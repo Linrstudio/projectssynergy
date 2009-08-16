@@ -8,3 +8,13 @@ c:\documents\projects\synergy\SynergyClient\obj\Debug\SynergyClient.exe
 c:\documents\projects\synergy\SynergyClient\obj\Debug\SynergyClient.pdb
 c:\documents\projects\synergy\SynergyClient\bin\Debug\SynergyNode.dll
 c:\documents\projects\synergy\SynergyClient\bin\Debug\SynergyNode.pdb
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Debug\SynergyClient.exe
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Debug\SynergyClient.pdb
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\bin\Debug\SynergyClient.exe
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\bin\Debug\SynergyClient.pdb
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\bin\Debug\SynergyNode.dll
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\bin\Debug\SynergyNode.pdb
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Debug\ResolveAssemblyReference.cache
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Debug\SynergyClient.f_Main.resources
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Debug\SynergyClient.Properties.Resources.resources
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Debug\SynergyClient.csproj.GenerateResource.Cache

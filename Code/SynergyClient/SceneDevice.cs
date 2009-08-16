@@ -103,7 +103,7 @@ namespace SynergyClient
             {
                 _Graphics.FillPie(Brushes.Green,rect, 0, 90);
 
-                _Graphics.FillEllipse(ConnectionManager.Devices[DeviceID].GetDigitalState() ? Brushes.Green : Brushes.Red, rect);
+                //_Graphics.FillEllipse(ConnectionManager.Devices[DeviceID].GetDigitalState() ? Brushes.Green : Brushes.Red, rect);
             }
             else
             {

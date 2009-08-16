@@ -1,0 +1,54 @@
+<Settings>
+  <DigitalInput0>
+    <DeviceID>1000</DeviceID>
+  </DigitalInput0>
+  <DigitalInput1>
+    <DeviceID>1001</DeviceID>
+  </DigitalInput1>
+  <DigitalInput2>
+    <DeviceID>1002</DeviceID>
+  </DigitalInput2>
+  <DigitalInput3>
+    <DeviceID>1003</DeviceID>
+  </DigitalInput3>
+  <DigitalInput4>
+    <DeviceID>1004</DeviceID>
+  </DigitalInput4>
+  <DigitalInput5>
+    <DeviceID>1005</DeviceID>
+  </DigitalInput5>
+
+  <DigitalOutput0>
+    <DeviceID>2000</DeviceID>
+  </DigitalOutput0>
+  <DigitalOutput1>
+    <DeviceID>2001</DeviceID>
+  </DigitalOutput1>
+  <DigitalOutput2>
+    <DeviceID>2002</DeviceID>
+  </DigitalOutput2>
+  <DigitalOutput3>
+    <DeviceID>2003</DeviceID>
+  </DigitalOutput3>
+  <DigitalOutput4>
+    <DeviceID>2004</DeviceID>
+  </DigitalOutput4>
+  <DigitalOutput5>
+    <DeviceID>2005</DeviceID>
+  </DigitalOutput5>
+  <DigitalOutput6>
+    <DeviceID>2006</DeviceID>
+  </DigitalOutput6>
+  <DigitalOutput7>
+    <DeviceID>2007</DeviceID>
+  </DigitalOutput7>
+  
+  <AnalogOutput0>
+    <DeviceID>3000</DeviceID>
+  </AnalogOutput0>
+  <AnalogOutput1>
+    <DeviceID>3001</DeviceID>
+  </AnalogOutput1>
+
+
+</Settings>
