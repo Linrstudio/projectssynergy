@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SceneGraph>
+  <BackgroundImage>Background.png</BackgroundImage>
+  <Device>
+    <Name>waaier</Name>
+    <Type>0</Type>
+    <DeviceID>2002</DeviceID>
+    <Size>0,1</Size>
+    <TextSize>0,25</TextSize>
+    <X>0,1727494</X>
+    <Y>0,0973236</Y>
+  </Device>
+  <Device>
+    <Name>audio crap</Name>
+    <Type>0</Type>
+    <DeviceID>2004</DeviceID>
+    <Size>0,1</Size>
+    <TextSize>0,2</TextSize>
+    <X>0,1</X>
+    <Y>0,5</Y>
+  </Device>
+  <Device>
+    <Name>Bed</Name>
+    <Type>0</Type>
+    <DeviceID>2000</DeviceID>
+    <Size>0,2</Size>
+    <TextSize>0,4</TextSize>
+    <X>0,8491484</X>
+    <Y>0,6058394</Y>
+  </Device>
+  <Device>
+    <Name>SoldeerShit</Name>
+    <Type>0</Type>
+    <DeviceID>2001</DeviceID>
+    <Size>0,09701286</Size>
+    <TextSize>0,2</TextSize>
+    <X>0,9221411</X>
+    <Y>0,04622871</Y>
+  </Device>
+  <Device>
+    <Name>Keuken</Name>
+    <Type>0</Type>
+    <DeviceID>2003</DeviceID>
+    <Size>0,09701286</Size>
+    <TextSize>0,2</TextSize>
+    <X>0,9480875</X>
+    <Y>0,7896175</Y>
+  </Device>
+  <Device>
+    <Name>Door</Name>
+    <Type>0</Type>
+    <DeviceID>2005</DeviceID>
+    <Size>0,09701286</Size>
+    <TextSize>0,2</TextSize>
+    <X>0,2964481</X>
+    <Y>0,6461748</Y>
+  </Device>
+
+  <Device>
+    <Name>Base lights</Name>
+    <Type>2</Type>
+    <DeviceID>3000</DeviceID>
+    <Size>0,09701286</Size>
+    <TextSize>0,2</TextSize>
+    <X>0,5</X>
+    <Y>0,5</Y>
+  </Device>
+</SceneGraph>

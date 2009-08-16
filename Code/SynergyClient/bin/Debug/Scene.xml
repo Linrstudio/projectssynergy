@@ -1,0 +1,25 @@
+<Scene>
+
+  <BackgroundImage>Background.png</BackgroundImage>
+
+  <Device>
+    <Name>waaier</Name>
+    <ID>2003</ID>
+    <Type>0</Type>
+    <Size>0,1</Size>
+    <TextSize>10</TextSize>
+    <X>0,175</X>
+    <Y>0,1</Y>
+  </Device>
+
+  <Device>
+    <Name>audio crap</Name>
+    <ID>2000</ID>
+    <Type>0</Type>
+    <Size>0,15</Size>
+    <TextSize>10</TextSize>
+    <X>0,1</X>
+    <Y>0,5</Y>
+  </Device>
+   
+</Scene>

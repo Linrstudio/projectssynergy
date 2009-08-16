@@ -1,0 +1,10 @@
+c:\documents\projects\synergy\SynergyClient\obj\Debug\ResolveAssemblyReference.cache
+c:\documents\projects\synergy\SynergyClient\obj\Debug\SynergyClient.f_Main.resources
+c:\documents\projects\synergy\SynergyClient\obj\Debug\SynergyClient.Properties.Resources.resources
+c:\documents\projects\synergy\SynergyClient\obj\Debug\SynergyClient.csproj.GenerateResource.Cache
+c:\documents\projects\synergy\SynergyClient\bin\Debug\SynergyClient.exe
+c:\documents\projects\synergy\SynergyClient\bin\Debug\SynergyClient.pdb
+c:\documents\projects\synergy\SynergyClient\obj\Debug\SynergyClient.exe
+c:\documents\projects\synergy\SynergyClient\obj\Debug\SynergyClient.pdb
+c:\documents\projects\synergy\SynergyClient\bin\Debug\SynergyNode.dll
+c:\documents\projects\synergy\SynergyClient\bin\Debug\SynergyNode.pdb
