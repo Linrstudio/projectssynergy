@@ -6,14 +6,14 @@ namespace SynergyNode
 {
     public class Device
     {
+
         public Device(bool _IsLocal) { islocal = _IsLocal; }
         private bool islocal;//do not change
         public ushort ID;
         public byte DeviceType = 0;
         public byte[] Memory = new byte[0];
-        public virtual void OnMemoryChanged() { }
         public bool IsLocal() { return islocal; }
-
+        public virtual void OnMemoryChanged(){}
         public void SetMemory(byte[] _Memory, bool _UpdateRemote)
         {
             Memory = _Memory;
@@ -52,10 +52,6 @@ namespace SynergyNode
         public RemoteDevice(ushort _DeviceID) : base(false)
         {
             ID = _DeviceID;
-        }
-        public override void OnMemoryChanged()
-        {
-            
         }
     }
 }

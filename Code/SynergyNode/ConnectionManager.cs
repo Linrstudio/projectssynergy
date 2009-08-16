@@ -8,13 +8,18 @@ namespace SynergyNode
 {
     public static class ConnectionManager
     {
-        public static string Revision =  "2.160";
+        public delegate void OnDeviceFoundHandler(Device _Device);
+        public static event OnDeviceFoundHandler OnDeviceFound;
+        public delegate void OnDeviceMemoryChangedHandler(Device _Device);
+        public static event OnDeviceMemoryChangedHandler OnDeviceMemoryChanged;
+
+        public static string Revision =  "2.165";
         public static Random random;
         public static List<Connection> Connections;
         private static Queue<Packet> ReceiveQueue;
         private static Queue<Packet> SendQueue;
 
-        public static Dictionary<uint, Device> Devices;
+        public static Dictionary<ushort, Device> Devices;
         
         public static void AddDevice(Device _Device)//you can also do this yourself
         {
@@ -27,7 +32,7 @@ namespace SynergyNode
             Connections = new List<Connection>();
             ReceiveQueue = new Queue<Packet>();
             SendQueue = new Queue<Packet>();
-            Devices = new Dictionary<uint, Device>();
+            Devices = new Dictionary<ushort, Device>();
             Console.WriteLine("ConnectionManager Initialized");
             Console.WriteLine("Version:{0}", Revision);
         }
@@ -93,6 +98,7 @@ namespace SynergyNode
                                     {
                                         d.SetMemory(Data, false);
                                         Console.WriteLine("{0} received MemoryBin", d.ID);
+                                        if (OnDeviceMemoryChanged != null) OnDeviceMemoryChanged(d);
                                     }
                                 }
                             }
@@ -124,6 +130,7 @@ namespace SynergyNode
                                     d.SetMemory(packet.GetPiece(3, (uint)packet.Data.Length - 3), false);
                                     AddDevice(d);
                                     Console.WriteLine("whois result added");
+                                    if(OnDeviceFound!=null)OnDeviceFound(d);
                                 }
                                 else { Console.WriteLine("we already have this device {0}", device); }
                             }
