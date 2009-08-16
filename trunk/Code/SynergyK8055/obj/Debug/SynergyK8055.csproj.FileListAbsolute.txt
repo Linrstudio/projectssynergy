@@ -5,3 +5,10 @@ c:\documents\projects\synergy\SynergyK8055\bin\Debug\SynergyNode.pdb
 c:\documents\projects\synergy\SynergyK8055\obj\Debug\SynergyK8055.exe
 c:\documents\projects\synergy\SynergyK8055\obj\Debug\SynergyK8055.pdb
 c:\documents\projects\synergy\SynergyK8055\bin\Debug\SynergyNode.dll
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyK8055\obj\Debug\SynergyK8055.exe
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyK8055\obj\Debug\SynergyK8055.pdb
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyK8055\bin\Debug\SynergyK8055.exe
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyK8055\bin\Debug\SynergyK8055.pdb
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyK8055\bin\Debug\SynergyNode.dll
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyK8055\bin\Debug\SynergyNode.pdb
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyK8055\obj\Debug\ResolveAssemblyReference.cache

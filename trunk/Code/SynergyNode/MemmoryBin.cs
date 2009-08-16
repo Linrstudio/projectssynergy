@@ -22,7 +22,7 @@ namespace SynergyNode
             stream.Write(BitConverter.GetBytes(DeviceID), 0, 2);
             stream.Write(Data, 0, Data.Length);
             Packet p = new Packet(0, stream.ToArray());
-            ConnectionManager.SendQueue.Enqueue(p);//that'll do
+            ConnectionManager.SendPacket(p);//that'll do
         }
     }
 }

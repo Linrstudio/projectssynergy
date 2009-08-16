@@ -40,9 +40,10 @@ namespace SynergyNode
 
     public class LocalDevice : Device
     {
-        public LocalDevice(ushort _DeviceID) : base(true)
+        public LocalDevice(ushort _DeviceID,byte _Type) : base(true)
         {
             ID = _DeviceID;
+            DeviceType = _Type;
         }
     }
 

@@ -33,7 +33,6 @@ namespace SynergyNode
                 {
                     TcpClient client = listener.AcceptTcpClient();
                     ConnectionManager.Connections.Add(new TCPConnection(client, false));
-                    Console.WriteLine("TCPConnection with {0}",client.Client.RemoteEndPoint.ToString());
                 }
                 Thread.Sleep(100);
             }

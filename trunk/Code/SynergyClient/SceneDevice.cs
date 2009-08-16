@@ -34,7 +34,7 @@ namespace SynergyClient
             element.Add(new XElement("Y", Y.ToString()));
             return element;
         }
-        public virtual void OnClick(){ }
+        public virtual void OnClick(float _X, float _Y){ }
         public virtual void OnDraw(Graphics _Graphics, float _GraphicsSize) { }
         public string Name;
         public uint DeviceID;
@@ -48,7 +48,7 @@ namespace SynergyClient
         public DigitalOutSceneDevice(XElement _Xelement):base(_Xelement)
         {
         }
-        public override void OnClick()
+        public override void OnClick(float _X, float _Y)
         {
             if(ConnectionManager.Devices.ContainsKey(DeviceID))
             {
@@ -82,11 +82,14 @@ namespace SynergyClient
             : base(_Xelement)
         {
         }
-        public override void OnClick()
+        public override void OnClick(float _X,float _Y)
         {
             if (ConnectionManager.Devices.ContainsKey(DeviceID))
             {
-                ConnectionManager.Devices[DeviceID].ToggleDigital();
+                float dx=_X-X;
+                float dy=Y-_Y;
+                byte value = (byte)(Math.Atan2(dx, dy) * 40.86f);
+                ConnectionManager.Devices[DeviceID].SetAnalogState(value);
                 ConnectionManager.Devices[DeviceID].UpdateRemoteMemory();
             }
         }
@@ -101,8 +104,8 @@ namespace SynergyClient
             Rectangle rect = new Rectangle((int)((X * _GraphicsSize) - size * 0.5f), (int)((Y * _GraphicsSize) - size * 0.5f), (int)size, (int)size);
             if (ConnectionManager.Devices.ContainsKey(DeviceID))
             {
-                _Graphics.FillPie(Brushes.Green,rect, 0, 90);
-
+                _Graphics.FillPie(Brushes.Green,rect, 270, ((float)ConnectionManager.Devices[DeviceID].GetAnalogState())*1.411f);
+                _Graphics.DrawEllipse(Pens.Green, rect);
                 //_Graphics.FillEllipse(ConnectionManager.Devices[DeviceID].GetDigitalState() ? Brushes.Green : Brushes.Red, rect);
             }
             else

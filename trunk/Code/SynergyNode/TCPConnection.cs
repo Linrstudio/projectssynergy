@@ -46,7 +46,9 @@ namespace SynergyNode
                     {
                         if (SendQueue.Count > 0)
                         {
+                            Thread.BeginCriticalRegion();
                             Packet p = SendQueue.Dequeue();
+                            Thread.EndCriticalRegion();
                             if (!InBlackList(p.PacketID))
                             {
                                 AddToBlackList(p.PacketID);
@@ -74,8 +76,8 @@ namespace SynergyNode
                                 {
                                     //Console.WriteLine("Packet received ( {2} ) PacketID:{0} Data:{1}", p.PacketID, System.Text.Encoding.ASCII.GetString(p.Data), client.Client.RemoteEndPoint.ToString());
                                     AddToBlackList(p.PacketID);
-                                    ConnectionManager.ReceiveQueue.Enqueue(p);
-                                    ConnectionManager.SendQueue.Enqueue(p);
+                                    ConnectionManager.AddReceivePacket(p);
+                                    ConnectionManager.SendPacket(p);
                                 }
                             }
                         }
@@ -109,7 +111,9 @@ namespace SynergyNode
         }
         public override void SendPacket(Packet _Packet)
         {
+            Thread.BeginCriticalRegion();
             SendQueue.Enqueue(_Packet);
+            Thread.EndCriticalRegion();
         }
         public void Kill()
         {
