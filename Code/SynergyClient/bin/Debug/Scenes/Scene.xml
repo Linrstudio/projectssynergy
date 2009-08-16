@@ -16,8 +16,8 @@
     <DeviceID>2004</DeviceID>
     <Size>0,1</Size>
     <TextSize>0,2</TextSize>
-    <X>0,1</X>
-    <Y>0,5</Y>
+    <X>0,1021898</X>
+    <Y>0,4744526</Y>
   </Device>
   <Device>
     <Name>Bed</Name>
@@ -32,10 +32,10 @@
     <Name>SoldeerShit</Name>
     <Type>0</Type>
     <DeviceID>2001</DeviceID>
-    <Size>0,09701286</Size>
+    <Size>0,09305675</Size>
     <TextSize>0,2</TextSize>
-    <X>0,9221411</X>
-    <Y>0,04622871</Y>
+    <X>0,9303279</X>
+    <Y>0,04644809</Y>
   </Device>
   <Device>
     <Name>Keuken</Name>
@@ -52,17 +52,16 @@
     <DeviceID>2005</DeviceID>
     <Size>0,09701286</Size>
     <TextSize>0,2</TextSize>
-    <X>0,2964481</X>
+    <X>0,3005464</X>
     <Y>0,6461748</Y>
   </Device>
-
   <Device>
     <Name>Base lights</Name>
     <Type>2</Type>
     <DeviceID>3000</DeviceID>
-    <Size>0,09701286</Size>
+    <Size>0,09597602</Size>
     <TextSize>0,2</TextSize>
-    <X>0,5</X>
-    <Y>0,5</Y>
+    <X>0,107056</X>
+    <Y>0,5742093</Y>
   </Device>
 </SceneGraph>

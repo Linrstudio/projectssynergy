@@ -30,7 +30,7 @@ namespace SynergyClient
                 d_Connections.Rows.Add(i.IP, i.Port.ToString());
                 try 
                 {
-                    SynergyNode.ConnectionManager.Connections.Add(new SynergyNode.TCPConnection(new System.Net.Sockets.TcpClient(i.IP, i.Port),true));
+                    //SynergyNode.ConnectionManager.Connections.Add(new SynergyNode.TCPConnection(new System.Net.Sockets.TcpClient(i.IP, i.Port),true));
                 } catch { }
             }
         }
@@ -63,7 +63,7 @@ namespace SynergyClient
             try
             {
                 Graphics g = e.Graphics;
-
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
                 if (CurrentScene != null)
                 {
                     g.DrawImage(CurrentScene.BackgroundImage, new RectangleF(0, 0, p_Graphic.Width, p_Graphic.Height));
@@ -78,7 +78,7 @@ namespace SynergyClient
                     }
                 }
             }
-            catch { }
+            catch { Text = "oh noes!"; }
         }
 
         public void ReDraw()
@@ -96,7 +96,7 @@ namespace SynergyClient
                 {
                     if (e.Button == MouseButtons.Left)
                     {
-                        d.OnClick();
+                        d.OnClick((float)e.X / SceneSize, (float)e.Y / SceneSize);
                         ReDraw();
                     }
                     if (e.Button == MouseButtons.Right)

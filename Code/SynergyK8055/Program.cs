@@ -19,7 +19,7 @@ namespace SynergyK8055
         [DllImport("k8055.dll")]
         private static extern void ClearDigitalChannel(int Channel);
         public int Channel;
-        public DigitalOutput(ushort _DeviceID, int _Channel):base(_DeviceID){Channel = _Channel;}
+        public DigitalOutput(ushort _DeviceID, int _Channel):base(_DeviceID,0){Channel = _Channel;}
         public override void  OnMemoryChanged()
         {
             SetState(GetDigitalState());
@@ -30,12 +30,31 @@ namespace SynergyK8055
             if (_On) SetDigitalChannel(Channel); else ClearDigitalChannel(Channel);
         }
     }
+    public class DigitalInput : LocalDevice
+    {
+        [DllImport("k8055.dll")]
+        private static extern int ReadDigitalChannel(int Channel);
+        public int Channel;
+        public DigitalInput(ushort _DeviceID, int _Channel) : base(_DeviceID, 1) { Channel = _Channel; }
+        public void Update()
+        {
+            bool last = GetDigitalState();
+            bool current = ReadDigitalChannel(Channel) != 0;
+            if (last != current)
+            {
+                SetDigitalState(current);
+                UpdateRemoteMemory();
+                Console.WriteLine("{0} is now {1}", Channel, current);
+            }
+        }
+
+    }
     public class AnalogOutput : LocalDevice
     {
         [DllImport("k8055.dll")]
         private static extern void OutputAnalogChannel(int Channel, int Data);
         public int Channel;
-        public AnalogOutput(ushort _DeviceID, int _Channel) : base(_DeviceID) { Channel = _Channel; }
+        public AnalogOutput(ushort _DeviceID, int _Channel) : base(_DeviceID,2) { Channel = _Channel; }
         public override void OnMemoryChanged()
         {
             SetState(GetAnalogState());
@@ -63,16 +82,23 @@ namespace SynergyK8055
         static void Main(string[] args)
         {
             ConnectionManager.Init();
+            DigitalInput[] digitalinputs = new DigitalInput[5];
             DigitalOutput[] digitaloutputs = new DigitalOutput[8];
             AnalogOutput[] analogoutputs = new AnalogOutput[2];
             XElement file = XElement.Load("Settings.xml");
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 5; i++)//0
+            {
+                XElement element = file.Element("DigitalInput" + i.ToString());
+                digitalinputs[i] = new DigitalInput(ushort.Parse(element.Element("DeviceID").Value), i + 1);
+                ConnectionManager.AddDevice(digitalinputs[i]);
+            }
+            for (int i = 0; i < 8; i++)//1
             {
                 XElement element = file.Element("DigitalOutput" + i.ToString());
                 digitaloutputs[i] = new DigitalOutput(ushort.Parse(element.Element("DeviceID").Value), i + 1);
                 ConnectionManager.AddDevice(digitaloutputs[i]);
             }
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 2; i++)//2
             {
                 XElement element = file.Element("AnalogOutput" + i.ToString());
                 analogoutputs[i] = new AnalogOutput(ushort.Parse(element.Element("DeviceID").Value), i + 1);
@@ -87,6 +113,7 @@ namespace SynergyK8055
             TCPListener listner = new TCPListener(int.Parse(Console.ReadLine()));
             while (true)
             {
+                foreach (DigitalInput i in digitalinputs) { i.Update(); }
                 ConnectionManager.Update();
                 Thread.Sleep(100);
             }

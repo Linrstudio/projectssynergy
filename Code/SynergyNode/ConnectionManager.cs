@@ -8,15 +8,14 @@ namespace SynergyNode
 {
     public static class ConnectionManager
     {
-        public static string Revision =  "2.100";
+        public static string Revision =  "2.160";
         public static Random random;
         public static List<Connection> Connections;
-        public static Queue<Packet> ReceiveQueue;
-        public static Queue<Packet> SendQueue;
+        private static Queue<Packet> ReceiveQueue;
+        private static Queue<Packet> SendQueue;
 
         public static Dictionary<uint, Device> Devices;
-        // real network layer ( data wise )
-
+        
         public static void AddDevice(Device _Device)//you can also do this yourself
         {
             Devices.Add(_Device.ID, _Device);
@@ -47,7 +46,7 @@ namespace SynergyNode
             }
         }
 
-        public static void SetRemoteMemory(ushort _DeviceID, byte[] _Memory)//TYPE=0
+        public static void SetRemoteMemory(ushort _DeviceID, byte[] _Memory)
         {
             MemoryStream stream = new MemoryStream();
             stream.Write(BitConverter.GetBytes(_DeviceID), 0, 2);
@@ -62,6 +61,9 @@ namespace SynergyNode
             SendQueue.Enqueue(p);
         }
 
+        public static void AddReceivePacket(Packet _Packet) { Thread.BeginCriticalRegion(); ReceiveQueue.Enqueue(_Packet); Thread.EndCriticalRegion(); }
+        public static void /* */ SendPacket(Packet _Packet) { Thread.BeginCriticalRegion(); SendQueue.Enqueue(_Packet); Thread.EndCriticalRegion(); }
+
         public static void Update()
         {
             //main parsing of packets
@@ -73,56 +75,63 @@ namespace SynergyNode
 
             while (ReceiveQueue.Count > 0)
             {
+                Thread.BeginCriticalRegion();
                 Packet packet = ReceiveQueue.Dequeue();
-                Console.WriteLine("Parsing packet");
-                switch (packet.Type)//swap the banana with the apple
+                Thread.EndCriticalRegion();
+                if (packet != null)
                 {
-                    case 0://packets as they all should be
-                        {
-                            ushort ReceivedID = BitConverter.ToUInt16(packet.Data, 0);
-                            byte[] Data = packet.GetPiece(2, (uint)packet.Data.Length - 2);
-                            foreach (Device d in Devices.Values)
+                    Console.WriteLine("Parsing packet");
+                    switch (packet.Type)//swap the banana with the apple
+                    {
+                        case 0://packets as they all should be
                             {
-                                if (d.ID == ReceivedID)
+                                ushort ReceivedID = BitConverter.ToUInt16(packet.Data, 0);
+                                byte[] Data = packet.GetPiece(2, (uint)packet.Data.Length - 2);
+                                foreach (Device d in Devices.Values)
                                 {
-                                    d.SetMemory(Data, false);
-                                    Console.WriteLine("{0} received MemoryBin", d.ID);
+                                    if (d.ID == ReceivedID)
+                                    {
+                                        d.SetMemory(Data, false);
+                                        Console.WriteLine("{0} received MemoryBin", d.ID);
+                                    }
                                 }
                             }
-                        }
-                        break;
-                    case 1://WhoIs
-                        {
-                            Console.WriteLine("returning device info");
-                            foreach (Device d in Devices.Values)
+                            break;
+                        case 1://WhoIs
                             {
-                                if (d.IsLocal())
+                                Console.WriteLine("returning device info");
+                                foreach (Device d in Devices.Values)
                                 {
-                                    MemoryStream stream=new MemoryStream();
-                                    stream.WriteByte(d.DeviceType);
-                                    stream.Write( BitConverter.GetBytes( d.ID),0,2);
-                                    stream.Write(d.Memory,0,d.Memory.Length);
-                                    SendQueue.Enqueue(new Packet(2, stream.ToArray()));
+                                    if (d.IsLocal())
+                                    {
+                                        MemoryStream stream = new MemoryStream();
+                                        stream.WriteByte(d.DeviceType);
+                                        stream.Write(BitConverter.GetBytes(d.ID), 0, 2);
+                                        stream.Write(d.Memory, 0, d.Memory.Length);
+                                        SendQueue.Enqueue(new Packet(2, stream.ToArray()));
+                                        Console.WriteLine("returning device {0}", d.ID);
+                                    }
                                 }
                             }
-                        }
-                        break;
-                    case 2://WhoIsResult
-                        {
-                            byte type = packet.Data[0];
-                            ushort device = BitConverter.ToUInt16(packet.Data, 1);
-                            if (!Devices.ContainsKey(device))
+                            break;
+                        case 2://WhoIsResult
                             {
-                                RemoteDevice d = new RemoteDevice(device);
-                                d.SetMemory(packet.GetPiece(3, (uint)packet.Data.Length - 3), false);
-                                AddDevice(d);
-                                Console.WriteLine("whois result added");
+                                byte type = packet.Data[0];
+                                ushort device = BitConverter.ToUInt16(packet.Data, 1);
+                                if (!Devices.ContainsKey(device))
+                                {
+                                    RemoteDevice d = new RemoteDevice(device);
+                                    d.SetMemory(packet.GetPiece(3, (uint)packet.Data.Length - 3), false);
+                                    AddDevice(d);
+                                    Console.WriteLine("whois result added");
+                                }
+                                else { Console.WriteLine("we already have this device {0}", device); }
                             }
-                            else { Console.WriteLine("we already have this device"); }
-                        }
-                        break;
+                            break;
+                    }
                 }
-            }   
+                else { Console.WriteLine("Error in dequeueing packet, note: the exact reasons for this behaviour is unknown"); }
+            }
             foreach (Connection c in Connections) c.Update();
         }
     }
