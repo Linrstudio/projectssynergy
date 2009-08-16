@@ -1,0 +1,5 @@
+c:\DOCUMENTS\PROJECTS\Synergy\SynergyNode\bin\Debug\SynergyNode.dll
+c:\DOCUMENTS\PROJECTS\Synergy\SynergyNode\bin\Debug\SynergyNode.pdb
+c:\DOCUMENTS\PROJECTS\Synergy\SynergyNode\obj\Debug\ResolveAssemblyReference.cache
+c:\DOCUMENTS\PROJECTS\Synergy\SynergyNode\obj\Debug\SynergyNode.dll
+c:\DOCUMENTS\PROJECTS\Synergy\SynergyNode\obj\Debug\SynergyNode.pdb
