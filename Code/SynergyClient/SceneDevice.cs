@@ -16,7 +16,7 @@ namespace SynergyClient
         {
             Name = (string)_Element.Element("Name").Value;
             Type = byte.Parse((string)_Element.Element("Type"));
-            DeviceID = uint.Parse((string)_Element.Element("DeviceID").Value);
+            DeviceID = ushort.Parse((string)_Element.Element("DeviceID").Value);
             Size = float.Parse((string)_Element.Element("Size").Value);
             TextSize = float.Parse((string)_Element.Element("TextSize").Value);
             X = float.Parse((string)_Element.Element("X").Value);
@@ -37,7 +37,7 @@ namespace SynergyClient
         public virtual void OnClick(float _X, float _Y){ }
         public virtual void OnDraw(Graphics _Graphics, float _GraphicsSize) { }
         public string Name;
-        public uint DeviceID;
+        public ushort DeviceID;
         public float Size;
         public float TextSize;
         public float X, Y;

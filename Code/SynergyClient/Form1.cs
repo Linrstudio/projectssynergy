@@ -11,6 +11,7 @@ namespace SynergyClient
 {
     public partial class f_Main : Form
     {
+        bool needsredraw = false;
         Scene CurrentScene = null;
         SceneDevice CurrentDevice = null;
         int DeviceOperation = 0;
@@ -18,10 +19,13 @@ namespace SynergyClient
         public f_Main()
         {
             InitializeComponent();
+            SynergyNode.ConnectionManager.OnDeviceFound += DeviceAdded;
+            SynergyNode.ConnectionManager.OnDeviceMemoryChanged += AnyThingChanged;
         }
 
         private void f_Main_Load(object sender, EventArgs e)
         {
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
             Resize();
             CurrentScene = new Scene("Scenes/Scene.xml");
             ConnectionList.Load("Connections.xml");
@@ -33,6 +37,15 @@ namespace SynergyClient
                     //SynergyNode.ConnectionManager.Connections.Add(new SynergyNode.TCPConnection(new System.Net.Sockets.TcpClient(i.IP, i.Port),true));
                 } catch { }
             }
+        }
+
+        public void AnyThingChanged(SynergyNode.Device _Device)
+        {
+            needsredraw = true;
+        }
+        public void DeviceAdded(SynergyNode.Device _Device)
+        {
+            needsredraw = true;
         }
 
         public void UpdateDeviceList()
@@ -60,7 +73,8 @@ namespace SynergyClient
 
         private void p_Graphic_Paint(object sender, PaintEventArgs e)
         {
-            try
+            if (e.ClipRectangle.Width <= 0 || e.ClipRectangle.Height <= 0) return;
+            //try
             {
                 Graphics g = e.Graphics;
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
@@ -78,13 +92,14 @@ namespace SynergyClient
                     }
                 }
             }
-            catch { Text = "oh noes!"; }
+            //catch { Text = "oh noes!"; }
         }
 
         public void ReDraw()
         {
-            Refresh();
+            p_Graphic.Invalidate();
         }
+
         private void p_Graphic_MouseClick(object sender, MouseEventArgs e)
         {
             if (DeviceOperation != 0)
@@ -106,6 +121,7 @@ namespace SynergyClient
                     }
                 }
             }
+            ReDraw();
         }
 
         private void b_update_Click(object sender, EventArgs e)
@@ -189,6 +205,11 @@ namespace SynergyClient
                 }
                 catch { MessageBox.Show("Error in syntax"); }
             }
+        }
+
+        private void t_refresh_Tick(object sender, EventArgs e)
+        {
+            if (needsredraw) { ReDraw(); needsredraw = false; }
         }
     }
 }

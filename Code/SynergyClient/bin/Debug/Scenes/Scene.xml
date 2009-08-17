@@ -16,17 +16,17 @@
     <DeviceID>2004</DeviceID>
     <Size>0,1</Size>
     <TextSize>0,2</TextSize>
-    <X>0,1021898</X>
-    <Y>0,4744526</Y>
+    <X>0,1051913</X>
+    <Y>0,4767759</Y>
   </Device>
   <Device>
     <Name>Bed</Name>
     <Type>0</Type>
     <DeviceID>2000</DeviceID>
-    <Size>0,2</Size>
+    <Size>0,0521994</Size>
     <TextSize>0,4</TextSize>
-    <X>0,8491484</X>
-    <Y>0,6058394</Y>
+    <X>0,9098361</X>
+    <Y>0,6530055</Y>
   </Device>
   <Device>
     <Name>SoldeerShit</Name>
@@ -59,7 +59,7 @@
     <Name>Base lights</Name>
     <Type>2</Type>
     <DeviceID>3000</DeviceID>
-    <Size>0,09597602</Size>
+    <Size>0,09565946</Size>
     <TextSize>0,2</TextSize>
     <X>0,107056</X>
     <Y>0,5742093</Y>
