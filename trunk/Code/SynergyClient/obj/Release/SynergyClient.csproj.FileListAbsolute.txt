@@ -8,3 +8,5 @@ C:\DOCUMENTS\PROJECTS\Synergy\SynergyClient\bin\Release\SynergyNode.dll
 C:\DOCUMENTS\PROJECTS\Synergy\SynergyClient\bin\Release\SynergyNode.pdb
 C:\DOCUMENTS\PROJECTS\Synergy\SynergyClient\obj\Release\SynergyClient.exe
 C:\DOCUMENTS\PROJECTS\Synergy\SynergyClient\obj\Release\SynergyClient.pdb
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Release\SynergyClient.exe
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Release\SynergyClient.pdb
