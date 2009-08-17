@@ -9,9 +9,9 @@ namespace SynergyNode
     public static class ConnectionManager
     {
         public delegate void OnDeviceFoundHandler(Device _Device);
-        public static event OnDeviceFoundHandler OnDeviceFound;
+        public static  event OnDeviceFoundHandler OnDeviceFound;
         public delegate void OnDeviceMemoryChangedHandler(Device _Device);
-        public static event OnDeviceMemoryChangedHandler OnDeviceMemoryChanged;
+        public static  event OnDeviceMemoryChangedHandler OnDeviceMemoryChanged;
 
         public static string Revision =  "2.165";
         public static Random random;
@@ -130,7 +130,7 @@ namespace SynergyNode
                                     d.SetMemory(packet.GetPiece(3, (uint)packet.Data.Length - 3), false);
                                     AddDevice(d);
                                     Console.WriteLine("whois result added");
-                                    if(OnDeviceFound!=null)OnDeviceFound(d);
+                                    if (OnDeviceFound != null) OnDeviceFound(d);
                                 }
                                 else { Console.WriteLine("we already have this device {0}", device); }
                             }
