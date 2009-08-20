@@ -20,16 +20,19 @@ public static bool[] buttons=new bool[16];
             var wm = new Wiimote();
             wm.WiimoteChanged += new WiimoteChangedEventHandler(OnWiimoteChanged);
             wm.Connect();
-            wm.SetReportType(Wiimote.InputReport.Buttons | Wiimote.InputReport.IRExtensionAccel | Wiimote.InputReport.Status, true);
+            wm.SetReportType(Wiimote.InputReport.ButtonsAccel, true);
             
             ConnectionManager.UpdateAsync();
 
             while(true)
             {
-                byte power=wm.WiimoteState.Battery;
-                wm.SetLEDs(power>32,power>64,power>128,power>255-64);
+                float power = (((100.0f * 48.0f * (float)((int)wm.WiimoteState.Battery / 48.0f))) / 192.0f);
+                if (power > 75.0f) wm.SetLEDs(false, false, false, true);
+                else if (power > 50.0f) wm.SetLEDs(false, false, true, false);
+                else if (power > 25.0f) wm.SetLEDs(false, true, false, false);
+                else wm.SetLEDs(true, false, false, false);
 
-                System.Threading.Thread.Sleep(10000);
+                System.Threading.Thread.Sleep(1000);
             }
 
             Console.ReadLine();
@@ -97,7 +100,6 @@ public static bool[] buttons=new bool[16];
                 else { buttons[10] = false; }
             }
 
-
             if (ConnectionManager.Devices.ContainsKey(3000))
             {
                 if (args.WiimoteState.ButtonState.B)
@@ -106,7 +108,14 @@ public static bool[] buttons=new bool[16];
                     {
                         buttons[0] = true;
                         Device d = ConnectionManager.Devices[3000];
-                        d.SetAnalogState((byte)((args.WiimoteState.AccelState.X * 128) + 128));
+                        float dir = args.WiimoteState.AccelState.X;
+                        dir *= 0.5f;
+                        dir *= 1.1f;
+                        dir += 0.5f;
+                        int diri = (int)(dir * 256);
+                        if (diri < 0) diri = 0;
+                        if (diri > 255) diri = 255;
+                        d.SetAnalogState((byte)(diri));
                         d.UpdateRemoteMemory();
                     }
                 }
