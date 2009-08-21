@@ -9,30 +9,30 @@ namespace SynergyWiimote
 {
     class Program
     {
-public static bool[] buttons=new bool[16];
+        public static bool[] buttons=new bool[16];
+        public static byte battery = 0;
         static void Main(string[] args)
         {
             ConnectionManager.Init();
             ConnectionManager.Connections.Add(new TCPConnection(new System.Net.Sockets.TcpClient("192.168.1.123", 1000), true));
             //ConnectionManager.OnDeviceMemoryChanged += OnMemoryChanged;
             ConnectionManager.Whois();
-            
+            ConnectionManager.UpdateAsync();
             var wm = new Wiimote();
             wm.WiimoteChanged += new WiimoteChangedEventHandler(OnWiimoteChanged);
-            wm.Connect();
-            wm.SetReportType(Wiimote.InputReport.ButtonsAccel, true);
             
-            ConnectionManager.UpdateAsync();
-
-            while(true)
+            while (true)
             {
-                float power = (((100.0f * 48.0f * (float)((int)wm.WiimoteState.Battery / 48.0f))) / 192.0f);
+                wm.Connect();wm.SetReportType(Wiimote.InputReport.ButtonsAccel | Wiimote.InputReport.Status, true);
+                //float power = (((100.0f * 48.0f * (float)((int)wm.WiimoteState.Battery / 48.0f))) / 192.0f);
+                float power = ((float)battery) * (100.0f / 140.0f );
+                Console.WriteLine(power);
                 if (power > 75.0f) wm.SetLEDs(false, false, false, true);
                 else if (power > 50.0f) wm.SetLEDs(false, false, true, false);
                 else if (power > 25.0f) wm.SetLEDs(false, true, false, false);
                 else wm.SetLEDs(true, false, false, false);
-
-                System.Threading.Thread.Sleep(1000);
+                wm.Disconnect();
+                System.Threading.Thread.Sleep(60000);
             }
 
             Console.ReadLine();
@@ -57,6 +57,8 @@ public static bool[] buttons=new bool[16];
         }
         public static void OnWiimoteChanged(object sender, WiimoteChangedEventArgs args)
         {
+            battery = args.WiimoteState.Battery;
+
             DoDevice(1, 2002, args.WiimoteState.ButtonState.Plus);
             DoDevice(2, 2001, args.WiimoteState.ButtonState.One);
             DoDevice(3, 2004, args.WiimoteState.ButtonState.Two);
@@ -90,7 +92,7 @@ public static bool[] buttons=new bool[16];
                         d.SetDigitalState(false);
                         d.UpdateRemoteMemory();
                         d = ConnectionManager.Devices[2005];
-                        d.SetDigitalState(false);
+                        d.SetDigitalState(true);
                         d.UpdateRemoteMemory();
                         d = ConnectionManager.Devices[3000];
                         d.SetAnalogState(1);
