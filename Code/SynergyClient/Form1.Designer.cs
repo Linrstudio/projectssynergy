@@ -39,7 +39,6 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
             this.p_Container = new System.Windows.Forms.Panel();
-            this.p_Graphic = new System.Windows.Forms.Panel();
             this.panel4 = new System.Windows.Forms.Panel();
             this.b_Save = new System.Windows.Forms.Button();
             this.splitter1 = new System.Windows.Forms.Splitter();
@@ -58,10 +57,9 @@
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column4 = new System.Windows.Forms.DataGridViewButtonColumn();
             this.label2 = new System.Windows.Forms.Label();
-            this.c_Menu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.moveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.resizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.t_refresh = new System.Windows.Forms.Timer(this.components);
+            this.p_Graphic = new SynergyClient.SceneControl();
+            this.b_Whois = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -73,7 +71,6 @@
             this.tabPage2.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.d_Connections)).BeginInit();
-            this.c_Menu.SuspendLayout();
             this.SuspendLayout();
             // 
             // button6
@@ -102,6 +99,7 @@
             this.l_Scenes.TabIndex = 1;
             this.l_Scenes.UseCompatibleStateImageBehavior = false;
             this.l_Scenes.View = System.Windows.Forms.View.List;
+            this.l_Scenes.SelectedIndexChanged += new System.EventHandler(this.l_Scenes_SelectedIndexChanged);
             // 
             // imageList
             // 
@@ -118,7 +116,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(704, 469);
+            this.tabControl1.Size = new System.Drawing.Size(750, 469);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage1
@@ -129,10 +127,11 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(696, 443);
+            this.tabPage1.Size = new System.Drawing.Size(742, 443);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Scene";
             this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
             // 
             // panel2
             // 
@@ -142,7 +141,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(157, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(536, 437);
+            this.panel2.Size = new System.Drawing.Size(582, 437);
             this.panel2.TabIndex = 3;
             this.panel2.Resize += new System.EventHandler(this.panel2_Resize);
             // 
@@ -153,28 +152,18 @@
             this.p_Container.Dock = System.Windows.Forms.DockStyle.Fill;
             this.p_Container.Location = new System.Drawing.Point(0, 26);
             this.p_Container.Name = "p_Container";
-            this.p_Container.Size = new System.Drawing.Size(536, 411);
+            this.p_Container.Size = new System.Drawing.Size(582, 411);
             this.p_Container.TabIndex = 1;
-            // 
-            // p_Graphic
-            // 
-            this.p_Graphic.Location = new System.Drawing.Point(40, 29);
-            this.p_Graphic.Name = "p_Graphic";
-            this.p_Graphic.Size = new System.Drawing.Size(465, 365);
-            this.p_Graphic.TabIndex = 0;
-            this.p_Graphic.Paint += new System.Windows.Forms.PaintEventHandler(this.p_Graphic_Paint);
-            this.p_Graphic.MouseMove += new System.Windows.Forms.MouseEventHandler(this.p_Graphic_MouseMove);
-            this.p_Graphic.MouseClick += new System.Windows.Forms.MouseEventHandler(this.p_Graphic_MouseClick);
-            this.p_Graphic.MouseUp += new System.Windows.Forms.MouseEventHandler(this.p_Graphic_MouseUp);
             // 
             // panel4
             // 
             this.panel4.BackColor = System.Drawing.SystemColors.Control;
+            this.panel4.Controls.Add(this.b_Whois);
             this.panel4.Controls.Add(this.b_Save);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel4.Location = new System.Drawing.Point(0, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(536, 26);
+            this.panel4.Size = new System.Drawing.Size(582, 26);
             this.panel4.TabIndex = 2;
             // 
             // b_Save
@@ -223,7 +212,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(696, 443);
+            this.tabPage3.Size = new System.Drawing.Size(742, 443);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "World";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -276,7 +265,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(696, 443);
+            this.tabPage2.Size = new System.Drawing.Size(742, 443);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Node";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -332,39 +321,36 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "Connection list";
             // 
-            // c_Menu
-            // 
-            this.c_Menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.moveToolStripMenuItem,
-            this.resizeToolStripMenuItem});
-            this.c_Menu.Name = "c_Menu";
-            this.c_Menu.Size = new System.Drawing.Size(107, 48);
-            // 
-            // moveToolStripMenuItem
-            // 
-            this.moveToolStripMenuItem.Name = "moveToolStripMenuItem";
-            this.moveToolStripMenuItem.Size = new System.Drawing.Size(106, 22);
-            this.moveToolStripMenuItem.Text = "Move";
-            this.moveToolStripMenuItem.Click += new System.EventHandler(this.moveToolStripMenuItem_Click);
-            // 
-            // resizeToolStripMenuItem
-            // 
-            this.resizeToolStripMenuItem.Name = "resizeToolStripMenuItem";
-            this.resizeToolStripMenuItem.Size = new System.Drawing.Size(106, 22);
-            this.resizeToolStripMenuItem.Text = "Resize";
-            this.resizeToolStripMenuItem.Click += new System.EventHandler(this.resizeToolStripMenuItem_Click);
-            // 
             // t_refresh
             // 
             this.t_refresh.Enabled = true;
             this.t_refresh.Interval = 50;
             this.t_refresh.Tick += new System.EventHandler(this.t_refresh_Tick);
             // 
+            // p_Graphic
+            // 
+            this.p_Graphic.Location = new System.Drawing.Point(59, 45);
+            this.p_Graphic.Name = "p_Graphic";
+            this.p_Graphic.Size = new System.Drawing.Size(265, 158);
+            this.p_Graphic.TabIndex = 1;
+            this.p_Graphic.Text = "sceneControl1";
+            // 
+            // b_Whois
+            // 
+            this.b_Whois.Dock = System.Windows.Forms.DockStyle.Right;
+            this.b_Whois.Location = new System.Drawing.Point(528, 0);
+            this.b_Whois.Name = "b_Whois";
+            this.b_Whois.Size = new System.Drawing.Size(54, 26);
+            this.b_Whois.TabIndex = 1;
+            this.b_Whois.Text = "Whois";
+            this.b_Whois.UseVisualStyleBackColor = true;
+            this.b_Whois.Click += new System.EventHandler(this.b_Whois_Click);
+            // 
             // f_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 469);
+            this.ClientSize = new System.Drawing.Size(750, 469);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.button6);
             this.DoubleBuffered = true;
@@ -387,7 +373,6 @@
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.d_Connections)).EndInit();
-            this.c_Menu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -400,10 +385,8 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ImageList imageList;
-        private System.Windows.Forms.Panel p_Graphic;
         private System.Windows.Forms.Panel p_Container;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.TabPage tabPage3;
@@ -413,9 +396,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
         private System.Windows.Forms.Button b_update;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ContextMenuStrip c_Menu;
-        private System.Windows.Forms.ToolStripMenuItem moveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem resizeToolStripMenuItem;
         private System.Windows.Forms.Button b_Save;
         private System.Windows.Forms.DataGridView d_Connections;
         private System.Windows.Forms.Panel panel3;
@@ -424,6 +404,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewButtonColumn Column4;
         private System.Windows.Forms.Timer t_refresh;
+        private System.Windows.Forms.Splitter splitter1;
+        private SceneControl p_Graphic;
+        private System.Windows.Forms.Button b_Whois;
     }
 }
 
