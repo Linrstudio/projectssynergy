@@ -24,5 +24,17 @@ namespace SynergyClient
                 Items.Add(new ConnectionListItem((string)e.Element("IP").Value, ushort.Parse((string)e.Element("Port").Value)));
             }
         }
+        public static void Save(string _Path)
+        {
+            XElement root = new XElement("Connections");
+            foreach(ConnectionListItem e in Items)
+            {
+                XElement c = new XElement("Connection");
+                c.Add(new XElement("IP",e.IP));
+                c.Add(new XElement("Port",e.Port.ToString()));
+                root.Add(c);
+            }
+            root.Save(_Path);
+        }
     }
 }

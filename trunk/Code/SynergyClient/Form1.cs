@@ -6,36 +6,56 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace SynergyClient
 {
     public partial class f_Main : Form
     {
         bool needsredraw = false;
-        Scene CurrentScene = null;
-        SceneDevice CurrentDevice = null;
-        int DeviceOperation = 0;
+        Dictionary<string, Scene> scenes;
+        
         float SceneSize;
+  
         public f_Main()
         {
             InitializeComponent();
+            Resources.Load();
             SynergyNode.ConnectionManager.OnDeviceFound += DeviceAdded;
             SynergyNode.ConnectionManager.OnDeviceMemoryChanged += AnyThingChanged;
         }
 
         private void f_Main_Load(object sender, EventArgs e)
         {
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
+            //this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
+            scenes = Scene.LoadScenes("Scenes");
+            
+            RebuildSceneList();
+            
             Resize();
-            CurrentScene = new Scene("Scenes/Scene.xml");
             ConnectionList.Load("Connections.xml");
             foreach (ConnectionListItem i in ConnectionList.Items)
             {
                 d_Connections.Rows.Add(i.IP, i.Port.ToString());
-                try 
+                try
                 {
-                    //SynergyNode.ConnectionManager.Connections.Add(new SynergyNode.TCPConnection(new System.Net.Sockets.TcpClient(i.IP, i.Port),true));
-                } catch { }
+                    SynergyNode.ConnectionManager.Connections.Add(new SynergyNode.TCPConnection(i.IP, i.Port, true));
+                }
+                catch { }
+                finally
+                {
+                    SynergyNode.ConnectionManager.Whois();
+                }
+            }
+        }
+
+        public void RebuildSceneList()
+        {
+            l_Scenes.Items.Clear();
+            foreach (Scene s in scenes.Values)
+            {
+                l_Scenes.Items.Add(s.Name);
             }
         }
 
@@ -71,57 +91,9 @@ namespace SynergyClient
             if (SceneSize < 1) SceneSize = 1;
         }
 
-        private void p_Graphic_Paint(object sender, PaintEventArgs e)
-        {
-            if (e.ClipRectangle.Width <= 0 || e.ClipRectangle.Height <= 0) return;
-            //try
-            {
-                Graphics g = e.Graphics;
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                if (CurrentScene != null)
-                {
-                    g.DrawImage(CurrentScene.BackgroundImage, new RectangleF(0, 0, p_Graphic.Width, p_Graphic.Height));
-                    foreach (SceneDevice d in CurrentScene.Devices)
-                    {
-                       d.OnDraw(g, SceneSize);
-                        /*
-                        Font font = new Font("Arial", size * 0.2f, FontStyle.Bold);
-                        g.FillEllipse(Brushes.Red, new RectangleF((d.X * SceneSize) - size * 0.5f, (float)(d.Y * SceneSize) - size * 0.5f, size, size));
-                        g.DrawString(d.Name, font, Brushes.Black, d.X * SceneSize, d.Y * SceneSize, format);
-                        */
-                    }
-                }
-            }
-            //catch { Text = "oh noes!"; }
-        }
-
         public void ReDraw()
         {
             p_Graphic.Invalidate();
-        }
-
-        private void p_Graphic_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (DeviceOperation != 0)
-                DeviceOperation = 0;
-            else
-            {
-                SceneDevice d = CurrentScene.GetDevice((float)e.X / SceneSize, (float)e.Y / SceneSize);
-                if (d != null)
-                {
-                    if (e.Button == MouseButtons.Left)
-                    {
-                        d.OnClick((float)e.X / SceneSize, (float)e.Y / SceneSize);
-                        ReDraw();
-                    }
-                    if (e.Button == MouseButtons.Right)
-                    {
-                        CurrentDevice = d;
-                        c_Menu.Show(p_Graphic, e.Location);
-                    }
-                }
-            }
-            ReDraw();
         }
 
         private void b_update_Click(object sender, EventArgs e)
@@ -129,47 +101,12 @@ namespace SynergyClient
             UpdateDeviceList();
         }
 
-        private void moveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DeviceOperation = 1;
-        }
-
-        private void resizeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DeviceOperation = 2;
-        }
-
-        private void p_Graphic_MouseMove(object sender, MouseEventArgs e)
-        {
-            float X = (float)e.X / SceneSize;
-            float Y = (float)e.Y / SceneSize;
-            switch (DeviceOperation)
-            {
-                case 1:
-                    CurrentDevice.X = X;
-                    CurrentDevice.Y = Y;
-                    ReDraw();
-                    break;
-                case 2:
-                    {
-                        float dx = CurrentDevice.X - X;
-                        float dy = CurrentDevice.Y - Y;
-                        CurrentDevice.Size = (float)Math.Sqrt(dx * dx + dy * dy) * 2;
-                        ReDraw();
-                    }
-                    break;
-            }
-        }
-
-        private void p_Graphic_MouseUp(object sender, MouseEventArgs e)
-        {
-
-        }
-
         private void b_Save_Click(object sender, EventArgs e)
         {
-            CurrentScene.Save("Scenes/Scene.xml");
+            if (p_Graphic.scene != null)
+                p_Graphic.scene.Save();
         }
+        
         public void Save(string _Path)
         {
             
@@ -177,6 +114,11 @@ namespace SynergyClient
 
         private void f_Main_FormClosed(object sender, FormClosedEventArgs e)
         {
+
+
+            ConnectionList.Save("Connections.xml");
+            
+            
             System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
 
@@ -195,7 +137,7 @@ namespace SynergyClient
                     int port = int.Parse((string)d_Connections.Rows[e.RowIndex].Cells[1].Value);
                     try
                     {
-                        SynergyNode.ConnectionManager.Connections.Add(new SynergyNode.TCPConnection(new System.Net.Sockets.TcpClient(ip, port), true));
+                        SynergyNode.ConnectionManager.Connections.Add(new SynergyNode.TCPConnection(new System.Net.Sockets.TcpClient(ip, port), false));
                     }
                     catch { MessageBox.Show("Could not connect."); }
                     finally
@@ -210,6 +152,27 @@ namespace SynergyClient
         private void t_refresh_Tick(object sender, EventArgs e)
         {
             if (needsredraw) { ReDraw(); needsredraw = false; }
+        }
+
+        private void tabPage1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void l_Scenes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                p_Graphic.scene = scenes[l_Scenes.SelectedItems[0].Text];
+                ReDraw();
+            }
+            catch { }
+        }
+
+        private void b_Whois_Click(object sender, EventArgs e)
+        {
+            SynergyNode.ConnectionManager.Devices.Clear();
+            SynergyNode.ConnectionManager.Whois();
         }
     }
 }

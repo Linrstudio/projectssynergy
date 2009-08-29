@@ -61,10 +61,19 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="GetDeviceName.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GetDeviceName.Designer.cs">
+      <DependentUpon>GetDeviceName.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GetDeviceName.resx">
+      <DependentUpon>GetDeviceName.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -84,7 +93,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Resources.cs" />
     <Compile Include="Scene.cs" />
+    <Compile Include="SceneControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="SceneDevice.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

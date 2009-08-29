@@ -13,29 +13,32 @@ namespace SynergyClient
         public Image BackgroundImage = null;
         public string BackGroundImagePath;
         public List<SceneDevice> Devices = new List<SceneDevice>();
+        string Path;
+        public string Name;
         public Scene(string _Path)
         {
-            XElement element = XElement.Load(_Path);
+            Path = _Path;
+            XElement element = XElement.Load(Path);
             try
             {
                 BackGroundImagePath = (string)element.Element("BackgroundImage").Value;
                 BackgroundImage = Image.FromFile(BackGroundImagePath);
             } catch { }
+            Name = (string)element.Element("SceneName").Value;
             foreach (XElement e in element.Elements("Device"))
             {
-                switch (byte.Parse((string)e.Element("Type").Value))
-                {
-                    case 0:
-                        Devices.Add(new DigitalOutSceneDevice(e)); break;
-                    case 2:
-                        Devices.Add(new AnalogOutSceneDevice(e)); break;
-                }
+                Devices.Add(SceneDevice.GetDevice(e));
             }
+        }
+        public void Save()
+        {
+            Save(Path);
         }
         public void Save(string _Path)
         {
             XElement root = new XElement("SceneGraph");
             root.Add(new XElement("BackgroundImage", BackGroundImagePath));
+            root.Add(new XElement("SceneName", Name));
             foreach (SceneDevice d in Devices)
             {
                 root.Add(d.Save());
@@ -53,6 +56,19 @@ namespace SynergyClient
                 if (dis < dist && dis < d.Size * 0.5f) { dist = dis; found = d; }
             }
             return found;
+        }
+        public static Dictionary<string, Scene> LoadScenes(string _Directory)
+        {
+            Dictionary<string, Scene> scenes = new Dictionary<string, Scene>();
+            foreach (string file in System.IO.Directory.GetFiles(_Directory))
+            {
+                if (System.IO.Path.GetExtension(file) == ".xml")
+                {
+                    Scene s = new Scene(file);
+                    if (s != null) scenes.Add(s.Name, s);
+                }
+            }
+            return scenes;
         }
     }
 }
