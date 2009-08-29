@@ -1,35 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <SceneGraph>
   <BackgroundImage>Background.png</BackgroundImage>
+  <SceneName>Roeny</SceneName>
   <Device>
-    <Name>waaier</Name>
+    <Name>Lamp</Name>
     <Type>0</Type>
     <DeviceID>2002</DeviceID>
-    <Size>0,1</Size>
+    <Size>0,1704095</Size>
     <TextSize>0,25</TextSize>
-    <X>0,1727494</X>
-    <Y>0,0973236</Y>
+    <X>0,6092896</X>
+    <Y>0,08743169</Y>
   </Device>
   <Device>
-    <Name>audio crap</Name>
+    <Name>Audio</Name>
     <Type>0</Type>
     <DeviceID>2004</DeviceID>
-    <Size>0,1</Size>
+    <Size>0,2244099</Size>
     <TextSize>0,2</TextSize>
-    <X>0,1051913</X>
-    <Y>0,4767759</Y>
+    <X>0,1297814</X>
+    <Y>0,4412568</Y>
   </Device>
   <Device>
     <Name>Bed</Name>
     <Type>0</Type>
     <DeviceID>2000</DeviceID>
-    <Size>0,0521994</Size>
+    <Size>0,1068721</Size>
     <TextSize>0,4</TextSize>
-    <X>0,9098361</X>
-    <Y>0,6530055</Y>
+    <X>0,8852459</X>
+    <Y>0,6270492</Y>
   </Device>
   <Device>
-    <Name>SoldeerShit</Name>
+    <Name>Soldeer
+</Name>
     <Type>0</Type>
     <DeviceID>2001</DeviceID>
     <Size>0,09305675</Size>
@@ -41,27 +43,28 @@
     <Name>Keuken</Name>
     <Type>0</Type>
     <DeviceID>2003</DeviceID>
-    <Size>0,09701286</Size>
+    <Size>0,1395584</Size>
     <TextSize>0,2</TextSize>
-    <X>0,9480875</X>
-    <Y>0,7896175</Y>
+    <X>0,9244663</X>
+    <Y>0,7783251</Y>
   </Device>
   <Device>
     <Name>Door</Name>
     <Type>0</Type>
     <DeviceID>2005</DeviceID>
-    <Size>0,09701286</Size>
+    <Size>0,1260687</Size>
     <TextSize>0,2</TextSize>
     <X>0,3005464</X>
     <Y>0,6461748</Y>
   </Device>
   <Device>
-    <Name>Base lights</Name>
+    <Name>Base
+</Name>
     <Type>2</Type>
     <DeviceID>3000</DeviceID>
     <Size>0,09565946</Size>
     <TextSize>0,2</TextSize>
-    <X>0,107056</X>
-    <Y>0,5742093</Y>
+    <X>0,1325137</X>
+    <Y>0,6065574</Y>
   </Device>
 </SceneGraph>
