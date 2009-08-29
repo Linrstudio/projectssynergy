@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SceneGraph>
+  <BackgroundImage>Background.png</BackgroundImage>
+  <SceneName>Bas</SceneName>
+</SceneGraph>
