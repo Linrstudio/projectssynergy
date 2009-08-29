@@ -25,11 +25,21 @@ namespace SynergyNode
             thread = new Thread(new ThreadStart(main));
             thread.Start();
         }
+        public TCPConnection(string _IP,ushort _Port, bool _AutoConnect)
+        {
+            AutoConnect = _AutoConnect;
+            IP = _IP;
+            Port = _Port;
+            //Console.WriteLine("TCPConnection created {0}:{1}", IP, Port);
+            client = null;
+            thread = new Thread(new ThreadStart(main));
+            thread.Start();
+        }
         public void AddToBlackList(uint _PacketID)
         {
             //Console.WriteLine("{0} added to blacklist", _PacketID);
             BlackList.Enqueue(_PacketID);
-            while (BlackList.Count > 10) BlackList.Dequeue();//trim the end
+            while (BlackList.Count > 100) BlackList.Dequeue();//trim the end
         }
         public bool InBlackList(uint _PacketID)
         {
@@ -38,6 +48,15 @@ namespace SynergyNode
         }
         public void main()
         {
+            if (client == null)
+            {
+                Console.WriteLine("no connection found, attempting to reconnect with {0}:{1}", IP, Port);
+                try
+                {
+                    client = new TcpClient(IP, Port);
+                }
+                catch { OnConnectionLost(); }
+            }//there is no connection passed by the constructor, we should try to connect now
             while (true)//only loops when reconnected
             {
                 try
@@ -55,7 +74,7 @@ namespace SynergyNode
                                 byte[] buffer = p.GetPacketBytes();
                                 client.GetStream().Write(buffer, 0, buffer.Length);
                                 //Console.WriteLine(" > {0}", System.Text.Encoding.ASCII.GetString(buffer));
-                                //Console.WriteLine("Packet sent ( {2} ) PacketID:{0} Data:{1}", p.PacketID, System.Text.Encoding.ASCII.GetString(p.Data), client.Client.RemoteEndPoint.ToString());
+                                Console.WriteLine("Packet sent ( {2} ) PacketID:{0} Data:{1}", p.PacketID, System.Text.Encoding.ASCII.GetString(p.Data), client.Client.RemoteEndPoint.ToString());
                             }
                             else 
                             { 
@@ -74,7 +93,7 @@ namespace SynergyNode
                             {
                                 if (!InBlackList(p.PacketID))//if it is not on the blacklist add it and spread around the other connections
                                 {
-                                    //Console.WriteLine("Packet received ( {2} ) PacketID:{0} Data:{1}", p.PacketID, System.Text.Encoding.ASCII.GetString(p.Data), client.Client.RemoteEndPoint.ToString());
+                                    Console.WriteLine("Packet received ( {2} ) PacketID:{0} Data:{1}", p.PacketID, System.Text.Encoding.ASCII.GetString(p.Data), client.Client.RemoteEndPoint.ToString());
                                     AddToBlackList(p.PacketID);
                                     ConnectionManager.AddReceivePacket(p);
                                     ConnectionManager.SendPacket(p);
@@ -86,27 +105,31 @@ namespace SynergyNode
                 }
                 catch
                 {
-                    if (AutoConnect)//attempt resurrection if allowed by family
-                    {
-                        Console.WriteLine("Error in transmission, connection will be resurrected");
-                        client = null;
-                        while (client == null)
-                        {
-                            try
-                            {
-                                client = new TcpClient(IP, Port);
-                                Console.WriteLine("TCPConnection with {0}:{1} was resurrected successfully", IP, Port);
-                            }
-                            catch { Console.WriteLine("Failed to resurrect TCPConnection with {0}:{1}  -  reattempt in 10s", IP, Port); Thread.Sleep(10000); }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Error in transmission, connection will be killed");
-                        Kill();
-                        return;
-                    }
+                    OnConnectionLost();
                 }
+            }
+        }
+        private void OnConnectionLost()
+        {
+            if (AutoConnect)//attempt resurrection if allowed by family
+            {
+                Console.WriteLine("Error in transmission, connection will be resurrected");
+                client = null;
+                while (client == null)
+                {
+                    try
+                    {
+                        client = new TcpClient(IP, Port);
+                        Console.WriteLine("TCPConnection with {0}:{1} was resurrected successfully", IP, Port);
+                    }
+                    catch { Console.WriteLine("Failed to resurrect TCPConnection with {0}:{1}  -  reattempt in 10s", IP, Port); Thread.Sleep(10000); }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Error in transmission, connection will be killed");
+                Kill();
+                return;
             }
         }
         public override void SendPacket(Packet _Packet)

@@ -10,7 +10,7 @@ namespace SynergyNode
         public Device(bool _IsLocal) { islocal = _IsLocal; }
         private bool islocal;//do not change
         public ushort ID;
-        public byte DeviceType = 0;
+        public byte DeviceType;
         public byte[] Memory = new byte[0];
         public bool IsLocal() { return islocal; }
         public virtual void OnMemoryChanged(){}
