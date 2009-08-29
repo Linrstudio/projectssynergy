@@ -13,7 +13,7 @@ namespace SynergyNode
         public delegate void OnDeviceMemoryChangedHandler(Device _Device);
         public static  event OnDeviceMemoryChangedHandler OnDeviceMemoryChanged;
 
-        public static string Revision =  "2.165";
+        public static string Revision =  "3.000";
         public static Random random;
         public static List<Connection> Connections;
         private static Queue<Packet> ReceiveQueue;
@@ -127,6 +127,7 @@ namespace SynergyNode
                                 if (!Devices.ContainsKey(device))
                                 {
                                     RemoteDevice d = new RemoteDevice(device);
+                                    d.DeviceType = packet.Data[0];
                                     d.SetMemory(packet.GetPiece(3, (uint)packet.Data.Length - 3), false);
                                     AddDevice(d);
                                     Console.WriteLine("whois result added");
