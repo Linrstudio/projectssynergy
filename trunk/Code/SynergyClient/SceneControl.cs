@@ -90,7 +90,7 @@ namespace SynergyClient
                 scene.Devices.Add(d);
                 ReDraw();
             }
-            else { MessageBox.Show("We do not jet have support for this Device type.\nTry to find an update of this software"); }
+            else { MessageBox.Show("We do not yet have support for this Device type.\nTry to find an update of this software"); }
         }
 
         private void OnMenuMoveClick(object sender, EventArgs e)
