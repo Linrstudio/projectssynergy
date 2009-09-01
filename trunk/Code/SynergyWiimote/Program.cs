@@ -20,20 +20,8 @@ namespace SynergyWiimote
             ConnectionManager.UpdateAsync();
             var wm = new Wiimote();
             wm.WiimoteChanged += new WiimoteChangedEventHandler(OnWiimoteChanged);
-            
-            while (true)
-            {
-                wm.Connect();wm.SetReportType(Wiimote.InputReport.ButtonsAccel | Wiimote.InputReport.Status, true);
-                //float power = (((100.0f * 48.0f * (float)((int)wm.WiimoteState.Battery / 48.0f))) / 192.0f);
-                float power = ((float)battery) * (100.0f / 140.0f );
-                Console.WriteLine(power);
-                if (power > 75.0f) wm.SetLEDs(false, false, false, true);
-                else if (power > 50.0f) wm.SetLEDs(false, false, true, false);
-                else if (power > 25.0f) wm.SetLEDs(false, true, false, false);
-                else wm.SetLEDs(true, false, false, false);
-                wm.Disconnect();
-                System.Threading.Thread.Sleep(60000);
-            }
+
+            wm.SetLEDs(0);
 
             Console.ReadLine();
         }
