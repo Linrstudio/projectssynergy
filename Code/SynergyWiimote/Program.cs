@@ -20,7 +20,7 @@ namespace SynergyWiimote
             ConnectionManager.UpdateAsync();
             var wm = new Wiimote();
             wm.WiimoteChanged += new WiimoteChangedEventHandler(OnWiimoteChanged);
-
+            wm.Connect();
             wm.SetLEDs(0);
 
             Console.ReadLine();
