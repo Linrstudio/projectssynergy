@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace SynergyNode
 {
@@ -147,6 +150,26 @@ namespace SynergyNode
         public override void Update()
         {
 
+        }
+        public static void LoadConnectionFile(string _Path)
+        {
+            try
+            {
+                XElement root = XElement.Load(_Path);
+                foreach (XElement e in root.Elements("TCPConnection"))
+                {
+                    try
+                    {
+                        string IP = (string)e.Element("IP").Value;
+                        ushort Port = ushort.Parse((string)e.Element("Port").Value);
+                        bool Resurrect = bool.Parse((string)e.Element("Resurrect").Value);
+
+                        SynergyNode.ConnectionManager.Connections.Add(new TCPConnection(IP, Port, Resurrect));
+                    }
+                    catch { Console.WriteLine("Could not parse TCPConnection in connections file"); }
+                }
+            }
+            catch { Console.WriteLine("Could not open {0}",_Path); }
         }
     }
 }

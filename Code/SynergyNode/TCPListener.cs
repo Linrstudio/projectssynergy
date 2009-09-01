@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace SynergyNode
 {
@@ -37,6 +40,25 @@ namespace SynergyNode
                 Thread.Sleep(100);
             }
         }
+
+        public static void LoadConnectionFile(string _Path)
+        {
+            try
+            {
+                XElement root = XElement.Load(_Path);
+                foreach (XElement e in root.Elements("TCPListener"))
+                {
+                    try
+                    {
+                        ushort Port = ushort.Parse((string)e.Element("Port").Value);
+                        new TCPListener(Port);
+                    }
+                    catch { Console.WriteLine("Could not parse TCPListner in connections file"); }
+                }
+            }
+            catch { Console.WriteLine("Could not open {0}", _Path); }
+        }
+
         ~TCPListener()
         {
             thread.Abort();
