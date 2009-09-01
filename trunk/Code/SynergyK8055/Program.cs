@@ -77,11 +77,17 @@ namespace SynergyK8055
         [DllImport("k8055.dll")]
         private static extern void OutputAnalogChannel(int Channel, int Data);
 
-
-
         static void Main(string[] args)
         {
             ConnectionManager.Init();
+
+            Console.WriteLine("Connecting to K8055");
+            Console.Write("insert card address:");
+            OpenDevice(int.Parse(Console.ReadLine()));
+
+            TCPListener.LoadConnectionFile("Connections.xml");
+            TCPConnection.LoadConnectionFile("Connections.xml");
+
             DigitalInput[] digitalinputs = new DigitalInput[5];
             DigitalOutput[] digitaloutputs = new DigitalOutput[8];
             AnalogOutput[] analogoutputs = new AnalogOutput[2];
@@ -105,12 +111,6 @@ namespace SynergyK8055
                 ConnectionManager.AddDevice(analogoutputs[i]);
             }
 
-            Console.WriteLine("Connecting to K8055");
-            Console.Write("insert card address:");
-            OpenDevice(int.Parse(Console.ReadLine()));
-            Console.WriteLine("TCPListener Setup");
-            Console.Write("Port:");
-            TCPListener listner = new TCPListener(int.Parse(Console.ReadLine()));
             while (true)
             {
                 foreach (DigitalInput i in digitalinputs) { i.Update(); }

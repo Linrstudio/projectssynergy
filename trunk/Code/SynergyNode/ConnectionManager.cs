@@ -13,7 +13,7 @@ namespace SynergyNode
         public delegate void OnDeviceMemoryChangedHandler(Device _Device);
         public static  event OnDeviceMemoryChangedHandler OnDeviceMemoryChanged;
 
-        public static string Revision =  "3.000";
+        public static string Revision =  "3.100";
         public static Random random;
         public static List<Connection> Connections;
         private static Queue<Packet> ReceiveQueue;
