@@ -1,7 +1,13 @@
 <Connections>
 
-<TCPListener>
-<Port>1000</Port>
-</TCPListener>
+	<TCPListener>
+		<Port>1000</Port>
+	</TCPListener>
+
+	<TCPConnection>
+		<IP>5.213.152.229</IP>
+		<Port>1000</Port>
+		<Resurrect>True</Resurrect>
+	</TCPConnection>
 
 </Connections>
