@@ -1,53 +1,107 @@
 <Settings>
-  <DigitalInput0>
-    <DeviceID>1000</DeviceID>
-  </DigitalInput0>
-  <DigitalInput1>
-    <DeviceID>1001</DeviceID>
-  </DigitalInput1>
-  <DigitalInput2>
-    <DeviceID>1002</DeviceID>
-  </DigitalInput2>
-  <DigitalInput3>
-    <DeviceID>1003</DeviceID>
-  </DigitalInput3>
-  <DigitalInput4>
-    <DeviceID>1004</DeviceID>
-  </DigitalInput4>
-  <DigitalInput5>
-    <DeviceID>1005</DeviceID>
-  </DigitalInput5>
 
-  <DigitalOutput0>
-    <DeviceID>2000</DeviceID>
-  </DigitalOutput0>
-  <DigitalOutput1>
-    <DeviceID>2001</DeviceID>
-  </DigitalOutput1>
-  <DigitalOutput2>
-    <DeviceID>2002</DeviceID>
-  </DigitalOutput2>
-  <DigitalOutput3>
-    <DeviceID>2003</DeviceID>
-  </DigitalOutput3>
-  <DigitalOutput4>
-    <DeviceID>2004</DeviceID>
-  </DigitalOutput4>
-  <DigitalOutput5>
-    <DeviceID>2005</DeviceID>
-  </DigitalOutput5>
-  <DigitalOutput6>
-    <DeviceID>2006</DeviceID>
-  </DigitalOutput6>
-  <DigitalOutput7>
-    <DeviceID>2007</DeviceID>
-  </DigitalOutput7>
+  <DigitalInput0>
+    <ID>1000</ID>
+    <Channel>1</Channel>
+  </DigitalInput0>
+
+  <DigitalInput0MemoryBin>
+    <Inversed>true</Inversed>
+  </DigitalInput0MemoryBin>
   
+  <DigitalInput1>
+    <ID>1001</ID>
+    <Channel>2</Channel>
+  </DigitalInput1>
+
+  <DigitalInput2>
+    <ID>1002</ID>
+    <Channel>3</Channel>
+  </DigitalInput2>
+
+  <DigitalInput3>
+    <ID>1003</ID>
+    <Channel>4</Channel>
+  </DigitalInput3>
+
+  <DigitalInput4>
+    <ID>1004</ID>
+    <Channel>5</Channel>
+  </DigitalInput4>
+  
+  
+  
+  <DigitalOutput0>
+    <ID>2000</ID>
+    <Channel>1</Channel>
+  </DigitalOutput0>
+  <DigitalOutput0MemoryBin>
+    <Invert>True</Invert>
+  </DigitalOutput0MemoryBin>
+
+  <DigitalOutput1>
+    <ID>2001</ID>
+    <Channel>2</Channel>
+  </DigitalOutput1>
+  <DigitalOutput1MemoryBin>
+    <Invert>True</Invert>
+  </DigitalOutput1MemoryBin>
+
+  <DigitalOutput2>
+    <ID>2002</ID>
+    <Channel>3</Channel>
+  </DigitalOutput2>
+  <DigitalOutput2MemoryBin>
+    <Invert>True</Invert>
+  </DigitalOutput2MemoryBin>
+
+  <DigitalOutput3>
+    <ID>2003</ID>
+    <Channel>4</Channel>
+  </DigitalOutput3>
+  <DigitalOutput3MemoryBin>
+    <Invert>True</Invert>
+  </DigitalOutput3MemoryBin>
+
+  <DigitalOutput4>
+    <ID>2004</ID>
+    <Channel>5</Channel>
+  </DigitalOutput4>
+  <DigitalOutput4MemoryBin>
+    <Invert>True</Invert>
+  </DigitalOutput4MemoryBin>
+
+  <DigitalOutput5>
+    <ID>2005</ID>
+    <Channel>6</Channel>
+  </DigitalOutput5>
+  <DigitalOutput5MemoryBin>
+    <Invert>True</Invert>
+  </DigitalOutput5MemoryBin>
+
+  <DigitalOutput6>
+    <ID>2006</ID>
+    <Channel>7</Channel>
+  </DigitalOutput6>
+  <DigitalOutput6MemoryBin>
+    <Invert>True</Invert>
+  </DigitalOutput6MemoryBin>
+
+  <DigitalOutput7>
+    <ID>2007</ID>
+    <Channel>8</Channel>
+  </DigitalOutput7>
+  <DigitalOutput7MemoryBin>
+    <Invert>True</Invert>
+  </DigitalOutput7MemoryBin>
+
+
+
   <AnalogOutput0>
-    <DeviceID>3000</DeviceID>
+    <ID>3000</ID>
   </AnalogOutput0>
   <AnalogOutput1>
-    <DeviceID>3001</DeviceID>
+    <ID>3001</ID>
   </AnalogOutput1>
 
 

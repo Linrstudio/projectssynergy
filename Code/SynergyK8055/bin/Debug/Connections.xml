@@ -1,4 +1,4 @@
-<Connections>
+<Settings>
 
 	<TCPListener>
 		<Port>1000</Port>
@@ -10,4 +10,4 @@
 		<Resurrect>True</Resurrect>
 	</TCPConnection>
 
-</Connections>
+</Settings>
