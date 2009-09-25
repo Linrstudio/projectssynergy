@@ -19,10 +19,14 @@ namespace SynergyK8055
         [DllImport("k8055.dll")]
         private static extern void ClearDigitalChannel(int Channel);
         public int Channel;
-        public DigitalOutput(ushort _DeviceID, int _Channel):base(_DeviceID,0){Channel = _Channel;}
+        public DigitalOutput(ushort _DeviceID):base(_DeviceID, 10) { }
         public override void  OnMemoryChanged()
         {
-            SetState(GetDigitalState());
+            DigitalMemoryBin bin = ((DigitalMemoryBin)Memory);
+            if (bin != null)
+            {
+                SetState(bin.On != bin.Inversed);
+            }
         }
         public void SetState(bool _On)
         {
@@ -35,29 +39,32 @@ namespace SynergyK8055
         [DllImport("k8055.dll")]
         private static extern int ReadDigitalChannel(int Channel);
         public int Channel;
-        public DigitalInput(ushort _DeviceID, int _Channel) : base(_DeviceID, 1) { Channel = _Channel; }
+        public DigitalInput(ushort _DeviceID) : base(_DeviceID, 11) { }
         public void Update()
         {
-            bool last = GetDigitalState();
+            DigitalMemoryBin bin = ((DigitalMemoryBin)Memory);
+
+            bool last = bin.On;
             bool current = ReadDigitalChannel(Channel) != 0;
             if (last != current)
             {
-                SetDigitalState(current);
+                bin.On = current;
+                Memory = bin;
                 UpdateRemoteMemory();
                 Console.WriteLine("{0} is now {1}", Channel, current);
             }
         }
-
     }
     public class AnalogOutput : LocalDevice
     {
         [DllImport("k8055.dll")]
         private static extern void OutputAnalogChannel(int Channel, int Data);
         public int Channel;
-        public AnalogOutput(ushort _DeviceID, int _Channel) : base(_DeviceID,2) { Channel = _Channel; }
+        public AnalogOutput(ushort _DeviceID) : base(_DeviceID, 12) { }
         public override void OnMemoryChanged()
         {
-            SetState(GetAnalogState());
+            AnalogMemoryBin bin = ((AnalogMemoryBin)Memory);
+            SetState(bin.Value);
         }
         public void SetState(byte _Value)
         {
@@ -81,36 +88,56 @@ namespace SynergyK8055
         {
             ConnectionManager.Init();
 
-            Console.WriteLine("Connecting to K8055");
-            Console.Write("insert card address:");
-            OpenDevice(int.Parse(Console.ReadLine()));
+            Type[] types=new Type[]
+                {
+                    typeof(DigitalInput), 
+                    typeof(DigitalOutput),
+                    typeof(MemoryBin) 
+                };
 
-            TCPListener.LoadConnectionFile("Connections.xml");
-            TCPConnection.LoadConnectionFile("Connections.xml");
+            Dictionary<Type, List<object>> list = Utilities.LoadSettingsFile("Settings.xml", types );
+
+            //Console.Read();
+            Console.WriteLine("Connecting to K8055");
+            OpenDevice(0);
+
+            TCPListener.LoadSettingsFile("Connections.xml");
+            TCPConnection.LoadSettingsFile("Connections.xml");
 
             DigitalInput[] digitalinputs = new DigitalInput[5];
             DigitalOutput[] digitaloutputs = new DigitalOutput[8];
             AnalogOutput[] analogoutputs = new AnalogOutput[2];
-            XElement file = XElement.Load("Settings.xml");
-            for (int i = 0; i < 5; i++)//0
-            {
-                XElement element = file.Element("DigitalInput" + i.ToString());
-                digitalinputs[i] = new DigitalInput(ushort.Parse(element.Element("DeviceID").Value), i + 1);
-                ConnectionManager.AddDevice(digitalinputs[i]);
-            }
-            for (int i = 0; i < 8; i++)//1
-            {
-                XElement element = file.Element("DigitalOutput" + i.ToString());
-                digitaloutputs[i] = new DigitalOutput(ushort.Parse(element.Element("DeviceID").Value), i + 1);
-                ConnectionManager.AddDevice(digitaloutputs[i]);
-            }
-            for (int i = 0; i < 2; i++)//2
-            {
-                XElement element = file.Element("AnalogOutput" + i.ToString());
-                analogoutputs[i] = new AnalogOutput(ushort.Parse(element.Element("DeviceID").Value), i + 1);
-                ConnectionManager.AddDevice(analogoutputs[i]);
-            }
 
+            for (int i = 0; i < 5; i++)
+            {
+                var dev = new DigitalInput(0);
+                Device.LoadSettingsFile("Settings.xml", dev, "DigitalInput" + i.ToString());
+                dev.Memory = MemoryBin.GetBinForType(dev.DeviceType);
+                Device.LoadSettingsFile("Settings.xml", dev.Memory, "DigitalInput" + i.ToString() + "MemoryBin");
+                digitalinputs[i] = dev;
+                ConnectionManager.AddLocalDevice(dev);
+            }
+            
+            for (int i = 0; i < 8; i++)
+            {
+                var dev = new DigitalOutput(0);
+                Device.LoadSettingsFile("Settings.xml", dev, "DigitalOutput" + i.ToString());
+                dev.Memory = MemoryBin.GetBinForType(dev.DeviceType);
+                Device.LoadSettingsFile("Settings.xml", dev.Memory, "DigitalOutput" + i.ToString() + "MemoryBin");
+                digitaloutputs[i] = dev;
+                ConnectionManager.AddLocalDevice(dev);
+            }
+            
+            for (int i = 0; i < 2; i++)
+            {
+                var dev = new AnalogOutput(0);
+                Device.LoadSettingsFile("Settings.xml", dev, "AnalogOutput" + i.ToString());
+                dev.Memory = MemoryBin.GetBinForType(dev.DeviceType);
+                Device.LoadSettingsFile("Settings.xml", dev.Memory, "AnalogOutput" + i.ToString() + "MemoryBin");
+                analogoutputs[i] = dev;
+                ConnectionManager.AddLocalDevice(dev);
+            }
+            
             while (true)
             {
                 foreach (DigitalInput i in digitalinputs) { i.Update(); }
