@@ -48,12 +48,12 @@
   <ItemGroup>
     <Compile Include="Device.cs" />
     <Compile Include="MemmoryBin.cs" />
-    <Compile Include="Packet.cs" />
     <Compile Include="TCPConnection.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="ConnectionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TCPListener.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

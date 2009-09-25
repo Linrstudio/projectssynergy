@@ -35,13 +35,13 @@ namespace SynergyNode
                 if (listener.Pending())
                 {
                     TcpClient client = listener.AcceptTcpClient();
-                    ConnectionManager.Connections.Add(new TCPConnection(client, false));
+                    ConnectionManager.AddConnection(new TCPConnection(client, false));
                 }
                 Thread.Sleep(100);
             }
         }
 
-        public static void LoadConnectionFile(string _Path)
+        public static void LoadSettingsFile(string _Path)
         {
             try
             {
