@@ -13,26 +13,36 @@ namespace SynergyNode
         public delegate void OnDeviceMemoryChangedHandler(Device _Device);
         public static  event OnDeviceMemoryChangedHandler OnDeviceMemoryChanged;
 
-        public static string Revision =  "3.100";
-        public static Random random;
-        public static List<Connection> Connections;
-        private static Queue<Packet> ReceiveQueue;
-        private static Queue<Packet> SendQueue;
+        public static string Revision =  "4.000";
 
-        public static Dictionary<ushort, Device> Devices;
-        
-        public static void AddDevice(Device _Device)//you can also do this yourself
+        public static List<Connection> Connections;
+        public static Dictionary<ushort, LocalDevice> LocalDevices;
+        public static Dictionary<ushort, RemoteDevice> RemoteDevices;
+
+
+
+        public static void AddConnection(Connection _Connection)
         {
-            Devices.Add(_Device.ID, _Device);
+            Connections.Add(_Connection);
+            _Connection.OnReceiveRequestDeviceList += OnReceiveRequestDeviceList;
+            _Connection.OnReceiveDeviceListElement += OnReceiveDeviceListElement;
+        }
+
+        public static void AddLocalDevice(LocalDevice _Device)//you can also do this yourself
+        {
+            LocalDevices.Add(_Device.ID, _Device);
+        }
+        public static void AddRemoteDevice(RemoteDevice _Device)//you can also do this yourself
+        {
+            RemoteDevices.Add(_Device.ID, _Device);
         }
 
         public static void Init()
         {
-            random = new Random(Environment.TickCount);
+            
             Connections = new List<Connection>();
-            ReceiveQueue = new Queue<Packet>();
-            SendQueue = new Queue<Packet>();
-            Devices = new Dictionary<ushort, Device>();
+            LocalDevices = new Dictionary<ushort, LocalDevice>();
+            RemoteDevices = new Dictionary<ushort, RemoteDevice>();
             Console.WriteLine("ConnectionManager Initialized");
             Console.WriteLine("Version:{0}", Revision);
         }
@@ -47,100 +57,63 @@ namespace SynergyNode
             while (true)
             {
                 Update();
-                Thread.Sleep(10);
+                Thread.Sleep(50);
             }
         }
 
-        public static void SetRemoteMemory(ushort _DeviceID, byte[] _Memory)
+        public static void RequestDeviceList()
         {
-            MemoryStream stream = new MemoryStream();
-            stream.Write(BitConverter.GetBytes(_DeviceID), 0, 2);
-            stream.Write(_Memory, 0, _Memory.Length);
-            Packet p = new Packet(0, stream.ToArray());
-            SendQueue.Enqueue(p);
+            uint ID = ActionBlackList.GetRandomID();
+            Console.WriteLine("device list requested ActionID:{0}", ID);
+            foreach (Connection c in Connections) c.RequestDeviceList(ID, true);
         }
 
-        public static void Whois()
+        public static void OnReceiveRequestDeviceList()
         {
-            Packet p = new Packet(1, new byte[] { 0 });
-            SendQueue.Enqueue(p);
+            Console.WriteLine("Device list request received");
+            foreach (LocalDevice d in LocalDevices.Values)
+            {
+                uint ID = ActionBlackList.GetRandomID();
+                foreach (Connection c in Connections) c.SendDeviceListElement(ID, true, d);
+            }
+            Console.WriteLine("Devices Returned:{0}", LocalDevices.Values.Count);
         }
 
-        public static void AddReceivePacket(Packet _Packet) { Thread.BeginCriticalRegion(); ReceiveQueue.Enqueue(_Packet); Thread.EndCriticalRegion(); }
-        public static void /* */ SendPacket(Packet _Packet) { Thread.BeginCriticalRegion(); SendQueue.Enqueue(_Packet); Thread.EndCriticalRegion(); }
+        public static void OnReceiveDeviceListElement(RemoteDevice _Device)
+        {
+            Console.WriteLine("new device found!");
+            
+        }
+
+        public static void SendDeviceMemoryBin(Device _Device)
+        {
+            uint ID = ActionBlackList.GetRandomID();
+            foreach (Connection c in Connections) c.SendDeviceMemoryBin(ID, true, _Device);
+        }
 
         public static void Update()
         {
-            //main parsing of packets
-            if (SendQueue.Count > 0)
-            {
-                Packet p = SendQueue.Dequeue();
-                foreach (Connection c in Connections) c.SendPacket(p);
-            }
-
-            while (ReceiveQueue.Count > 0)
-            {
-                Thread.BeginCriticalRegion();
-                Packet packet = ReceiveQueue.Dequeue();
-                Thread.EndCriticalRegion();
-                if (packet != null)
-                {
-                    Console.WriteLine("Parsing packet");
-                    switch (packet.Type)//swap the banana with the apple
-                    {
-                        case 0://packets as they all should be
-                            {
-                                ushort ReceivedID = BitConverter.ToUInt16(packet.Data, 0);
-                                byte[] Data = packet.GetPiece(2, (uint)packet.Data.Length - 2);
-                                foreach (Device d in Devices.Values)
-                                {
-                                    if (d.ID == ReceivedID)
-                                    {
-                                        d.SetMemory(Data, false);
-                                        Console.WriteLine("{0} received MemoryBin", d.ID);
-                                        if (OnDeviceMemoryChanged != null) OnDeviceMemoryChanged(d);
-                                    }
-                                }
-                            }
-                            break;
-                        case 1://WhoIs
-                            {
-                                Console.WriteLine("returning device info");
-                                foreach (Device d in Devices.Values)
-                                {
-                                    if (d.IsLocal())
-                                    {
-                                        MemoryStream stream = new MemoryStream();
-                                        stream.WriteByte(d.DeviceType);
-                                        stream.Write(BitConverter.GetBytes(d.ID), 0, 2);
-                                        stream.Write(d.Memory, 0, d.Memory.Length);
-                                        SendQueue.Enqueue(new Packet(2, stream.ToArray()));
-                                        Console.WriteLine("returning device {0}", d.ID);
-                                    }
-                                }
-                            }
-                            break;
-                        case 2://WhoIsResult
-                            {
-                                byte type = packet.Data[0];
-                                ushort device = BitConverter.ToUInt16(packet.Data, 1);
-                                if (!Devices.ContainsKey(device))
-                                {
-                                    RemoteDevice d = new RemoteDevice(device);
-                                    d.DeviceType = packet.Data[0];
-                                    d.SetMemory(packet.GetPiece(3, (uint)packet.Data.Length - 3), false);
-                                    AddDevice(d);
-                                    Console.WriteLine("whois result added");
-                                    if (OnDeviceFound != null) OnDeviceFound(d);
-                                }
-                                else { Console.WriteLine("we already have this device {0}", device); }
-                            }
-                            break;
-                    }
-                }
-                else { Console.WriteLine("Error in dequeueing packet, note: the exact reasons for this behaviour is unknown"); }
-            }
             foreach (Connection c in Connections) c.Update();
+        }
+
+        public static class ActionBlackList
+        {
+            public static Random random= new Random(Environment.TickCount);
+            private static Queue<uint> blacklist = new Queue<uint>();
+            public static uint Size=100;
+            public static uint GetRandomID() { return (uint)random.Next() + (uint)random.Next(); }
+
+            public static void Add(uint _ActionID)
+            {
+                //Console.WriteLine("{0} added to blacklist", _PacketID);
+                blacklist.Enqueue(_ActionID);
+                while (blacklist.Count > Size) blacklist.Dequeue();//trim the end
+            }
+            public static bool Contains(uint _ActionID)
+            {
+                foreach (uint v in blacklist.ToArray()) if (v == _ActionID) return true;
+                return false;
+            }
         }
     }
 }

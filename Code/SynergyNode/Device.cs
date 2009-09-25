@@ -1,49 +1,77 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
+using System.Reflection;
 
 namespace SynergyNode
 {
     public class Device
     {
-
         public Device(bool _IsLocal) { islocal = _IsLocal; }
         private bool islocal;//do not change
         public ushort ID;
         public byte DeviceType;
-        public byte[] Memory = new byte[0];
-        public bool IsLocal() { return islocal; }
-        public virtual void OnMemoryChanged(){}
-        public void SetMemory(byte[] _Memory, bool _UpdateRemote)
-        {
-            Memory = _Memory;
-            OnMemoryChanged();
-            if (_UpdateRemote) UpdateRemoteMemory();
-            Console.WriteLine("Memory changed!");
-        }
-        public void SetMemory(byte[] _Memory)
-        {
-            SetMemory(_Memory, true);
-        }
-        public void UpdateRemoteMemory()
-        {
-            ConnectionManager.SetRemoteMemory(ID, Memory);
-        }
-        //Data types!
-        public void SetDigitalState(bool _On) { Memory = new byte[] { (byte)(_On ? 255 : 0) }; }//Type 0/1
-        public void ToggleDigital() { SetDigitalState(!GetDigitalState()); }
-        public bool GetDigitalState() { if (Memory.Length == 0)return false; return Memory[0] != 0; }//Type 0/1
 
-        public void SetAnalogState(byte _Value) { Memory = new byte[] { _Value }; }//Type 2/3
-        public byte GetAnalogState() { if (Memory.Length == 0) return 0; else return Memory[0]; }//Type 2/3
+        public MemoryBin Memory;
+
+        public bool IsLocal() { return islocal; }
+
+        public virtual void OnMemoryChanged() { }
+
+        public virtual void UpdateRemoteMemory()
+        {
+            ConnectionManager.SendDeviceMemoryBin(this);
+        }
+
+        public static bool LoadSettingsFile(string _Path, object _Device, string _SectionName)//fills the fields of this device
+        {
+            bool ret = false;
+            try
+            {
+                XElement root = XElement.Load(_Path);
+                Type t = _Device.GetType();
+
+                foreach (XElement sect in root.Elements(_SectionName))//fetch the right section
+                {
+                    ret = true;
+                    foreach (XElement f in sect.Elements())
+                    {
+                        foreach (FieldInfo i in t.GetFields())
+                        {
+                            if (i.Name == f.Name)
+                            {
+                                Console.WriteLine(i.FieldType.Name);
+                                try
+                                {
+                                    object o = i.FieldType.GetMethod("Parse", new Type[] { f.Value.GetType() }).Invoke(i, new object[] { (object)f.Value });
+                                    i.SetValue(_Device, o); Console.WriteLine("Field {0} set to value {1}", f.Name, f.Value);
+                                }
+                                catch { Console.Write("Could not Parse data."); }
+                            }
+                        }
+                    }
+                }
+            }
+            catch { Console.WriteLine("Could not open {0}", _Path); }
+            return ret;
+        }
     }
 
     public class LocalDevice : Device
     {
+        public LocalDevice(ushort _DeviceID) : base(true)
+        {
+            ID = _DeviceID;
+            Memory = new DefaultMemoryBin();
+        }
         public LocalDevice(ushort _DeviceID,byte _Type) : base(true)
         {
             ID = _DeviceID;
             DeviceType = _Type;
+            Memory = MemoryBin.GetBinForType(_Type);
         }
     }
 
@@ -52,6 +80,7 @@ namespace SynergyNode
         public RemoteDevice(ushort _DeviceID) : base(false)
         {
             ID = _DeviceID;
+            Memory = new DefaultMemoryBin();
         }
     }
 }
