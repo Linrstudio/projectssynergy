@@ -13,7 +13,7 @@ namespace SynergyNode
         public delegate void OnDeviceMemoryChangedHandler(Device _Device);
         public static  event OnDeviceMemoryChangedHandler OnDeviceMemoryChanged;
 
-        public static string Revision =  "4.000";
+        public static string Revision =  "4.100";
 
         public static List<Connection> Connections;
         public static Dictionary<ushort, LocalDevice> LocalDevices;
@@ -28,11 +28,11 @@ namespace SynergyNode
             _Connection.OnReceiveDeviceListElement += OnReceiveDeviceListElement;
         }
 
-        public static void AddLocalDevice(LocalDevice _Device)//you can also do this yourself
+        public static void AddLocalDevice(LocalDevice _Device)
         {
             LocalDevices.Add(_Device.ID, _Device);
         }
-        public static void AddRemoteDevice(RemoteDevice _Device)//you can also do this yourself
+        public static void AddRemoteDevice(RemoteDevice _Device)
         {
             RemoteDevices.Add(_Device.ID, _Device);
         }

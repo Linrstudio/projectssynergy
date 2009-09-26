@@ -4,7 +4,7 @@
   <SceneName>Roeny</SceneName>
   <Device>
     <Name>Lamp</Name>
-    <Type>0</Type>
+    <Type>10</Type>
     <DeviceID>2002</DeviceID>
     <Size>0,1704095</Size>
     <TextSize>0,25</TextSize>
@@ -13,44 +13,44 @@
   </Device>
   <Device>
     <Name>Audio</Name>
-    <Type>0</Type>
+    <Type>10</Type>
     <DeviceID>2004</DeviceID>
-    <Size>0,2244099</Size>
+    <Size>0,1515021</Size>
     <TextSize>0,2</TextSize>
-    <X>0,1297814</X>
-    <Y>0,4412568</Y>
+    <X>0,1101549</X>
+    <Y>0,4096386</Y>
   </Device>
   <Device>
     <Name>Bed</Name>
-    <Type>0</Type>
+    <Type>10</Type>
     <DeviceID>2000</DeviceID>
     <Size>0,1068721</Size>
     <TextSize>0,4</TextSize>
-    <X>0,8852459</X>
-    <Y>0,6270492</Y>
+    <X>0,8812392</X>
+    <Y>0,626506</Y>
   </Device>
   <Device>
     <Name>Soldeer
 </Name>
-    <Type>0</Type>
+    <Type>10</Type>
     <DeviceID>2001</DeviceID>
     <Size>0,09305675</Size>
     <TextSize>0,2</TextSize>
-    <X>0,9303279</X>
-    <Y>0,04644809</Y>
+    <X>0,9500861</X>
+    <Y>0,04475043</Y>
   </Device>
   <Device>
     <Name>Keuken</Name>
-    <Type>0</Type>
+    <Type>10</Type>
     <DeviceID>2003</DeviceID>
-    <Size>0,1395584</Size>
+    <Size>0,1485002</Size>
     <TextSize>0,2</TextSize>
-    <X>0,9244663</X>
-    <Y>0,7783251</Y>
+    <X>0,9259897</X>
+    <Y>0,9225473</Y>
   </Device>
   <Device>
     <Name>Door</Name>
-    <Type>0</Type>
+    <Type>10</Type>
     <DeviceID>2005</DeviceID>
     <Size>0,1260687</Size>
     <TextSize>0,2</TextSize>
@@ -59,11 +59,11 @@
   </Device>
   <Device>
     <Name>Base</Name>
-    <Type>2</Type>
+    <Type>12</Type>
     <DeviceID>3000</DeviceID>
     <Size>0,09565946</Size>
     <TextSize>0,2</TextSize>
-    <X>0,1325137</X>
-    <Y>0,6065574</Y>
+    <X>0,1101549</X>
+    <Y>0,535284</Y>
   </Device>
 </SceneGraph>

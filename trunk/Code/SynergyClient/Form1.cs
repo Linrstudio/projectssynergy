@@ -45,7 +45,7 @@ namespace SynergyClient
                 catch { }
                 finally
                 {
-                    SynergyNode.ConnectionManager.Whois();
+                    SynergyNode.ConnectionManager.RequestDeviceList();
                 }
             }
         }
@@ -71,9 +71,9 @@ namespace SynergyClient
         public void UpdateDeviceList()
         {
             d_Devices.Rows.Clear();
-            foreach( SynergyNode.Device d in SynergyNode.ConnectionManager.Devices.Values)
+            foreach (SynergyNode.Device d in SynergyNode.ConnectionManager.RemoteDevices.Values)
             {
-                d_Devices.Rows.Add(d.ID, d.DeviceType, System.Text.Encoding.ASCII.GetString(d.Memory));
+                d_Devices.Rows.Add(d.ID, d.DeviceType, d.Memory.GetState());
             }
         }
 
@@ -83,7 +83,6 @@ namespace SynergyClient
         }
         public void Resize()
         {
-            p_Graphic.Top = 0;
             p_Graphic.Width = p_Graphic.Height = Math.Min(p_Container.Width, p_Container.Height);
             p_Graphic.Left = (p_Container.Width - p_Graphic.Width) / 2;
             p_Graphic.Top = (p_Container.Height - p_Graphic.Height) / 2;
@@ -142,7 +141,7 @@ namespace SynergyClient
                     catch { MessageBox.Show("Could not connect."); }
                     finally
                     {
-                        SynergyNode.ConnectionManager.Whois();
+                        SynergyNode.ConnectionManager.RequestDeviceList();
                     }
                 }
                 catch { MessageBox.Show("Error in syntax"); }
@@ -171,8 +170,8 @@ namespace SynergyClient
 
         private void b_Whois_Click(object sender, EventArgs e)
         {
-            SynergyNode.ConnectionManager.Devices.Clear();
-            SynergyNode.ConnectionManager.Whois();
+            SynergyNode.ConnectionManager.RemoteDevices.Clear();
+            SynergyNode.ConnectionManager.RequestDeviceList();
         }
     }
 }
