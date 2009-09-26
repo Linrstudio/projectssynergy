@@ -81,6 +81,7 @@ namespace SynergyNode
 
         private static void TriggerOnDeviceMemoryChanged(Device _Device)
         {
+            Console.WriteLine("Device memory received");
             if (OnDeviceMemoryChanged != null) OnDeviceMemoryChanged(_Device);
         }
 
