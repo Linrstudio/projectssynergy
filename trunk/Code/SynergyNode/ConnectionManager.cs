@@ -13,7 +13,7 @@ namespace SynergyNode
         public delegate void OnDeviceMemoryChangedHandler(Device _Device);
         public static  event OnDeviceMemoryChangedHandler OnDeviceMemoryChanged;
 
-        public static string Revision =  "4.121";
+        public static string Revision =  "4.125";
 
         public static List<Connection> Connections;
         public static Dictionary<ushort, LocalDevice> LocalDevices;
@@ -24,6 +24,7 @@ namespace SynergyNode
         public static void AddConnection(Connection _Connection)
         {
             Connections.Add(_Connection);
+            _Connection.OnReceiveRequestDeviceList += TriggerOnRequestDeviceList;
             _Connection.OnReceiveDeviceListElement += TriggerOnDeviceFound;
             _Connection.OnReceiveDeviceMemoryBin += TriggerOnDeviceMemoryChanged;
         }
@@ -68,7 +69,7 @@ namespace SynergyNode
             foreach (Connection c in Connections) c.RequestDeviceList(ID, true);
         }
 
-        public static void OnReceiveRequestDeviceList()
+        private static void TriggerOnRequestDeviceList()
         {
             Console.WriteLine("Device list request received");
             foreach (LocalDevice d in LocalDevices.Values)
