@@ -75,103 +75,107 @@ namespace SynergyNode
 
         private void ParseData(byte[] _Data)
         {
-            switch (_Data[0])
+            try
             {
-                case REQUESTDEVICELISTID://ReceiveDeviceList
-                    {
-                        Console.WriteLine("REQUESTDEVICELISTID");
-                        bool BroadCast = _Data[1] != 0;
-                        uint ActionID = BitConverter.ToUInt32(_Data, 2);
-                        if (!ConnectionManager.ActionBlackList.Contains(ActionID))
+                switch (_Data[0])
+                {
+                    case REQUESTDEVICELISTID://ReceiveDeviceList
                         {
-                            ConnectionManager.ActionBlackList.Add(ActionID);
-                            //broadcast
-                            if (BroadCast) foreach (Connection c in ConnectionManager.Connections) if (c != this) c.RequestDeviceList(ActionID, true);
+                            Console.WriteLine("REQUESTDEVICELISTID");
+                            bool BroadCast = _Data[1] != 0;
+                            uint ActionID = BitConverter.ToUInt32(_Data, 2);
+                            if (!ConnectionManager.ActionBlackList.Contains(ActionID))
+                            {
+                                ConnectionManager.ActionBlackList.Add(ActionID);
+                                //broadcast
+                                if (BroadCast) foreach (Connection c in ConnectionManager.Connections) if (c != this) c.RequestDeviceList(ActionID, true);
 
-                            if (OnReceiveRequestDeviceList != null) OnReceiveRequestDeviceList();
-                        }
-                    }
-                    break;
-                case SENDDEVICELISTELEMENTID://ReceiveDevice
-                    {
-                        Console.WriteLine("SENDDEVICELISTELEMENTID");
-                        bool BroadCast = _Data[1] != 0;
-                        uint ActionID = BitConverter.ToUInt32(_Data, 2);
-                        
-                        if (!ConnectionManager.ActionBlackList.Contains(ActionID))
-                        {
-                            ConnectionManager.ActionBlackList.Add(ActionID);
-                            byte type = _Data[6];
-                            ushort ID = BitConverter.ToUInt16(_Data, 7);
-                            ushort membinsize = BitConverter.ToUInt16(_Data, 9);
-                            byte[] membin = new byte[membinsize];
-                            for (int i = 0; i < membinsize; i++)
-                                membin[i] = _Data[i + 11];
-                            RemoteDevice remotedevice = new RemoteDevice(ID);
-                            LocalDevice localdevice = new LocalDevice(ID);
-                            remotedevice.DeviceType = localdevice.DeviceType = type;
-                            remotedevice.Memory = localdevice.Memory = FromBytes(type, membin);
-                            //add device to devicelist if it is not present ( or local )
-                            if (!ConnectionManager.RemoteDevices.ContainsKey(ID) && !ConnectionManager.LocalDevices.ContainsKey(ID))
-                            {
-                                Console.WriteLine("Device added ---------------");
-                                ConnectionManager.AddRemoteDevice(remotedevice);
+                                if (OnReceiveRequestDeviceList != null) OnReceiveRequestDeviceList();
                             }
-                            else
+                        }
+                        break;
+                    case SENDDEVICELISTELEMENTID://ReceiveDevice
+                        {
+                            Console.WriteLine("SENDDEVICELISTELEMENTID");
+                            bool BroadCast = _Data[1] != 0;
+                            uint ActionID = BitConverter.ToUInt32(_Data, 2);
+
+                            if (!ConnectionManager.ActionBlackList.Contains(ActionID))
                             {
-                                if (remotedevice.DeviceType != ConnectionManager.RemoteDevices[ID].DeviceType)
+                                ConnectionManager.ActionBlackList.Add(ActionID);
+                                byte type = _Data[6];
+                                ushort ID = BitConverter.ToUInt16(_Data, 7);
+                                ushort membinsize = BitConverter.ToUInt16(_Data, 9);
+                                byte[] membin = new byte[membinsize];
+                                for (int i = 0; i < membinsize; i++)
+                                    membin[i] = _Data[i + 11];
+                                RemoteDevice remotedevice = new RemoteDevice(ID);
+                                LocalDevice localdevice = new LocalDevice(ID);
+                                remotedevice.DeviceType = localdevice.DeviceType = type;
+                                remotedevice.Memory = localdevice.Memory = FromBytes(type, membin);
+                                //add device to devicelist if it is not present ( or local )
+                                if (!ConnectionManager.RemoteDevices.ContainsKey(ID) && !ConnectionManager.LocalDevices.ContainsKey(ID))
                                 {
-                                    Console.WriteLine("Device with ID:{0} already added using another memorybin type ( conflicting devices? )", ID);
+                                    Console.WriteLine("Device added ---------------");
+                                    ConnectionManager.AddRemoteDevice(remotedevice);
+                                }
+                                else
+                                {
+                                    if (remotedevice.DeviceType != ConnectionManager.RemoteDevices[ID].DeviceType)
+                                    {
+                                        Console.WriteLine("Device with ID:{0} already added using another memorybin type ( conflicting devices? )", ID);
+                                    }
+                                }
+                                //broadcast
+                                if (BroadCast) foreach (Connection c in ConnectionManager.Connections) if (c != this) c.SendDeviceListElement(ActionID, true, localdevice);
+                                //only trigger this if we dont have a device with this ID
+                                if (!ConnectionManager.RemoteDevices.ContainsKey(ID) && !ConnectionManager.LocalDevices.ContainsKey(ID))
+                                {
+                                    if (OnReceiveDeviceListElement != null) OnReceiveDeviceListElement(remotedevice);
                                 }
                             }
-                            //broadcast
-                            if (BroadCast) foreach (Connection c in ConnectionManager.Connections) if (c != this) c.SendDeviceListElement(ActionID, true, localdevice);
-                            //only trigger this if we dont have a device with this ID
-                            if (!ConnectionManager.RemoteDevices.ContainsKey(ID) && !ConnectionManager.LocalDevices.ContainsKey(ID))
-                            {
-                                if (OnReceiveDeviceListElement != null) OnReceiveDeviceListElement(remotedevice);
-                            }
                         }
-                    }
-                    break;
-                case UPDATEREMOTEMEMORYID:
-                    {
-                        Console.WriteLine("UPDATEREMOTEMEMORYID");
-                        bool BroadCast = _Data[1] != 0;
-                        uint ActionID = BitConverter.ToUInt32(_Data, 2);
-
-                        if (!ConnectionManager.ActionBlackList.Contains(ActionID))
+                        break;
+                    case UPDATEREMOTEMEMORYID:
                         {
-                            ConnectionManager.ActionBlackList.Add(ActionID);
-                            byte type = _Data[6];
-                            ushort ID = BitConverter.ToUInt16(_Data, 7);
-                            ushort membinsize = BitConverter.ToUInt16(_Data, 9);
-                            byte[] membin = new byte[membinsize];
-                            for (int i = 0; i < membinsize; i++)
-                                membin[i] = _Data[i + 11];
-                            MemoryBin bin = FromBytes(type, membin);
+                            Console.WriteLine("UPDATEREMOTEMEMORYID");
+                            bool BroadCast = _Data[1] != 0;
+                            uint ActionID = BitConverter.ToUInt32(_Data, 2);
 
-                            Device device = null;
-                            if (ConnectionManager.LocalDevices.ContainsKey(ID)) device = ConnectionManager.LocalDevices[ID];
-                            if (ConnectionManager.RemoteDevices.ContainsKey(ID)) device = ConnectionManager.RemoteDevices[ID];
-                            if (device == null)
+                            if (!ConnectionManager.ActionBlackList.Contains(ActionID))
                             {
-                                Console.WriteLine("memory for unknown device found ID:{0}", ID);
-                                Console.WriteLine("note: it is possible to add this device ( kick Roeny in the face to fix this)");
-                            }
-                            else
-                            {
-                                if (device.DeviceType != type) Console.WriteLine("Device type does not match type received, something is fishy here.");
-                                device.Memory = bin;
-                                device.OnMemoryChanged();
-                                //broadcast
-                                if (BroadCast) foreach (Connection c in ConnectionManager.Connections) if (c != this) c.SendDeviceMemoryBin(ActionID, true, device);
-                                if (OnReceiveDeviceMemoryBin != null) OnReceiveDeviceMemoryBin(device);
+                                ConnectionManager.ActionBlackList.Add(ActionID);
+                                byte type = _Data[6];
+                                ushort ID = BitConverter.ToUInt16(_Data, 7);
+                                ushort membinsize = BitConverter.ToUInt16(_Data, 9);
+                                byte[] membin = new byte[membinsize];
+                                for (int i = 0; i < membinsize; i++)
+                                    membin[i] = _Data[i + 11];
+                                MemoryBin bin = FromBytes(type, membin);
+
+                                Device device = null;
+                                if (ConnectionManager.LocalDevices.ContainsKey(ID)) device = ConnectionManager.LocalDevices[ID];
+                                if (ConnectionManager.RemoteDevices.ContainsKey(ID)) device = ConnectionManager.RemoteDevices[ID];
+                                if (device == null)
+                                {
+                                    Console.WriteLine("memory for unknown device found ID:{0}", ID);
+                                    Console.WriteLine("note: it is possible to add this device ( kick Roeny in the face to fix this)");
+                                }
+                                else
+                                {
+                                    if (device.DeviceType != type) Console.WriteLine("Device type does not match type received, something is fishy here.");
+                                    device.Memory = bin;
+                                    device.OnMemoryChanged();
+                                    //broadcast
+                                    if (BroadCast) foreach (Connection c in ConnectionManager.Connections) if (c != this) c.SendDeviceMemoryBin(ActionID, true, device);
+                                    if (OnReceiveDeviceMemoryBin != null) OnReceiveDeviceMemoryBin(device);
+                                }
                             }
                         }
-                    }
-                    break;
+                        break;
+                }
             }
+            catch { Console.WriteLine("Invalid packet receive, data was trashed and connection survived ( not sure whats wrong tho )"); }
         }
 
         public void SendData(byte[] _Data)
@@ -241,7 +245,9 @@ namespace SynergyNode
                         if (SendBuffer.Count>0)
                         {
                             MemoryStream stream = new MemoryStream();
+                            Thread.BeginCriticalRegion();
                             while (SendBuffer.Count > 0) stream.WriteByte(SendBuffer.Dequeue());
+                            Thread.EndCriticalRegion();
                             byte[] buffer = stream.ToArray();
                             client.GetStream().Write(buffer, 0, buffer.Length);
                         }
@@ -249,7 +255,9 @@ namespace SynergyNode
                         {
                             byte[] buffer = new byte[Math.Min(client.Available,PACKETSIZE)];
                             client.GetStream().Read(buffer, 0, buffer.Length);
+                            Thread.BeginCriticalRegion();
                             foreach (byte b in buffer) ReceiveBuffer.Enqueue(b);
+                            Thread.EndCriticalRegion();
                             Console.WriteLine("{0} bytes received", buffer.Length);
                         }
                         Thread.Sleep(10);
@@ -381,6 +389,5 @@ namespace SynergyNode
             }
             return b;
         }
-
     }
 }

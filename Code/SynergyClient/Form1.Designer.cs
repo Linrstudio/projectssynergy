@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("sdfsdf");
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("sdfsfd");
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("werwrcv");
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("sdfsdf");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("sdfsfd");
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("werwrcv");
             this.button6 = new System.Windows.Forms.Button();
             this.l_Scenes = new System.Windows.Forms.ListView();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
@@ -39,7 +39,9 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
             this.p_Container = new System.Windows.Forms.Panel();
+            this.p_Graphic = new SynergyClient.SceneControl();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.b_Whois = new System.Windows.Forms.Button();
             this.b_Save = new System.Windows.Forms.Button();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -58,8 +60,6 @@
             this.Column4 = new System.Windows.Forms.DataGridViewButtonColumn();
             this.label2 = new System.Windows.Forms.Label();
             this.t_refresh = new System.Windows.Forms.Timer(this.components);
-            this.p_Graphic = new SynergyClient.SceneControl();
-            this.b_Whois = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -85,13 +85,13 @@
             // l_Scenes
             // 
             this.l_Scenes.Dock = System.Windows.Forms.DockStyle.Fill;
-            listViewItem4.StateImageIndex = 0;
-            listViewItem5.StateImageIndex = 0;
-            listViewItem6.StateImageIndex = 0;
+            listViewItem1.StateImageIndex = 0;
+            listViewItem2.StateImageIndex = 0;
+            listViewItem3.StateImageIndex = 0;
             this.l_Scenes.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem4,
-            listViewItem5,
-            listViewItem6});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3});
             this.l_Scenes.Location = new System.Drawing.Point(0, 13);
             this.l_Scenes.Name = "l_Scenes";
             this.l_Scenes.Size = new System.Drawing.Size(151, 424);
@@ -155,6 +155,14 @@
             this.p_Container.Size = new System.Drawing.Size(582, 411);
             this.p_Container.TabIndex = 1;
             // 
+            // p_Graphic
+            // 
+            this.p_Graphic.Location = new System.Drawing.Point(59, 45);
+            this.p_Graphic.Name = "p_Graphic";
+            this.p_Graphic.Size = new System.Drawing.Size(265, 158);
+            this.p_Graphic.TabIndex = 1;
+            this.p_Graphic.Text = "sceneControl1";
+            // 
             // panel4
             // 
             this.panel4.BackColor = System.Drawing.SystemColors.Control;
@@ -165,6 +173,17 @@
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(582, 26);
             this.panel4.TabIndex = 2;
+            // 
+            // b_Whois
+            // 
+            this.b_Whois.Dock = System.Windows.Forms.DockStyle.Right;
+            this.b_Whois.Location = new System.Drawing.Point(528, 0);
+            this.b_Whois.Name = "b_Whois";
+            this.b_Whois.Size = new System.Drawing.Size(54, 26);
+            this.b_Whois.TabIndex = 1;
+            this.b_Whois.Text = "Whois";
+            this.b_Whois.UseVisualStyleBackColor = true;
+            this.b_Whois.Click += new System.EventHandler(this.b_Whois_Click);
             // 
             // b_Save
             // 
@@ -326,25 +345,6 @@
             this.t_refresh.Enabled = true;
             this.t_refresh.Interval = 50;
             this.t_refresh.Tick += new System.EventHandler(this.t_refresh_Tick);
-            // 
-            // p_Graphic
-            // 
-            this.p_Graphic.Location = new System.Drawing.Point(59, 45);
-            this.p_Graphic.Name = "p_Graphic";
-            this.p_Graphic.Size = new System.Drawing.Size(265, 158);
-            this.p_Graphic.TabIndex = 1;
-            this.p_Graphic.Text = "sceneControl1";
-            // 
-            // b_Whois
-            // 
-            this.b_Whois.Dock = System.Windows.Forms.DockStyle.Right;
-            this.b_Whois.Location = new System.Drawing.Point(528, 0);
-            this.b_Whois.Name = "b_Whois";
-            this.b_Whois.Size = new System.Drawing.Size(54, 26);
-            this.b_Whois.TabIndex = 1;
-            this.b_Whois.Text = "Whois";
-            this.b_Whois.UseVisualStyleBackColor = true;
-            this.b_Whois.Click += new System.EventHandler(this.b_Whois_Click);
             // 
             // f_Main
             // 

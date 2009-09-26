@@ -23,7 +23,8 @@ namespace SynergyClient
         {
             SceneMenuAdd = new MenuItem("Add");
             ConnectionManager.OnDeviceFound += OnDeviceFound;
-            SceneMenu = new ContextMenu(new MenuItem[] { SceneMenuAdd });
+            SceneMenu = new ContextMenu(new MenuItem[] { SceneMenuAdd ,new MenuItem("Change background")});
+            SceneMenu.MenuItems[1].Click += OnMenuChangeBackground;
             DeviceMenu = new ContextMenu(new MenuItem[] { new MenuItem("Move"), new MenuItem("Resize"), new MenuItem("Rename"), new MenuItem("Delete") });
             DeviceMenu.MenuItems[0].Click += OnMenuMoveClick;
             DeviceMenu.MenuItems[1].Click += OnMenuResizeClick;
@@ -34,12 +35,20 @@ namespace SynergyClient
             base.OnCreateControl();
         }
 
+        public void OnMenuChangeBackground(object sender, EventArgs e)
+        {
+            OpenFileDialog d = new OpenFileDialog();
+            d.ShowDialog();
+            
+        }
+
         public void OnDeviceFound(Device _D)
         {
             SceneMenuAdd.MenuItems.Clear();
-            foreach (Device d in ConnectionManager.Devices.Values)
+            foreach (Device d in ConnectionManager.RemoteDevices.Values)
             {
-                MenuItem item = new MenuItem(d.ID.ToString());
+                MenuItem item = new MenuItem(d.GetType().Name + " " + d.ID.ToString());
+                item.Tag = d.ID;
                 SceneMenuAdd.MenuItems.Add(item);
                 item.Click += OnDeviceAdd;
             }
@@ -82,8 +91,8 @@ namespace SynergyClient
         private void OnDeviceAdd(object sender, EventArgs e)
         {
             var s = (MenuItem)sender;
-            ushort ID = ushort.Parse(s.Text);
-            Device D = ConnectionManager.Devices[ID];
+            ushort ID = (ushort)s.Tag;
+            Device D = ConnectionManager.RemoteDevices[ID];
             SceneDevice d = SceneDevice.GetDevice(D);
             if (d != null)
             {
@@ -119,7 +128,6 @@ namespace SynergyClient
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-
             float X = (float)e.X / SceneSize;
             float Y = (float)e.Y / SceneSize;
             switch (DeviceOperation)
@@ -142,34 +150,36 @@ namespace SynergyClient
         }
         protected override void OnMouseClick(MouseEventArgs e)
         {
-            if (DeviceOperation != 0)
-                DeviceOperation = 0;
-            else
+            if (scene != null)
             {
-                SceneDevice d = scene.GetDevice((float)e.X / SceneSize, (float)e.Y / SceneSize);
-                if (d != null)
-                {
-                    if (e.Button == MouseButtons.Left)
-                    {
-                        d.OnClick((float)e.X / SceneSize, (float)e.Y / SceneSize);
-                        ReDraw();
-                    }
-                    if (e.Button == MouseButtons.Right)
-                    {
-                        CurrentDevice = d;
-                        DeviceMenu.Show(this, e.Location);
-                    }
-                }
+                if (DeviceOperation != 0)
+                    DeviceOperation = 0;
                 else
                 {
-                    if (e.Button == MouseButtons.Right)
+                    SceneDevice d = scene.GetDevice((float)e.X / SceneSize, (float)e.Y / SceneSize);
+                    if (d != null)
                     {
-                        SceneMenu.Show(this, e.Location);
+                        if (e.Button == MouseButtons.Left)
+                        {
+                            d.OnClick((float)e.X / SceneSize, (float)e.Y / SceneSize);
+                            ReDraw();
+                        }
+                        if (e.Button == MouseButtons.Right)
+                        {
+                            CurrentDevice = d;
+                            DeviceMenu.Show(this, e.Location);
+                        }
+                    }
+                    else
+                    {
+                        if (e.Button == MouseButtons.Right)
+                        {
+                            SceneMenu.Show(this, e.Location);
+                        }
                     }
                 }
+                ReDraw();
             }
-            ReDraw();
-
             base.OnMouseClick(e);
         }
 
