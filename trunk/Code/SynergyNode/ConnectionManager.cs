@@ -13,7 +13,7 @@ namespace SynergyNode
         public delegate void OnDeviceMemoryChangedHandler(Device _Device);
         public static  event OnDeviceMemoryChangedHandler OnDeviceMemoryChanged;
 
-        public static string Revision =  "4.100";
+        public static string Revision =  "4.120";
 
         public static List<Connection> Connections;
         public static Dictionary<ushort, LocalDevice> LocalDevices;
@@ -24,8 +24,8 @@ namespace SynergyNode
         public static void AddConnection(Connection _Connection)
         {
             Connections.Add(_Connection);
-            _Connection.OnReceiveRequestDeviceList += OnReceiveRequestDeviceList;
-            _Connection.OnReceiveDeviceListElement += OnReceiveDeviceListElement;
+            _Connection.OnReceiveDeviceListElement += TriggerOnDeviceFound;
+            _Connection.OnReceiveDeviceMemoryBin += TriggerOnDeviceMemoryChanged;
         }
 
         public static void AddLocalDevice(LocalDevice _Device)
@@ -79,10 +79,14 @@ namespace SynergyNode
             Console.WriteLine("Devices Returned:{0}", LocalDevices.Values.Count);
         }
 
-        public static void OnReceiveDeviceListElement(RemoteDevice _Device)
+        private static void TriggerOnDeviceMemoryChanged(Device _Device)
         {
-            Console.WriteLine("new device found!");
-            
+            if (OnDeviceMemoryChanged != null) OnDeviceMemoryChanged(_Device);
+        }
+
+        private static void TriggerOnDeviceFound(RemoteDevice _Device)
+        {
+            if (OnDeviceFound != null) OnDeviceFound(_Device);
         }
 
         public static void SendDeviceMemoryBin(Device _Device)

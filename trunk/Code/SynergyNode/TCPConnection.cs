@@ -154,8 +154,9 @@ namespace SynergyNode
                                 MemoryBin bin = FromBytes(type, membin);
 
                                 Device device = null;
+                                RemoteDevice remdev = null;
                                 if (ConnectionManager.LocalDevices.ContainsKey(ID)) device = ConnectionManager.LocalDevices[ID];
-                                if (ConnectionManager.RemoteDevices.ContainsKey(ID)) device = ConnectionManager.RemoteDevices[ID];
+                                if (ConnectionManager.RemoteDevices.ContainsKey(ID)) { device = remdev = ConnectionManager.RemoteDevices[ID]; }
                                 if (device == null)
                                 {
                                     Console.WriteLine("memory for unknown device found ID:{0}", ID);
