@@ -1,0 +1,14 @@
+c:\documents\projects\synergy\SynergyTerminal\bin\Release\SynergyTerminal.exe
+c:\documents\projects\synergy\SynergyTerminal\bin\Release\SynergyTerminal.pdb
+c:\documents\projects\synergy\SynergyTerminal\bin\Release\SynergyNode.dll
+c:\documents\projects\synergy\SynergyTerminal\bin\Release\SynergyNode.pdb
+c:\documents\projects\synergy\SynergyTerminal\obj\Release\ResolveAssemblyReference.cache
+c:\documents\projects\synergy\SynergyTerminal\obj\Release\SynergyTerminal.exe
+c:\documents\projects\synergy\SynergyTerminal\obj\Release\SynergyTerminal.pdb
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyTerminal\bin\Release\SynergyTerminal.exe
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyTerminal\bin\Release\SynergyTerminal.pdb
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyTerminal\bin\Release\SynergyNode.dll
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyTerminal\bin\Release\SynergyNode.pdb
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyTerminal\obj\Release\ResolveAssemblyReference.cache
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyTerminal\obj\Release\SynergyTerminal.exe
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyTerminal\obj\Release\SynergyTerminal.pdb
