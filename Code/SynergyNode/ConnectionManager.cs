@@ -93,6 +93,7 @@ namespace SynergyNode
 
         public static void SendDeviceMemoryBin(Device _Device)
         {
+            Console.WriteLine("Update Remote memorybin");
             uint ID = ActionBlackList.GetRandomID();
             foreach (Connection c in Connections) c.SendDeviceMemoryBin(ID, true, _Device);
         }
