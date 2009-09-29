@@ -128,7 +128,8 @@ namespace SynergyClient
                 float dx=_X-X;
                 float dy=Y-_Y;
                 byte value = (byte)(Math.Atan2(dx, dy) * 40.86f);
-                ((AnalogMemoryBin)ConnectionManager.RemoteDevices[DeviceID].Memory).Value = value;
+                ((AnalogMemoryBin)ConnectionManager.RemoteDevices[DeviceID].Memory).TargetValue = value;
+                ((AnalogMemoryBin)ConnectionManager.RemoteDevices[DeviceID].Memory).Speed = 3;
                 ConnectionManager.RemoteDevices[DeviceID].UpdateRemoteMemory();
             }
         }
@@ -143,7 +144,7 @@ namespace SynergyClient
             Rectangle rect = new Rectangle((int)((X * _GraphicsSize) - size * 0.5f), (int)((Y * _GraphicsSize) - size * 0.5f), (int)size, (int)size);
             if (ConnectionManager.RemoteDevices.ContainsKey(DeviceID))
             {
-                byte value = ((AnalogMemoryBin)ConnectionManager.RemoteDevices[DeviceID].Memory).Value;
+                byte value = ((AnalogMemoryBin)ConnectionManager.RemoteDevices[DeviceID].Memory).TargetValue;
                 _Graphics.FillPie(Brushes.Green, rect, 270, value * 1.411f);
                 _Graphics.DrawEllipse(Pens.Green, rect);
                 //_Graphics.FillEllipse(ConnectionManager.Devices[DeviceID].GetDigitalState() ? Brushes.Green : Brushes.Red, rect);

@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Device.cs" />
+    <Compile Include="Event.cs" />
     <Compile Include="MemmoryBin.cs" />
     <Compile Include="TCPConnection.cs" />
     <Compile Include="Connection.cs" />

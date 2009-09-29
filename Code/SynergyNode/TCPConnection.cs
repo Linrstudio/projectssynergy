@@ -13,6 +13,7 @@ namespace SynergyNode
     public class TCPConnection:Connection
     {
         public const uint PACKETSIZE = 1024;
+        public const byte SLEEP = 4;
         public const byte REQUESTDEVICELISTID = 1;
         public const byte SENDDEVICELISTELEMENTID = 2;
         public const byte UPDATEREMOTEMEMORYID = 3;
@@ -43,7 +44,7 @@ namespace SynergyNode
 
             stream.WriteByte(_Device.DeviceType);//Type
             stream.Write(BitConverter.GetBytes(_Device.ID), 0, 2);//ID
-            byte[] devicememory = ToBytes(_Device.Memory);
+            byte[] devicememory = MemoryBin.ToBytes(_Device.Memory);
             stream.Write(BitConverter.GetBytes((ushort)devicememory.Length), 0, 2);//memorybin size
             stream.Write(devicememory, 0, devicememory.Length);//memorybin
             SendData(stream.ToArray());
@@ -58,7 +59,7 @@ namespace SynergyNode
 
             stream.WriteByte(_Device.DeviceType);//Type
             stream.Write(BitConverter.GetBytes(_Device.ID), 0, 2);//ID
-            byte[] devicememory = ToBytes(_Device.Memory);
+            byte[] devicememory = MemoryBin.ToBytes(_Device.Memory);
             stream.Write(BitConverter.GetBytes((ushort)devicememory.Length), 0, 2);//memorybin size
             stream.Write(devicememory, 0, devicememory.Length);//memorybin
             SendData(stream.ToArray());
@@ -75,11 +76,11 @@ namespace SynergyNode
 
         private void ParseData(byte[] _Data)
         {
-            try
-            {
+            
                 switch (_Data[0])
                 {
                     case REQUESTDEVICELISTID://ReceiveDeviceList
+                        try
                         {
                             Console.WriteLine("REQUESTDEVICELISTID");
                             bool BroadCast = _Data[1] != 0;
@@ -93,8 +94,10 @@ namespace SynergyNode
                                 if (OnReceiveRequestDeviceList != null) OnReceiveRequestDeviceList();
                             }
                         }
+                        catch { Console.WriteLine("cant parse packet REQUESTDEVICELISTID"); }
                         break;
                     case SENDDEVICELISTELEMENTID://ReceiveDevice
+                        try
                         {
                             Console.WriteLine("SENDDEVICELISTELEMENTID");
                             bool BroadCast = _Data[1] != 0;
@@ -112,7 +115,7 @@ namespace SynergyNode
                                 RemoteDevice remotedevice = new RemoteDevice(ID);
                                 LocalDevice localdevice = new LocalDevice(ID);
                                 remotedevice.DeviceType = localdevice.DeviceType = type;
-                                remotedevice.Memory = localdevice.Memory = FromBytes(type, membin);
+                                remotedevice.Memory = localdevice.Memory = MemoryBin.FromBytes(type, membin);
                                 //add device to devicelist if it is not present ( or local )
                                 if (!ConnectionManager.RemoteDevices.ContainsKey(ID) && !ConnectionManager.LocalDevices.ContainsKey(ID))
                                 {
@@ -134,10 +137,12 @@ namespace SynergyNode
                                     if (OnReceiveDeviceListElement != null) OnReceiveDeviceListElement(remotedevice);
                                 }
                             }
+
                         }
+                        catch { Console.WriteLine("cant parse packet SENDDEVICELISTELEMENTID"); }
                         break;
                     case UPDATEREMOTEMEMORYID:
-                        {
+                        try{
                             Console.WriteLine("UPDATEREMOTEMEMORYID");
                             bool BroadCast = _Data[1] != 0;
                             uint ActionID = BitConverter.ToUInt32(_Data, 2);
@@ -151,7 +156,7 @@ namespace SynergyNode
                                 byte[] membin = new byte[membinsize];
                                 for (int i = 0; i < membinsize; i++)
                                     membin[i] = _Data[i + 11];
-                                MemoryBin bin = FromBytes(type, membin);
+                                MemoryBin bin = MemoryBin.FromBytes(type, membin);
 
                                 Device device = null;
                                 RemoteDevice remdev = null;
@@ -173,10 +178,15 @@ namespace SynergyNode
                                 }
                             }
                         }
+                        catch { Console.WriteLine("cant parse packet UPDATEREMOTEMEMORYID"); }
+                        break;
+                    case SLEEP:
+                        Console.WriteLine("Sleep received");
+                        break;
+                    default:
+                        Console.WriteLine("packet with invalid ID received");
                         break;
                 }
-            }
-            catch { Console.WriteLine("Invalid packet receive, data was trashed and connection survived ( not sure whats wrong tho )"); }
         }
 
         public void SendData(byte[] _Data)
@@ -307,16 +317,19 @@ namespace SynergyNode
             if (currentpacketsize == 0)
             {
                 //read new packetype
-                if (ReceiveBuffer.Count <2) return; //there is no data available so we cant ready any
+                if (ReceiveBuffer.Count < 2) return; //there is no data available so we cant ready any
                 Thread.BeginCriticalRegion();
                 currentpacketsize = BitConverter.ToUInt16(ReadData(2), 0);
                 Thread.EndCriticalRegion();
             }
-            if (ReceiveBuffer.Count >= currentpacketsize)
+            if(currentpacketsize!=0)
             {
-                byte[] packetdata = ReadData(currentpacketsize);
-                ParseData(packetdata);
-                currentpacketsize = 0;
+                if (ReceiveBuffer.Count >= currentpacketsize)
+                {
+                    byte[] packetdata = ReadData(currentpacketsize);
+                    ParseData(packetdata);
+                    currentpacketsize = 0;
+                }
             }
         }
 
@@ -339,56 +352,6 @@ namespace SynergyNode
                 }
             }
             catch { Console.WriteLine("Could not open {0}",_Path); }
-        }
-
-        public byte[] ToBytes(MemoryBin _MemoryBin)
-        {
-            if (_MemoryBin == null) return new byte[] { };
-            MemoryStream s = new MemoryStream();
-            Type t = _MemoryBin.GetType();
-            foreach (FieldInfo i in t.GetFields())
-            {
-                string name = i.FieldType.Name;
-                try
-                {
-                    if (name == typeof(byte).Name)
-                    {
-                        s.WriteByte((byte)i.GetValue(_MemoryBin));
-                    }
-                    if (name == typeof(bool).Name)
-                    {
-                        s.WriteByte((byte)((bool)i.GetValue(_MemoryBin) ? 255 : 0));
-                    }
-                }
-                catch { }
-            }
-            return s.GetBuffer();
-        }
-        public MemoryBin FromBytes(byte _Type, byte[] _Bytes)
-        {
-            MemoryBin b = MemoryBin.GetBinForType(_Type);
-            if (b == null) return null;
-            Type t = b.GetType();
-            int index = 0;
-            foreach (FieldInfo i in t.GetFields())
-            {
-                string name = i.FieldType.Name;
-                try
-                {
-                    if (name == typeof(byte).Name)
-                    {
-                        i.SetValue(b, _Bytes[index]);
-                        index += sizeof(byte);
-                    }
-                    if (name == typeof(bool).Name)
-                    {
-                        i.SetValue(b, _Bytes[index] != 0);
-                        index += sizeof(byte);
-                    }
-                }
-                catch { }
-            }
-            return b;
         }
     }
 }
