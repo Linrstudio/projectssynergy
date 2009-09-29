@@ -8,3 +8,8 @@ C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyNode\bin\Debug\SynergyNode.pdb
 C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyNode\obj\Debug\ResolveAssemblyReference.cache
 C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyNode\obj\Debug\SynergyNode.dll
 C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyNode\obj\Debug\SynergyNode.pdb
+C:\Users\Remote\Desktop\SynergySVN\Code\SynergyNode\bin\Debug\SynergyNode.dll
+C:\Users\Remote\Desktop\SynergySVN\Code\SynergyNode\bin\Debug\SynergyNode.pdb
+C:\Users\Remote\Desktop\SynergySVN\Code\SynergyNode\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Remote\Desktop\SynergySVN\Code\SynergyNode\obj\Debug\SynergyNode.dll
+C:\Users\Remote\Desktop\SynergySVN\Code\SynergyNode\obj\Debug\SynergyNode.pdb
