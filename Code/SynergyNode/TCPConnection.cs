@@ -83,7 +83,7 @@ namespace SynergyNode
                 case REQUESTDEVICELISTID://ReceiveDeviceList
                     try
                     {
-                        Console.WriteLine("REQUESTDEVICELISTID");
+                        //Console.WriteLine("REQUESTDEVICELISTID");
                         bool BroadCast = _Data[1] != 0;
                         uint ActionID = BitConverter.ToUInt32(_Data, 2);
                         if (!NetworkNode.ActionBlackList.Contains(ActionID))
@@ -100,7 +100,7 @@ namespace SynergyNode
                 case SENDDEVICELISTELEMENTID://ReceiveDevice
                     try
                     {
-                        Console.WriteLine("SENDDEVICELISTELEMENTID");
+                        //Console.WriteLine("SENDDEVICELISTELEMENTID");
                         bool BroadCast = _Data[1] != 0;
                         uint ActionID = BitConverter.ToUInt32(_Data, 2);
 
@@ -145,7 +145,7 @@ namespace SynergyNode
                 case UPDATEREMOTEMEMORYID:
                     try
                     {
-                        Console.WriteLine("UPDATEREMOTEMEMORYID");
+                        //Console.WriteLine("UPDATEREMOTEMEMORYID");
                         bool BroadCast = _Data[1] != 0;
                         uint ActionID = BitConverter.ToUInt32(_Data, 2);
 
@@ -183,7 +183,7 @@ namespace SynergyNode
                     catch { Console.WriteLine("cant parse packet UPDATEREMOTEMEMORYID"); }
                     break;
                 case SLEEP:
-                    Console.WriteLine("Sleep received");
+                    //Console.WriteLine("Sleep received");
                     break;
                 default:
                     Console.WriteLine("packet with invalid ID received");
@@ -255,9 +255,9 @@ namespace SynergyNode
                 {
                     while (true)//loops continuous
                     {
-                        if (Environment.TickCount - 10000 > lastsendtime)
+                        if (Environment.TickCount - 60000 > lastsendtime)
                         {
-                            Console.WriteLine("Keep alive.");
+                            //Console.WriteLine("Keep alive.");
                             SendData(new byte[] { SLEEP });
                             lastsendtime = Environment.TickCount;//not that this is usefull in any way
                         }
