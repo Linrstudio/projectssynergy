@@ -6,20 +6,18 @@ using System.Threading;
 
 namespace SynergyNode
 {
-    public static class ConnectionManager
+    public static class NetworkNode
     {
         public delegate void OnDeviceFoundHandler(Device _Device);
         public static  event OnDeviceFoundHandler OnDeviceFound;
         public delegate void OnDeviceMemoryChangedHandler(Device _Device);
         public static  event OnDeviceMemoryChangedHandler OnDeviceMemoryChanged;
 
-        public static string Revision =  "4.126";
+        public static string Revision =  "4.200";
 
         public static List<Connection> Connections;
         public static Dictionary<ushort, LocalDevice> LocalDevices;
         public static Dictionary<ushort, RemoteDevice> RemoteDevices;
-
-
 
         public static void AddConnection(Connection _Connection)
         {

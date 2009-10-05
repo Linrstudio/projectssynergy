@@ -23,7 +23,7 @@ namespace SynergyNode
 
         public virtual void UpdateRemoteMemory()
         {
-            ConnectionManager.SendDeviceMemoryBin(this);
+            NetworkNode.SendDeviceMemoryBin(this);
         }
 
         public static bool LoadSettingsFile(string _Path, object _Device, string _SectionName)//fills the fields of this device

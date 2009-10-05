@@ -35,7 +35,7 @@ namespace SynergyNode
                 if (listener.Pending())
                 {
                     TcpClient client = listener.AcceptTcpClient();
-                    ConnectionManager.AddConnection(new TCPConnection(client, false));
+                    NetworkNode.AddConnection(new TCPConnection(client, false));
                 }
                 Thread.Sleep(100);
             }
