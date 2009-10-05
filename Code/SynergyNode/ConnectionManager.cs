@@ -42,7 +42,7 @@ namespace SynergyNode
             Connections = new List<Connection>();
             LocalDevices = new Dictionary<ushort, LocalDevice>();
             RemoteDevices = new Dictionary<ushort, RemoteDevice>();
-            Console.WriteLine("ConnectionManager Initialized");
+            Console.WriteLine("NetworkNode Initialized");
             Console.WriteLine("Version:{0}", Revision);
         }
 

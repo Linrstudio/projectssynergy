@@ -173,10 +173,10 @@ namespace SynergyNode
                             {
                                 if (device.DeviceType != type) Console.WriteLine("Device type does not match type received, something is fishy here.");
                                 device.Memory = bin;
+                                if (OnReceiveDeviceMemoryBin != null) OnReceiveDeviceMemoryBin(device);
                                 device.OnMemoryChanged();
                                 //broadcast
                                 if (BroadCast) foreach (Connection c in NetworkNode.Connections) if (c != this) c.SendDeviceMemoryBin(ActionID, true, device);
-                                if (OnReceiveDeviceMemoryBin != null) OnReceiveDeviceMemoryBin(device);
                             }
                         }
                     }
