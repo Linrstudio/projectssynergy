@@ -49,9 +49,10 @@
     <Compile Include="Device.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="MemmoryBin.cs" />
+    <Compile Include="RemoteNetworkNode.cs" />
     <Compile Include="TCPConnection.cs" />
     <Compile Include="Connection.cs" />
-    <Compile Include="ConnectionManager.cs" />
+    <Compile Include="NetworkNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TCPListener.cs" />
     <Compile Include="Utilities.cs" />

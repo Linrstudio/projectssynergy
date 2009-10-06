@@ -77,8 +77,10 @@ namespace SynergyNode
 
     public class RemoteDevice : Device
     {
-        public RemoteDevice(ushort _DeviceID) : base(false)
+        private ushort NetworkNodeID;
+        public RemoteDevice(ushort _DeviceID,ushort _NetworkNodeID) : base(false)
         {
+            NetworkNodeID = _NetworkNodeID;
             ID = _DeviceID;
             Memory = new DefaultMemoryBin();
         }
