@@ -33,7 +33,7 @@ namespace SynergyNode
 
         //fix weirdness in event inheriting
         public override event Connection.OnReceiveDeviceListElementHandler OnReceiveDeviceListElement;
-        public override event OnReceiveRequestDeviceListHandler OnReceiveRequestDeviceList;
+        public override event Connection.OnReceiveRequestNetworkMapHandler OnReceiveRequestNetworkMap;
         public override event Connection.OnReceiveDeviceMemoryBinHandler OnReceiveDeviceMemoryBin;
 
         public override void SendDeviceListElement(uint _ActionID, bool _Broadcast, LocalDevice _Device)
@@ -43,6 +43,8 @@ namespace SynergyNode
             stream.WriteByte((byte)(_Broadcast ? 255 : 0));
 
             stream.Write(BitConverter.GetBytes(_ActionID), 0, 4);//Action ID
+
+            stream.Write(BitConverter.GetBytes(NetworkNode.GetID()), 0, 2);
 
             stream.WriteByte(_Device.DeviceType);//Type
             stream.Write(BitConverter.GetBytes(_Device.ID), 0, 2);//ID
@@ -67,7 +69,7 @@ namespace SynergyNode
             SendData(stream.ToArray());
         }
 
-        public override void RequestDeviceList(uint _ActionID, bool _Broadcast)
+        public override void RequestNetworkMap(uint _ActionID, bool _Broadcast)
         {
             MemoryStream stream = new MemoryStream();
             stream.WriteByte(REQUESTDEVICELISTID);//ID is always first 
@@ -90,9 +92,9 @@ namespace SynergyNode
                         {
                             NetworkNode.ActionBlackList.Add(ActionID);
                             //broadcast
-                            if (BroadCast) foreach (Connection c in NetworkNode.Connections) if (c != this) c.RequestDeviceList(ActionID, true);
+                            if (BroadCast) foreach (Connection c in NetworkNode.Connections) if (c != this) c.RequestNetworkMap(ActionID, true);
 
-                            if (OnReceiveRequestDeviceList != null) OnReceiveRequestDeviceList();
+                            if (OnReceiveRequestNetworkMap != null) OnReceiveRequestNetworkMap();
                         }
                     }
                     catch { Console.WriteLine("cant parse packet REQUESTDEVICELISTID"); }
@@ -107,13 +109,14 @@ namespace SynergyNode
                         if (!NetworkNode.ActionBlackList.Contains(ActionID))
                         {
                             NetworkNode.ActionBlackList.Add(ActionID);
+                            ushort NetworkNodeID = BitConverter.ToUInt16(_Data, 7);
                             byte type = _Data[6];
-                            ushort ID = BitConverter.ToUInt16(_Data, 7);
-                            ushort membinsize = BitConverter.ToUInt16(_Data, 9);
+                            ushort ID = BitConverter.ToUInt16(_Data, 9);
+                            ushort membinsize = BitConverter.ToUInt16(_Data, 11);
                             byte[] membin = new byte[membinsize];
-                            for (int i = 0; i < membinsize; i++)
-                                membin[i] = _Data[i + 11];
-                            RemoteDevice remotedevice = new RemoteDevice(ID);
+                            for (int i = 0; i < membinsize; i++) membin[i] = _Data[i + 13];
+
+                            RemoteDevice remotedevice = new RemoteDevice(ID, NetworkNodeID);
                             LocalDevice localdevice = new LocalDevice(ID);
                             remotedevice.DeviceType = localdevice.DeviceType = type;
                             remotedevice.Memory = localdevice.Memory = MemoryBin.FromBytes(type, membin);

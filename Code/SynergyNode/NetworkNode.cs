@@ -8,6 +8,8 @@ namespace SynergyNode
 {
     public static class NetworkNode
     {
+        private static ushort NetworkNodeID;
+
         public delegate void OnDeviceFoundHandler(Device _Device);
         public static  event OnDeviceFoundHandler OnDeviceFound;
         public delegate void OnDeviceMemoryChangedHandler(Device _Device);
@@ -19,10 +21,12 @@ namespace SynergyNode
         public static Dictionary<ushort, LocalDevice> LocalDevices;
         public static Dictionary<ushort, RemoteDevice> RemoteDevices;
 
+        public static Dictionary<ushort,RemoteNetworkNode>RemoteNodes;
+
         public static void AddConnection(Connection _Connection)
         {
             Connections.Add(_Connection);
-            _Connection.OnReceiveRequestDeviceList += TriggerOnRequestDeviceList;
+            _Connection.OnReceiveRequestNetworkMap += TriggerOnRequestNetworkMap;
             _Connection.OnReceiveDeviceListElement += TriggerOnDeviceFound;
             _Connection.OnReceiveDeviceMemoryBin += TriggerOnDeviceMemoryChanged;
         }
@@ -31,19 +35,23 @@ namespace SynergyNode
         {
             LocalDevices.Add(_Device.ID, _Device);
         }
+
         public static void AddRemoteDevice(RemoteDevice _Device)
         {
             RemoteDevices.Add(_Device.ID, _Device);
         }
 
+        public static ushort GetID() { return NetworkNodeID; }
+
         public static void Init()
         {
-            
             Connections = new List<Connection>();
             LocalDevices = new Dictionary<ushort, LocalDevice>();
             RemoteDevices = new Dictionary<ushort, RemoteDevice>();
             Console.WriteLine("NetworkNode Initialized");
             Console.WriteLine("Version:{0}", Revision);
+            Random random=new Random(Environment.TickCount);
+            NetworkNodeID = (ushort)(Math.Abs(random.Next()) % ushort.MaxValue);//generate random ID
         }
 
         public static void UpdateAsync()
@@ -59,15 +67,14 @@ namespace SynergyNode
                 Thread.Sleep(50);
             }
         }
-
-        public static void RequestDeviceList()
+        public static void RequestNetworkMap()
         {
             uint ID = ActionBlackList.GetRandomID();
-            Console.WriteLine("device list requested ActionID:{0}", ID);
-            foreach (Connection c in Connections) c.RequestDeviceList(ID, true);
+            Console.WriteLine("network map requested ActionID:{0}", ID);
+            foreach (Connection c in Connections) c.RequestNetworkMap(ID, true);
         }
 
-        private static void TriggerOnRequestDeviceList()
+        private static void TriggerOnRequestNetworkMap()
         {
             Console.WriteLine("Device list request received");
             foreach (LocalDevice d in LocalDevices.Values)
