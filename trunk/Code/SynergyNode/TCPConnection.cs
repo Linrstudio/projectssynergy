@@ -109,8 +109,8 @@ namespace SynergyNode
                         if (!NetworkNode.ActionBlackList.Contains(ActionID))
                         {
                             NetworkNode.ActionBlackList.Add(ActionID);
-                            ushort NetworkNodeID = BitConverter.ToUInt16(_Data, 7);
-                            byte type = _Data[6];
+                            ushort NetworkNodeID = BitConverter.ToUInt16(_Data, 6);
+                            byte type = _Data[8];
                             ushort ID = BitConverter.ToUInt16(_Data, 9);
                             ushort membinsize = BitConverter.ToUInt16(_Data, 11);
                             byte[] membin = new byte[membinsize];
