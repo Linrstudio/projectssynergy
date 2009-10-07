@@ -9,6 +9,11 @@ namespace SynergyNode
     public class Connection
     {
         public virtual void Update() { }
+
+        public virtual ushort GetRemoteNetworkNodeID() { return 0; }
+
+        public virtual void SendConnection(uint _ActionID, bool _Broadcast, Connection _Connection) { }
+
         public virtual void RequestNetworkMap(uint _ActionID, bool _Broadcast) { }
         public virtual void SendDeviceMemoryBin(uint _ActionID, bool _Broadcast, Device _Device) { }
 
@@ -16,6 +21,10 @@ namespace SynergyNode
 
         public delegate void OnReceiveRequestNetworkMapHandler();
         public virtual event OnReceiveRequestNetworkMapHandler OnReceiveRequestNetworkMap;
+
+        //the connection should add the device to the device list
+        public delegate void OnReceiveConnectionHandler(ushort _NetworkNodeA,ushort _NetworkNodeB);
+        public virtual event OnReceiveConnectionHandler OnReceiveConnection;
 
         //the connection should add the device to the device list
         public delegate void OnReceiveDeviceListElementHandler(RemoteDevice _Device);
