@@ -8,6 +8,9 @@ namespace SynergyNode
 {
     public static class NetworkNode
     {
+        public static Random random = new Random(Environment.TickCount);
+
+
         private static ushort NetworkNodeID;
 
         public delegate void OnDeviceFoundHandler(Device _Device);
@@ -53,7 +56,8 @@ namespace SynergyNode
         {
             if (!RemoteNodes.ContainsKey(_NodeID)) RemoteNodes.Add(_NodeID, new RemoteNetworkNode(_NodeID));
             RemoteDevices.Add(_Device.ID, _Device);
-            RemoteNodes[_NodeID].LocalDevices.Add(_Device.ID, _Device);
+            if(!RemoteNodes[_NodeID].LocalDevices.ContainsKey(_Device.ID))
+                RemoteNodes[_NodeID].LocalDevices.Add(_Device.ID, _Device);
         }
 
         public static ushort GetID() { return NetworkNodeID; }
@@ -80,6 +84,7 @@ namespace SynergyNode
 
         private static void TriggerOnReceiveConnection(ushort _NodeA, ushort _NodeB)
         {
+            if (_NodeA == 0 || _NodeB == 0) return;
             if (!RemoteNodes.ContainsKey(_NodeA)) RemoteNodes.Add(_NodeA, new RemoteNetworkNode(_NodeA));
             if (!RemoteNodes.ContainsKey(_NodeB)) RemoteNodes.Add(_NodeB, new RemoteNetworkNode(_NodeB));
             if (!RemoteNodes[_NodeA].RemoteNodes.ContainsKey(_NodeB)) RemoteNodes[_NodeA].RemoteNodes.Add(_NodeB, RemoteNodes[_NodeB]);
@@ -123,14 +128,17 @@ namespace SynergyNode
 
         public static void Update()
         {
-            foreach (Connection c in Connections) c.Update();
+            try
+            {
+                foreach (Connection c in Connections) c.Update();
+            }
+            catch { }
         }
 
         public static class ActionBlackList
         {
-            public static Random random= new Random(Environment.TickCount);
             private static Queue<uint> blacklist = new Queue<uint>();
-            public static uint Size=100;
+            public static uint Size = 100;
             public static uint GetRandomID() { return (uint)random.Next() + (uint)random.Next(); }
 
             public static void Add(uint _ActionID)
