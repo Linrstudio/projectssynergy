@@ -143,7 +143,7 @@ namespace SynergyNode
                     catch { Console.WriteLine("cant parse packet REQUESTDEVICELISTID"); }
                     break;
                 case SENDDEVICELISTELEMENTID://ReceiveDevice
-                    try
+                    //try
                     {
                         //Console.WriteLine("SENDDEVICELISTELEMENTID");
                         bool BroadCast = _Data[1] != 0;
@@ -186,7 +186,7 @@ namespace SynergyNode
                         }
 
                     }
-                    catch { Console.WriteLine("cant parse packet SENDDEVICELISTELEMENTID"); }
+                    //catch (Exception ex) { Console.WriteLine(ex.Message); Console.WriteLine("cant parse packet SENDDEVICELISTELEMENTID"); }
                     break;
                 case UPDATEREMOTEMEMORYID:
                     try
