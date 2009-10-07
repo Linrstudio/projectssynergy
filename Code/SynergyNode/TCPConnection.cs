@@ -14,9 +14,14 @@ namespace SynergyNode
     {
         public const uint PACKETSIZE = 1024;
         public const byte SLEEP = 4;
-        public const byte REQUESTDEVICELISTID = 1;
+        public const byte REQUESTNETWORKMAP = 1;
         public const byte SENDDEVICELISTELEMENTID = 2;
         public const byte UPDATEREMOTEMEMORYID = 3;
+        public const byte SENDCONNECTIONID = 5;
+        public const byte REQUESTREMOTENODEID = 6;
+        public const byte SENDNODEID = 7;
+
+        private ushort RemoteNodeID=0;
 
         public int lastsendtime=Environment.TickCount;
         Random random = new Random(Environment.TickCount);
@@ -41,7 +46,6 @@ namespace SynergyNode
             MemoryStream stream = new MemoryStream();
             stream.WriteByte(SENDDEVICELISTELEMENTID);//ID is always first
             stream.WriteByte((byte)(_Broadcast ? 255 : 0));
-
             stream.Write(BitConverter.GetBytes(_ActionID), 0, 4);//Action ID
 
             stream.Write(BitConverter.GetBytes(NetworkNode.GetID()), 0, 2);
@@ -53,12 +57,12 @@ namespace SynergyNode
             stream.Write(devicememory, 0, devicememory.Length);//memorybin
             SendData(stream.ToArray());
         }
+
         public override void SendDeviceMemoryBin(uint _ActionID, bool _Broadcast, Device _Device)
         {
             MemoryStream stream = new MemoryStream();
             stream.WriteByte(UPDATEREMOTEMEMORYID);//ID is always first
             stream.WriteByte((byte)(_Broadcast ? 255 : 0));
-
             stream.Write(BitConverter.GetBytes(_ActionID), 0, 4);//Action ID
 
             stream.WriteByte(_Device.DeviceType);//Type
@@ -69,10 +73,37 @@ namespace SynergyNode
             SendData(stream.ToArray());
         }
 
+        public void SendConnection(uint _ActionID, bool _Broadcast,Connection _Connection)
+        {
+            MemoryStream stream = new MemoryStream();
+            stream.WriteByte(UPDATEREMOTEMEMORYID);//ID is always first
+            stream.WriteByte((byte)(_Broadcast ? 255 : 0));
+            stream.Write(BitConverter.GetBytes(_ActionID), 0, 4);//Action ID
+            stream.Write(BitConverter.GetBytes(NetworkNode.GetID()), 0, 2);//sender node
+            stream.Write(BitConverter.GetBytes(RemoteNodeID), 0, 2);//receiver node
+            SendData(stream.ToArray());
+        }
+
+        public void RequestRemoteNetworkNodeID()
+        {
+            MemoryStream stream = new MemoryStream();
+            stream.WriteByte(REQUESTREMOTENODEID);//ID is always first
+            SendData(stream.ToArray());
+            Console.WriteLine("Remote networknode ID Requested");
+        }
+
+        public void SendNetworkNodeID()
+        {
+            MemoryStream stream = new MemoryStream();
+            stream.WriteByte(SENDNODEID);//ID is always first
+            stream.Write(BitConverter.GetBytes(NetworkNode.GetID()), 0, 2);//ID
+            SendData(stream.ToArray());
+        }
+
         public override void RequestNetworkMap(uint _ActionID, bool _Broadcast)
         {
             MemoryStream stream = new MemoryStream();
-            stream.WriteByte(REQUESTDEVICELISTID);//ID is always first 
+            stream.WriteByte(REQUESTNETWORKMAP);//ID is always first 
             stream.WriteByte((byte)(_Broadcast ? 255 : 0));
             stream.Write(BitConverter.GetBytes(_ActionID), 0, 4);//Action ID
             SendData(stream.ToArray());
@@ -82,7 +113,7 @@ namespace SynergyNode
         {
             switch (_Data[0])
             {
-                case REQUESTDEVICELISTID://ReceiveDeviceList
+                case REQUESTNETWORKMAP://ReceiveDeviceList
                     try
                     {
                         //Console.WriteLine("REQUESTDEVICELISTID");
@@ -124,7 +155,7 @@ namespace SynergyNode
                             if (!NetworkNode.RemoteDevices.ContainsKey(ID) && !NetworkNode.LocalDevices.ContainsKey(ID))
                             {
                                 Console.WriteLine("Device added ---------------");
-                                NetworkNode.AddRemoteDevice(remotedevice);
+                                NetworkNode.AddRemoteDevice(remotedevice, NetworkNodeID);
                             }
                             else
                             {
@@ -184,6 +215,24 @@ namespace SynergyNode
                         }
                     }
                     catch { Console.WriteLine("cant parse packet UPDATEREMOTEMEMORYID"); }
+                    break;
+                case REQUESTREMOTENODEID:
+                    try
+                    {
+                        //Console.WriteLine("REQUESTDEVICELISTID");
+                        SendNetworkNodeID();
+                        Console.WriteLine("RemoteNodeID request received");
+                    }
+                    catch { Console.WriteLine("cant parse packet REQUESTREMOTENODEID"); }
+                    break;
+                case SENDNODEID:
+                    try
+                    {
+                        //Console.WriteLine("REQUESTDEVICELISTID");
+                        RemoteNodeID = BitConverter.ToUInt16(_Data, 1);
+                        Console.WriteLine("RemoteNodeID received");
+                    }
+                    catch { Console.WriteLine("cant parse packet SENDNODEID"); }
                     break;
                 case SLEEP:
                     //Console.WriteLine("Sleep received");
@@ -256,6 +305,8 @@ namespace SynergyNode
             {
                 try
                 {
+                    //each session starts here
+                    RequestRemoteNetworkNodeID();
                     while (true)//loops continuous
                     {
                         if (Environment.TickCount - 60000 > lastsendtime)

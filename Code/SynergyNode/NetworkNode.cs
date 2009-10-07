@@ -15,13 +15,25 @@ namespace SynergyNode
         public delegate void OnDeviceMemoryChangedHandler(Device _Device);
         public static  event OnDeviceMemoryChangedHandler OnDeviceMemoryChanged;
 
-        public static string Revision =  "4.200";
+        public static string Revision =  "4.201";
 
         public static List<Connection> Connections;
         public static Dictionary<ushort, LocalDevice> LocalDevices;
         public static Dictionary<ushort, RemoteDevice> RemoteDevices;
 
         public static Dictionary<ushort,RemoteNetworkNode>RemoteNodes;
+
+        public static void Init()
+        {
+            Connections = new List<Connection>();
+            LocalDevices = new Dictionary<ushort, LocalDevice>();
+            RemoteDevices = new Dictionary<ushort, RemoteDevice>();
+            RemoteNodes = new Dictionary<ushort, RemoteNetworkNode>();
+            Console.WriteLine("NetworkNode Initialized");
+            Console.WriteLine("Version:{0}", Revision);
+            Random random = new Random(Environment.TickCount);
+            NetworkNodeID = (ushort)(Math.Abs(random.Next()) % ushort.MaxValue);//generate random ID
+        }
 
         public static void AddConnection(Connection _Connection)
         {
@@ -36,23 +48,14 @@ namespace SynergyNode
             LocalDevices.Add(_Device.ID, _Device);
         }
 
-        public static void AddRemoteDevice(RemoteDevice _Device)
+        public static void AddRemoteDevice(RemoteDevice _Device,ushort _NodeID)
         {
+            if (!RemoteNodes.ContainsKey(_NodeID)) RemoteNodes.Add(_NodeID, new RemoteNetworkNode(_NodeID));
             RemoteDevices.Add(_Device.ID, _Device);
+            RemoteNodes[_NodeID].LocalDevices.Add(_Device.ID, _Device);
         }
 
         public static ushort GetID() { return NetworkNodeID; }
-
-        public static void Init()
-        {
-            Connections = new List<Connection>();
-            LocalDevices = new Dictionary<ushort, LocalDevice>();
-            RemoteDevices = new Dictionary<ushort, RemoteDevice>();
-            Console.WriteLine("NetworkNode Initialized");
-            Console.WriteLine("Version:{0}", Revision);
-            Random random=new Random(Environment.TickCount);
-            NetworkNodeID = (ushort)(Math.Abs(random.Next()) % ushort.MaxValue);//generate random ID
-        }
 
         public static void UpdateAsync()
         {
