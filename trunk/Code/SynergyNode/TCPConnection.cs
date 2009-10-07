@@ -38,6 +38,7 @@ namespace SynergyNode
 
         //fix weirdness in event inheriting
         public override event Connection.OnReceiveDeviceListElementHandler OnReceiveDeviceListElement;
+        public override event Connection.OnReceiveConnectionHandler OnReceiveConnection;
         public override event Connection.OnReceiveRequestNetworkMapHandler OnReceiveRequestNetworkMap;
         public override event Connection.OnReceiveDeviceMemoryBinHandler OnReceiveDeviceMemoryBin;
 
@@ -73,14 +74,20 @@ namespace SynergyNode
             SendData(stream.ToArray());
         }
 
-        public void SendConnection(uint _ActionID, bool _Broadcast,Connection _Connection)
+        public override void SendConnection(uint _ActionID, bool _Broadcast, Connection _Connection)
         {
+            SendConnection(_ActionID, _Broadcast, NetworkNode.GetID(), _Connection.GetRemoteNetworkNodeID());
+        }
+
+        public void SendConnection(uint _ActionID, bool _Broadcast, ushort _NodeA, ushort _NodeB)
+        {
+            Console.WriteLine("Sending connection from {0} {1}", _NodeA, _NodeB);
             MemoryStream stream = new MemoryStream();
-            stream.WriteByte(UPDATEREMOTEMEMORYID);//ID is always first
+            stream.WriteByte(SENDCONNECTIONID);//ID is always first
             stream.WriteByte((byte)(_Broadcast ? 255 : 0));
             stream.Write(BitConverter.GetBytes(_ActionID), 0, 4);//Action ID
-            stream.Write(BitConverter.GetBytes(NetworkNode.GetID()), 0, 2);//sender node
-            stream.Write(BitConverter.GetBytes(RemoteNodeID), 0, 2);//receiver node
+            stream.Write(BitConverter.GetBytes(_NodeA), 0, 2);//sender node
+            stream.Write(BitConverter.GetBytes(_NodeB), 0, 2);//receiver node
             SendData(stream.ToArray());
         }
 
@@ -107,6 +114,11 @@ namespace SynergyNode
             stream.WriteByte((byte)(_Broadcast ? 255 : 0));
             stream.Write(BitConverter.GetBytes(_ActionID), 0, 4);//Action ID
             SendData(stream.ToArray());
+        }
+
+        public override ushort GetRemoteNetworkNodeID()
+        {
+            return RemoteNodeID;
         }
 
         private void ParseData(byte[] _Data)
@@ -234,6 +246,22 @@ namespace SynergyNode
                     }
                     catch { Console.WriteLine("cant parse packet SENDNODEID"); }
                     break;
+                case SENDCONNECTIONID:
+                    try
+                    {
+                        bool BroadCast = _Data[1] != 0;
+                        uint ActionID = BitConverter.ToUInt32(_Data, 2);
+                        if (!NetworkNode.ActionBlackList.Contains(ActionID))
+                        {
+                            NetworkNode.ActionBlackList.Add(ActionID);
+                            ushort A = BitConverter.ToUInt16(_Data, 6);
+                            ushort B = BitConverter.ToUInt16(_Data, 8);
+                            if (OnReceiveConnection != null) OnReceiveConnection(A, B);
+                            if (BroadCast) foreach (Connection c in NetworkNode.Connections) if (c != this) SendConnection(ActionID, true, A,B);
+                        }
+                    }
+                    catch { Console.WriteLine("cant parse packet SENDCONNECTIONID"); }
+                     break;
                 case SLEEP:
                     //Console.WriteLine("Sleep received");
                     break;
@@ -278,6 +306,7 @@ namespace SynergyNode
             thread = new Thread(new ThreadStart(main));
             thread.Start();
         }
+
         public TCPConnection(string _IP, ushort _Port, bool _AutoReconnect)
         {
             AutoReconnect = _AutoReconnect;
@@ -290,6 +319,7 @@ namespace SynergyNode
         }
 
         public uint GetRandomPacketID() { return (uint)random.Next() + (uint)random.Next(); }
+
         public void main()
         {
             if (client == null)
@@ -344,6 +374,7 @@ namespace SynergyNode
                 }
             }
         }
+
         private void OnConnectionLost()
         {
             if (AutoReconnect)//attempt resurrection

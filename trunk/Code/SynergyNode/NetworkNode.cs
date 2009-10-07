@@ -41,6 +41,7 @@ namespace SynergyNode
             _Connection.OnReceiveRequestNetworkMap += TriggerOnRequestNetworkMap;
             _Connection.OnReceiveDeviceListElement += TriggerOnDeviceFound;
             _Connection.OnReceiveDeviceMemoryBin += TriggerOnDeviceMemoryChanged;
+            _Connection.OnReceiveConnection += TriggerOnReceiveConnection;
         }
 
         public static void AddLocalDevice(LocalDevice _Device)
@@ -77,6 +78,15 @@ namespace SynergyNode
             foreach (Connection c in Connections) c.RequestNetworkMap(ID, true);
         }
 
+        private static void TriggerOnReceiveConnection(ushort _NodeA, ushort _NodeB)
+        {
+            if (!RemoteNodes.ContainsKey(_NodeA)) RemoteNodes.Add(_NodeA, new RemoteNetworkNode(_NodeA));
+            if (!RemoteNodes.ContainsKey(_NodeB)) RemoteNodes.Add(_NodeB, new RemoteNetworkNode(_NodeB));
+            if (!RemoteNodes[_NodeA].RemoteNodes.ContainsKey(_NodeB)) RemoteNodes[_NodeA].RemoteNodes.Add(_NodeB, RemoteNodes[_NodeB]);
+            if (!RemoteNodes[_NodeB].RemoteNodes.ContainsKey(_NodeA)) RemoteNodes[_NodeB].RemoteNodes.Add(_NodeA, RemoteNodes[_NodeA]);
+            Console.WriteLine("Connection added to remote");
+        }
+
         private static void TriggerOnRequestNetworkMap()
         {
             Console.WriteLine("Device list request received");
@@ -84,6 +94,11 @@ namespace SynergyNode
             {
                 uint ID = ActionBlackList.GetRandomID();
                 foreach (Connection c in Connections) c.SendDeviceListElement(ID, true, d);
+            }
+            foreach (Connection connection in Connections)
+            {
+                uint ID = ActionBlackList.GetRandomID();
+                foreach (Connection c in Connections) c.SendConnection(ID, true, connection);
             }
             Console.WriteLine("Devices Returned:{0}", LocalDevices.Values.Count);
         }
