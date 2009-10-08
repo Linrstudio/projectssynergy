@@ -81,6 +81,7 @@ namespace SynergyNode
 
         public void SendConnection(uint _ActionID, bool _Broadcast, ushort _NodeA, ushort _NodeB)
         {
+            if (_NodeA == 0 || _NodeB == 0) return;
             Console.WriteLine("Sending connection from {0} {1}", _NodeA, _NodeB);
             MemoryStream stream = new MemoryStream();
             stream.WriteByte(SENDCONNECTIONID);//ID is always first
@@ -168,6 +169,7 @@ namespace SynergyNode
                             {
                                 Console.WriteLine("Device added ---------------");
                                 NetworkNode.AddRemoteDevice(remotedevice, NetworkNodeID);
+                                if (OnReceiveDeviceListElement != null) OnReceiveDeviceListElement(remotedevice);
                             }
                             else
                             {
@@ -242,6 +244,8 @@ namespace SynergyNode
                     {
                         //Console.WriteLine("REQUESTDEVICELISTID");
                         RemoteNodeID = BitConverter.ToUInt16(_Data, 1);
+                        uint ActionID = NetworkNode.ActionBlackList.GetRandomID();
+                        foreach (Connection c in NetworkNode.Connections) if (c != this) SendConnection(ActionID, true, NetworkNode.GetID(), RemoteNodeID);
                         Console.WriteLine("RemoteNodeID received");
                     }
                     catch { Console.WriteLine("cant parse packet SENDNODEID"); }
@@ -377,6 +381,9 @@ namespace SynergyNode
 
         private void OnConnectionLost()
         {
+            RemoteNodeID = 0;//we are not sure who is on the other end
+            NetworkNode.RequestNetworkMap();//FIXME
+
             if (AutoReconnect)//attempt resurrection
             {
                 Console.WriteLine("Error in transmission, connection will be resurrected");
