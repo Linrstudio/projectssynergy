@@ -36,6 +36,7 @@ namespace SynergyNode
             Console.WriteLine("Version:{0}", Revision);
             Random random = new Random(Environment.TickCount);
             NetworkNodeID = (ushort)(Math.Abs(random.Next()) % ushort.MaxValue);//generate random ID
+            RemoteNodes.Add(GetID(), new RemoteNetworkNode(GetID()));
         }
 
         public static void AddConnection(Connection _Connection)
