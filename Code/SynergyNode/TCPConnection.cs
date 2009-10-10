@@ -271,7 +271,7 @@ namespace SynergyNode
                     //Console.WriteLine("Sleep received");
                     break;
                 default:
-                    Console.WriteLine("packet with invalid ID received");
+                    Console.WriteLine("packet with invalid ID received {0}", _Data[0]);
                     break;
             }
         }
