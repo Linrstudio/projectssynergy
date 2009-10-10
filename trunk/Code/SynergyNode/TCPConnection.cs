@@ -366,7 +366,7 @@ namespace SynergyNode
                             Thread.BeginCriticalRegion();
                             foreach (byte b in buffer) ReceiveBuffer.Enqueue(b);
                             Thread.EndCriticalRegion();
-                            Console.WriteLine("{0} bytes received", buffer.Length);
+                            //Console.WriteLine("{0} bytes received", buffer.Length);
                         }
                         Thread.Sleep(10);
                     }
@@ -383,7 +383,7 @@ namespace SynergyNode
         {
             RemoteNodeID = 0;//we are not sure who is on the other end
             NetworkNode.RequestNetworkMap();//FIXME
-
+            ReceiveBuffer.Clear();//trash anything received
             if (AutoReconnect)//attempt resurrection
             {
                 Console.WriteLine("Error in transmission, connection will be resurrected");
