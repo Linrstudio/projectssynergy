@@ -132,14 +132,7 @@ namespace SynergyNode
 
         public static void Update()
         {
-            try
-            {
-                lock (Connections)
-                {
-                    foreach (Connection c in Connections) c.Update();
-                }
-            }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
+            foreach (Connection c in new List<Connection>(Connections.ToArray())) c.Update();
         }
 
         public static class ActionBlackList
