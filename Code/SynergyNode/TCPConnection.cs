@@ -219,6 +219,7 @@ namespace SynergyNode
                             }
                             else
                             {
+                                Console.WriteLine("Memory for {0} received", remdev.ID);
                                 if (device.DeviceType != type) Console.WriteLine("Device type does not match type received, something is fishy here.");
                                 device.Memory = bin;
                                 if (OnReceiveDeviceMemoryBin != null) OnReceiveDeviceMemoryBin(device);
