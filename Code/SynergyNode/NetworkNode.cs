@@ -41,11 +41,14 @@ namespace SynergyNode
 
         public static void AddConnection(Connection _Connection)
         {
-            Connections.Add(_Connection);
-            _Connection.OnReceiveRequestNetworkMap += TriggerOnRequestNetworkMap;
-            _Connection.OnReceiveDeviceListElement += TriggerOnDeviceFound;
-            _Connection.OnReceiveDeviceMemoryBin += TriggerOnDeviceMemoryChanged;
-            _Connection.OnReceiveConnection += TriggerOnReceiveConnection;
+            lock (Connections)
+            {
+                Connections.Add(_Connection);
+                _Connection.OnReceiveRequestNetworkMap += TriggerOnRequestNetworkMap;
+                _Connection.OnReceiveDeviceListElement += TriggerOnDeviceFound;
+                _Connection.OnReceiveDeviceMemoryBin += TriggerOnDeviceMemoryChanged;
+                _Connection.OnReceiveConnection += TriggerOnReceiveConnection;
+            }
         }
 
         public static void AddLocalDevice(LocalDevice _Device)
@@ -131,9 +134,12 @@ namespace SynergyNode
         {
             try
             {
-                foreach (Connection c in Connections) c.Update();
+                lock (Connections)
+                {
+                    foreach (Connection c in Connections) c.Update();
+                }
             }
-            catch { }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
         }
 
         public static class ActionBlackList
