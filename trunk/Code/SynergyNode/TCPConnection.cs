@@ -280,6 +280,7 @@ namespace SynergyNode
         {
             Thread.BeginCriticalRegion();
             byte[] length = BitConverter.GetBytes((ushort)_Data.Length);
+            Console.WriteLine("Packet with size {0} enqueued", _Data.Length);
             foreach (byte b in length) SendBuffer.Enqueue(b);
             foreach (byte b in _Data) SendBuffer.Enqueue(b);
             Thread.EndCriticalRegion();
@@ -384,7 +385,7 @@ namespace SynergyNode
         {
             RemoteNodeID = 0;//we are not sure who is on the other end
             NetworkNode.RequestNetworkMap();//FIXME
-            ReceiveBuffer.Clear();//trash anything received
+            //ReceiveBuffer.Clear();//trash anything received
             if (AutoReconnect)//attempt resurrection
             {
                 Console.WriteLine("Error in transmission, connection will be resurrected");
