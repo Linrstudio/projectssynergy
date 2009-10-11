@@ -22,7 +22,7 @@ namespace SynergyClient
         protected override void OnCreateControl()
         {
             SceneMenuAdd = new MenuItem("Add");
-            ConnectionManager.OnDeviceFound += OnDeviceFound;
+            NetworkNode.OnDeviceFound += OnDeviceFound;
             SceneMenu = new ContextMenu(new MenuItem[] { SceneMenuAdd ,new MenuItem("Change background")});
             SceneMenu.MenuItems[1].Click += OnMenuChangeBackground;
             DeviceMenu = new ContextMenu(new MenuItem[] { new MenuItem("Move"), new MenuItem("Resize"), new MenuItem("Rename"), new MenuItem("Delete") });
@@ -45,7 +45,7 @@ namespace SynergyClient
         public void OnDeviceFound(Device _D)
         {
             SceneMenuAdd.MenuItems.Clear();
-            foreach (Device d in ConnectionManager.RemoteDevices.Values)
+            foreach (Device d in NetworkNode.RemoteDevices.Values)
             {
                 MenuItem item = new MenuItem(d.GetType().Name + " " + d.ID.ToString());
                 item.Tag = d.ID;
@@ -92,7 +92,7 @@ namespace SynergyClient
         {
             var s = (MenuItem)sender;
             ushort ID = (ushort)s.Tag;
-            Device D = ConnectionManager.RemoteDevices[ID];
+            Device D = NetworkNode.RemoteDevices[ID];
             SceneDevice d = SceneDevice.GetDevice(D);
             if (d != null)
             {
@@ -182,7 +182,7 @@ namespace SynergyClient
             }
             base.OnMouseClick(e);
         }
-
+        
         protected override void OnNotifyMessage(Message m)
         {
             //Filter out the WM_ERASEBKGND message ( reduce flickering )

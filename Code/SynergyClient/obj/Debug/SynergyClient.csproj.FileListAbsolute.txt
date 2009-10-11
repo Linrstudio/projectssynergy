@@ -19,3 +19,16 @@ C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Debug\SynergyClient.f_Ma
 C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Debug\SynergyClient.Properties.Resources.resources
 C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Debug\SynergyClient.csproj.GenerateResource.Cache
 C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Debug\SynergyClient.GetDeviceName.resources
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Debug\SynergyClient.WorldView.resources
+F:\Code\SynergyClient\obj\Debug\SynergyClient.exe
+F:\Code\SynergyClient\obj\Debug\SynergyClient.pdb
+F:\Code\SynergyClient\obj\Debug\ResolveAssemblyReference.cache
+F:\Code\SynergyClient\obj\Debug\SynergyClient.f_Main.resources
+F:\Code\SynergyClient\obj\Debug\SynergyClient.GetDeviceName.resources
+F:\Code\SynergyClient\obj\Debug\SynergyClient.Properties.Resources.resources
+F:\Code\SynergyClient\obj\Debug\SynergyClient.WorldView.resources
+F:\Code\SynergyClient\obj\Debug\SynergyClient.csproj.GenerateResource.Cache
+F:\Code\SynergyClient\bin\Debug\SynergyClient.exe
+F:\Code\SynergyClient\bin\Debug\SynergyClient.pdb
+F:\Code\SynergyClient\bin\Debug\SynergyNode.dll
+F:\Code\SynergyClient\bin\Debug\SynergyNode.pdb

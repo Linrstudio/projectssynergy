@@ -6,10 +6,10 @@
     <Name>Lamp</Name>
     <Type>10</Type>
     <DeviceID>2002</DeviceID>
-    <Size>0,1704095</Size>
+    <Size>0,1549242</Size>
     <TextSize>0,25</TextSize>
-    <X>0,6092896</X>
-    <Y>0,08743169</Y>
+    <X>0,5783582</X>
+    <Y>0,08208955</Y>
   </Device>
   <Device>
     <Name>Audio</Name>
@@ -34,10 +34,10 @@
 </Name>
     <Type>10</Type>
     <DeviceID>2001</DeviceID>
-    <Size>0,09305675</Size>
+    <Size>0,09099662</Size>
     <TextSize>0,2</TextSize>
-    <X>0,9500861</X>
-    <Y>0,04475043</Y>
+    <X>0,942623</X>
+    <Y>0,04508197</Y>
   </Device>
   <Device>
     <Name>Keuken</Name>
