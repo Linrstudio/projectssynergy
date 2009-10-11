@@ -84,10 +84,10 @@ namespace SynergyClient
         public DigitalOutSceneDevice() : base() { }
         public override void OnClick(float _X, float _Y)
         {
-            if(ConnectionManager.RemoteDevices.ContainsKey(DeviceID))
+            if(NetworkNode.RemoteDevices.ContainsKey(DeviceID))
             {
-                ((DigitalMemoryBin)ConnectionManager.RemoteDevices[DeviceID].Memory).Toggle();
-                ConnectionManager.RemoteDevices[DeviceID].UpdateRemoteMemory();
+                ((DigitalMemoryBin)NetworkNode.RemoteDevices[DeviceID].Memory).Toggle();
+                NetworkNode.RemoteDevices[DeviceID].UpdateRemoteMemory();
             }
         }
         public override void OnDraw(Graphics _Graphics, float _GraphicsSize)
@@ -101,16 +101,19 @@ namespace SynergyClient
             StringFormat format = new StringFormat();
             format.Alignment = StringAlignment.Center;
             format.LineAlignment = StringAlignment.Center;
+            
+            RectangleF rect=new RectangleF((X * _GraphicsSize) - size * 0.5f, (float)(Y * _GraphicsSize) - size * 0.5f, size, size);
 
-            if (ConnectionManager.RemoteDevices.ContainsKey(DeviceID))
+            if (NetworkNode.RemoteDevices.ContainsKey(DeviceID))
             {
-                bool on = ((DigitalMemoryBin)ConnectionManager.RemoteDevices[DeviceID].Memory).On;
-                _Graphics.FillEllipse(on ? Brushes.Green : Brushes.Red, new RectangleF((X * _GraphicsSize) - size * 0.5f, (float)(Y * _GraphicsSize) - size * 0.5f, size, size));
-                _Graphics.DrawImage(Resources.images[on ? "light on" : "light off"], new RectangleF((X * _GraphicsSize) - size * 0.5f, (float)(Y * _GraphicsSize) - size * 0.5f, size, size));
+                bool on = ((DigitalMemoryBin)NetworkNode.RemoteDevices[DeviceID].Memory).On;
+                //_Graphics.FillEllipse(on ? Brushes.Green : Brushes.Red, new RectangleF((X * _GraphicsSize) - size * 0.5f, (float)(Y * _GraphicsSize) - size * 0.5f, size, size));
+                _Graphics.DrawImage(Resources.images["Options"],rect);
+                _Graphics.DrawImage(Resources.images[on ? "DigitalOn" : "DigitalOff"], rect);
             }
             else
             {
-                _Graphics.FillEllipse(Brushes.Gray, new RectangleF((X * _GraphicsSize) - size * 0.5f, (float)(Y * _GraphicsSize) - size * 0.5f, size, size));
+                _Graphics.DrawImage(Resources.images["DigitalNotFound"], new RectangleF((X * _GraphicsSize) - size * 0.5f, (float)(Y * _GraphicsSize) - size * 0.5f, size, size));
             }
             _Graphics.DrawString(Name, font, Brushes.Black, (X + (Size * 0.02f)) * _GraphicsSize, (Y + (Size * 0.02f)) * _GraphicsSize, format);
             _Graphics.DrawString(Name, font, Brushes.DarkGray, X * _GraphicsSize, Y * _GraphicsSize, format);
@@ -123,14 +126,14 @@ namespace SynergyClient
         public AnalogOutSceneDevice() : base() { }
         public override void OnClick(float _X,float _Y)
         {
-            if (ConnectionManager.RemoteDevices.ContainsKey(DeviceID))
+            if (NetworkNode.RemoteDevices.ContainsKey(DeviceID))
             {
                 float dx=_X-X;
                 float dy=Y-_Y;
                 byte value = (byte)(Math.Atan2(dx, dy) * 40.86f);
-                ((AnalogMemoryBin)ConnectionManager.RemoteDevices[DeviceID].Memory).TargetValue = value;
-                ((AnalogMemoryBin)ConnectionManager.RemoteDevices[DeviceID].Memory).Speed = 3;
-                ConnectionManager.RemoteDevices[DeviceID].UpdateRemoteMemory();
+                ((AnalogMemoryBin)NetworkNode.RemoteDevices[DeviceID].Memory).TargetValue = value;
+                ((AnalogMemoryBin)NetworkNode.RemoteDevices[DeviceID].Memory).Speed = 3;
+                NetworkNode.RemoteDevices[DeviceID].UpdateRemoteMemory();
             }
         }
         public override void OnDraw(Graphics _Graphics, float _GraphicsSize)
@@ -142,12 +145,12 @@ namespace SynergyClient
             format.Alignment = StringAlignment.Center;
             format.LineAlignment = StringAlignment.Center;
             Rectangle rect = new Rectangle((int)((X * _GraphicsSize) - size * 0.5f), (int)((Y * _GraphicsSize) - size * 0.5f), (int)size, (int)size);
-            if (ConnectionManager.RemoteDevices.ContainsKey(DeviceID))
+            if (NetworkNode.RemoteDevices.ContainsKey(DeviceID))
             {
-                byte value = ((AnalogMemoryBin)ConnectionManager.RemoteDevices[DeviceID].Memory).TargetValue;
+                byte value = ((AnalogMemoryBin)NetworkNode.RemoteDevices[DeviceID].Memory).TargetValue;
                 _Graphics.FillPie(Brushes.Green, rect, 270, value * 1.411f);
                 _Graphics.DrawEllipse(Pens.Green, rect);
-                //_Graphics.FillEllipse(ConnectionManager.Devices[DeviceID].GetDigitalState() ? Brushes.Green : Brushes.Red, rect);
+                //_Graphics.FillEllipse(NetworkNode.Devices[DeviceID].GetDigitalState() ? Brushes.Green : Brushes.Red, rect);
             }
             else
             {

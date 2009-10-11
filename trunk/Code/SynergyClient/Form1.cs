@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using SynergyNode;
 
 namespace SynergyClient
 {
@@ -19,10 +20,16 @@ namespace SynergyClient
   
         public f_Main()
         {
+            CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
+
+            worldview.Objects.Add(new NetworkDeviceAnalog(3000));
+            worldview.Objects[0].X = 0.25f;
+            worldview.Objects.Add(new NetworkDeviceDigital(2005));
+
             Resources.Load();
-            SynergyNode.ConnectionManager.OnDeviceFound += DeviceAdded;
-            SynergyNode.ConnectionManager.OnDeviceMemoryChanged += AnyThingChanged;
+            SynergyNode.NetworkNode.OnDeviceFound += DeviceAdded;
+            SynergyNode.NetworkNode.OnDeviceMemoryChanged += AnyThingChanged;
         }
 
         private void f_Main_Load(object sender, EventArgs e)
@@ -30,9 +37,10 @@ namespace SynergyClient
             //this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
             scenes = Scene.LoadScenes("Scenes");
-            
             RebuildSceneList();
-            
+            l_Scenes.SelectedItems.Clear();
+            l_Scenes.Items[1].Selected = true;
+            tabControl1.SelectedIndex = 1;
             Resize();
             ConnectionList.Load("Connections.xml");
             foreach (ConnectionListItem i in ConnectionList.Items)
@@ -40,12 +48,12 @@ namespace SynergyClient
                 d_Connections.Rows.Add(i.IP, i.Port.ToString());
                 try
                 {
-                    SynergyNode.ConnectionManager.Connections.Add(new SynergyNode.TCPConnection(i.IP, i.Port, true));
+                    SynergyNode.NetworkNode.AddConnection(new SynergyNode.TCPConnection(i.IP, i.Port, true));
                 }
                 catch { }
                 finally
                 {
-                    SynergyNode.ConnectionManager.RequestDeviceList();
+                    SynergyNode.NetworkNode.RequestNetworkMap();
                 }
             }
         }
@@ -70,17 +78,20 @@ namespace SynergyClient
 
         public void UpdateDeviceList()
         {
+            /*
             d_Devices.Rows.Clear();
-            foreach (SynergyNode.Device d in SynergyNode.ConnectionManager.RemoteDevices.Values)
+            foreach (SynergyNode.Device d in SynergyNode.NetworkNode.RemoteDevices.Values)
             {
                 d_Devices.Rows.Add(d.ID, d.DeviceType, d.Memory.GetState());
             }
+            */
         }
 
         private void panel2_Resize(object sender, EventArgs e)
         {
             Resize();
         }
+
         public void Resize()
         {
             p_Graphic.Width = p_Graphic.Height = Math.Min(p_Container.Width, p_Container.Height);
@@ -136,12 +147,12 @@ namespace SynergyClient
                     int port = int.Parse((string)d_Connections.Rows[e.RowIndex].Cells[1].Value);
                     try
                     {
-                        SynergyNode.ConnectionManager.Connections.Add(new SynergyNode.TCPConnection(new System.Net.Sockets.TcpClient(ip, port), false));
+                        SynergyNode.NetworkNode.Connections.Add(new SynergyNode.TCPConnection(new System.Net.Sockets.TcpClient(ip, port), false));
                     }
                     catch { MessageBox.Show("Could not connect."); }
                     finally
                     {
-                        SynergyNode.ConnectionManager.RequestDeviceList();
+                        SynergyNode.NetworkNode.RequestNetworkMap();
                     }
                 }
                 catch { MessageBox.Show("Error in syntax"); }
@@ -151,6 +162,7 @@ namespace SynergyClient
         private void t_refresh_Tick(object sender, EventArgs e)
         {
             if (needsredraw) { ReDraw(); needsredraw = false; }
+            //worldView1.Update();
         }
 
         private void tabPage1_Click(object sender, EventArgs e)
@@ -170,8 +182,14 @@ namespace SynergyClient
 
         private void b_Whois_Click(object sender, EventArgs e)
         {
-            SynergyNode.ConnectionManager.RemoteDevices.Clear();
-            SynergyNode.ConnectionManager.RequestDeviceList();
+            SynergyNode.NetworkNode.RemoteDevices.Clear();
+            SynergyNode.NetworkNode.RequestNetworkMap();
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            ((DigitalMemoryBin)NetworkNode.RemoteDevices[1001].Memory).On = true;
+            NetworkNode.RemoteDevices[1001].UpdateRemoteMemory();
         }
     }
 }

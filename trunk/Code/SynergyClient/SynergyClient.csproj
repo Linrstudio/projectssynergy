@@ -55,6 +55,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectionList.cs" />
+    <Compile Include="DeviceControls\NetworkDeviceDigitalOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DeviceControls\NetworkDeviceDigitalOptions.Designer.cs">
+      <DependentUpon>NetworkDeviceDigitalOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DeviceControls\NetworkDeviceDigital.cs" />
+    <Compile Include="DeviceControls\NetworkDeviceAnalog.cs" />
+    <Compile Include="DeviceControls\NetworkDeviceAnalogOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DeviceControls\NetworkDeviceAnalogOptions.Designer.cs">
+      <DependentUpon>NetworkDeviceAnalogOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NetworkDeviceObject.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,6 +95,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="WorldView.resx">
+      <DependentUpon>WorldView.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -99,6 +117,12 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="SceneDevice.cs" />
+    <Compile Include="WorldView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="WorldView.Designer.cs">
+      <DependentUpon>WorldView.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

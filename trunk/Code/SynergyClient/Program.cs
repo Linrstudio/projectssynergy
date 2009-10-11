@@ -11,9 +11,8 @@ namespace SynergyClient
         [STAThread]
         static void Main()
         {
-            ConnectionManager.Init();
-            ConnectionManager.UpdateAsync();
-
+            NetworkNode.Init();
+            NetworkNode.UpdateAsync();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new f_Main());
