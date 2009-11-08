@@ -18,13 +18,13 @@ namespace SynergyK8055
             private static extern void ClearDigitalChannel(int Channel);
             public int Channel;
             public ushort inputID;
-            public CrossDigitalOutput(ushort _DeviceID) : base(_DeviceID, 10) { 
+            public CrossDigitalOutput(ushort _DeviceID) : base(_DeviceID, 10) { }
             public override void OnMemoryChanged()
             {
                 DigitalMemoryBin bin = ((DigitalMemoryBin)Memory);
                 DigitalMemoryBin inbin = ((DigitalMemoryBin)NetworkNode.Devices.GetDevice(inputID).Memory);
-                if(inbin.On!=bin.On)
-                SetState(bin.On != bin.Inversed);
+                
+                SetState(bin.On == inbin.On);
             }
             public void SetState(bool _On)
             {
