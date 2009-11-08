@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
-
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
@@ -20,13 +19,10 @@ namespace SynergyK8055
         private static extern void ClearDigitalChannel(int Channel);
         public int Channel;
         public DigitalOutput(ushort _DeviceID):base(_DeviceID, 10) { }
-        public override void  OnMemoryChanged()
+        public override void OnMemoryChanged()
         {
             DigitalMemoryBin bin = ((DigitalMemoryBin)Memory);
-            if (bin != null)
-            {
-                SetState(bin.On != bin.Inversed);
-            }
+            SetState(bin.On != bin.Inversed);
         }
         public void SetState(bool _On)
         {
@@ -45,7 +41,7 @@ namespace SynergyK8055
             DigitalMemoryBin bin = ((DigitalMemoryBin)Memory);
 
             bool last = bin.On;
-            bool current = ReadDigitalChannel(Channel) != 0;
+            bool current = (ReadDigitalChannel(Channel) != 0) != bin.Inversed;
             if (last != current)
             {
                 bin.On = current;
@@ -60,19 +56,36 @@ namespace SynergyK8055
         [DllImport("k8055.dll")]
         private static extern void OutputAnalogChannel(int Channel, int Data);
         public int Channel;
+        public int current = 0;
         public AnalogOutput(ushort _DeviceID) : base(_DeviceID, 12) { }
         public override void OnMemoryChanged()
         {
             AnalogMemoryBin bin = ((AnalogMemoryBin)Memory);
-            SetState(bin.Value);
+            SetState(bin.TargetValue);
         }
         public void SetState(byte _Value)
         {
             Console.Write("AnalogOut {0} -> {1}", Channel, _Value);
-            OutputAnalogChannel(Channel, _Value);
+        }
+        public void Update()
+        {
+            int speed = ((AnalogMemoryBin)Memory).Speed;
+            int target = ((AnalogMemoryBin)Memory).TargetValue;
+            if (current < target)
+            {
+                current += speed;
+                if (current > target) current = target;
+                OutputAnalogChannel(Channel, current);
+            }
+            if (current > target)
+            {
+                current -= speed;
+                if (current < target) current = target;
+                OutputAnalogChannel(Channel, current);
+            }
         }
     }
-
+  
     class Program
     {
         [DllImport("k8055.dll")]
@@ -86,8 +99,9 @@ namespace SynergyK8055
 
         static void Main(string[] args)
         {
-            ConnectionManager.Init();
-
+            NetworkNode.Init();
+            NetworkNode.RequestNetworkMap();
+            RoenyRoom.Init();
             Type[] types=new Type[]
                 {
                     typeof(DigitalInput), 
@@ -115,7 +129,7 @@ namespace SynergyK8055
                 dev.Memory = MemoryBin.GetBinForType(dev.DeviceType);
                 Device.LoadSettingsFile("Settings.xml", dev.Memory, "DigitalInput" + i.ToString() + "MemoryBin");
                 digitalinputs[i] = dev;
-                ConnectionManager.AddLocalDevice(dev);
+                NetworkNode.AddLocalDevice(dev);
             }
             
             for (int i = 0; i < 8; i++)
@@ -125,7 +139,7 @@ namespace SynergyK8055
                 dev.Memory = MemoryBin.GetBinForType(dev.DeviceType);
                 Device.LoadSettingsFile("Settings.xml", dev.Memory, "DigitalOutput" + i.ToString() + "MemoryBin");
                 digitaloutputs[i] = dev;
-                ConnectionManager.AddLocalDevice(dev);
+                NetworkNode.AddLocalDevice(dev);
             }
             
             for (int i = 0; i < 2; i++)
@@ -135,14 +149,16 @@ namespace SynergyK8055
                 dev.Memory = MemoryBin.GetBinForType(dev.DeviceType);
                 Device.LoadSettingsFile("Settings.xml", dev.Memory, "AnalogOutput" + i.ToString() + "MemoryBin");
                 analogoutputs[i] = dev;
-                ConnectionManager.AddLocalDevice(dev);
+                NetworkNode.AddLocalDevice(dev);
             }
             
             while (true)
             {
-                foreach (DigitalInput i in digitalinputs) { i.Update(); }
-                ConnectionManager.Update();
-                Thread.Sleep(100);
+                foreach (DigitalInput i in digitalinputs) i.Update();
+                foreach (AnalogOutput i in analogoutputs) i.Update();
+                RoenyRoom.Update();
+                NetworkNode.Update();
+                Thread.Sleep(50);
             }
         }
     }
