@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Connections>
   <Connection>
-    <IP>5.213.152.229</IP>
-    <Port>1000</Port>
-  </Connection>
-  <Connection>
     <IP>192.168.1.123</IP>
     <Port>1000</Port>
   </Connection>

@@ -13,7 +13,12 @@ namespace SynergyNode
     public partial class NetworkView : Control
     {
         public List<NetworkObject> Objects = new List<NetworkObject>();
-        public float zoom = 1;
+        public float zoom = 100;
+        public Matrix projection = new Matrix();
+        public Matrix view = new Matrix();
+
+        public PointF MousePos;
+
         public NetworkView()
         {
             InitializeComponent();
@@ -26,24 +31,28 @@ namespace SynergyNode
         public void OnResize()
         {
             zoom = Math.Max(Math.Min(Width, Height), float.Epsilon);
+            //zoom = Math.Max((Width + Height) * 0.5f, float.Epsilon);
+            projection = new Matrix();
+            projection.Scale(zoom, zoom);
+            projection.Translate((Width - zoom) / (zoom * 2), (Height - zoom) / (zoom * 2));
         }
 
         private void NetworkView_Paint(object sender, PaintEventArgs e)
         {
             OnResize();
+            Matrix viewproj = view.Clone(); viewproj.Multiply(projection);
+            e.Graphics.Transform = viewproj;
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            float camx = 0;
-            float camy = 0;
-            foreach (NetworkObject o in Objects)
+            foreach (NetworkObject o in Objects.ToArray())
             {
                 o.Parent = this;
-                o.Draw(e.Graphics, camx, camy, zoom);
+                o.Draw(e.Graphics);
             }
         }
 
         public void Redraw()
         {
-            Refresh();
+            //Refresh();
         }
 
         public void OnDeviceFound(Device _Device)
@@ -56,15 +65,22 @@ namespace SynergyNode
             Redraw();
         }
 
+        private void UpdateMouse(float _windowX,float _windowY)
+        {
+            PointF[] points = new PointF[] { new PointF(_windowX, _windowY) };
+            Matrix m = projection.Clone();
+            m.Invert();
+            m.TransformPoints(points);
+            MousePos = points[0];
+        }
+
         private void NetworkView_MouseMove(object sender, MouseEventArgs e)
         {
             OnResize();
-            float x = e.X / zoom;
-            float y = e.Y / zoom;
-
+            UpdateMouse(e.X, e.Y);
             foreach (NetworkObject o in Objects)
             {
-                o.OnMouseChange(x - o.X, y - o.Y, e.Button == MouseButtons.Left, false, false);
+                o.OnMouseChange(MousePos.X - o.X, MousePos.Y - o.Y, e.Button == MouseButtons.Left, false, false);
             }
         }
 
@@ -80,24 +96,22 @@ namespace SynergyNode
         private void NetworkView_MouseDown(object sender, MouseEventArgs e)
         {
             OnResize();
-            float x = e.X / zoom;
-            float y = e.Y / zoom;
+            UpdateMouse(e.X, e.Y);
 
-            foreach (NetworkObject o in Objects)
+            foreach (NetworkObject o in Objects.ToArray())
             {
-                o.OnMouseChange(x - o.X, y - o.Y, e.Button == MouseButtons.Left, e.Button == MouseButtons.Left, false);
+                o.OnMouseChange(MousePos.X - o.X, MousePos.Y - o.Y, e.Button == MouseButtons.Left, e.Button == MouseButtons.Left, false);
             }
         }
 
         private void NetworkView_MouseUp(object sender, MouseEventArgs e)
         {
             OnResize();
-            float x = e.X / zoom;
-            float y = e.Y / zoom;
+            UpdateMouse(e.X, e.Y);
 
-            foreach (NetworkObject o in Objects)
+            foreach (NetworkObject o in Objects.ToArray())
             {
-                o.OnMouseChange(x - o.X, y - o.Y, e.Button == MouseButtons.Left, false, e.Button == MouseButtons.Left);
+                o.OnMouseChange(MousePos.X - o.X, MousePos.Y - o.Y, e.Button == MouseButtons.Left, false, e.Button == MouseButtons.Left);
             }
         }
     }

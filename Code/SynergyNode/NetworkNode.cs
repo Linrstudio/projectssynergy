@@ -18,17 +18,34 @@ namespace SynergyNode
         public delegate void OnDeviceMemoryChangedHandler(Device _Device);
         public static  event OnDeviceMemoryChangedHandler OnDeviceMemoryChanged;
 
-        public static string Revision =  "4.201";
+        public static string Revision =  "4.205";
 
         public static List<Connection> Connections;
+        public static DeviceList<Device> Devices;
         public static Dictionary<ushort, LocalDevice> LocalDevices;
         public static Dictionary<ushort, RemoteDevice> RemoteDevices;
 
-        public static Dictionary<ushort,RemoteNetworkNode>RemoteNodes;
+        public static Dictionary<ushort, RemoteNetworkNode> RemoteNodes;
+
+        public static Dictionary<string, LocalNetworkClass> LocalNetworkClasses = new Dictionary<string, LocalNetworkClass>();
+
+        public static Device GetDevice(ushort _Device)
+        {
+            lock (LocalDevices)
+            {
+                if (LocalDevices.ContainsKey(_Device)) return LocalDevices[_Device];
+            }
+            lock (RemoteDevices)
+            {
+                if (RemoteDevices.ContainsKey(_Device)) return RemoteDevices[_Device];
+            }
+            return null;//we dont have this device, return null
+        }
 
         public static void Init()
         {
             Connections = new List<Connection>();
+            Devices = new DeviceList<Device>();
             LocalDevices = new Dictionary<ushort, LocalDevice>();
             RemoteDevices = new Dictionary<ushort, RemoteDevice>();
             RemoteNodes = new Dictionary<ushort, RemoteNetworkNode>();
@@ -53,11 +70,13 @@ namespace SynergyNode
 
         public static void AddLocalDevice(LocalDevice _Device)
         {
+            Devices.AddDevice(_Device);
             LocalDevices.Add(_Device.ID, _Device);
         }
 
         public static void AddRemoteDevice(RemoteDevice _Device,ushort _NodeID)
         {
+            Devices.AddDevice(_Device);
             if (!RemoteNodes.ContainsKey(_NodeID)) RemoteNodes.Add(_NodeID, new RemoteNetworkNode(_NodeID));
             RemoteDevices.Add(_Device.ID, _Device);
             if(!RemoteNodes[_NodeID].LocalDevices.ContainsKey(_Device.ID))
@@ -66,9 +85,23 @@ namespace SynergyNode
 
         public static ushort GetID() { return NetworkNodeID; }
 
-        public static void UpdateAsync()
+        private static Thread ThreadUpdateAsync = null;
+        public static void StartUpdateAsync()
         {
-            new Thread(new ThreadStart(main)).Start();
+            if (ThreadUpdateAsync == null)
+            {
+                ThreadUpdateAsync = new Thread(new ThreadStart(main));
+                ThreadUpdateAsync.Start();
+                Console.WriteLine("Async Update started");
+            }
+        }
+        public static void StopUpdateAsync()
+        {
+            if (ThreadUpdateAsync != null)//that'll do :)
+            {
+                ThreadUpdateAsync.Abort();
+                ThreadUpdateAsync = null;
+            }
         }
 
         static void main()
@@ -86,7 +119,7 @@ namespace SynergyNode
             foreach (Connection c in Connections) c.RequestNetworkMap(ID, true);
         }
 
-        private static void TriggerOnReceiveConnection(ushort _NodeA, ushort _NodeB)
+        internal static void TriggerOnReceiveConnection(ushort _NodeA, ushort _NodeB)
         {
             if (_NodeA == 0 || _NodeB == 0) return;
             if (!RemoteNodes.ContainsKey(_NodeA)) RemoteNodes.Add(_NodeA, new RemoteNetworkNode(_NodeA));
@@ -118,7 +151,7 @@ namespace SynergyNode
             if (OnDeviceMemoryChanged != null) OnDeviceMemoryChanged(_Device);
         }
 
-        private static void TriggerOnDeviceFound(RemoteDevice _Device)
+        internal static void TriggerOnDeviceFound(RemoteDevice _Device)
         {
             if (OnDeviceFound != null) OnDeviceFound(_Device);
         }

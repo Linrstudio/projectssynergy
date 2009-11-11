@@ -12,7 +12,7 @@ namespace SynergyClient
         static void Main()
         {
             NetworkNode.Init();
-            NetworkNode.UpdateAsync();
+            NetworkNode.StartUpdateAsync();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new f_Main());

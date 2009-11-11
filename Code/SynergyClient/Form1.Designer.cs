@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.worldview = new SynergyNode.NetworkView();
             this.button6 = new System.Windows.Forms.Button();
             this.l_Scenes = new System.Windows.Forms.ListView();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
@@ -37,7 +36,6 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
             this.p_Container = new System.Windows.Forms.Panel();
-            this.p_Graphic = new SynergyClient.SceneControl();
             this.panel4 = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
             this.b_Whois = new System.Windows.Forms.Button();
@@ -54,6 +52,8 @@
             this.Column4 = new System.Windows.Forms.DataGridViewButtonColumn();
             this.label2 = new System.Windows.Forms.Label();
             this.t_refresh = new System.Windows.Forms.Timer(this.components);
+            this.p_Graphic = new SynergyClient.SceneControl();
+            this.worldview = new SynergyClient.WorldView();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -65,14 +65,6 @@
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.d_Connections)).BeginInit();
             this.SuspendLayout();
-            // 
-            // worldview
-            // 
-            this.worldview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.worldview.Location = new System.Drawing.Point(3, 3);
-            this.worldview.Name = "worldview";
-            this.worldview.Size = new System.Drawing.Size(770, 562);
-            this.worldview.TabIndex = 0;
             // 
             // button6
             // 
@@ -88,7 +80,7 @@
             this.l_Scenes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.l_Scenes.Location = new System.Drawing.Point(0, 13);
             this.l_Scenes.Name = "l_Scenes";
-            this.l_Scenes.Size = new System.Drawing.Size(151, 549);
+            this.l_Scenes.Size = new System.Drawing.Size(151, 508);
             this.l_Scenes.SmallImageList = this.imageList;
             this.l_Scenes.TabIndex = 1;
             this.l_Scenes.UseCompatibleStateImageBehavior = false;
@@ -110,7 +102,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(784, 594);
+            this.tabControl1.Size = new System.Drawing.Size(768, 553);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage1
@@ -121,7 +113,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(776, 568);
+            this.tabPage1.Size = new System.Drawing.Size(760, 527);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Scene";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -135,7 +127,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(157, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(616, 562);
+            this.panel2.Size = new System.Drawing.Size(600, 521);
             this.panel2.TabIndex = 3;
             this.panel2.Resize += new System.EventHandler(this.panel2_Resize);
             // 
@@ -146,16 +138,8 @@
             this.p_Container.Dock = System.Windows.Forms.DockStyle.Fill;
             this.p_Container.Location = new System.Drawing.Point(0, 26);
             this.p_Container.Name = "p_Container";
-            this.p_Container.Size = new System.Drawing.Size(616, 536);
+            this.p_Container.Size = new System.Drawing.Size(600, 495);
             this.p_Container.TabIndex = 1;
-            // 
-            // p_Graphic
-            // 
-            this.p_Graphic.Location = new System.Drawing.Point(59, 45);
-            this.p_Graphic.Name = "p_Graphic";
-            this.p_Graphic.Size = new System.Drawing.Size(265, 158);
-            this.p_Graphic.TabIndex = 1;
-            this.p_Graphic.Text = "sceneControl1";
             // 
             // panel4
             // 
@@ -166,7 +150,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel4.Location = new System.Drawing.Point(0, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(616, 26);
+            this.panel4.Size = new System.Drawing.Size(600, 26);
             this.panel4.TabIndex = 2;
             // 
             // button1
@@ -182,7 +166,7 @@
             // b_Whois
             // 
             this.b_Whois.Dock = System.Windows.Forms.DockStyle.Right;
-            this.b_Whois.Location = new System.Drawing.Point(562, 0);
+            this.b_Whois.Location = new System.Drawing.Point(546, 0);
             this.b_Whois.Name = "b_Whois";
             this.b_Whois.Size = new System.Drawing.Size(54, 26);
             this.b_Whois.TabIndex = 1;
@@ -205,7 +189,7 @@
             // 
             this.splitter1.Location = new System.Drawing.Point(154, 3);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 562);
+            this.splitter1.Size = new System.Drawing.Size(3, 521);
             this.splitter1.TabIndex = 4;
             this.splitter1.TabStop = false;
             // 
@@ -216,7 +200,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(151, 562);
+            this.panel1.Size = new System.Drawing.Size(151, 521);
             this.panel1.TabIndex = 2;
             // 
             // label1
@@ -235,7 +219,7 @@
             this.t_World.Location = new System.Drawing.Point(4, 22);
             this.t_World.Name = "t_World";
             this.t_World.Padding = new System.Windows.Forms.Padding(3);
-            this.t_World.Size = new System.Drawing.Size(776, 568);
+            this.t_World.Size = new System.Drawing.Size(773, 568);
             this.t_World.TabIndex = 2;
             this.t_World.Text = "World";
             this.t_World.UseVisualStyleBackColor = true;
@@ -246,7 +230,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(776, 568);
+            this.tabPage2.Size = new System.Drawing.Size(773, 568);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Node";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -308,11 +292,29 @@
             this.t_refresh.Interval = 50;
             this.t_refresh.Tick += new System.EventHandler(this.t_refresh_Tick);
             // 
+            // p_Graphic
+            // 
+            this.p_Graphic.Location = new System.Drawing.Point(59, 45);
+            this.p_Graphic.Name = "p_Graphic";
+            this.p_Graphic.Size = new System.Drawing.Size(265, 158);
+            this.p_Graphic.TabIndex = 1;
+            this.p_Graphic.Text = "sceneControl1";
+            // 
+            // worldview
+            // 
+            this.worldview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.worldview.Location = new System.Drawing.Point(3, 3);
+            this.worldview.Name = "worldview";
+            this.worldview.Size = new System.Drawing.Size(767, 562);
+            this.worldview.TabIndex = 1;
+            this.worldview.Text = "worldView1";
+            this.worldview.Click += new System.EventHandler(this.worldview_Click);
+            // 
             // f_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 594);
+            this.ClientSize = new System.Drawing.Size(768, 553);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.button6);
             this.DoubleBuffered = true;
@@ -339,7 +341,6 @@
 
         #endregion
 
-        private SynergyNode.NetworkView worldview;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.ListView l_Scenes;
         private System.Windows.Forms.TabControl tabControl1;
@@ -364,6 +365,7 @@
         private SceneControl p_Graphic;
         private System.Windows.Forms.Button b_Whois;
         private System.Windows.Forms.Button button1;
+        private WorldView worldview;
     }
 }
 

@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Device.cs" />
+    <Compile Include="DeviceList.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="MemmoryBin.cs" />
     <Compile Include="NetworkObject.cs" />
@@ -58,8 +59,9 @@
     <Compile Include="NetworkView.Designer.cs">
       <DependentUpon>NetworkView.cs</DependentUpon>
     </Compile>
+    <Compile Include="RemoteMethodManager.cs" />
     <Compile Include="RemoteNetworkNode.cs" />
-    <Compile Include="TCPConnection.cs" />
+    <Compile Include="Connections\TCPConnection.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="NetworkNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
