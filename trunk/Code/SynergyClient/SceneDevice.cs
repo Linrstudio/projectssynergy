@@ -128,8 +128,8 @@ namespace SynergyClient
         {
             if (NetworkNode.RemoteDevices.ContainsKey(DeviceID))
             {
-                float dx=_X-X;
-                float dy=Y-_Y;
+                float dx = _X - X;
+                float dy = Y - _Y;
                 byte value = (byte)(Math.Atan2(dx, dy) * 40.86f);
                 ((AnalogMemoryBin)NetworkNode.RemoteDevices[DeviceID].Memory).TargetValue = value;
                 ((AnalogMemoryBin)NetworkNode.RemoteDevices[DeviceID].Memory).Speed = 3;

@@ -20,3 +20,6 @@ C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Release\SynergyClient.Pr
 C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Release\SynergyClient.csproj.GenerateResource.Cache
 C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Release\SynergyClient.GetDeviceName.resources
 C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Release\SynergyClient.WorldView.resources
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Release\SynergyClient.NetworkDeviceAnalogOptions.resources
+c:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\bin\Release\SynergyTemplate.dll
+c:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\bin\Release\SynergyTemplate.pdb

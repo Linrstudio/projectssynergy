@@ -25,7 +25,10 @@ namespace SynergyClient
 
             worldview.Objects.Add(new NetworkDeviceAnalog(3000));
             worldview.Objects[0].X = 0.25f;
+            worldview.Objects[0].Y = 0.25f;
             worldview.Objects.Add(new NetworkDeviceDigital(2005));
+            worldview.Objects[1].X = 0.75f;
+            worldview.Objects[1].Y = 0.75f;
 
             Resources.Load();
             SynergyNode.NetworkNode.OnDeviceFound += DeviceAdded;
@@ -124,10 +127,7 @@ namespace SynergyClient
 
         private void f_Main_FormClosed(object sender, FormClosedEventArgs e)
         {
-
-
             ConnectionList.Save("Connections.xml");
-            
             
             System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
@@ -162,7 +162,7 @@ namespace SynergyClient
         private void t_refresh_Tick(object sender, EventArgs e)
         {
             if (needsredraw) { ReDraw(); needsredraw = false; }
-            //worldView1.Update();
+            worldview.Update();
         }
 
         private void tabPage1_Click(object sender, EventArgs e)
@@ -190,6 +190,11 @@ namespace SynergyClient
         {
             ((DigitalMemoryBin)NetworkNode.RemoteDevices[1001].Memory).On = true;
             NetworkNode.RemoteDevices[1001].UpdateRemoteMemory();
+        }
+
+        private void worldview_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

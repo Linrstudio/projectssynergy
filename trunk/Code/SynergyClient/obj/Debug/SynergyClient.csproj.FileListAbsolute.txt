@@ -32,3 +32,6 @@ F:\Code\SynergyClient\bin\Debug\SynergyClient.exe
 F:\Code\SynergyClient\bin\Debug\SynergyClient.pdb
 F:\Code\SynergyClient\bin\Debug\SynergyNode.dll
 F:\Code\SynergyClient\bin\Debug\SynergyNode.pdb
+C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\obj\Debug\SynergyClient.NetworkDeviceAnalogOptions.resources
+c:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\bin\Debug\SynergyTemplate.dll
+c:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyClient\bin\Debug\SynergyTemplate.pdb
