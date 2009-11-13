@@ -1,0 +1,10 @@
+d:\documents\C#\RemoteFunction\RemoteFunction\obj\Debug\ResolveAssemblyReference.cache
+d:\documents\C#\RemoteFunction\RemoteFunction\bin\Debug\RemoteFunction.exe
+d:\documents\C#\RemoteFunction\RemoteFunction\bin\Debug\RemoteFunction.pdb
+d:\documents\C#\RemoteFunction\RemoteFunction\obj\Debug\RemoteFunction.exe
+d:\documents\C#\RemoteFunction\RemoteFunction\obj\Debug\RemoteFunction.pdb
+I:\RemoteFunction\RemoteFunction\obj\Debug\RemoteFunction.exe
+I:\RemoteFunction\RemoteFunction\obj\Debug\RemoteFunction.pdb
+I:\RemoteFunction\RemoteFunction\obj\Debug\ResolveAssemblyReference.cache
+I:\RemoteFunction\RemoteFunction\bin\Debug\RemoteFunction.exe
+I:\RemoteFunction\RemoteFunction\bin\Debug\RemoteFunction.pdb
