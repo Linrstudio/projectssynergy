@@ -6,7 +6,7 @@ taal voor MCU designen
 
 Bas
 ********************
-Circuit maken met timing van 1 Seconden [ crystal resonator ] [ quartz crystal ]
+Circuit maken met timing van 1 Seconden [ Pierce oscillator ] [ crystal resonator ] [ quartz crystal ]
 circuit maken met timting 32.768Hz/N
 
 Eagle component van once IC maken
