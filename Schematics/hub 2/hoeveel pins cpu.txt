@@ -1,0 +1,23 @@
+proogrameeren	 	3
+ 
+cpu clock		2
+
+datalijn heen 1 	1
+datalijn trug 1 	1 
+dtr 1			1
+
+clock lijn		1
+
+datalijn heen 2		1
+datalijn trug 2		1
+dtr 2			1
+
+disply 			3
+
+voeding			2
+
+gehuegen 		3
+
+http://www.jancorver.org/info/microchip/rrt/lcd.htm
+
+ 
