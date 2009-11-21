@@ -1,4 +1,4 @@
-logic inverters, chips like 7404 or 74LS04
+logic inverters, chips like 7404 or !(74LS04)!
 
 crystal 32.768Hz 
 
