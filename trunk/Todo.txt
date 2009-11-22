@@ -1,8 +1,9 @@
 Roeny
 ********************
-SynergyNode netwerk laag fixen ( IMPORTANT! )
+SynergyNode netwerk laag fixen ( IMPORTANT! ) Done!
 taal voor MCU designen
-
+DNS support for network layer
+Refactor
 
 Bas
 ********************
