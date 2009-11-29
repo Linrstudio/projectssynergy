@@ -8,7 +8,7 @@ Refactor
 Bas
 ********************
 Circuit maken met timing van 1 Seconden [ Pierce oscillator ] [ crystal resonator ] [ quartz crystal ]
-circuit maken met timting 32.768Hz/N
-
+circuit maken met timing 32.768Hz/N
+I2C researchen, might just make your life a lot easier
 Eagle component van once IC maken
 
