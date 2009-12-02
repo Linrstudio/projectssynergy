@@ -1,5 +1,5 @@
-logic inverters, chips like 7404 or !(74LS04)!
+
 
 crystal 32.768Hz 
 
-condsator 15pf
+DS1307
