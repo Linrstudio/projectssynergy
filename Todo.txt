@@ -9,15 +9,6 @@ Bas
 ********************
 Circuit maken met timing van 1 Seconden [ Pierce oscillator ] [ crystal resonator ] [ quartz crystal ]
 circuit maken met timing 32.768Hz/N
-I2C researchen, might just make your life a lot easier
-
-stekker in eagel maaken met namen
-datalijn heen tx
-datalijn trug rx
-vdd
-vss
-
-
-stekker maaken voor de programeer kit
+IC researchen, might just make your life a lot easier
 
  
