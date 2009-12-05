@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 using Framework;
 
 namespace SynergyConsole
@@ -14,17 +15,17 @@ namespace SynergyConsole
             new TCPListener(1111);
             NetworkManager.StartUpdateAsync();
 
-            testclass test = new testclass();
-            NetworkManager.LocalNode.AddLocalNetworkClass(test);
-
             while (true)
             {
                 switch (Console.ReadLine().ToLower())
                 {
+                    case "load":
+                        {
+                            PluginManager.LoadPlugin(@".\plugins\testplugin.cs");
+                        } break;
                     case "try":
                         {
-                            NetworkManager.LocalNode.Connections[0].SendCommand(test.Name, NetworkClassLocal.GetSetFieldCommand("myfield", 12));
-                            NetworkManager.LocalNode.Connections[0].SendCommand(test.Name, NetworkClassLocal.GetInvokeCommand("mymethod"));
+                            NetworkManager.LocalNode.Connections[0].SendCommand("digital out 1", NetworkClassLocal.GetSetFieldCommand("On", true));
                         } break;
                     case "connect":
                         {
@@ -41,10 +42,14 @@ namespace SynergyConsole
                     case "cow":
                         Console.WriteLine("Haha he said cow"); break;
                     case "break":
-                        System.Diagnostics.Debugger.Break();
+                        Debugger.Break();
                         break;
-                    case "whois":
+                    case "map":
                         NetworkManager.RequestNetworkMap(); break;
+                    case "clear":
+                        Console.Clear(); break;
+                    case "exit":
+                        Process.GetCurrentProcess().Kill(); break;
                     default:
                         Console.WriteLine("Invalid command");
                         break;

@@ -18,11 +18,12 @@ namespace Framework
         public override void Update()
         {
             foreach (Connection c in Connections.ToArray()) c.Update();
+            foreach (NetworkClassLocal c in NetworkClasses.Values) c.Update();
 
             base.Update();
         }
 
-        public void AddLocalNetworkClass(NetworkClassLocal _NetworkClass)
+        public void AddNetworkClass(NetworkClassLocal _NetworkClass)
         {
             NetworkClasses.Add(_NetworkClass.Name, _NetworkClass);
         }

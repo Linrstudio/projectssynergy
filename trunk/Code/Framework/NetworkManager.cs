@@ -11,8 +11,7 @@ namespace Framework
         public static string Revision = "6.000";
         public static void Initialize()
         {
-            Console.WriteLine("NetworkNode Initialized");
-            Console.WriteLine("Version:{0}", Revision);
+            Console.WriteLine("Framework initialized Version:{0}", Revision);
         }
         public static Random random = new Random(Environment.TickCount);
         public static NetworkNodeLocal LocalNode = new NetworkNodeLocal();
@@ -55,6 +54,7 @@ namespace Framework
         public static void Update()
         {
             LocalNode.Update();
+            PluginManager.Update();
         }
 
         public static void RequestNetworkMap()

@@ -13,6 +13,7 @@ namespace Framework
         {
             if (!initialized)
             {
+                AddConverter(new BoolConverter(), typeof(Boolean));
                 AddConverter(new ByteConverter(), typeof(Byte));
                 AddConverter(new ByteArrayConverter(), typeof(Byte[]));
                 AddConverter(new IntConverter(), typeof(Int32));
@@ -81,6 +82,18 @@ namespace Framework
             public override object ReadObject(ByteStream _TargetStream)
             {
                 return BitConverter.ToInt32(_TargetStream.Read(4), 0);
+            }
+        }
+
+        public class BoolConverter : Converter
+        {
+            public override void WriteObject(object _Object, ByteStream _TargetStream)
+            {
+                _TargetStream.Write((byte)(((bool)_Object)?255:0));
+            }
+            public override object ReadObject(ByteStream _TargetStream)
+            {
+                return _TargetStream.Read()!=0;
             }
         }
 
