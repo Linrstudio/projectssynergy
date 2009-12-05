@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C# Express 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework", "Framework\Framework.csproj", "{7F7862F6-190D-4B91-9F0D-6526A90B473D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Console\Console.csproj", "{AD18F03D-6684-4760-8BCF-4F1E3F9F7296}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7F7862F6-190D-4B91-9F0D-6526A90B473D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F7862F6-190D-4B91-9F0D-6526A90B473D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F7862F6-190D-4B91-9F0D-6526A90B473D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F7862F6-190D-4B91-9F0D-6526A90B473D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD18F03D-6684-4760-8BCF-4F1E3F9F7296}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD18F03D-6684-4760-8BCF-4F1E3F9F7296}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD18F03D-6684-4760-8BCF-4F1E3F9F7296}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD18F03D-6684-4760-8BCF-4F1E3F9F7296}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
