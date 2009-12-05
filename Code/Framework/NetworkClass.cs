@@ -12,8 +12,10 @@ namespace Framework
     }
     public class NetworkField : Attribute
     {
-        public NetworkField(string _Name) { Name = _Name; }
+        public NetworkField(string _Name) { Name = _Name; ReadOnly = false; }
+        public NetworkField(string _Name, bool _ReadOnly) { Name = _Name; ReadOnly = _ReadOnly; }
         public string Name;
+        public bool ReadOnly;
     }
 
     public class NetworkClassRemote
@@ -34,6 +36,10 @@ namespace Framework
         public NetworkClassLocal(string _Name)
         {
             name = _Name;
+        }
+
+        public virtual void Update()
+        {
         }
 
         public object InvokeMethod(string _Name, params object[] _Parameters)
@@ -65,7 +71,13 @@ namespace Framework
             if (info != null)
             {
                 if (_Value.GetType() == info.FieldType)
-                    info.SetValue((object)this, _Value);
+                {
+                    NetworkField[] attributes = (NetworkField[])info.GetCustomAttributes(typeof(NetworkField), true);
+                    if (!attributes[0].ReadOnly)
+                        info.SetValue((object)this, _Value);
+                    else Console.WriteLine("this field is readonly!");
+                }
+                else Console.WriteLine("Value is of wrong type");
             }
             else Console.WriteLine("Cant find member with name {0}", _Name);
         }

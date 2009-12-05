@@ -34,6 +34,7 @@ namespace Framework
             s.Write(NetworkClassLocal.GetInvokeCommand(_FunctionName, _Parameters));
             //make it a packet
             byte[] data = s.ReadAll();
+
             Thread.BeginCriticalRegion();
             Converter.Write((ushort)data.Length, SendBuffer);
             SendBuffer.Write(data);
@@ -48,6 +49,7 @@ namespace Framework
         public override void Send(ByteStream _RawData)
         {
             byte[] data = _RawData.ReadAll();
+
             Thread.BeginCriticalRegion();
             Converter.Write((ushort)data.Length, SendBuffer);
             SendBuffer.Write(data);

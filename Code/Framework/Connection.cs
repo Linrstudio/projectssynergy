@@ -83,7 +83,7 @@ namespace Framework
                     NetworkManager.LocalNode.NetworkClasses[_TargetClass].ExecuteCommand(_Command);
                 else
                 {
-                    //Console.WriteLine("Network class {0} not found", _TargetClass);
+                    Console.WriteLine("Network class {0} not found", _TargetClass);
                 }
             }
 
