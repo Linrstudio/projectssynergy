@@ -48,7 +48,7 @@ namespace Framework
             [NetworkMethod("Hello")]
             public void Hello(ushort _NodeID)
             {
-                //Console.WriteLine("Hello {0}", _NodeID);
+                Log.Write("Networking","Hello Node {0}", _NodeID);
                 connection.RemoteNodeID = _NodeID;
                 connection.Send(true, NetworkManager.ActionBlackList.GetRandomID(), "RequestNetworkMap");
             }
@@ -64,7 +64,7 @@ namespace Framework
                 if (!NetworkManager.RemoteNodes.ContainsKey(node2)) NetworkManager.RemoteNodes.Add(node2, new NetworkNodeRemote(node2));
                 if (!NetworkManager.RemoteNodes[node1].RemoteNodes.ContainsKey(node2)) NetworkManager.RemoteNodes[node1].RemoteNodes.Add(node2, NetworkManager.RemoteNodes[node2]);
                 if (!NetworkManager.RemoteNodes[node2].RemoteNodes.ContainsKey(node1)) NetworkManager.RemoteNodes[node2].RemoteNodes.Add(node1, NetworkManager.RemoteNodes[node1]);
-                //Console.WriteLine("Connection added {0} <-> {1}", node1, node2);
+                Log.Write("Networking","Connection added {0} <-> {1}", node1, node2);
             }
 
             [NetworkMethod("MapClass")]
@@ -73,7 +73,7 @@ namespace Framework
                 if (!NetworkManager.RemoteNodes.ContainsKey(_NodeID)) NetworkManager.AddRemoteNode(_NodeID);
                 NetworkNodeRemote node = NetworkManager.RemoteNodes[_NodeID];
                 if (!node.LocalDevices.ContainsKey(_ClassName)) node.LocalDevices.Add(_ClassName, new NetworkClassRemote(_ClassName));
-                //Console.WriteLine("Network class {0} added", _ClassName);
+                Log.Write("Networking","Network class {0} added", _ClassName);
             }
 
             [NetworkMethod("ExecuteCommand")]
@@ -83,14 +83,14 @@ namespace Framework
                     NetworkManager.LocalNode.NetworkClasses[_TargetClass].ExecuteCommand(_Command);
                 else
                 {
-                    Console.WriteLine("Network class {0} not found", _TargetClass);
+                    Log.Write("Networking", "Network class {0} not found", _TargetClass);
                 }
             }
 
             [NetworkMethod("RequestNetworkMap")]
             public void RequestNetworkMap()
             {
-                //Console.WriteLine("NetworkMap request received");
+                Log.Write("Networking","NetworkMap request received");
                 //send connections
                 foreach (Connection connection in NetworkManager.LocalNode.Connections)
                 {

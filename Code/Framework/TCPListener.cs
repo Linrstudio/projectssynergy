@@ -26,9 +26,13 @@ namespace Framework
             {
                 listener = new TcpListener(System.Net.IPAddress.Any, port);
                 listener.Start();
-                System.Console.WriteLine("Listener started at port {0}", port);
+                Log.Write("Networking", "Listener started at port {0}", port);
             }
-            catch { System.Console.WriteLine("Failed to start Listener at port {0}", port); return; }
+            catch
+            {
+                Log.Write("Networking", "Failed to start Listener at port {0}", port);
+                return;
+            }
 
             while (true)
             {
@@ -53,10 +57,10 @@ namespace Framework
                         ushort Port = ushort.Parse((string)e.Element("Port").Value);
                         new TCPListener(Port);
                     }
-                    catch { System.Console.WriteLine("Could not parse TCPListner in connections file"); }
+                    catch { Log.Write("IO", "Could not parse TCPListner in connections file"); }
                 }
             }
-            catch { System.Console.WriteLine("Could not open {0}", _Path); }
+            catch { Log.Write("IO", "Could not open {0}", _Path); }
         }
 
         ~TCPListener()
