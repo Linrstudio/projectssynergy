@@ -66,7 +66,7 @@ namespace Framework
             AutoReconnect = _AutoReconnect;
             IP = _Client.Client.RemoteEndPoint.ToString().Split(':')[0];
             Port = ushort.Parse(_Client.Client.RemoteEndPoint.ToString().Split(':')[1]);
-            //Console.WriteLine("TCPConnection created {0}:{1}", IP, Port);
+            Log.Write("Networking", "TCPConnection created {0}:{1}", IP, Port);
             client = _Client;
             thread = new Thread(new ThreadStart(main));
             thread.Start();
@@ -76,7 +76,7 @@ namespace Framework
             AutoReconnect = _AutoReconnect;
             IP = _IP;
             Port = _Port;
-            //Console.WriteLine("TCPConnection created {0}:{1}", IP, Port);
+            Log.Write("Networking", "TCPConnection created {0}:{1}", IP, Port);
             client = null;
             thread = new Thread(new ThreadStart(main));
             thread.Start();
@@ -169,7 +169,7 @@ namespace Framework
         public void Kill()
         {
             NetworkManager.LocalNode.Connections.Remove(this);
-            client.Close();
+            if (client != null) client.Close();
             thread.Abort();//final suicide action
         }
 

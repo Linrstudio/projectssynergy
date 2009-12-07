@@ -22,7 +22,7 @@ namespace Framework
                 AddConverter(new FloatConverter(), typeof(Single));
                 AddConverter(new StringConverter(), typeof(String));
                 AddConverter(new ByteStreamConverter(), typeof(ByteStream));
-                Console.WriteLine("Converter initialized");
+                Log.Write("Converter","Converter initialized");
                 initialized = true;
             }
         }
@@ -32,7 +32,7 @@ namespace Framework
             foreach (Type t in _Types)
             {
                 if (Converters.ContainsKey(t))
-                    Console.WriteLine("Converter of Type {0} has already been added", t.Name);
+                    Log.Write("Converter", "Converter of Type {0} has already been added", t.Name);
                 else
                     Converters.Add(t, _Converter);
             }
@@ -45,7 +45,7 @@ namespace Framework
             if (Converters.ContainsKey(t))
                 Converters[t].WriteObject(_Object, _TargetStream);
             else
-                Console.WriteLine("Cant find converter for Type {0}", t.Name);
+                Log.Write("Networking", "Cant find converter for Type {0}", t.Name);
         }
 
         public static object Read(Type _Type, ByteStream _Stream)

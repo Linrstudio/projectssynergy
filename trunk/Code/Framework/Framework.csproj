@@ -50,6 +50,7 @@
     <Compile Include="ByteStream.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="Converter.cs" />
+    <Compile Include="CrossThreadEvent.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="NetworkNodeLocal.cs" />
     <Compile Include="NetworkClass.cs" />

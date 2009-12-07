@@ -46,22 +46,26 @@ public class DigitalOutput : NetworkClassLocal
     private static extern void ClearDigitalChannel(int Channel);
 
     public int Channel;
-    public DigitalOutput(string _Name, int _Channel) : base(_Name) { Channel = _Channel; }
+    public DigitalOutput(string _Name, int _Channel) : base(_Name) { Channel = _Channel; enabled = true; }
 
     [NetworkField("On")]
-    public bool On;
-	
-	public override void Update()
-	{
-		
-		base.Update();
-	}
+    public bool enabled;
 
-    [NetworkMethod("Update")]
-    public void OnMemoryChanged()
+    [NetworkField("Inversed")]
+    public bool inversed;
+
+    [NetworkFieldChanged("On")]
+    public void OnOnChanged(bool _Oldval, bool _Newval)
     {
-        if (On) SetDigitalChannel(Channel); else ClearDigitalChannel(Channel);
+        Console.WriteLine("uuh hallo ?");
+        if (_Oldval != _Newval) updatehardware();
     }
+
+    void updatehardware()
+    {
+        if (enabled != inversed) SetDigitalChannel(Channel); else ClearDigitalChannel(Channel);
+    }
+
 }
 
 public class DigitalInput : NetworkClassLocal

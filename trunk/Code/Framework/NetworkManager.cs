@@ -11,7 +11,7 @@ namespace Framework
         public static string Revision = "6.000";
         public static void Initialize()
         {
-            Console.WriteLine("Framework initialized Version:{0}", Revision);
+            Log.Write("default", "Framework initialized Version:{0}", Revision);
         }
         public static Random random = new Random(Environment.TickCount);
         public static NetworkNodeLocal LocalNode = new NetworkNodeLocal();
