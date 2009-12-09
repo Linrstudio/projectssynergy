@@ -11,4 +11,7 @@ Circuit maken met timing van 1 Seconden [ Pierce oscillator ] [ crystal resonato
 circuit maken met timing 32.768Hz/N
 IC researchen, might just make your life a lot easier
 
- 
+
+uln2803 maaken 
+
+datasiet zoeken l78z05cv
