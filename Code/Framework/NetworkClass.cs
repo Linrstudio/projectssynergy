@@ -10,6 +10,7 @@ namespace Framework
         public string Name;
         public NetworkMethod(string _Name) { Name = _Name; }
     }
+
     public class NetworkField : Attribute
     {
         public string Name;
@@ -24,19 +25,10 @@ namespace Framework
         public NetworkFieldChanged(string _FieldName) { FieldName = _FieldName; }
     }
 
-    public class NetworkClassRemote
-    {
-        string name;
-        public string Name { get { return name; } }
-        public NetworkClassRemote(string _Name)
-        {
-            name = _Name;
-        }
-
-    }
-
     public class NetworkClassLocal
     {
+        Queue<ByteStream> CommandQueue = new Queue<ByteStream>();
+
         string name;
         public string Name { get { return name; } }
         public NetworkClassLocal(string _Name)
@@ -44,8 +36,45 @@ namespace Framework
             name = _Name;
         }
 
+        public void UpdateRemote()
+        {
+
+        }
+
         public virtual void Update()
         {
+            lock (CommandQueue)
+            {
+                while (CommandQueue.Count > 0)
+                {
+                    ByteStream c = CommandQueue.Dequeue();
+                    ExecuteCommand(c);
+                }
+            }
+        }
+
+        public string[] GetMethods()
+        {
+            List<string> methods = new List<string>();
+            foreach (MethodInfo i in this.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+            {
+                NetworkMethod[] attributes = (NetworkMethod[])i.GetCustomAttributes(typeof(NetworkMethod), true);
+                if (attributes.Length > 0)
+                    methods.Add(attributes[0].Name);
+            }
+            return methods.ToArray();
+        }
+
+        public string[] GetFields()
+        {
+            List<string> fields = new List<string>();
+            foreach (FieldInfo i in this.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+            {
+                NetworkField[] attributes = (NetworkField[])i.GetCustomAttributes(typeof(NetworkField), true);
+                if (attributes.Length > 0)
+                    fields.Add(attributes[0].Name);
+            }
+            return fields.ToArray();
         }
 
         public object InvokeMethod(string _Name, params object[] _Parameters)
@@ -60,14 +89,22 @@ namespace Framework
                 }
                 catch (TargetInvocationException e)
                 {
-                    throw e.InnerException;
+                    System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace(e.InnerException, true);
+
+                    
+                    Log.Write("NetworkClass", Log.Line.Type.Error, "BAD error! File:{0} Line:{1} Message:{2}",
+                        System.IO.Path.GetFileName(trace.GetFrame(0).GetFileName()), 
+                        trace.GetFrame(0).GetFileLineNumber(),
+                        e.InnerException.Message);
+
+                    //throw e.InnerException;
                 }
                 catch (TargetParameterCountException)
                 {
-                    Log.Write("NetworkClass", "Method {0} does not have {1} parameters", _Name, _Parameters.Length);
+                    Log.Write("NetworkClass", Log.Line.Type.Error, "Method {0} does not have {1} parameters", _Name, _Parameters.Length);
                 }
             }
-            else { Log.Write("NetworkClass", "Method {0} does not exits", _Name); }
+            else { Log.Write("NetworkClass", Log.Line.Type.Error, "Method {0} does not exits", _Name); }
             return result;
         }
 
@@ -86,11 +123,18 @@ namespace Framework
                         //trigger any OnChanged 'events'
                         TriggerFieldChanged(_Name, oldvalue, _Value);
                     }
-                    else Log.Write("NetworkClass", "this field is readonly!");
+                    else Log.Write("NetworkClass", Log.Line.Type.Error, "this field is readonly!");
                 }
-                else Log.Write("NetworkClass", "Value is of wrong type");
+                else Log.Write("NetworkClass", Log.Line.Type.Error, "Value is of wrong type");
             }
-            else Log.Write("NetworkClass", "Cant find member with name {0}", _Name);
+            else Log.Write("NetworkClass", Log.Line.Type.Error, "Cant find member with name {0}", _Name);
+        }
+
+        public object GetField(string _Name)
+        {
+            FieldInfo info = GetFieldInfo(_Name);
+            if (info == null) return null;
+            return GetFieldInfo(_Name).GetValue(this);
         }
 
         public void TriggerFieldChanged(string _FieldName, object _OldVal, object _NewVal)
@@ -98,15 +142,26 @@ namespace Framework
             foreach (MethodInfo i in this.GetType().GetMethods())
             {
                 NetworkFieldChanged[] attributes = (NetworkFieldChanged[])System.Attribute.GetCustomAttributes(i, typeof(NetworkFieldChanged));
-
                 foreach (NetworkFieldChanged a in attributes)
                 {
                     if (a.FieldName == _FieldName)
                     {
-                        i.Invoke(this, new object[] { _OldVal, _NewVal });
+                        try
+                        {
+                            i.Invoke(this, new object[] { _OldVal, _NewVal });
+                        }
+                        catch (ArgumentException) { Log.Write("NetworkClass", "Cant invoke field change event, arguments are of wrong type "); }
+                        catch (Exception e) { throw e.InnerException; }
                     }
                 }
             }
+        }
+
+        public void UpdateRemoteField(string _FieldName)
+        {
+            FieldInfo info = GetFieldInfo(_FieldName);
+            if (info == null) Log.Write("NetworkClass", Log.Line.Type.Error, "Cant find field with name : {0}", _FieldName);
+            
         }
 
         public static ByteStream GetInvokeCommand(string _Name, params object[] _Parameters)
@@ -130,6 +185,14 @@ namespace Framework
             return stream;
         }
 
+        public void EnqueueCommand(ByteStream _Stream)
+        {
+            lock(CommandQueue)
+            {
+                CommandQueue.Enqueue(_Stream);
+            }
+        }
+
         public void ExecuteCommand(ByteStream _Stream)
         {
             byte command = _Stream.Read();
@@ -137,7 +200,7 @@ namespace Framework
             {
                 case 1://invoke method
                     {
-                        string methodname = (string)Converter.Read(typeof(string), _Stream);
+                        string methodname = (string)Converter.Read( _Stream);
                         MethodInfo info = GetMethodInfo(methodname);
                         if (info != null)
                         {
@@ -145,31 +208,31 @@ namespace Framework
                             List<object> parameters = new List<object>();
                             foreach (ParameterInfo i in parametersinfo)
                             {
-                                parameters.Add(Converter.Read(i.ParameterType, _Stream));
+                                parameters.Add(Converter.Read( _Stream));
                             }
                             InvokeMethod(methodname, parameters.ToArray());
                         }
-                        else Log.Write("NetworkClass", "Cant find method with name {0}", methodname);
+                        else Log.Write("NetworkClass", Log.Line.Type.Error, "Cant find method with name {0}", methodname);
                     }
                     break;
                 case 2://set field
                     {
-                        string fieldname = (string)Converter.Read(typeof(string), _Stream);
+                        string fieldname = (string)Converter.Read( _Stream);
                         FieldInfo info = GetFieldInfo(fieldname);
                         if (info != null)
                         {
-                            object value = Converter.Read(info.FieldType, _Stream);
+                            object value = Converter.Read(_Stream);
                             SetField(fieldname, value);
                         }
-                        else Log.Write("NetworkClass", "Cant find field with name {0}", fieldname);
+                        else Log.Write("NetworkClass", Log.Line.Type.Error, "Cant find field with name {0}", fieldname);
                     }
                     break;
             }
         }
 
-        MethodInfo GetMethodInfo(string _Name)
+        public MethodInfo GetMethodInfo(string _Name)
         {
-            foreach (MethodInfo i in this.GetType().GetMethods())
+            foreach (MethodInfo i in this.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly))
             {
                 NetworkMethod[] attributes = (NetworkMethod[])System.Attribute.GetCustomAttributes(i, typeof(NetworkMethod));
 
@@ -184,7 +247,7 @@ namespace Framework
             return null;
         }
 
-        FieldInfo GetFieldInfo(string _Name)
+        public FieldInfo GetFieldInfo(string _Name)
         {
             foreach (FieldInfo i in this.GetType().GetFields())
             {

@@ -11,7 +11,7 @@ public class plugin
     [PluginEntry]
     public static void Main()
     {
-        Console.WriteLine("w00tie iam in yer assembly");
+        Log.Write("My Plugin", "w00tie iam in yer assembly");
         outputs.Add(new DigitalOutput("digital out 1", 1));
         outputs.Add(new DigitalOutput("digital out 2", 2));
         outputs.Add(new DigitalOutput("digital out 3", 3));

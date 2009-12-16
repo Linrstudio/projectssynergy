@@ -25,7 +25,7 @@ namespace SynergyConsole
                         } break;
                     case "try":
                         {
-                            NetworkManager.LocalNode.Connections[0].SendCommand("digital out 1", NetworkClassLocal.GetSetFieldCommand("On", true));
+                            NetworkManager.LocalNode.Connections[0].SendCommand("analog out 1", NetworkClassLocal.GetSetFieldCommand("Value", 128));
                         } break;
                     case "connect":
                         {
