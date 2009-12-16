@@ -37,7 +37,6 @@ namespace Framework
                 case CompilerType.CSharp: compiler = new CSharpCodeProvider(); break;
             }
             
-            string output = System.IO.Path.GetFileNameWithoutExtension(_Filename) + ".dll";
             CompilerParameters compilerParams = new CompilerParameters();
             compilerParams.GenerateInMemory = true;
             compilerParams.ReferencedAssemblies.Add("system.dll");
@@ -49,7 +48,7 @@ namespace Framework
             {
                 foreach (CompilerError e in results.Errors)
                 {
-                    Console.WriteLine(e.ToString());
+                    Log.Write("Plugin Compiler", Log.Line.Type.Error, e.ToString());
                 }
                 return null;
             }

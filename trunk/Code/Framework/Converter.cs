@@ -21,6 +21,7 @@ namespace Framework
                 AddConverter(new UShortConverter(), typeof(UInt16));
                 AddConverter(new FloatConverter(), typeof(Single));
                 AddConverter(new StringConverter(), typeof(String));
+                AddConverter(new StringArrayConverter(), typeof(String[]));
                 AddConverter(new ByteStreamConverter(), typeof(ByteStream));
                 Log.Write("Converter","Converter initialized");
                 initialized = true;
@@ -34,7 +35,10 @@ namespace Framework
                 if (Converters.ContainsKey(t))
                     Log.Write("Converter", "Converter of Type {0} has already been added", t.Name);
                 else
+                {
                     Converters.Add(t, _Converter);
+                    Log.Write("Converter", "Added {0} Converter", _Types[0].Name);
+                }
             }
         }
 
@@ -43,15 +47,20 @@ namespace Framework
             Initialize();
             Type t = _Object.GetType();
             if (Converters.ContainsKey(t))
+            {
+                Converters[typeof(string)].WriteObject(t.FullName, _TargetStream);
                 Converters[t].WriteObject(_Object, _TargetStream);
+            }
             else
                 Log.Write("Networking", "Cant find converter for Type {0}", t.Name);
         }
 
-        public static object Read(Type _Type, ByteStream _Stream)
+        public static object Read(ByteStream _Stream)
         {
             Initialize();
-            if (Converters.ContainsKey(_Type)) return Converters[_Type].ReadObject(_Stream);
+            string typename = (string)Converters[typeof(string)].ReadObject(_Stream);
+            Type t = Type.GetType(typename);
+            if (Converters.ContainsKey(t)) return Converters[t].ReadObject(_Stream);
             return null;
         }
 
@@ -170,6 +179,31 @@ namespace Framework
             {
                 int len = BitConverter.ToUInt16(_TargetStream.Read(2), 0);
                 return System.Text.Encoding.ASCII.GetString(_TargetStream.Read(len));
+            }
+        }
+
+        public class StringArrayConverter : Converter
+        {
+            public override void WriteObject(object _Object, ByteStream _TargetStream)
+            {
+                string[] strings = (string[])_Object;
+                Converter.Write((ushort)strings.Length, _TargetStream);
+                _TargetStream.Write(BitConverter.GetBytes((ushort)(strings.Length)));
+                foreach (string s in strings)
+                {
+                    Converter.Write(s, _TargetStream);
+                }
+                foreach (char c in (string)_Object) _TargetStream.Write((byte)c);
+            }
+            public override object ReadObject(ByteStream _TargetStream)
+            {
+                int len = (int)Converter.Read(_TargetStream);
+                string[] strings = new string[len];
+                for (int i = 0; i < len; i++)
+                {
+                    strings[i] = (string)Converter.Read( _TargetStream);
+                }
+                return strings;
             }
         }
     }

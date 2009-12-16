@@ -14,8 +14,6 @@ namespace FrontEnd
         static void Main()
         {
             Framework.NetworkManager.Initialize();
-            Framework.NetworkManager.StartUpdateAsync();
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FrontEnd());

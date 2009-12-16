@@ -55,6 +55,7 @@ namespace Framework
         {
             LocalNode.Update();
             PluginManager.Update();
+            Log.Update();
         }
 
         public static void RequestNetworkMap()

@@ -32,13 +32,8 @@ namespace Framework
             s.Write((byte)(_BroadCast ? 255 : 0));
             Converter.Write(_ActionID, s);
             s.Write(NetworkClassLocal.GetInvokeCommand(_FunctionName, _Parameters));
-            //make it a packet
-            byte[] data = s.ReadAll();
 
-            Thread.BeginCriticalRegion();
-            Converter.Write((ushort)data.Length, SendBuffer);
-            SendBuffer.Write(data);
-            Thread.EndCriticalRegion();
+            Send(s);
         }
 
         public override void Send(bool _BroadCast, string _FunctionName, params object[] _Parameters)
@@ -95,43 +90,44 @@ namespace Framework
                 }
                 catch { OnConnectionLost(); }
             }//there is no connection passed by the constructor, we should try to connect now
+
+            client.ReceiveBufferSize = 65536;
             while (true)//only loops when reconnected
             {
 #if !DEBUGNETWORK
                 try
                 {
 #endif
-                //Send our localnodeID
-                Send(true, NetworkManager.ActionBlackList.GetRandomID(), "Hello", NetworkManager.LocalNode.NodeID);
+                    //Send our localnodeID
+                    Send(true, "Hello", NetworkManager.LocalNode.NodeID);
 
-                while (true)//loops continuous
-                {
-                    if (Environment.TickCount - lastsendtime > 10000)
+                    while (true)//loops continuous
                     {
-                        //Console.WriteLine("Keep alive.");
-                        Send(false, NetworkManager.ActionBlackList.GetRandomID(), "Sleep");
-                        lastsendtime = Environment.TickCount;//not that this is usefull in any way
+                        if (Environment.TickCount - lastsendtime > 10000)
+                        {
+                            //Console.WriteLine("Keep alive.");
+                            Send(false, NetworkManager.ActionBlackList.GetRandomID(), "Sleep");
+                            lastsendtime = Environment.TickCount;//not that this is usefull in any way
+                        }
+                        byte[] sendb = SendBuffer.Read(PACKETSIZE);
+                        if (sendb.Length > 0)
+                        {
+                            client.Client.Send(sendb);
+                            lastsendtime = Environment.TickCount;
+                        }
+                        if (client.Available > 0)
+                        {
+                            byte[] buffer = new byte[Math.Min(client.Available, PACKETSIZE)];
+                            client.GetStream().Read(buffer, 0, buffer.Length);
+                            ReceiveBuffer.Write(buffer);
+                            //Console.WriteLine("{0} bytes received", buffer.Length);
+                        }
+                        Thread.Sleep(50);
                     }
-                    byte[] sendb = SendBuffer.Read(PACKETSIZE);
-                    if (sendb.Length > 0)
-                    {
-                        client.Client.Send(sendb);
-                        lastsendtime = Environment.TickCount;
-                    }
-                    if (client.Available > 0)
-                    {
-                        byte[] buffer = new byte[Math.Min(client.Available, PACKETSIZE)];
-                        client.GetStream().Read(buffer, 0, buffer.Length);
-                        ReceiveBuffer.Write(buffer);
-                        //Console.WriteLine("{0} bytes received", buffer.Length);
-                    }
-                    Thread.Sleep(20);
-                }
 #if !DEBUGNETWORK
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    //Console.WriteLine(ex.Message);
                     OnConnectionLost();
                 }
 #endif
@@ -175,33 +171,37 @@ namespace Framework
 
         public override void Update()
         {
-            if (currentpacketsize == 0)
+            while (true)
             {
-                //read new packetype
-                if (ReceiveBuffer.GetSize() < 2) return; //there is no data available so we cant ready any
-                currentpacketsize = (ushort)Converter.Read(typeof(ushort), ReceiveBuffer);
-            }
-            if (currentpacketsize != 0)
-            {
-                if (ReceiveBuffer.GetSize() >= currentpacketsize)
+                if (currentpacketsize == 0)
                 {
-                    byte[] buffer = ReceiveBuffer.Read(currentpacketsize);
-                    ByteStream packet = new ByteStream(buffer);
-                    bool broadcast = packet.Read() != 0;
-                    uint action = (uint)Converter.Read(typeof(uint), packet);
-                    if (!NetworkManager.ActionBlackList.Contains(action))
+                    //read new packetype
+                    if (ReceiveBuffer.GetSize() < 2) return; //there is no data available so we cant read any
+                    currentpacketsize = (ushort)Converter.Read(ReceiveBuffer);
+                }
+                if (currentpacketsize != 0)
+                {
+                    if (ReceiveBuffer.GetSize() >= currentpacketsize)
                     {
-                        NetworkManager.ActionBlackList.Add(action);
-                        if (broadcast)
+                        byte[] buffer = ReceiveBuffer.Read(currentpacketsize);
+                        ByteStream packet = new ByteStream(buffer);
+                        bool broadcast = packet.Read() != 0;
+                        uint action = (uint)Converter.Read(packet);
+                        if (!NetworkManager.ActionBlackList.Contains(action))
                         {
-                            foreach (Connection c in NetworkManager.LocalNode.Connections)
+                            NetworkManager.ActionBlackList.Add(action);
+                            if (broadcast)
                             {
-                                if (c != this) c.Send(new ByteStream(buffer));
+                                foreach (Connection c in NetworkManager.LocalNode.Connections)
+                                {
+                                    if (c != this) c.Send(new ByteStream(buffer));
+                                }
                             }
+                            methods.ExecuteCommand(packet);
                         }
-                        methods.ExecuteCommand(packet);
+                        currentpacketsize = 0;
                     }
-                    currentpacketsize = 0;
+                    else return;
                 }
             }
         }
