@@ -1,0 +1,16 @@
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\FrontEnd\obj\Release\ResolveAssemblyReference.cache
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\FrontEnd\obj\Release\FrontEnd.FrontEnd.resources
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\FrontEnd\obj\Release\FrontEnd.Properties.Resources.resources
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\FrontEnd\obj\Release\FrontEnd.csproj.GenerateResource.Cache
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\FrontEnd\bin\Release\FrontEnd.exe
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\FrontEnd\bin\Release\FrontEnd.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\FrontEnd\obj\Release\FrontEnd.exe
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\FrontEnd\obj\Release\FrontEnd.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\FrontEnd\bin\Release\Framework.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\FrontEnd\bin\Release\Framework.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\BasMeuk\obj\Release\ResolveAssemblyReference.cache
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\BasMeuk\obj\Release\FrontEnd.FrontEnd.resources
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\BasMeuk\obj\Release\FrontEnd.Properties.Resources.resources
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\BasMeuk\obj\Release\FrontEnd.UI.resources
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\BasMeuk\obj\Release\FrontEnd.csproj.GenerateResource.Cache
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\BasMeuk\obj\Release\FrontEnd.exe
