@@ -1,11 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C# Express 2008
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework", "Framework\Framework.csproj", "{7F7862F6-190D-4B91-9F0D-6526A90B473D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Console\Console.csproj", "{AD18F03D-6684-4760-8BCF-4F1E3F9F7296}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrontEnd", "FrontEnd\FrontEnd.csproj", "{AF488545-87A9-4314-AC42-2D2BD20BC581}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynergyGraphics", "Graphics\SynergyGraphics.csproj", "{405356A3-E8E6-4CAC-AFF3-EFA4DBB16F09}"
+	ProjectSection(ProjectDependencies) = postProject
+		{234303EE-2883-407A-BEA6-47EC1501C788} = {234303EE-2883-407A-BEA6-47EC1501C788}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynergyTemplate", "Template\SynergyTemplate.csproj", "{234303EE-2883-407A-BEA6-47EC1501C788}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynergyGraphicsTest", "SynergyGraphicsTest\SynergyGraphicsTest.csproj", "{63412F3B-6901-4016-AAE0-2C374AD764DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +34,18 @@ Global
 		{AF488545-87A9-4314-AC42-2D2BD20BC581}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF488545-87A9-4314-AC42-2D2BD20BC581}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF488545-87A9-4314-AC42-2D2BD20BC581}.Release|Any CPU.Build.0 = Release|Any CPU
+		{405356A3-E8E6-4CAC-AFF3-EFA4DBB16F09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{405356A3-E8E6-4CAC-AFF3-EFA4DBB16F09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{405356A3-E8E6-4CAC-AFF3-EFA4DBB16F09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{405356A3-E8E6-4CAC-AFF3-EFA4DBB16F09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{234303EE-2883-407A-BEA6-47EC1501C788}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{234303EE-2883-407A-BEA6-47EC1501C788}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{234303EE-2883-407A-BEA6-47EC1501C788}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{234303EE-2883-407A-BEA6-47EC1501C788}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63412F3B-6901-4016-AAE0-2C374AD764DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63412F3B-6901-4016-AAE0-2C374AD764DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63412F3B-6901-4016-AAE0-2C374AD764DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63412F3B-6901-4016-AAE0-2C374AD764DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
