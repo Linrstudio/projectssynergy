@@ -1,0 +1,5 @@
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Framework\obj\Release\ResolveAssemblyReference.cache
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Framework\bin\Release\Framework.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Framework\bin\Release\Framework.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Framework\obj\Release\Framework.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Framework\obj\Release\Framework.pdb

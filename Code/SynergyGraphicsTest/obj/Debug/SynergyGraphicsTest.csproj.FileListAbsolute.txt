@@ -10,3 +10,4 @@ C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\SynergyGraphicsTest\bin\Debug\Templa
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\SynergyGraphicsTest\bin\Debug\Graphics.pdb
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\SynergyGraphicsTest\obj\Debug\SynergyGraphicsTest.exe
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\SynergyGraphicsTest\obj\Debug\SynergyGraphicsTest.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\SynergyGraphicsTest\obj\Debug\SynergyGraphicsTest.RenderWindow.resources

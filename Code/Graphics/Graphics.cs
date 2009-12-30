@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using SynergyTemplate;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Windows.Forms;
 
 namespace SynergyGraphics
 {
@@ -26,16 +27,20 @@ namespace SynergyGraphics
         public static int ImageMipLevelDepth = 1;
         public static GraphicsDevice device = null;
 
-        public struct DeviceTarget
+        public static SynergyTemplate.Rect GetTotalDesktopSize()
         {
-            public DeviceTarget(IntPtr _WindowHandle, Int2 _Resolution)
+            SynergyTemplate.Rect rect = new SynergyTemplate.Rect( new Int2(100000, 100000),new Int2(-100000, -100000));
+            foreach (Screen screen in Screen.AllScreens)
             {
-                WindowHandle = _WindowHandle;
-                Resolution = _Resolution;
+                if (screen.Bounds.Left < rect.From.X) rect.From.X = screen.Bounds.Left;
+                if (screen.Bounds.Top < rect.From.Y) rect.From.Y = screen.Bounds.Top;
+
+                if (screen.Bounds.Right > rect.To.X) rect.To.X = screen.Bounds.Right;
+                if (screen.Bounds.Bottom > rect.To.Y) rect.To.Y = screen.Bounds.Bottom;
             }
-            public IntPtr WindowHandle;
-            public Int2 Resolution;
-        }
+
+            return rect;
+        } 
 
         public static void Initialize(IntPtr _WindowHandle,Int2 _Resolution)
         {
@@ -52,9 +57,37 @@ namespace SynergyGraphics
             device = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, DeviceType.Hardware, _WindowHandle, parameter);
         }
 
-        public static void Flush()
+        public static void Present()
         {
             device.Present();
+        }
+
+        public static void SetRenderTarget(RenderTarget _RenderTarget)
+        {
+            device.SetRenderTarget(0, _RenderTarget.rendertarget);
+        }
+
+        public static void Present(IntPtr _WindowHandle)
+        {
+            device.Present(_WindowHandle);
+        }
+
+        public static void Present(IntPtr _WindowHandle, Float2 _SourceRectFrom, Float2 _SourceRectTo, Int2 _TargetRectFrom, Int2 _TargetRectTo)
+        {
+            float w = device.PresentationParameters.BackBufferWidth;
+            float h = device.PresentationParameters.BackBufferHeight;
+            _SourceRectTo.X *= w;
+            _SourceRectTo.Y *= h;
+            _SourceRectFrom.X *= w;
+            _SourceRectFrom.Y *= h;
+
+            _SourceRectTo -= _SourceRectFrom;
+            _TargetRectTo -= _TargetRectFrom;
+            device.Present(
+                new Rectangle((int)_SourceRectFrom.X, (int)_SourceRectFrom.Y, (int)_SourceRectTo.X, (int)_SourceRectTo.Y),
+                new Rectangle(_TargetRectFrom.X, _TargetRectFrom.Y, _TargetRectTo.X, _TargetRectTo.Y),
+                
+                _WindowHandle);
         }
 
         public static void Update()
