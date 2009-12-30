@@ -1,15 +1,3 @@
-Roeny
-********************
-SynergyNode netwerk laag fixen ( IMPORTANT! ) Done!
-taal voor MCU designen
-DNS support for network layer
-Refactor
-
 Bas
 ********************
-Circuit maken met timing van 1 Seconden [ Pierce oscillator ] [ crystal resonator ] [ quartz crystal ]
-circuit maken met timing 32.768Hz/N
-IC researchen, might just make your life a lot easier
 
-
-testen of dat met die ulns werekt
