@@ -1,0 +1,2 @@
+the Core has a networking layer
+the Core has support for plugins ( *.dll and *.cs files )

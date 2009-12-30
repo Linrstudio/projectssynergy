@@ -84,7 +84,6 @@ namespace Framework
             }
             InvokeEntries();
         }
-
         public void InvokeEntries()
         {
             foreach (Type t in assambly.GetTypes())
@@ -99,7 +98,6 @@ namespace Framework
                 }
             }
         }
-
         public void Update()
         {
             foreach (Type t in assambly.GetTypes())
