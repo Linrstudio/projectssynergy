@@ -5,17 +5,20 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Windows.Forms;
 using Framework;
+using SynergyTemplate;
 
 namespace FrontEnd
 {
     public partial class FrontEnd : Form
     {
+        public bool update = true;
         public Dictionary<string, CheckBox> enabledlogs = new Dictionary<string, CheckBox>();
         public FrontEnd()
         {
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
             InitializeComponent();
             Log.Write("user input", "user input log added");
         }
@@ -49,30 +52,39 @@ namespace FrontEnd
             }
         }
 
-        public void OnLogAdded(Log _AddedLog)
+        public void UpdateAll()
         {
             RebuildEnabledLogsList();
             RebuildLogText();
+            RebuildVariables();
         }
 
-        public void OnLogWrite(Log.Line _LogLine)
+        public void OnLogAdded(Log _AddedLog)
         {
-            RebuildEnabledLogsList();
-            RebuildLogText();
+            update = true;
+        }
+
+        public void OnWriteLine(Log.Line _LogLine)
+        {
+            update = true;
+        }
+
+        public void OnWriteVariable(Log.Variable _LogVariable)
+        {
+            update = true;
         }
 
         public void RebuildLogText()
         {
-            DataGridView log = dataGridView1;
+            DataGridView log = d_Log;
             log.Rows.Clear();
             log.Text = "";
-            foreach (Log.Line line in Log.AllEntries)
+            foreach (Log.Line line in Log.AllLines)
             {
                 if (line.LogName != null && enabledlogs.ContainsKey(line.LogName) && enabledlogs[line.LogName].Checked)
                 {
                     DataGridViewRow row = new DataGridViewRow();
                     row.Height = 16;
-                    //row.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
                     switch (line.type)
                     {
                         case Log.Line.Type.Message:
@@ -85,7 +97,27 @@ namespace FrontEnd
                             row.DefaultCellStyle.ForeColor = Color.Yellow;
                             break;
                     }
-                    row.CreateCells(log, line.Time.ToLocalTime(), line.LogName, line.Message);
+                    row.CreateCells(log, line.Time.ToShortTimeString(), line.LogName, line.Message);
+                    row.Cells[0].ToolTipText = line.Time.ToString();
+                    log.Rows.Add(row);
+                }
+            }
+        }
+
+        public void RebuildVariables()
+        {
+            DataGridView log = d_Variables;
+            log.Rows.Clear();
+            log.Text = "";
+            foreach (Log.Variable variable in Log.AllVariables)
+            {
+                if (variable.LogName != null && enabledlogs.ContainsKey(variable.LogName) && enabledlogs[variable.LogName].Checked)
+                {
+                    DataGridViewRow row = new DataGridViewRow();
+                    row.Height = 16;
+                    row.DefaultCellStyle.ForeColor = Color.White;
+                    row.CreateCells(log, variable.Time.ToShortTimeString(), variable.LogName, variable.VariableName, variable.Value.ToString());
+                    row.Cells[0].ToolTipText = variable.Time.ToString();
                     log.Rows.Add(row);
                 }
             }
@@ -96,7 +128,10 @@ namespace FrontEnd
             RebuildEnabledLogsList();
             RebuildLogText();
             Log.OnLogAdded += OnLogAdded;
-            Log.OnLogWrite += OnLogWrite;
+            Log.OnWriteLine += OnWriteLine;
+            Log.OnWriteVariable += OnWriteVariable;
+
+            Application.Idle += t_Tick_Tick;
             c_Input.Select();
             ExecuteCommand(@"load .\plugins\K8055.cs");
         }
@@ -129,7 +164,7 @@ namespace FrontEnd
                     case "listen":
                         if (split.Length > 1)
                             new TCPListener(ushort.Parse(split[1]));
-                        else 
+                        else
                             new TCPListener(1111);
                         break;
                     case "load":
@@ -169,18 +204,34 @@ namespace FrontEnd
             int curtick = Environment.TickCount;
             int delta = curtick - lasttick;
             lasttick = curtick;
-            if(lastfpsupdatetick<curtick-100)
+            if (lastfpsupdatetick < curtick - 100)
             {
-                lastfpsupdatetick=curtick;
-                Text = string.Format("FPS:{0}", 1000 / delta);
+                lastfpsupdatetick = curtick;
+                Log.Write(new Log.Variable("Default", "Framework FPS", 1000 / delta));
+                if (update)
+                {
+                    UpdateAll();
+                    update = false;
+                }
             }
         }
 
         private void dataGridView1_Paint(object sender, PaintEventArgs e)
         {
-            DataGridView grid = dataGridView1;
-            int width = grid.Columns[0].Width + grid.Columns[1].Width;
-            e.Graphics.DrawLine(new Pen(Brushes.White, 2), width, 0, width, grid.Height);
+            DataGridView grid = d_Log;
+            int width = grid.Columns[0].Width;
+            e.Graphics.DrawLine(new Pen(Color.FromArgb(32, 32, 32), 2), width, 0, width, grid.Height);
+            width += grid.Columns[1].Width;
+            e.Graphics.DrawLine(new Pen(Brushes.Gray, 2), width, 0, width, grid.Height);
+        }
+
+        private void d_Variables_Paint(object sender, PaintEventArgs e)
+        {
+            DataGridView grid = d_Variables;
+            int width = grid.Columns[0].Width;
+            e.Graphics.DrawLine(new Pen(Color.FromArgb(32, 32, 32), 2), width, 0, width, grid.Height);
+            width += grid.Columns[1].Width;
+            e.Graphics.DrawLine(new Pen(Brushes.Gray, 2), width, 0, width, grid.Height);
         }
     }
 }

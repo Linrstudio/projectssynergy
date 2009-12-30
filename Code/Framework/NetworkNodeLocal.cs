@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SynergyTemplate;
 
 namespace Framework
 {
@@ -17,6 +18,7 @@ namespace Framework
 
         public override void Update()
         {
+            Log.Write(new Log.Variable("LocalNode", "ID", NodeID));
             foreach (Connection c in Connections.ToArray()) c.Update();
             foreach (NetworkClassLocal c in NetworkClasses.Values) c.Update();
 

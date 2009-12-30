@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using SynergyTemplate;
 
 namespace Framework
 {
@@ -53,6 +54,7 @@ namespace Framework
 
         public static void Update()
         {
+            Log.Write(new Log.Variable("NetworkManager", "RemoteNodes", RemoteNodes.Count));
             LocalNode.Update();
             PluginManager.Update();
             Log.Update();

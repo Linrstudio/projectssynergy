@@ -6,6 +6,7 @@ using System.Threading;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using SynergyTemplate;
 
 namespace Framework
 {
