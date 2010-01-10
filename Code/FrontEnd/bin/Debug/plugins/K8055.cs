@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Framework;
+using SynergyTemplate;
 
 public class plugin
 {
@@ -59,7 +60,7 @@ public class plugin
     }
 }
 
-public class DigitalOutput : NetworkClassLocal
+public class DigitalOutput : NetworkClassMaster
 {
     [DllImport("k8055.dll")]
     private static extern void SetDigitalChannel(int Channel);
@@ -67,21 +68,21 @@ public class DigitalOutput : NetworkClassLocal
     private static extern void ClearDigitalChannel(int Channel);
 
     public int Channel;
-    public DigitalOutput(string _Name, int _Channel) : base(_Name) { Channel = _Channel; enabled = false; inversed = false; }
+    public DigitalOutput(string _Name, int _Channel) : base(_Name,"DigitalOutput") { Channel = _Channel; enabled = false; inversed = false; }
 
-    [NetworkField("HUD_ON")]
+    [NetworkClass.Field("On")]
     public bool enabled;
 
-    [NetworkField("Inversed")]
+    [NetworkClass.Field("Inversed")]
     public bool inversed;
 
-    [NetworkFieldChanged("On")]
+    [NetworkClass.FieldChanged("On")]
     public void OnOnChanged(bool _Oldval, bool _Newval)
     {
         if (_Oldval != _Newval) updatehardware();
     }
 
-    [NetworkFieldChanged("Inversed")]
+    [NetworkClass.FieldChanged("Inversed")]
     public void OnInversedChanged(bool _Oldval, bool _Newval)
     {
         if (_Oldval != _Newval) updatehardware();
@@ -95,18 +96,18 @@ public class DigitalOutput : NetworkClassLocal
 
 }
 
-public class DigitalInput : NetworkClassLocal
+public class DigitalInput : NetworkClassMaster
 {
     [DllImport("k8055.dll")]
     private static extern int ReadDigitalChannel(int Channel);
 
     public int Channel;
-    public DigitalInput(string _Name, int _Channel) : base(_Name) { Channel = _Channel; On = false; inversed = false; ReadDigitalChannel(Channel); }
+    public DigitalInput(string _Name, int _Channel) : base(_Name, "K8055.testclass") { Channel = _Channel; On = false; inversed = false; ReadDigitalChannel(Channel); }
 
-    [NetworkField("On",true)]
+    [NetworkClass.Field("On", true)]
     public bool On;
 
-    [NetworkField("Inversed")]
+    [NetworkClass.Field("Inversed")]
     public bool inversed;
 
     public override void Update()
@@ -123,24 +124,24 @@ public class DigitalInput : NetworkClassLocal
     }
 }
 
-public class AnalogOutput : NetworkClassLocal
+public class AnalogOutput : NetworkClassMaster
 {
     [DllImport("k8055.dll")]
     private static extern void OutputAnalogChannel(int Channel, int Data);
 
     public int Channel;
-    public AnalogOutput(string _Name, int _Channel) : base(_Name) { Channel = _Channel;}
+    public AnalogOutput(string _Name, int _Channel) : base(_Name, "AnalogOutput") { Channel = _Channel; }
 
-    [NetworkField("Value")]
+    [NetworkClass.Field("Value")]
     public byte Value;
 
-    [NetworkFieldChanged("Value")]
+    [NetworkClass.FieldChanged("Value")]
     public void OnInversedChanged(byte _Oldval, byte _Newval)
     {
         if (_Oldval != _Newval) updatehardware();
     }
 
-    [NetworkMethod("UpdateHardware")]
+    [NetworkClass.Method("UpdateHardware")]
     void updatehardware()
     {
         OutputAnalogChannel(Channel, Value);
@@ -148,15 +149,15 @@ public class AnalogOutput : NetworkClassLocal
     }
 }
 
-public class AnalogInput : NetworkClassLocal
+public class AnalogInput : NetworkClassMaster
 {
     [DllImport("k8055.dll")]
     private static extern int ReadAnalogChannel(int Channel);
 
     public int Channel;
-    public AnalogInput(string _Name, int _Channel) : base(_Name) { Channel = _Channel; }
+    public AnalogInput(string _Name, int _Channel) : base(_Name, "AnalogInput") { Channel = _Channel; }
 
-    [NetworkField("Value",true)]
+    [NetworkClass.Field("Value",true)]
     public byte Value;
 
     public override void Update()

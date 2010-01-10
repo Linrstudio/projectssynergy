@@ -19,24 +19,28 @@ namespace Framework
         public enum CompilerType { CSharp = 1, VisualBasic = 2 };
 
         public static List<Plugin> plugins = new List<Plugin>();
-        public static Dictionary<string, PluginData> CollectedPluginData = new Dictionary<string, PluginData>();
+        /// <summary>
+        /// Plugins that can be sent to clients to interact with the local plugin on the server
+        /// </summary>
+        public static Dictionary<string, SlavePlugin> SlavePlugins = new Dictionary<string, SlavePlugin>();
 
-        public static Plugin LoadPlugin(string _Filename)
+
+        public static Assembly LoadPlugin(string _Filename)
         {
-            string[] _PluginSource = File.ReadAllLines(_Filename);
+            string _PluginSource = File.ReadAllText(_Filename);
             if (Path.GetExtension(_Filename) == ".vb")
-                return LoadPlugin(_PluginSource, CompilerType.VisualBasic);
+                return LoadPlugin(_PluginSource, PluginManager.CompilerType.VisualBasic);
             else
-                return LoadPlugin(_PluginSource, CompilerType.CSharp);
+                return LoadPlugin(_PluginSource, PluginManager.CompilerType.CSharp);
         }
 
-        public static Plugin LoadPlugin(string[] _Source, CompilerType _Compiler)
+        public static Assembly LoadPlugin(string _Source, PluginManager.CompilerType _Compiler)
         {
             CodeDomProvider compiler = null;
             switch (_Compiler)
             {
-                case CompilerType.VisualBasic: compiler = new VBCodeProvider(); break;
-                case CompilerType.CSharp: compiler = new CSharpCodeProvider(); break;
+                case PluginManager.CompilerType.VisualBasic: compiler = new VBCodeProvider(); break;
+                case PluginManager.CompilerType.CSharp: compiler = new CSharpCodeProvider(); break;
             }
 
             CompilerParameters compilerParams = new CompilerParameters();
@@ -44,6 +48,7 @@ namespace Framework
             compilerParams.IncludeDebugInformation = true;
             compilerParams.ReferencedAssemblies.Add("system.dll");
             compilerParams.ReferencedAssemblies.Add("framework.dll");
+            compilerParams.ReferencedAssemblies.Add("template.dll");
             compilerParams.GenerateExecutable = false;
             CompilerResults results = compiler.CompileAssemblyFromSource(compilerParams, _Source);
 
@@ -55,15 +60,7 @@ namespace Framework
                 }
                 return null;
             }
-
-            foreach (Type t in results.CompiledAssembly.GetTypes())
-            {
-                Log.Write("Plugin Compiler", Log.Line.Type.Message, "Type added {0}", t.FullName);
-            }
-
-            Plugin p = new Plugin(results.CompiledAssembly);
-            plugins.Add(p);
-            return p;
+            return results.CompiledAssembly;
         }
 
         public static void Update()
@@ -75,66 +72,106 @@ namespace Framework
     public class Plugin
     {
         Assembly assambly;
-        public Plugin(Assembly _Assambly)
+        string pluginname;
+        string source;
+        PluginManager.CompilerType type;
+
+        public string PluginName { get { return pluginname; } }
+        public string Source { get { return source; } }
+        public PluginManager.CompilerType Type { get { return type; } }
+        public Type[] Types { get { return assambly.GetTypes(); } }
+
+        public Assembly Assambly { get { return assambly; } }
+
+        public Plugin(string _PluginName, string _SourceCode)
         {
-            assambly = _Assambly;
+            assambly = PluginManager.LoadPlugin(_SourceCode, PluginManager.CompilerType.CSharp);
             foreach (Type t in assambly.GetTypes())
             {
-                Console.WriteLine(t.Name);
+                Log.Write("Plugin Compiler", "Type compiled {0}", t.FullName);
             }
+
+            CheckPluginAttributes();
+
+        }
+
+        public void CheckPluginAttributes()
+        {
+            foreach (Type t in Assambly.GetTypes())
+            {
+                foreach (MethodInfo method in t.GetMethods())
+                {
+                    if (System.Attribute.GetCustomAttributes(method, typeof(PluginEntry)).Length > 0)
+                    {
+                        if (!method.IsStatic) Log.Write("Plugin Compiler", "Method {0} should be static", method.Name);
+                    }
+                    if (System.Attribute.GetCustomAttributes(method, typeof(PluginTick)).Length > 0)
+                    {
+                        if (!method.IsStatic) Log.Write("Plugin Compiler", "Method {0} should be static", method.Name);
+                    }
+                }
+            }
+        }
+
+        public virtual void Update()
+        {
+
+        }
+    }
+
+    public class LocalPlugin : Plugin
+    {
+        public LocalPlugin(string _PluginName, string _SourceCode)
+            : base(_PluginName, _SourceCode)
+        {
             InvokeEntries();
         }
+
         public void InvokeEntries()
         {
-            foreach (Type t in assambly.GetTypes())
+            foreach (Type t in Assambly.GetTypes())
             {
                 foreach (MethodInfo field in t.GetMethods())
                 {
                     if (field.IsStatic)
                     {
                         PluginEntry[] attributes = (PluginEntry[])System.Attribute.GetCustomAttributes(field, typeof(PluginEntry));
-                        if (attributes.Length > 0) field.Invoke(null, null);
+                        if (attributes.Length > 0)
+                        {
+                            SafeInvoke invoke = new SafeInvoke(field);
+                            invoke.Invoke(null, null);
+                        }
                     }
                 }
             }
         }
-        public void Update()
+
+        public override void Update()
         {
-            foreach (Type t in assambly.GetTypes())
+            foreach (Type t in Assambly.GetTypes())
             {
                 foreach (MethodInfo field in t.GetMethods())
                 {
                     if (field.IsStatic)
                     {
                         PluginTick[] attributes = (PluginTick[])System.Attribute.GetCustomAttributes(field, typeof(PluginTick));
-                        if (attributes.Length > 0) field.Invoke(null, null);
+                        if (attributes.Length > 0)
+                        {
+                            SafeInvoke invoke = new SafeInvoke(field);
+                            invoke.Invoke(null, null);
+                        }
                     }
                 }
             }
         }
     }
 
-    public class PluginData
+    public class SlavePlugin : Plugin
     {
-        string pluginname;
-        string[] source;
-        PluginManager.CompilerType type;
-
-        public PluginData(string _PluginName,string[] _Source, PluginManager.CompilerType _Type)
+        public SlavePlugin(string _PluginName, string _SourceCode)
+            : base(_PluginName, _SourceCode)
         {
-            pluginname = _PluginName;
-            source = _Source;
-            type = _Type;
-            PluginManager.CollectedPluginData.Add(_PluginName, this);
-        }
-        
-        public string PluginName { get { return pluginname; } }
-        public string[] Source { get { return source; } }
-        public PluginManager.CompilerType Type { get { return type; } }
 
-        public Plugin Load()
-        {
-            return PluginManager.LoadPlugin(source, type);
         }
     }
 }

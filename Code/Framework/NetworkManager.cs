@@ -12,7 +12,7 @@ namespace Framework
         public static string Revision = "6.000";
         public static void Initialize()
         {
-            Log.Write("default", "Framework initialized Version:{0}", Revision);
+            Log.Write("Default", "Framework initialized Version:{0}", Revision);
         }
         public static Random random = new Random(Environment.TickCount);
         public static NetworkNodeLocal LocalNode = new NetworkNodeLocal();
@@ -21,6 +21,26 @@ namespace Framework
         public static void AddRemoteNode(ushort _NodeID)
         {
             if (!NetworkManager.RemoteNodes.ContainsKey(_NodeID)) RemoteNodes.Add(_NodeID, new NetworkNodeRemote(_NodeID));
+        }
+
+        public static void AddConnection(ushort _NodeID1, ushort _NodeID2)
+        {
+            if (_NodeID1 == 0 || _NodeID2 == 0)
+            {
+                Log.Write("Network Manager", "Connections to non initialized Nodes not allowed");
+                return;
+            }
+
+            if (_NodeID1 == _NodeID2)
+            {
+                Log.Write("Network Manager", "Connection is illegal {0} <-> {1} ", _NodeID1, _NodeID2);
+                return;
+            }
+            AddRemoteNode(_NodeID1);
+            AddRemoteNode(_NodeID2);
+            if (!NetworkManager.RemoteNodes[_NodeID1].RemoteNodes.ContainsKey(_NodeID2)) NetworkManager.RemoteNodes[_NodeID1].RemoteNodes.Add(_NodeID2, NetworkManager.RemoteNodes[_NodeID2]);
+            if (!NetworkManager.RemoteNodes[_NodeID2].RemoteNodes.ContainsKey(_NodeID1)) NetworkManager.RemoteNodes[_NodeID2].RemoteNodes.Add(_NodeID1, NetworkManager.RemoteNodes[_NodeID1]);
+            Log.Write("Networking", "Connection added {0} <-> {1}", _NodeID1, _NodeID2);
         }
 
         private static Thread ThreadUpdateAsync = null;
@@ -56,13 +76,14 @@ namespace Framework
         {
             Log.Write(new Log.Variable("NetworkManager", "RemoteNodes", RemoteNodes.Count));
             LocalNode.Update();
+            foreach (NetworkNode node in RemoteNodes.Values.ToArray()) node.Update();
             PluginManager.Update();
             Log.Update();
         }
 
         public static void RequestNetworkMap()
         {
-            
+
         }
 
         internal static class ActionBlackList
@@ -74,7 +95,7 @@ namespace Framework
                 uint newid = (uint)random.Next() + (uint)random.Next();
                 if (Contains(newid))
                 {
-                    Console.WriteLine("ZOMG! the ID already existed, this was a one out of 43.000.000 chance!");
+                    Log.Write("Default","ZOMG! the ID already existed, this was a one out of 43.000.000 chance!");
                     newid = GetRandomID();
                 }
                 return newid;

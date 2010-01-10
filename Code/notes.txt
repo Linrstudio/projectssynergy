@@ -1,0 +1,9 @@
+make graphics layer remoteable ( dual screen ? ) ( message pump ? )
+
+
+
+
+
+Notes:
+
+Controls will be square, since they are a separate rendertarget

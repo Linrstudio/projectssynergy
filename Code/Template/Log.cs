@@ -29,7 +29,13 @@ namespace SynergyTemplate
 
         public static void Write(string _Log, Log.Line.Type _Type, string _Format, params object[] _Arguments)
         {
-            Write(new Log.Line(_Log, string.Format(_Format, _Arguments), _Type));
+            string result = "";
+            try
+            {
+                 result = string.Format(_Format, _Arguments);
+            }
+            catch { result = _Format; }
+            Write(new Log.Line(_Log, result, _Type));
         }
 
         public static void Write(Log.Line _Line)
