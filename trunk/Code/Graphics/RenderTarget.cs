@@ -17,5 +17,16 @@ namespace SynergyGraphics
         {
             rendertarget = new RenderTarget2D(Graphics.device, _Size.X, _Size.Y, 0, SurfaceFormat.Rgba32);
         }
+
+        public TextureGPU Resolve()
+        {
+            Texture2D tex = null;
+            try
+            {
+                tex = rendertarget.GetTexture();
+            }
+            catch { }
+            return new TextureGPU(tex);
+        }
     }
 }

@@ -32,7 +32,7 @@ namespace Framework
             ByteStream s = new ByteStream();
             s.Write((byte)(_BroadCast ? 255 : 0));
             Converter.Write(_ActionID, s);
-            s.Write(NetworkClassLocal.GetInvokeCommand(_FunctionName, _Parameters));
+            s.Write(NetworkClassMaster.GetInvokeCommand(_FunctionName, _Parameters));
 
             Send(s);
         }
@@ -47,7 +47,7 @@ namespace Framework
             byte[] data = _RawData.ReadAll();
 
             Thread.BeginCriticalRegion();
-            Converter.Write((ushort)data.Length, SendBuffer);
+            SendBuffer.Write(BitConverter.GetBytes((ushort)data.Length));
             SendBuffer.Write(data);
             Thread.EndCriticalRegion();
         }
@@ -178,7 +178,7 @@ namespace Framework
                 {
                     //read new packetype
                     if (ReceiveBuffer.GetSize() < 2) return; //there is no data available so we cant read any
-                    currentpacketsize = (ushort)Converter.Read(ReceiveBuffer);
+                    currentpacketsize = BitConverter.ToUInt16(ReceiveBuffer.Read(2), 0);
                 }
                 if (currentpacketsize != 0)
                 {

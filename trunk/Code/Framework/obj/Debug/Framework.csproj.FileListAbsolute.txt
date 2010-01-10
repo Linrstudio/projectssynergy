@@ -15,3 +15,10 @@ C:\Documents and Settings\Roeny\Bureaublad\Refactor\Code\Framework\obj\Debug\Fra
 C:\Documents and Settings\Roeny\Bureaublad\Refactor\Code\Framework\obj\Debug\Framework.pdb
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Framework\bin\Debug\Template.dll
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Framework\bin\Debug\Template.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Framework\obj\Debug\ResolveAssemblyReference.cache
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Framework\obj\Debug\Framework.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Framework\obj\Debug\Framework.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Framework\bin\Debug\Framework.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Framework\bin\Debug\Framework.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Framework\bin\Debug\Template.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Framework\bin\Debug\Template.pdb

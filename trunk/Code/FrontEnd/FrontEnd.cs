@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -14,26 +14,50 @@ namespace FrontEnd
 {
     public partial class FrontEnd : Form
     {
+        private const int WM_SCROLL = 276; // Horizontal scroll
+        private const int WM_VSCROLL = 277; // Vertical scroll
+        private const int SB_LINEUP = 0; // Scrolls one line up
+        private const int SB_LINELEFT = 0;// Scrolls one cell left
+        private const int SB_LINEDOWN = 1; // Scrolls one line down
+        private const int SB_LINERIGHT = 1;// Scrolls one cell right
+        private const int SB_PAGEUP = 2; // Scrolls one page up
+        private const int SB_PAGELEFT = 2;// Scrolls one page left
+        private const int SB_PAGEDOWN = 3; // Scrolls one page down
+        private const int SB_PAGERIGTH = 3; // Scrolls one page right
+        private const int SB_PAGETOP = 6; // Scrolls to the upper left
+        private const int SB_LEFT = 6; // Scrolls to the left
+        private const int SB_PAGEBOTTOM = 7; // Scrolls to the upper right
+        private const int SB_RIGHT = 7; // Scrolls to the right
+        private const int SB_ENDSCROLL = 8; // Ends scroll
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+
         public bool update = true;
         public Dictionary<string, CheckBox> enabledlogs = new Dictionary<string, CheckBox>();
         public FrontEnd()
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
+            NetworkClassSlave.AllowedTypes.Add(typeof(K8055.testclass));
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.EnableNotifyMessage | ControlStyles.UserPaint, true);
             InitializeComponent();
             Log.Write("user input", "user input log added");
         }
 
         public void RebuildEnabledLogsList()
         {
-            foreach (string s in Log.log.Keys)
+            foreach (Log.Line s in Log.AllLines)
             {
-                AddLog(s, true);
+                AddLog(s.LogName, true);
+            }
+            foreach (Log.Variable s in Log.AllVariables)
+            {
+                AddLog(s.LogName, true);
             }
         }
 
         public void OnLogChecked(object _Sender, EventArgs _Args)
         {
             RebuildLogText();
+            RebuildVariables();
         }
 
         public void AddLog(string _name, bool _Enabled)
@@ -77,6 +101,7 @@ namespace FrontEnd
         public void RebuildLogText()
         {
             DataGridView log = d_Log;
+            int selectedindex = log.SelectedRows.Count>0?log.SelectedRows[0].Index:log.Rows.Count;
             log.Rows.Clear();
             log.Text = "";
             foreach (Log.Line line in Log.AllLines)
@@ -100,6 +125,7 @@ namespace FrontEnd
                     row.CreateCells(log, line.Time.ToShortTimeString(), line.LogName, line.Message);
                     row.Cells[0].ToolTipText = line.Time.ToString();
                     log.Rows.Add(row);
+                    row.Selected = false;
                 }
             }
         }
@@ -148,27 +174,27 @@ namespace FrontEnd
         public void ExecuteCommand(string _Command)
         {
             string[] split = _Command.Split(' ');
-            try
+            //try
             {
                 switch (split[0].ToLower())
                 {
                     case "try":
-                        NetworkManager.LocalNode.NetworkClasses["analog out 1"].GetMethods();
+                        NetworkManager.LocalNode.NetworkClasses["digital in 1"].InvokeSlaveMethod("testfunction");
                         break;
                     case "connect":
                         if (split.Length > 1)
                             new TCPConnection(split[1], ushort.Parse(split[2]), false);
                         else
-                            new TCPConnection("127.0.0.1", 1111, false);
+                            new TCPConnection("127.0.0.1", 1000, false);
                         break;
                     case "listen":
                         if (split.Length > 1)
                             new TCPListener(ushort.Parse(split[1]));
                         else
-                            new TCPListener(1111);
+                            new TCPListener(1000);
                         break;
                     case "load":
-                        PluginManager.LoadPlugin(split[1]);
+                        new LocalPlugin("k8055", System.IO.File.ReadAllText(split[1]));
                         break;
                     case "deletenetworkclasses":
                         NetworkManager.LocalNode.NetworkClasses.Clear();
@@ -185,10 +211,10 @@ namespace FrontEnd
                         break;
                     default:
                         Log.Write("user input", Log.Line.Type.Error, "Unknown command {0}", _Command);
-                        throw new Exception();
+                        break;
                 }
             }
-            catch (Exception e) { Log.Write("user input", e.Message.ToString()); }
+            //catch (Exception e) { Log.Write("user input", e.Message.ToString()); }
             //Log.Write("user input", _Command); c_Input.Items.Add(_Command);
         }
 
@@ -204,7 +230,7 @@ namespace FrontEnd
             int curtick = Environment.TickCount;
             int delta = curtick - lasttick;
             lasttick = curtick;
-            if (lastfpsupdatetick < curtick - 100)
+            if (lastfpsupdatetick < curtick - 1000)
             {
                 lastfpsupdatetick = curtick;
                 Log.Write(new Log.Variable("Default", "Framework FPS", 1000 / delta));
@@ -232,6 +258,11 @@ namespace FrontEnd
             e.Graphics.DrawLine(new Pen(Color.FromArgb(32, 32, 32), 2), width, 0, width, grid.Height);
             width += grid.Columns[1].Width;
             e.Graphics.DrawLine(new Pen(Brushes.Gray, 2), width, 0, width, grid.Height);
+        }
+
+        protected override void OnNotifyMessage(Message m)
+        {
+            if (m.Msg != 0x14) base.OnNotifyMessage(m);
         }
     }
 }

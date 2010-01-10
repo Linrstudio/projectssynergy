@@ -3,3 +3,8 @@ C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Template\bin\Debug\Template.pdb
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Template\obj\Debug\ResolveAssemblyReference.cache
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Template\obj\Debug\Template.dll
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Template\obj\Debug\Template.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Template\bin\Debug\Template.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Template\bin\Debug\Template.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Template\obj\Debug\ResolveAssemblyReference.cache
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Template\obj\Debug\Template.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Template\obj\Debug\Template.pdb

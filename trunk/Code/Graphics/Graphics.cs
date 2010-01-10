@@ -34,7 +34,7 @@ namespace SynergyGraphics
             {
                 if (screen.Bounds.Left < rect.From.X) rect.From.X = screen.Bounds.Left;
                 if (screen.Bounds.Top < rect.From.Y) rect.From.Y = screen.Bounds.Top;
-
+                
                 if (screen.Bounds.Right > rect.To.X) rect.To.X = screen.Bounds.Right;
                 if (screen.Bounds.Bottom > rect.To.Y) rect.To.Y = screen.Bounds.Bottom;
             }
@@ -64,7 +64,10 @@ namespace SynergyGraphics
 
         public static void SetRenderTarget(RenderTarget _RenderTarget)
         {
-            device.SetRenderTarget(0, _RenderTarget.rendertarget);
+            if(_RenderTarget!=null)
+                device.SetRenderTarget(0, _RenderTarget.rendertarget);
+            else
+                device.SetRenderTarget(0, null);
         }
 
         public static void Present(IntPtr _WindowHandle)

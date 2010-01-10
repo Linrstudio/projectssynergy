@@ -11,3 +11,16 @@ C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\SynergyGraphicsTest\bin\Debug\Graphi
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\SynergyGraphicsTest\obj\Debug\SynergyGraphicsTest.exe
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\SynergyGraphicsTest\obj\Debug\SynergyGraphicsTest.pdb
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\SynergyGraphicsTest\obj\Debug\SynergyGraphicsTest.RenderWindow.resources
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyGraphicsTest\bin\Debug\SynergyGraphicsTest.exe
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyGraphicsTest\bin\Debug\SynergyGraphicsTest.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyGraphicsTest\bin\Debug\Graphics.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyGraphicsTest\bin\Debug\Template.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyGraphicsTest\bin\Debug\Template.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyGraphicsTest\bin\Debug\Graphics.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyGraphicsTest\obj\Debug\ResolveAssemblyReference.cache
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyGraphicsTest\obj\Debug\SynergyGraphicsTest.Form1.resources
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyGraphicsTest\obj\Debug\SynergyGraphicsTest.Properties.Resources.resources
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyGraphicsTest\obj\Debug\SynergyGraphicsTest.RenderWindow.resources
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyGraphicsTest\obj\Debug\SynergyGraphicsTest.csproj.GenerateResource.Cache
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyGraphicsTest\obj\Debug\SynergyGraphicsTest.exe
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyGraphicsTest\obj\Debug\SynergyGraphicsTest.pdb

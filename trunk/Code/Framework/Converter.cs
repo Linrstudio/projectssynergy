@@ -53,7 +53,7 @@ namespace Framework
                 Converters[t].WriteObject(_Object, _TargetStream);
             }
             else
-                Log.Write("Networking", "Cant find converter for Type {0}", t.Name);
+                Log.Write("Converter", "Cant find converter for Type {0}", t.Name);
         }
 
         public static object Read(ByteStream _Stream)
@@ -61,13 +61,16 @@ namespace Framework
             Initialize();
             string typename = (string)Converters[typeof(string)].ReadObject(_Stream);
             Type t = Type.GetType(typename);
-            if (Converters.ContainsKey(t)) return Converters[t].ReadObject(_Stream);
+            if (t != null)
+            {
+                if (Converters.ContainsKey(t)) return Converters[t].ReadObject(_Stream);
+            }
+            else { Log.Write("Networking", "Cant find Type {0}", typename); }
             return null;
         }
 
         public virtual void WriteObject(object _Object, ByteStream _TargetStream) { }
         public virtual object ReadObject(ByteStream _Stream) { return null; }
-
 
         public class ByteStreamConverter : Converter
         {

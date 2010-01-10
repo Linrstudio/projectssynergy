@@ -5,3 +5,10 @@ C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Graphics\bin\Debug\Template.dll
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Graphics\bin\Debug\Template.pdb
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Graphics\obj\Debug\Graphics.dll
 C:\DOCUMENTS\PROJECTS\Synergy\Refactor\Code\Graphics\obj\Debug\Graphics.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Graphics\bin\Debug\Graphics.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Graphics\bin\Debug\Graphics.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Graphics\bin\Debug\Template.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Graphics\bin\Debug\Template.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Graphics\obj\Debug\ResolveAssemblyReference.cache
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Graphics\obj\Debug\Graphics.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Graphics\obj\Debug\Graphics.pdb
