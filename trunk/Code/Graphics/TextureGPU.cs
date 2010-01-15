@@ -36,7 +36,7 @@ namespace SynergyGraphics
         {
             if (texture != null)
             {
-                texture.Dispose();
+                //texture.Dispose(); //ermm yea,, no, i dont gett it
                 texture = null;
             }
         }

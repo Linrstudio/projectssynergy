@@ -61,20 +61,17 @@ namespace SynergyGraphicsTest
                 new Float3(-0.5f, -0.5f, 0),
                 new Float3(0.5f, -0.5f, 0),
                 new Float3(-0.5f, 0.5f, 0),
-                new Float3(0.5f, 0.5f, 0),
-                test);
+                new Float3(0.5f, 0.5f, 0));
             SynergyGraphics.Graphics.DrawRectangle(
                 new Float3(-0.25f, -0.25f, 0),
                 new Float3(0.75f, -0.25f, 0),
                 new Float3(-0.25f, 0.75f, 0),
-                new Float3(0.75f, 0.75f, 0),
-                test);
+                new Float3(0.75f, 0.75f, 0));
             SynergyGraphics.Graphics.DrawRectangle(
                 new Float3(0, 0, 0),
                 new Float3(1, 0, 0),
                 new Float3(0, 1, 0),
-                new Float3(1, 1, 0),
-                test);
+                new Float3(1, 1, 0));
             shader.End();
 
             float totalw = DesktopBounds.Size.X;

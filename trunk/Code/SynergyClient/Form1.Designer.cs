@@ -28,18 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.p_WorkingArea = new System.Windows.Forms.Panel();
+            this.t_tick = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // p_WorkingArea
             // 
-            this.p_WorkingArea.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.p_WorkingArea.Location = new System.Drawing.Point(12, 12);
+            this.p_WorkingArea.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.p_WorkingArea.Location = new System.Drawing.Point(0, 0);
             this.p_WorkingArea.Name = "p_WorkingArea";
-            this.p_WorkingArea.Size = new System.Drawing.Size(761, 489);
+            this.p_WorkingArea.Size = new System.Drawing.Size(785, 513);
             this.p_WorkingArea.TabIndex = 0;
+            // 
+            // t_tick
+            // 
+            this.t_tick.Enabled = true;
+            this.t_tick.Interval = 20;
+            this.t_tick.Tick += new System.EventHandler(this.t_tick_Tick);
             // 
             // Form1
             // 
@@ -50,6 +56,7 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.ResumeLayout(false);
 
         }
@@ -57,6 +64,7 @@
         #endregion
 
         private System.Windows.Forms.Panel p_WorkingArea;
+        private System.Windows.Forms.Timer t_tick;
     }
 }
 
