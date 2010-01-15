@@ -10,3 +10,5 @@ C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyClient\obj\Debug\SynergyClient.P
 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyClient\obj\Debug\SynergyClient.csproj.GenerateResource.Cache
 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyClient\obj\Debug\SynergyClient.exe
 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyClient\obj\Debug\SynergyClient.pdb
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyClient\bin\Debug\Framework.dll
+C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\SynergyClient\bin\Debug\Framework.pdb

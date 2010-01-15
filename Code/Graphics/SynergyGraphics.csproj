@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Control.cs" />
     <Compile Include="Graphics.cs" />
+    <Compile Include="SpriteFont.cs" />
     <Compile Include="TextureGPU.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderTarget.cs" />

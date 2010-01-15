@@ -13,9 +13,12 @@ namespace SynergyGraphics
     public class RenderTarget
     {
         internal RenderTarget2D rendertarget;
+
+        public Int2 Size { get { return new Int2(rendertarget.Width, rendertarget.Height); } }
+
         public RenderTarget(Int2 _Size)
         {
-            rendertarget = new RenderTarget2D(Graphics.device, _Size.X, _Size.Y, 0, SurfaceFormat.Rgba32);
+            rendertarget = new RenderTarget2D(Graphics.device, _Size.X, _Size.Y, 0, SurfaceFormat.Color);
         }
 
         public TextureGPU Resolve()
@@ -25,7 +28,10 @@ namespace SynergyGraphics
             {
                 tex = rendertarget.GetTexture();
             }
-            catch { }
+            catch
+            {
+                return null; 
+            }
             return new TextureGPU(tex);
         }
     }

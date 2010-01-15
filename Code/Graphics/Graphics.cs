@@ -24,25 +24,27 @@ namespace SynergyGraphics
 
     public class Graphics
     {
-        public static int ImageMipLevelDepth = 1;
+        public static int ImageMipLevelDepth = 3;
         public static GraphicsDevice device = null;
+
+        public static Shader defaultshader = null;
 
         public static SynergyTemplate.Rect GetTotalDesktopSize()
         {
-            SynergyTemplate.Rect rect = new SynergyTemplate.Rect( new Int2(100000, 100000),new Int2(-100000, -100000));
+            SynergyTemplate.Rect rect = new SynergyTemplate.Rect(new Int2(100000, 100000), new Int2(-100000, -100000));
             foreach (Screen screen in Screen.AllScreens)
             {
                 if (screen.Bounds.Left < rect.From.X) rect.From.X = screen.Bounds.Left;
                 if (screen.Bounds.Top < rect.From.Y) rect.From.Y = screen.Bounds.Top;
-                
+
                 if (screen.Bounds.Right > rect.To.X) rect.To.X = screen.Bounds.Right;
                 if (screen.Bounds.Bottom > rect.To.Y) rect.To.Y = screen.Bounds.Bottom;
             }
 
             return rect;
-        } 
+        }
 
-        public static void Initialize(IntPtr _WindowHandle,Int2 _Resolution)
+        public static void Initialize(IntPtr _WindowHandle, Int2 _Resolution)
         {
             foreach (GraphicsAdapter adapter in GraphicsAdapter.Adapters)
             {
@@ -55,6 +57,12 @@ namespace SynergyGraphics
             parameter.DeviceWindowHandle = _WindowHandle;
 
             device = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, DeviceType.Hardware, _WindowHandle, parameter);
+
+
+
+
+            //load default stuff
+            defaultshader = ShaderCompiler.Compile(System.IO.File.ReadAllText("Default.fx"));
         }
 
         public static void Present()
@@ -64,7 +72,7 @@ namespace SynergyGraphics
 
         public static void SetRenderTarget(RenderTarget _RenderTarget)
         {
-            if(_RenderTarget!=null)
+            if (_RenderTarget != null)
                 device.SetRenderTarget(0, _RenderTarget.rendertarget);
             else
                 device.SetRenderTarget(0, null);
@@ -89,7 +97,7 @@ namespace SynergyGraphics
             device.Present(
                 new Rectangle((int)_SourceRectFrom.X, (int)_SourceRectFrom.Y, (int)_SourceRectTo.X, (int)_SourceRectTo.Y),
                 new Rectangle(_TargetRectFrom.X, _TargetRectFrom.Y, _TargetRectTo.X, _TargetRectTo.Y),
-                
+
                 _WindowHandle);
         }
 
@@ -103,10 +111,11 @@ namespace SynergyGraphics
             device.RenderState.AlphaBlendEnable = _Enabled;
             if (_Enabled)
             {
-                device.RenderState.AlphaBlendOperation = BlendFunction.Add;
+                device.RenderState.SeparateAlphaBlendEnabled = true;
+                device.RenderState.AlphaBlendOperation = BlendFunction.Max;
+                device.RenderState.BlendFunction = BlendFunction.Add;
                 device.RenderState.SourceBlend = Blend.SourceAlpha;
                 device.RenderState.DestinationBlend = Blend.InverseSourceAlpha;
-                device.RenderState.SeparateAlphaBlendEnabled = false;
             }
         }
 
@@ -128,7 +137,20 @@ namespace SynergyGraphics
         /// <param name="_C">Left lower Coordinate</param>
         /// <param name="_D">Right lower Coordinate</param>
         /// <param name="_Image"></param>
-        public static void DrawRectangle(Float3 _A, Float3 _B, Float3 _C, Float3 _D, TextureGPU _Image)
+        public static void DrawRectangle(Float3 _A, Float3 _B, Float3 _C, Float3 _D)
+        {
+            DrawRectangle(_A, _B, _C, _D, new Float2(0, 0), new Float2(1, 0), new Float2(0, 1), new Float2(1, 1));
+        }
+
+        /// <summary>
+        /// draws a rectangle using the provided image to the active render target
+        /// </summary>
+        /// <param name="_A">Left upper Coordinate</param>
+        /// <param name="_B">Right upper Coordinate</param>
+        /// <param name="_C">Left lower Coordinate</param>
+        /// <param name="_D">Right lower Coordinate</param>
+        /// <param name="_Image"></param>
+        public static void DrawRectangle(Float3 _A, Float3 _B, Float3 _C, Float3 _D, Float2 _UVA, Float2 _UVB, Float2 _UVC, Float2 _UVD)
         {
             device.RenderState.DepthBufferEnable = false;
             device.RenderState.CullMode = CullMode.None;
@@ -136,14 +158,53 @@ namespace SynergyGraphics
             VertexBuffer vbo = new VertexBuffer(Graphics.device, Marshal.SizeOf(typeof(Vertex)) * 4, BufferUsage.None);
             VertexPositionTexture[] vertices = new VertexPositionTexture[]
             {
-                new VertexPositionTexture(new Vector3(_A.X,_A.Y,_A.Z), new Vector2(0, 0)),
-                new VertexPositionTexture(new Vector3(_B.X,_B.Y,_B.Z), new Vector2(1, 0)),
-                new VertexPositionTexture(new Vector3(_C.X,_C.Y,_C.Z), new Vector2(0, 1)),
-                new VertexPositionTexture(new Vector3(_D.X,_D.Y,_D.Z), new Vector2(1, 1))
+                new VertexPositionTexture(new Vector3(_A.X,_A.Y,_A.Z), new Vector2(_UVA.X,_UVA.Y)),
+                new VertexPositionTexture(new Vector3(_B.X,_B.Y,_B.Z), new Vector2(_UVB.X,_UVB.Y)),
+                new VertexPositionTexture(new Vector3(_C.X,_C.Y,_C.Z), new Vector2(_UVC.X,_UVC.Y)),
+                new VertexPositionTexture(new Vector3(_D.X,_D.Y,_D.Z), new Vector2(_UVD.X,_UVD.Y))
             };
             vbo.SetData(vertices);
             device.VertexDeclaration = new VertexDeclaration(device, VertexPositionTexture.VertexElements);
             device.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 0, 2);
+        }
+
+        /// <summary>
+        /// draws a rectangle using the provided image to the active render target
+        /// </summary>
+        /// <param name="_A">Left upper Coordinate</param>
+        /// <param name="_B">Right upper Coordinate</param>
+        /// <param name="_C">Left lower Coordinate</param>
+        /// <param name="_D">Right lower Coordinate</param>
+        /// <param name="_Image"></param>
+        public static void DrawRectangle(Float2 _A, Float2 _B, Float2 _C, Float2 _D, Float2 _UVA, Float2 _UVB, Float2 _UVC, Float2 _UVD, float _Depth)
+        {
+            DrawRectangle(
+                new Float3(_A.X, _A.Y, _Depth),
+                new Float3(_B.X, _B.Y, _Depth),
+                new Float3(_C.X, _C.Y, _Depth),
+                new Float3(_D.X, _D.Y, _Depth),
+                _UVA,
+                _UVB,
+                _UVC,
+                _UVD);
+        }
+
+        /// <summary>
+        /// draws a rectangle using the provided image to the active render target
+        /// </summary>
+        /// <param name="_A">Left upper Coordinate</param>
+        /// <param name="_B">Right upper Coordinate</param>
+        /// <param name="_C">Left lower Coordinate</param>
+        /// <param name="_D">Right lower Coordinate</param>
+        /// <param name="_Depth">Right lower Coordinate</param>
+        /// <param name="_Image"></param>
+        public static void DrawRectangle(Float2 _A, Float2 _B, Float2 _C, Float2 _D, float _Depth)
+        {
+            DrawRectangle(
+                new Float3(_A.X, _A.Y, _Depth),
+                new Float3(_B.X, _B.Y, _Depth),
+                new Float3(_C.X, _C.Y, _Depth),
+                new Float3(_D.X, _D.Y, _Depth));
         }
     }
 }
