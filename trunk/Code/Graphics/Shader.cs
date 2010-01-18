@@ -67,7 +67,7 @@ namespace SynergyGraphics
                 //Log.Write("ShaderCompiler", Log.Line.Type.Error, "Failed to compile shader");
                 Log.Write("ShaderCompiler", Log.Line.Type.Error, shader.ErrorsAndWarnings);
                 return null;
-            } 
+            }
             else
             {
                 Shader ret = new Shader();

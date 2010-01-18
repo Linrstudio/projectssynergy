@@ -23,13 +23,13 @@ namespace SynergyClient
             Root.Size = new Float2(2, 2);
             Root.Position = new Float2(-1, -1);
 
-            new TCPConnection("127.0.0.1", 1000, false);
             Root.OnRefresh += new Control.OnRefreshHandler(Root_OnRefresh);
             System.Windows.Forms.Application.Idle += new EventHandler(Application_Idle);
         }
 
         void Root_OnRefresh()
         {
+            Root.SetViewFit(Graphics.defaultshader);
             Root.Draw();
             SynergyGraphics.Graphics.Present(p_WorkingArea.Handle);
         }
