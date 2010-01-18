@@ -7,16 +7,17 @@ namespace SynergyGraphics
 {
     public class Control
     {
-        public static Shader SelectionShader = ShaderCompiler.Compile(System.IO.File.ReadAllText("Selected.fx"));
-
         public string name;
         public string Name { get { return name; } }
+
         public Control Parent;
         public Dictionary<string, Control> Children = new Dictionary<string, Control>();
 
         public Float2 Position;
         public Float2 Size = new Float2(1, 1);
-        public Float2 Scale = new Float2(1, 1);
+
+        public Float2x3 View = new Float2x3();
+
         public Int2 Resolution = new Int2(800, 600);
 
         public delegate void Render();
@@ -26,7 +27,6 @@ namespace SynergyGraphics
 
         public delegate void OnRefreshHandler();
         public event OnRefreshHandler OnRefresh = null;
-
 
         public TextureGPU Texture;
 
@@ -62,7 +62,6 @@ namespace SynergyGraphics
             Graphics.Clear(new Float4(0, 0, 0, 0));
             if (OnRender != null)
             {
-                Graphics.defaultshader.SetParameter("Scale", Scale);
                 OnRender();
             }
             else
@@ -79,7 +78,8 @@ namespace SynergyGraphics
 
         public void DrawChildren()
         {
-            Graphics.defaultshader.SetParameter("Scale", Scale);
+            //Graphics.defaultshader.SetParameter("View", new Float2x3(2 / Size.X, 0, 0, 2 / Size.Y, -1, -1));
+            SetViewAspect(Graphics.defaultshader);
             foreach (Control child in Children.Values)
             {
                 child.Draw();
@@ -106,7 +106,6 @@ namespace SynergyGraphics
         public virtual void Draw()
         {
             if (Texture == null) Refresh();
-            Graphics.defaultshader.SetParameter("Scale", Scale);
             Graphics.defaultshader.SetParameter("DiffuseMap", Texture);
             Graphics.defaultshader.Begin();
             Graphics.DrawRectangle(
@@ -115,6 +114,16 @@ namespace SynergyGraphics
                 Position + new Float2(0, Size.Y),
                 Position + Size, 0.5f);
             Graphics.defaultshader.End();
+        }
+
+        public virtual void SetViewAspect(Shader _Shader)
+        {
+            _Shader.SetParameter("Scale", new Float2(1 / Size.X, 1 / Size.Y));
+        }
+
+        public virtual void SetViewFit(Shader _Shader)
+        {
+            _Shader.SetParameter("Scale", new Float2(1, 1));
         }
     }
 }

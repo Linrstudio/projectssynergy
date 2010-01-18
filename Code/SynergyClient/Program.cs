@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Framework;
 
 namespace SynergyClient
 {
@@ -13,8 +14,8 @@ namespace SynergyClient
         static void Main()
         {
             Framework.NetworkManager.Initialize();
-            new Framework.TCPListener(1000);
-
+            new TCPConnection("127.0.0.1", 1000, false);
+            //new Framework.TCPListener(1000);
 
             Application.Idle += new EventHandler(Application_Idle);
             Application.EnableVisualStyles();
