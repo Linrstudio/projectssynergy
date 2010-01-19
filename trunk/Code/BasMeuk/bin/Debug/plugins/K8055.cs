@@ -13,7 +13,7 @@ public class plugin
     {
         Log.Write("My Plugin", "K8055 plugin loaded");
 
-        int result = OpenDevice(3);// open channel zero
+        int result = OpenDevice(0);// open channel zero
         switch (result)
         {
             case -1:
