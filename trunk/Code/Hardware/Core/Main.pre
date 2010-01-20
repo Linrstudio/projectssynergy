@@ -1,0 +1,968 @@
+
+# 1 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Main.c"
+
+# 16 "C:\Program Files\HI-TECH Software\PICC-18\PRO\9.63\include\pic18f1xk50.h"
+extern volatile near unsigned char TOSU @ 0xFFF;
+extern volatile near unsigned char TOSH @ 0xFFE;
+extern volatile near unsigned char TOSL @ 0xFFD;
+extern volatile near unsigned char STKPTR @ 0xFFC;
+extern volatile near unsigned char PCLATU @ 0xFFB;
+extern volatile near unsigned char PCLATH @ 0xFFA;
+extern volatile near unsigned char PCL @ 0xFF9;
+extern volatile far unsigned char * TBLPTR @ 0xFF6;
+extern volatile near unsigned char TBLPTRU @ 0xFF8;
+extern volatile near unsigned char TBLPTRH @ 0xFF7;
+extern volatile near unsigned char TBLPTRL @ 0xFF6;
+extern volatile near unsigned char TABLAT @ 0xFF5;
+extern volatile near unsigned char PRODH @ 0xFF4;
+extern volatile near unsigned char PRODL @ 0xFF3;
+extern volatile near unsigned char INTCON @ 0xFF2;
+extern near unsigned char INTCON2 @ 0xFF1;
+extern volatile near unsigned char INTCON3 @ 0xFF0;
+extern volatile near unsigned char INDF0 @ 0xFEF;
+extern volatile near unsigned char POSTINC0 @ 0xFEE;
+extern volatile near unsigned char POSTDEC0 @ 0xFED;
+extern volatile near unsigned char PREINC0 @ 0xFEC;
+extern volatile near unsigned char PLUSW0 @ 0xFEB;
+extern volatile near unsigned char FSR0H @ 0xFEA;
+extern volatile near unsigned char FSR0L @ 0xFE9;
+extern volatile near unsigned char WREG @ 0xFE8;
+extern volatile near unsigned char INDF1 @ 0xFE7;
+extern volatile near unsigned char POSTINC1 @ 0xFE6;
+extern volatile near unsigned char POSTDEC1 @ 0xFE5;
+extern volatile near unsigned char PREINC1 @ 0xFE4;
+extern volatile near unsigned char PLUSW1 @ 0xFE3;
+extern volatile near unsigned char FSR1H @ 0xFE2;
+extern volatile near unsigned char FSR1L @ 0xFE1;
+extern near unsigned char BSR @ 0xFE0;
+extern volatile near unsigned char INDF2 @ 0xFDF;
+extern volatile near unsigned char POSTINC2 @ 0xFDE;
+extern volatile near unsigned char POSTDEC2 @ 0xFDD;
+extern volatile near unsigned char PREINC2 @ 0xFDC;
+extern volatile near unsigned char PLUSW2 @ 0xFDB;
+extern volatile near unsigned char FSR2H @ 0xFDA;
+extern volatile near unsigned char FSR2L @ 0xFD9;
+extern volatile near unsigned char STATUS @ 0xFD8;
+extern volatile near unsigned char TMR0H @ 0xFD7;
+extern volatile near unsigned char TMR0L @ 0xFD6;
+
+extern volatile near unsigned int TMR0 @ 0xFD6;
+extern near unsigned char T0CON @ 0xFD5;
+extern volatile near unsigned char OSCCON @ 0xFD3;
+extern volatile near unsigned char OSCCON2 @ 0xFD2;
+extern volatile near unsigned char WDTCON @ 0xFD1;
+extern volatile near unsigned char RCON @ 0xFD0;
+extern volatile near unsigned char TMR1H @ 0xFCF;
+extern volatile near unsigned char TMR1L @ 0xFCE;
+
+extern volatile near unsigned int TMR1 @ 0xFCE;
+extern near unsigned char T1CON @ 0xFCD;
+extern volatile near unsigned char TMR2 @ 0xFCC;
+extern near unsigned char PR2 @ 0xFCB;
+extern near unsigned char T2CON @ 0xFCA;
+extern volatile near unsigned char SSPBUF @ 0xFC9;
+extern near unsigned char SSPADD @ 0xFC8;
+extern volatile near unsigned char SSPSTAT @ 0xFC7;
+extern volatile near unsigned char SSPCON1 @ 0xFC6;
+extern volatile near unsigned char SSPCON2 @ 0xFC5;
+extern volatile near unsigned char ADRESH @ 0xFC4;
+extern volatile near unsigned char ADRESL @ 0xFC3;
+
+extern volatile near unsigned int ADRES @ 0xFC3;
+extern volatile near unsigned char ADCON0 @ 0xFC2;
+extern near unsigned char ADCON1 @ 0xFC1;
+extern near unsigned char ADCON2 @ 0xFC0;
+extern volatile near unsigned char CCPR1H @ 0xFBF;
+extern volatile near unsigned char CCPR1L @ 0xFBE;
+
+extern volatile near unsigned int CCPR1 @ 0xFBE;
+extern volatile near unsigned char CCP1CON @ 0xFBD;
+extern volatile near unsigned char REFCON2 @ 0xFBC;
+extern volatile near unsigned char REFCON1 @ 0xFBB;
+extern volatile near unsigned char REFCON0 @ 0xFBA;
+extern near unsigned char PSTRCON @ 0xFB9;
+extern volatile near unsigned char BAUDCON @ 0xFB8;
+extern volatile near unsigned char PWM1CON @ 0xFB7;
+extern volatile near unsigned char ECCP1AS @ 0xFB6;
+extern volatile near unsigned char TMR3H @ 0xFB3;
+extern volatile near unsigned char TMR3L @ 0xFB2;
+
+extern volatile near unsigned int TMR3 @ 0xFB2;
+extern near unsigned char T3CON @ 0xFB1;
+extern near unsigned char SPBRGH @ 0xFB0;
+extern near unsigned char SPBRG @ 0xFAF;
+
+extern near unsigned char SPBRG1 @ 0xFAF;
+extern volatile near unsigned char RCREG @ 0xFAE;
+
+extern volatile near unsigned char RCREG1 @ 0xFAE;
+extern volatile near unsigned char TXREG @ 0xFAD;
+
+extern volatile near unsigned char TXREG1 @ 0xFAD;
+extern volatile near unsigned char TXSTA @ 0xFAC;
+
+extern volatile near unsigned char TXSTA1 @ 0xFAC;
+extern volatile near unsigned char RCSTA @ 0xFAB;
+
+extern volatile near unsigned char RCSTA1 @ 0xFAB;
+extern near unsigned char EEADRH @ 0xFAA;
+extern near unsigned char EEADR @ 0xFA9;
+extern volatile near unsigned char EEDATA @ 0xFA8;
+extern volatile near unsigned char EECON2 @ 0xFA7;
+extern volatile near unsigned char EECON1 @ 0xFA6;
+extern near unsigned char IPR2 @ 0xFA2;
+extern volatile near unsigned char PIR2 @ 0xFA1;
+extern near unsigned char PIE2 @ 0xFA0;
+extern near unsigned char IPR1 @ 0xF9F;
+extern volatile near unsigned char PIR1 @ 0xF9E;
+extern near unsigned char PIE1 @ 0xF9D;
+extern near unsigned char OSCTUNE @ 0xF9B;
+extern volatile near unsigned char TRISC @ 0xF94;
+extern volatile near unsigned char TRISB @ 0xF93;
+extern volatile near unsigned char TRISA @ 0xF92;
+extern volatile near unsigned char LATC @ 0xF8B;
+extern volatile near unsigned char LATB @ 0xF8A;
+extern volatile near unsigned char LATA @ 0xF89;
+extern volatile near unsigned char PORTC @ 0xF82;
+extern volatile near unsigned char PORTB @ 0xF81;
+extern volatile near unsigned char PORTA @ 0xF80;
+extern near unsigned char ANSELH @ 0xF7F;
+extern near unsigned char ANSEL @ 0xF7E;
+extern near unsigned char IOCB @ 0xF7A;
+extern near unsigned char IOCA @ 0xF79;
+extern near unsigned char WPUB @ 0xF78;
+extern near unsigned char WPUA @ 0xF77;
+extern near unsigned char SLRCON @ 0xF76;
+extern volatile near unsigned char SSPMSK @ 0xF6F;
+extern volatile near unsigned char CM1CON0 @ 0xF6D;
+extern volatile near unsigned char CM2CON1 @ 0xF6C;
+extern volatile near unsigned char CM2CON0 @ 0xF6B;
+extern near unsigned char SRCON1 @ 0xF69;
+extern volatile near unsigned char SRCON0 @ 0xF68;
+extern volatile near unsigned char UCON @ 0xF64;
+extern volatile near unsigned char USTAT @ 0xF63;
+extern volatile near unsigned char UIR @ 0xF62;
+extern volatile near unsigned char UCFG @ 0xF61;
+extern near unsigned char UIE @ 0xF60;
+extern volatile unsigned char UEIR @ 0xF5F;
+extern volatile unsigned char UFRMH @ 0xF5E;
+extern volatile unsigned char UFRML @ 0xF5D;
+extern unsigned char UADDR @ 0xF5C;
+extern unsigned char UEIE @ 0xF5B;
+extern volatile unsigned char UEP7 @ 0xF5A;
+extern volatile unsigned char UEP6 @ 0xF59;
+extern volatile unsigned char UEP5 @ 0xF58;
+extern volatile unsigned char UEP4 @ 0xF57;
+extern volatile unsigned char UEP3 @ 0xF56;
+extern volatile unsigned char UEP2 @ 0xF55;
+extern volatile unsigned char UEP1 @ 0xF54;
+extern volatile unsigned char UEP0 @ 0xF53;
+
+
+
+extern volatile near bit STKUNF @ ((unsigned)&STKPTR*8)+6;
+extern volatile near bit STKFUL @ ((unsigned)&STKPTR*8)+7;
+
+
+extern volatile near bit RABIF @ ((unsigned)&INTCON*8)+0;
+extern volatile near bit INT0IF @ ((unsigned)&INTCON*8)+1;
+extern volatile near bit TMR0IF @ ((unsigned)&INTCON*8)+2;
+extern near bit RABIE @ ((unsigned)&INTCON*8)+3;
+extern near bit INT0IE @ ((unsigned)&INTCON*8)+4;
+extern near bit TMR0IE @ ((unsigned)&INTCON*8)+5;
+extern near bit PEIE @ ((unsigned)&INTCON*8)+6;
+extern near bit GIE @ ((unsigned)&INTCON*8)+7;
+
+extern near bit GIEL @ ((unsigned)&INTCON*8)+6;
+extern near bit GIEH @ ((unsigned)&INTCON*8)+7;
+
+
+extern near bit RABIP @ ((unsigned)&INTCON2*8)+0;
+extern near bit TMR0IP @ ((unsigned)&INTCON2*8)+2;
+extern near bit INTEDG2 @ ((unsigned)&INTCON2*8)+4;
+extern near bit INTEDG1 @ ((unsigned)&INTCON2*8)+5;
+extern near bit INTEDG0 @ ((unsigned)&INTCON2*8)+6;
+extern near bit RABPU @ ((unsigned)&INTCON2*8)+7;
+
+
+extern volatile near bit INT1IF @ ((unsigned)&INTCON3*8)+0;
+extern volatile near bit INT2IF @ ((unsigned)&INTCON3*8)+1;
+extern near bit INT1IE @ ((unsigned)&INTCON3*8)+3;
+extern near bit INT2IE @ ((unsigned)&INTCON3*8)+4;
+extern near bit INT1IP @ ((unsigned)&INTCON3*8)+6;
+extern near bit INT2IP @ ((unsigned)&INTCON3*8)+7;
+
+
+extern volatile near bit CARRY @ ((unsigned)&STATUS*8)+0;
+extern volatile near bit DC @ ((unsigned)&STATUS*8)+1;
+extern volatile near bit ZERO @ ((unsigned)&STATUS*8)+2;
+extern volatile near bit OV @ ((unsigned)&STATUS*8)+3;
+extern volatile near bit NEGATIVE @ ((unsigned)&STATUS*8)+4;
+
+
+extern near bit T0PS0 @ ((unsigned)&T0CON*8)+0;
+extern near bit T0PS1 @ ((unsigned)&T0CON*8)+1;
+extern near bit T0PS2 @ ((unsigned)&T0CON*8)+2;
+extern near bit PSA @ ((unsigned)&T0CON*8)+3;
+extern near bit T0SE @ ((unsigned)&T0CON*8)+4;
+extern near bit T0CS @ ((unsigned)&T0CON*8)+5;
+extern near bit T08BIT @ ((unsigned)&T0CON*8)+6;
+extern near bit TMR0ON @ ((unsigned)&T0CON*8)+7;
+
+
+extern near bit SCS0 @ ((unsigned)&OSCCON*8)+0;
+extern near bit SCS1 @ ((unsigned)&OSCCON*8)+1;
+extern near bit IOSF @ ((unsigned)&OSCCON*8)+2;
+extern volatile near bit OSTS @ ((unsigned)&OSCCON*8)+3;
+extern near bit IRCF0 @ ((unsigned)&OSCCON*8)+4;
+extern near bit IRCF1 @ ((unsigned)&OSCCON*8)+5;
+extern near bit IRCF2 @ ((unsigned)&OSCCON*8)+6;
+extern near bit IDLEN @ ((unsigned)&OSCCON*8)+7;
+
+
+extern volatile near bit LFIOFS @ ((unsigned)&OSCCON2*8)+0;
+extern volatile near bit HFIOFL @ ((unsigned)&OSCCON2*8)+1;
+extern volatile near bit PRI_SD @ ((unsigned)&OSCCON2*8)+2;
+
+
+extern near bit SWDTEN @ ((unsigned)&WDTCON*8)+0;
+
+
+extern volatile near bit BOR @ ((unsigned)&RCON*8)+0;
+extern volatile near bit POR @ ((unsigned)&RCON*8)+1;
+extern volatile near bit PD @ ((unsigned)&RCON*8)+2;
+extern volatile near bit TO @ ((unsigned)&RCON*8)+3;
+extern volatile near bit RI @ ((unsigned)&RCON*8)+4;
+extern near bit SBOREN @ ((unsigned)&RCON*8)+6;
+extern near bit IPEN @ ((unsigned)&RCON*8)+7;
+
+
+extern near bit TMR1ON @ ((unsigned)&T1CON*8)+0;
+extern near bit TMR1CS @ ((unsigned)&T1CON*8)+1;
+extern near bit T1SYNC @ ((unsigned)&T1CON*8)+2;
+extern near bit T1OSCEN @ ((unsigned)&T1CON*8)+3;
+extern near bit T1CKPS0 @ ((unsigned)&T1CON*8)+4;
+extern near bit T1CKPS1 @ ((unsigned)&T1CON*8)+5;
+extern near bit T1RUN @ ((unsigned)&T1CON*8)+6;
+extern near bit T1RD16 @ ((unsigned)&T1CON*8)+7;
+
+
+extern near bit T2CKPS0 @ ((unsigned)&T2CON*8)+0;
+extern near bit T2CKPS1 @ ((unsigned)&T2CON*8)+1;
+extern near bit TMR2ON @ ((unsigned)&T2CON*8)+2;
+extern near bit T2OUTPS0 @ ((unsigned)&T2CON*8)+3;
+extern near bit T2OUTPS1 @ ((unsigned)&T2CON*8)+4;
+extern near bit T2OUTPS2 @ ((unsigned)&T2CON*8)+5;
+extern near bit T2OUTPS3 @ ((unsigned)&T2CON*8)+6;
+
+
+extern volatile near bit BF @ ((unsigned)&SSPSTAT*8)+0;
+extern volatile near bit UA @ ((unsigned)&SSPSTAT*8)+1;
+extern volatile near bit RW @ ((unsigned)&SSPSTAT*8)+2;
+extern volatile near bit START @ ((unsigned)&SSPSTAT*8)+3;
+extern volatile near bit STOP @ ((unsigned)&SSPSTAT*8)+4;
+extern volatile near bit DA @ ((unsigned)&SSPSTAT*8)+5;
+extern near bit CKE @ ((unsigned)&SSPSTAT*8)+6;
+extern near bit SMP @ ((unsigned)&SSPSTAT*8)+7;
+
+
+extern near bit SSPM0 @ ((unsigned)&SSPCON1*8)+0;
+extern near bit SSPM1 @ ((unsigned)&SSPCON1*8)+1;
+extern near bit SSPM2 @ ((unsigned)&SSPCON1*8)+2;
+extern near bit SSPM3 @ ((unsigned)&SSPCON1*8)+3;
+extern volatile near bit CKP @ ((unsigned)&SSPCON1*8)+4;
+extern near bit SSPEN @ ((unsigned)&SSPCON1*8)+5;
+extern volatile near bit SSPOV @ ((unsigned)&SSPCON1*8)+6;
+extern volatile near bit WCOL @ ((unsigned)&SSPCON1*8)+7;
+
+
+extern near bit SEN @ ((unsigned)&SSPCON2*8)+0;
+extern volatile near bit RSEN @ ((unsigned)&SSPCON2*8)+1;
+extern volatile near bit PEN @ ((unsigned)&SSPCON2*8)+2;
+extern volatile near bit RCEN @ ((unsigned)&SSPCON2*8)+3;
+extern volatile near bit ACKEN @ ((unsigned)&SSPCON2*8)+4;
+extern volatile near bit ACKDT @ ((unsigned)&SSPCON2*8)+5;
+extern volatile near bit ACKSTAT @ ((unsigned)&SSPCON2*8)+6;
+extern near bit GCEN @ ((unsigned)&SSPCON2*8)+7;
+
+
+extern near bit ADON @ ((unsigned)&ADCON0*8)+0;
+extern volatile near bit GODONE @ ((unsigned)&ADCON0*8)+1;
+extern near bit CHS0 @ ((unsigned)&ADCON0*8)+2;
+extern near bit CHS1 @ ((unsigned)&ADCON0*8)+3;
+extern near bit CHS2 @ ((unsigned)&ADCON0*8)+4;
+extern near bit CHS3 @ ((unsigned)&ADCON0*8)+5;
+
+
+extern near bit NVCFG0 @ ((unsigned)&ADCON1*8)+0;
+extern near bit NVCFG1 @ ((unsigned)&ADCON1*8)+1;
+extern near bit PVCFG0 @ ((unsigned)&ADCON1*8)+2;
+extern near bit PVCFG1 @ ((unsigned)&ADCON1*8)+3;
+
+
+extern near bit ADCS0 @ ((unsigned)&ADCON2*8)+0;
+extern near bit ADCS1 @ ((unsigned)&ADCON2*8)+1;
+extern near bit ADCS2 @ ((unsigned)&ADCON2*8)+2;
+extern near bit ACQT0 @ ((unsigned)&ADCON2*8)+3;
+extern near bit ACQT1 @ ((unsigned)&ADCON2*8)+4;
+extern near bit ACQT2 @ ((unsigned)&ADCON2*8)+5;
+extern near bit ADFM @ ((unsigned)&ADCON2*8)+7;
+
+
+extern near bit CCP1M0 @ ((unsigned)&CCP1CON*8)+0;
+extern near bit CCP1M1 @ ((unsigned)&CCP1CON*8)+1;
+extern near bit CCP1M2 @ ((unsigned)&CCP1CON*8)+2;
+extern near bit CCP1M3 @ ((unsigned)&CCP1CON*8)+3;
+extern near bit DC1B0 @ ((unsigned)&CCP1CON*8)+4;
+extern near bit DC1B1 @ ((unsigned)&CCP1CON*8)+5;
+extern near bit P1M0 @ ((unsigned)&CCP1CON*8)+6;
+extern near bit P1M1 @ ((unsigned)&CCP1CON*8)+7;
+
+
+extern volatile near bit DAC1R0 @ ((unsigned)&REFCON2*8)+0;
+extern volatile near bit DAC1R1 @ ((unsigned)&REFCON2*8)+1;
+extern volatile near bit DAC1R2 @ ((unsigned)&REFCON2*8)+2;
+extern volatile near bit DAC1R3 @ ((unsigned)&REFCON2*8)+3;
+extern volatile near bit DAC1R4 @ ((unsigned)&REFCON2*8)+4;
+
+
+extern volatile near bit D1NSS @ ((unsigned)&REFCON1*8)+0;
+extern volatile near bit D1PSS0 @ ((unsigned)&REFCON1*8)+2;
+extern volatile near bit D1PSS1 @ ((unsigned)&REFCON1*8)+3;
+extern volatile near bit DAC1OE @ ((unsigned)&REFCON1*8)+5;
+extern volatile near bit D1LPS @ ((unsigned)&REFCON1*8)+6;
+extern volatile near bit D1EN @ ((unsigned)&REFCON1*8)+7;
+
+
+extern volatile near bit TSRS @ ((unsigned)&REFCON0*8)+2;
+extern volatile near bit TSEN @ ((unsigned)&REFCON0*8)+3;
+extern volatile near bit FVR1S0 @ ((unsigned)&REFCON0*8)+4;
+extern volatile near bit FVR1S1 @ ((unsigned)&REFCON0*8)+5;
+extern volatile near bit FVR1ST @ ((unsigned)&REFCON0*8)+6;
+extern volatile near bit FVR1EN @ ((unsigned)&REFCON0*8)+7;
+
+
+extern near bit STRA @ ((unsigned)&PSTRCON*8)+0;
+extern near bit STRB @ ((unsigned)&PSTRCON*8)+1;
+extern near bit STRC @ ((unsigned)&PSTRCON*8)+2;
+extern near bit STRD @ ((unsigned)&PSTRCON*8)+3;
+extern near bit STRSYNC @ ((unsigned)&PSTRCON*8)+4;
+
+
+extern volatile near bit ABDEN @ ((unsigned)&BAUDCON*8)+0;
+extern volatile near bit WUE @ ((unsigned)&BAUDCON*8)+1;
+extern near bit BRG16 @ ((unsigned)&BAUDCON*8)+3;
+extern near bit CKTXP @ ((unsigned)&BAUDCON*8)+4;
+extern near bit DTRXP @ ((unsigned)&BAUDCON*8)+5;
+extern volatile near bit RCIDL @ ((unsigned)&BAUDCON*8)+6;
+extern volatile near bit ABDOVF @ ((unsigned)&BAUDCON*8)+7;
+
+
+extern volatile near bit PDC0 @ ((unsigned)&PWM1CON*8)+0;
+extern volatile near bit PDC1 @ ((unsigned)&PWM1CON*8)+1;
+extern volatile near bit PDC2 @ ((unsigned)&PWM1CON*8)+2;
+extern volatile near bit PDC3 @ ((unsigned)&PWM1CON*8)+3;
+extern volatile near bit PDC4 @ ((unsigned)&PWM1CON*8)+4;
+extern volatile near bit PDC5 @ ((unsigned)&PWM1CON*8)+5;
+extern volatile near bit PDC6 @ ((unsigned)&PWM1CON*8)+6;
+extern volatile near bit PRSEN @ ((unsigned)&PWM1CON*8)+7;
+
+
+extern near bit PSSBD0 @ ((unsigned)&ECCP1AS*8)+0;
+extern near bit PSSBD1 @ ((unsigned)&ECCP1AS*8)+1;
+extern near bit PSSAC0 @ ((unsigned)&ECCP1AS*8)+2;
+extern near bit PSSAC1 @ ((unsigned)&ECCP1AS*8)+3;
+extern near bit ECCPAS0 @ ((unsigned)&ECCP1AS*8)+4;
+extern near bit ECCPAS1 @ ((unsigned)&ECCP1AS*8)+5;
+extern near bit ECCPAS2 @ ((unsigned)&ECCP1AS*8)+6;
+extern volatile near bit ECCPASE @ ((unsigned)&ECCP1AS*8)+7;
+
+
+extern near bit TMR3ON @ ((unsigned)&T3CON*8)+0;
+extern near bit TMR3CS @ ((unsigned)&T3CON*8)+1;
+extern near bit T3SYNC @ ((unsigned)&T3CON*8)+2;
+extern near bit T3CCP1 @ ((unsigned)&T3CON*8)+3;
+extern near bit T3CKPS0 @ ((unsigned)&T3CON*8)+4;
+extern near bit T3CKPS1 @ ((unsigned)&T3CON*8)+5;
+extern near bit T3RD16 @ ((unsigned)&T3CON*8)+7;
+
+
+extern volatile near bit TX9D @ ((unsigned)&TXSTA*8)+0;
+
+extern volatile near bit TX9D1 @ ((unsigned)&TXSTA*8)+0;
+extern volatile near bit TRMT @ ((unsigned)&TXSTA*8)+1;
+
+extern volatile near bit TRMT1 @ ((unsigned)&TXSTA*8)+1;
+extern near bit BRGH @ ((unsigned)&TXSTA*8)+2;
+
+extern near bit BRGH1 @ ((unsigned)&TXSTA*8)+2;
+extern near bit SENDB @ ((unsigned)&TXSTA*8)+3;
+
+extern near bit SENDB1 @ ((unsigned)&TXSTA*8)+3;
+extern near bit SYNC @ ((unsigned)&TXSTA*8)+4;
+
+extern near bit SYNC1 @ ((unsigned)&TXSTA*8)+4;
+extern near bit TXEN @ ((unsigned)&TXSTA*8)+5;
+
+extern near bit TXEN1 @ ((unsigned)&TXSTA*8)+5;
+extern near bit TX9 @ ((unsigned)&TXSTA*8)+6;
+
+extern near bit TX91 @ ((unsigned)&TXSTA*8)+6;
+extern near bit CSRC @ ((unsigned)&TXSTA*8)+7;
+
+extern near bit CSRC1 @ ((unsigned)&TXSTA*8)+7;
+
+
+extern volatile near bit RX9D @ ((unsigned)&RCSTA*8)+0;
+extern volatile near bit OERR @ ((unsigned)&RCSTA*8)+1;
+extern volatile near bit FERR @ ((unsigned)&RCSTA*8)+2;
+extern near bit ADDEN @ ((unsigned)&RCSTA*8)+3;
+extern near bit CREN @ ((unsigned)&RCSTA*8)+4;
+extern near bit SREN @ ((unsigned)&RCSTA*8)+5;
+extern near bit RX9 @ ((unsigned)&RCSTA*8)+6;
+extern near bit SPEN @ ((unsigned)&RCSTA*8)+7;
+
+
+extern volatile near bit RD @ ((unsigned)&EECON1*8)+0;
+extern volatile near bit WR @ ((unsigned)&EECON1*8)+1;
+extern near bit WREN @ ((unsigned)&EECON1*8)+2;
+extern volatile near bit WRERR @ ((unsigned)&EECON1*8)+3;
+extern volatile near bit FREE @ ((unsigned)&EECON1*8)+4;
+extern near bit CFGS @ ((unsigned)&EECON1*8)+6;
+extern near bit EEPGD @ ((unsigned)&EECON1*8)+7;
+
+
+extern near bit TMR3IP @ ((unsigned)&IPR2*8)+1;
+extern near bit USBIP @ ((unsigned)&IPR2*8)+2;
+extern near bit BCLIP @ ((unsigned)&IPR2*8)+3;
+extern near bit EEIP @ ((unsigned)&IPR2*8)+4;
+extern near bit C2IP @ ((unsigned)&IPR2*8)+5;
+extern near bit C1IP @ ((unsigned)&IPR2*8)+6;
+extern near bit OSCFIP @ ((unsigned)&IPR2*8)+7;
+
+
+extern volatile near bit TMR3IF @ ((unsigned)&PIR2*8)+1;
+extern volatile near bit USBIF @ ((unsigned)&PIR2*8)+2;
+extern volatile near bit BCLIF @ ((unsigned)&PIR2*8)+3;
+extern volatile near bit EEIF @ ((unsigned)&PIR2*8)+4;
+extern volatile near bit C2IF @ ((unsigned)&PIR2*8)+5;
+extern volatile near bit C1IF @ ((unsigned)&PIR2*8)+6;
+extern volatile near bit OSCFIF @ ((unsigned)&PIR2*8)+7;
+
+
+extern near bit TMR3IE @ ((unsigned)&PIE2*8)+1;
+extern near bit USBIE @ ((unsigned)&PIE2*8)+2;
+extern near bit BCLIE @ ((unsigned)&PIE2*8)+3;
+extern near bit EEIE @ ((unsigned)&PIE2*8)+4;
+extern near bit C2IE @ ((unsigned)&PIE2*8)+5;
+extern near bit C1IE @ ((unsigned)&PIE2*8)+6;
+extern near bit OSCFIE @ ((unsigned)&PIE2*8)+7;
+
+
+extern near bit TMR1IP @ ((unsigned)&IPR1*8)+0;
+extern near bit TMR2IP @ ((unsigned)&IPR1*8)+1;
+extern near bit CCP1IP @ ((unsigned)&IPR1*8)+2;
+extern near bit SSPIP @ ((unsigned)&IPR1*8)+3;
+extern near bit TXIP @ ((unsigned)&IPR1*8)+4;
+
+extern near bit TX1IP @ ((unsigned)&IPR1*8)+4;
+extern near bit RCIP @ ((unsigned)&IPR1*8)+5;
+
+extern near bit RC1IP @ ((unsigned)&IPR1*8)+5;
+extern near bit ADIP @ ((unsigned)&IPR1*8)+6;
+
+
+extern volatile near bit TMR1IF @ ((unsigned)&PIR1*8)+0;
+extern volatile near bit TMR2IF @ ((unsigned)&PIR1*8)+1;
+extern volatile near bit CCP1IF @ ((unsigned)&PIR1*8)+2;
+extern volatile near bit SSPIF @ ((unsigned)&PIR1*8)+3;
+extern volatile near bit TXIF @ ((unsigned)&PIR1*8)+4;
+
+extern volatile near bit TX1IF @ ((unsigned)&PIR1*8)+4;
+extern volatile near bit RCIF @ ((unsigned)&PIR1*8)+5;
+
+extern volatile near bit RC1IF @ ((unsigned)&PIR1*8)+5;
+extern volatile near bit ADIF @ ((unsigned)&PIR1*8)+6;
+
+
+extern near bit TMR1IE @ ((unsigned)&PIE1*8)+0;
+extern near bit TMR2IE @ ((unsigned)&PIE1*8)+1;
+extern near bit CCP1IE @ ((unsigned)&PIE1*8)+2;
+extern near bit SSPIE @ ((unsigned)&PIE1*8)+3;
+extern near bit TXIE @ ((unsigned)&PIE1*8)+4;
+
+extern near bit TX1IE @ ((unsigned)&PIE1*8)+4;
+extern near bit RCIE @ ((unsigned)&PIE1*8)+5;
+
+extern near bit RC1IE @ ((unsigned)&PIE1*8)+5;
+extern near bit ADIE @ ((unsigned)&PIE1*8)+6;
+
+
+extern near bit TUN0 @ ((unsigned)&OSCTUNE*8)+0;
+extern near bit TUN1 @ ((unsigned)&OSCTUNE*8)+1;
+extern near bit TUN2 @ ((unsigned)&OSCTUNE*8)+2;
+extern near bit TUN3 @ ((unsigned)&OSCTUNE*8)+3;
+extern near bit TUN4 @ ((unsigned)&OSCTUNE*8)+4;
+extern near bit TUN5 @ ((unsigned)&OSCTUNE*8)+5;
+extern near bit SPLLEN @ ((unsigned)&OSCTUNE*8)+6;
+extern near bit INTSRC @ ((unsigned)&OSCTUNE*8)+7;
+
+
+extern volatile near bit TRISC0 @ ((unsigned)&TRISC*8)+0;
+extern volatile near bit TRISC1 @ ((unsigned)&TRISC*8)+1;
+extern volatile near bit TRISC2 @ ((unsigned)&TRISC*8)+2;
+extern volatile near bit TRISC3 @ ((unsigned)&TRISC*8)+3;
+extern volatile near bit TRISC4 @ ((unsigned)&TRISC*8)+4;
+extern volatile near bit TRISC5 @ ((unsigned)&TRISC*8)+5;
+extern volatile near bit TRISC6 @ ((unsigned)&TRISC*8)+6;
+extern volatile near bit TRISC7 @ ((unsigned)&TRISC*8)+7;
+
+
+extern volatile near bit TRISB4 @ ((unsigned)&TRISB*8)+4;
+extern volatile near bit TRISB5 @ ((unsigned)&TRISB*8)+5;
+extern volatile near bit TRISB6 @ ((unsigned)&TRISB*8)+6;
+extern volatile near bit TRISB7 @ ((unsigned)&TRISB*8)+7;
+
+
+extern near bit TRISA4 @ ((unsigned)&TRISA*8)+4;
+extern near bit TRISA5 @ ((unsigned)&TRISA*8)+5;
+
+
+extern volatile near bit LATC0 @ ((unsigned)&LATC*8)+0;
+extern volatile near bit LATC1 @ ((unsigned)&LATC*8)+1;
+extern volatile near bit LATC2 @ ((unsigned)&LATC*8)+2;
+extern volatile near bit LATC3 @ ((unsigned)&LATC*8)+3;
+extern volatile near bit LATC4 @ ((unsigned)&LATC*8)+4;
+extern volatile near bit LATC5 @ ((unsigned)&LATC*8)+5;
+extern volatile near bit LATC6 @ ((unsigned)&LATC*8)+6;
+extern volatile near bit LATC7 @ ((unsigned)&LATC*8)+7;
+
+
+extern volatile near bit LATB4 @ ((unsigned)&LATB*8)+4;
+extern volatile near bit LATB5 @ ((unsigned)&LATB*8)+5;
+extern volatile near bit LATB6 @ ((unsigned)&LATB*8)+6;
+extern volatile near bit LATB7 @ ((unsigned)&LATB*8)+7;
+
+
+extern volatile near bit LATA4 @ ((unsigned)&LATA*8)+4;
+extern volatile near bit LATA5 @ ((unsigned)&LATA*8)+5;
+
+
+extern volatile near bit RC0 @ ((unsigned)&PORTC*8)+0;
+extern volatile near bit RC1 @ ((unsigned)&PORTC*8)+1;
+extern volatile near bit RC2 @ ((unsigned)&PORTC*8)+2;
+extern volatile near bit RC3 @ ((unsigned)&PORTC*8)+3;
+extern volatile near bit RC4 @ ((unsigned)&PORTC*8)+4;
+extern volatile near bit RC5 @ ((unsigned)&PORTC*8)+5;
+extern volatile near bit RC6 @ ((unsigned)&PORTC*8)+6;
+extern volatile near bit RC7 @ ((unsigned)&PORTC*8)+7;
+
+
+extern volatile near bit RB4 @ ((unsigned)&PORTB*8)+4;
+extern volatile near bit RB5 @ ((unsigned)&PORTB*8)+5;
+extern volatile near bit RB6 @ ((unsigned)&PORTB*8)+6;
+extern volatile near bit RB7 @ ((unsigned)&PORTB*8)+7;
+
+
+extern volatile near bit RA0 @ ((unsigned)&PORTA*8)+0;
+extern volatile near bit RA1 @ ((unsigned)&PORTA*8)+1;
+extern volatile near bit RA3 @ ((unsigned)&PORTA*8)+3;
+extern volatile near bit RA4 @ ((unsigned)&PORTA*8)+4;
+extern volatile near bit RA5 @ ((unsigned)&PORTA*8)+5;
+
+
+extern near bit ANS8 @ ((unsigned)&ANSELH*8)+0;
+extern near bit ANS9 @ ((unsigned)&ANSELH*8)+1;
+extern near bit ANS10 @ ((unsigned)&ANSELH*8)+2;
+extern near bit ANS11 @ ((unsigned)&ANSELH*8)+3;
+
+
+extern near bit ANS3 @ ((unsigned)&ANSEL*8)+3;
+extern near bit ANS4 @ ((unsigned)&ANSEL*8)+4;
+extern near bit ANS5 @ ((unsigned)&ANSEL*8)+5;
+extern near bit ANS6 @ ((unsigned)&ANSEL*8)+6;
+extern near bit ANS7 @ ((unsigned)&ANSEL*8)+7;
+
+
+extern near bit IOCB4 @ ((unsigned)&IOCB*8)+4;
+extern near bit IOCB5 @ ((unsigned)&IOCB*8)+5;
+extern near bit IOCB6 @ ((unsigned)&IOCB*8)+6;
+extern near bit IOCB7 @ ((unsigned)&IOCB*8)+7;
+
+
+extern near bit IOCA0 @ ((unsigned)&IOCA*8)+0;
+extern near bit IOCA1 @ ((unsigned)&IOCA*8)+1;
+extern near bit IOCA3 @ ((unsigned)&IOCA*8)+3;
+extern near bit IOCA4 @ ((unsigned)&IOCA*8)+4;
+extern near bit IOCA5 @ ((unsigned)&IOCA*8)+5;
+
+
+extern near bit WPUB4 @ ((unsigned)&WPUB*8)+4;
+extern near bit WPUB5 @ ((unsigned)&WPUB*8)+5;
+extern near bit WPUB6 @ ((unsigned)&WPUB*8)+6;
+extern near bit WPUB7 @ ((unsigned)&WPUB*8)+7;
+
+
+extern near bit WPUA3 @ ((unsigned)&WPUA*8)+3;
+extern near bit WPUA4 @ ((unsigned)&WPUA*8)+4;
+extern near bit WPUA5 @ ((unsigned)&WPUA*8)+5;
+
+
+extern near bit SLRA @ ((unsigned)&SLRCON*8)+0;
+extern near bit SLRB @ ((unsigned)&SLRCON*8)+1;
+extern near bit SLRC @ ((unsigned)&SLRCON*8)+2;
+
+
+extern near bit MSK0 @ ((unsigned)&SSPMSK*8)+0;
+extern near bit MSK1 @ ((unsigned)&SSPMSK*8)+1;
+extern near bit MSK2 @ ((unsigned)&SSPMSK*8)+2;
+extern near bit MSK3 @ ((unsigned)&SSPMSK*8)+3;
+extern near bit MSK4 @ ((unsigned)&SSPMSK*8)+4;
+extern near bit MSK5 @ ((unsigned)&SSPMSK*8)+5;
+extern near bit MSK6 @ ((unsigned)&SSPMSK*8)+6;
+extern near bit MSK7 @ ((unsigned)&SSPMSK*8)+7;
+
+
+extern near bit C1CH0 @ ((unsigned)&CM1CON0*8)+0;
+extern near bit C1CH1 @ ((unsigned)&CM1CON0*8)+1;
+extern near bit C1R @ ((unsigned)&CM1CON0*8)+2;
+extern near bit C1SP @ ((unsigned)&CM1CON0*8)+3;
+extern near bit C1POL @ ((unsigned)&CM1CON0*8)+4;
+extern near bit C1OE @ ((unsigned)&CM1CON0*8)+5;
+extern volatile near bit C1OUT @ ((unsigned)&CM1CON0*8)+6;
+extern near bit C1ON @ ((unsigned)&CM1CON0*8)+7;
+
+
+extern near bit C2SYNC @ ((unsigned)&CM2CON1*8)+0;
+extern near bit C1SYNC @ ((unsigned)&CM2CON1*8)+1;
+extern near bit C2HYS @ ((unsigned)&CM2CON1*8)+2;
+extern near bit C1HYS @ ((unsigned)&CM2CON1*8)+3;
+extern near bit C2RSEL @ ((unsigned)&CM2CON1*8)+4;
+extern near bit C1RSEL @ ((unsigned)&CM2CON1*8)+5;
+extern volatile near bit MC2OUT @ ((unsigned)&CM2CON1*8)+6;
+extern volatile near bit MC1OUT @ ((unsigned)&CM2CON1*8)+7;
+
+
+extern near bit C2CH0 @ ((unsigned)&CM2CON0*8)+0;
+extern near bit C2CH1 @ ((unsigned)&CM2CON0*8)+1;
+extern near bit C2R @ ((unsigned)&CM2CON0*8)+2;
+extern near bit C2SP @ ((unsigned)&CM2CON0*8)+3;
+extern near bit C2POL @ ((unsigned)&CM2CON0*8)+4;
+extern near bit C2OE @ ((unsigned)&CM2CON0*8)+5;
+extern volatile near bit C2OUT @ ((unsigned)&CM2CON0*8)+6;
+extern near bit C2ON @ ((unsigned)&CM2CON0*8)+7;
+
+
+extern near bit SRRC1E @ ((unsigned)&SRCON1*8)+0;
+extern near bit SRRC2E @ ((unsigned)&SRCON1*8)+1;
+extern near bit SRRCKE @ ((unsigned)&SRCON1*8)+2;
+extern near bit SRRPE @ ((unsigned)&SRCON1*8)+3;
+extern near bit SRSC1E @ ((unsigned)&SRCON1*8)+4;
+extern near bit SRSC2E @ ((unsigned)&SRCON1*8)+5;
+extern near bit SRSCKE @ ((unsigned)&SRCON1*8)+6;
+extern near bit SRSPE @ ((unsigned)&SRCON1*8)+7;
+
+
+extern volatile near bit SRPR @ ((unsigned)&SRCON0*8)+0;
+extern volatile near bit SRPS @ ((unsigned)&SRCON0*8)+1;
+extern volatile near bit SRNQEN @ ((unsigned)&SRCON0*8)+2;
+extern volatile near bit SRQEN @ ((unsigned)&SRCON0*8)+3;
+extern near bit SRCLK0 @ ((unsigned)&SRCON0*8)+4;
+extern near bit SRCLK1 @ ((unsigned)&SRCON0*8)+5;
+extern near bit SRCLK2 @ ((unsigned)&SRCON0*8)+6;
+extern near bit SRLEN @ ((unsigned)&SRCON0*8)+7;
+
+
+extern near bit SUSPND @ ((unsigned)&UCON*8)+1;
+extern near bit RESUME @ ((unsigned)&UCON*8)+2;
+extern volatile near bit USBEN @ ((unsigned)&UCON*8)+3;
+extern volatile near bit PKTDIS @ ((unsigned)&UCON*8)+4;
+extern volatile near bit SE0 @ ((unsigned)&UCON*8)+5;
+extern volatile near bit PPBRST @ ((unsigned)&UCON*8)+6;
+
+
+extern volatile near bit PPBI @ ((unsigned)&USTAT*8)+1;
+extern volatile near bit DIR @ ((unsigned)&USTAT*8)+2;
+extern volatile near bit ENDP0 @ ((unsigned)&USTAT*8)+3;
+extern volatile near bit ENDP1 @ ((unsigned)&USTAT*8)+4;
+extern volatile near bit ENDP2 @ ((unsigned)&USTAT*8)+5;
+extern volatile near bit ENDP3 @ ((unsigned)&USTAT*8)+6;
+
+
+extern volatile near bit URSTIF @ ((unsigned)&UIR*8)+0;
+extern volatile near bit UERRIF @ ((unsigned)&UIR*8)+1;
+extern volatile near bit ACTVIF @ ((unsigned)&UIR*8)+2;
+extern volatile near bit TRNIF @ ((unsigned)&UIR*8)+3;
+extern volatile near bit IDLEIF @ ((unsigned)&UIR*8)+4;
+extern volatile near bit STALLIF @ ((unsigned)&UIR*8)+5;
+extern volatile near bit SOFIF @ ((unsigned)&UIR*8)+6;
+
+
+extern near bit PPB0 @ ((unsigned)&UCFG*8)+0;
+extern near bit PPB1 @ ((unsigned)&UCFG*8)+1;
+extern near bit FSEN @ ((unsigned)&UCFG*8)+2;
+extern near bit UPUEN @ ((unsigned)&UCFG*8)+4;
+extern near bit UTEYE @ ((unsigned)&UCFG*8)+7;
+
+
+extern bit URSTIE @ ((unsigned)&UIE*8)+0;
+extern bit UERRIE @ ((unsigned)&UIE*8)+1;
+extern bit ACTVIE @ ((unsigned)&UIE*8)+2;
+extern bit TRNIE @ ((unsigned)&UIE*8)+3;
+extern bit IDLEIE @ ((unsigned)&UIE*8)+4;
+extern bit STALLIE @ ((unsigned)&UIE*8)+5;
+extern bit SOFIE @ ((unsigned)&UIE*8)+6;
+
+
+extern volatile bit PIDEF @ ((unsigned)&UEIR*8)+0;
+extern volatile bit CRC5EF @ ((unsigned)&UEIR*8)+1;
+extern volatile bit CRC16EF @ ((unsigned)&UEIR*8)+2;
+extern volatile bit DFN8EF @ ((unsigned)&UEIR*8)+3;
+extern volatile bit BTOEF @ ((unsigned)&UEIR*8)+4;
+extern volatile bit BTSEF @ ((unsigned)&UEIR*8)+7;
+
+
+extern bit ADDR0 @ ((unsigned)&UADDR*8)+0;
+extern bit ADDR1 @ ((unsigned)&UADDR*8)+1;
+extern bit ADDR2 @ ((unsigned)&UADDR*8)+2;
+extern bit ADDR3 @ ((unsigned)&UADDR*8)+3;
+extern bit ADDR4 @ ((unsigned)&UADDR*8)+4;
+extern bit ADDR5 @ ((unsigned)&UADDR*8)+5;
+extern bit ADDR6 @ ((unsigned)&UADDR*8)+6;
+
+
+extern bit PIDEE @ ((unsigned)&UEIE*8)+0;
+extern bit CRC5EE @ ((unsigned)&UEIE*8)+1;
+extern bit CRC16EE @ ((unsigned)&UEIE*8)+2;
+extern bit DFN8EE @ ((unsigned)&UEIE*8)+3;
+extern bit BTOEE @ ((unsigned)&UEIE*8)+4;
+extern bit BTSEE @ ((unsigned)&UEIE*8)+7;
+
+
+extern volatile bit EP7STALL @ ((unsigned)&UEP7*8)+0;
+extern volatile bit EP7INEN @ ((unsigned)&UEP7*8)+1;
+extern volatile bit EP7OUTEN @ ((unsigned)&UEP7*8)+2;
+extern volatile bit EP7CONDIS @ ((unsigned)&UEP7*8)+3;
+extern volatile bit EP7HSHK @ ((unsigned)&UEP7*8)+4;
+
+
+extern volatile bit EP6STALL @ ((unsigned)&UEP6*8)+0;
+extern volatile bit EP6INEN @ ((unsigned)&UEP6*8)+1;
+extern volatile bit EP6OUTEN @ ((unsigned)&UEP6*8)+2;
+extern volatile bit EP6CONDIS @ ((unsigned)&UEP6*8)+3;
+extern volatile bit EP6HSHK @ ((unsigned)&UEP6*8)+4;
+
+
+extern volatile bit EP5STALL @ ((unsigned)&UEP5*8)+0;
+extern volatile bit EP5INEN @ ((unsigned)&UEP5*8)+1;
+extern volatile bit EP5OUTEN @ ((unsigned)&UEP5*8)+2;
+extern volatile bit EP5CONDIS @ ((unsigned)&UEP5*8)+3;
+extern volatile bit EP5HSHK @ ((unsigned)&UEP5*8)+4;
+
+
+extern volatile bit EP4STALL @ ((unsigned)&UEP4*8)+0;
+extern volatile bit EP4INEN @ ((unsigned)&UEP4*8)+1;
+extern volatile bit EP4OUTEN @ ((unsigned)&UEP4*8)+2;
+extern volatile bit EP4CONDIS @ ((unsigned)&UEP4*8)+3;
+extern volatile bit EP4HSHK @ ((unsigned)&UEP4*8)+4;
+
+
+extern volatile bit EP3STALL @ ((unsigned)&UEP3*8)+0;
+extern volatile bit EP3INEN @ ((unsigned)&UEP3*8)+1;
+extern volatile bit EP3OUTEN @ ((unsigned)&UEP3*8)+2;
+extern volatile bit EP3CONDIS @ ((unsigned)&UEP3*8)+3;
+extern volatile bit EP3HSHK @ ((unsigned)&UEP3*8)+4;
+
+
+extern volatile bit EP2STALL @ ((unsigned)&UEP2*8)+0;
+extern volatile bit EP2INEN @ ((unsigned)&UEP2*8)+1;
+extern volatile bit EP2OUTEN @ ((unsigned)&UEP2*8)+2;
+extern volatile bit EP2CONDIS @ ((unsigned)&UEP2*8)+3;
+extern volatile bit EP2HSHK @ ((unsigned)&UEP2*8)+4;
+
+
+extern volatile bit EP1STALL @ ((unsigned)&UEP1*8)+0;
+extern volatile bit EP1INEN @ ((unsigned)&UEP1*8)+1;
+extern volatile bit EP1OUTEN @ ((unsigned)&UEP1*8)+2;
+extern volatile bit EP1CONDIS @ ((unsigned)&UEP1*8)+3;
+extern volatile bit EP1HSHK @ ((unsigned)&UEP1*8)+4;
+
+
+extern volatile bit EP0STALL @ ((unsigned)&UEP0*8)+0;
+extern volatile bit EP0INEN @ ((unsigned)&UEP0*8)+1;
+extern volatile bit EP0OUTEN @ ((unsigned)&UEP0*8)+2;
+extern volatile bit EP0CONDIS @ ((unsigned)&UEP0*8)+3;
+extern volatile bit EP0HSHK @ ((unsigned)&UEP0*8)+4;
+
+# 414 "C:\Program Files\HI-TECH Software\PICC-18\PRO\9.63\include\pic18.h"
+extern unsigned char idloc_read(unsigned char reg_no);
+extern void idloc_write(unsigned char reg_no,unsigned char data);
+
+# 535
+extern unsigned char eeprom_read(unsigned int address);
+extern void eeprom_write(unsigned int address,unsigned char data);
+
+
+
+extern unsigned char flash_read(unsigned long addr);
+
+
+
+extern void flash_write(const unsigned char *,unsigned int,far unsigned char *);
+
+
+extern void flash_erase(unsigned long addr);
+
+# 565
+extern unsigned int config_read(unsigned char reg_no);
+extern void config_write(unsigned char reg_no, unsigned int dataword);
+
+
+extern unsigned int device_id_read(void);
+
+
+extern void initiate_write(void);
+
+# 591
+extern unsigned char checksum8(unsigned long startAddr, unsigned long length);
+extern unsigned int checksum16(unsigned long startAddr, unsigned long length);
+extern unsigned long checksum32(unsigned long startAddr, unsigned long length);
+
+
+# 605
+#pragma inline(_delay)
+extern void _delay(unsigned long);
+#pragma inline(_delay3)
+extern void _delay3(unsigned char);
+
+# 170 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\always.h"
+struct sixteen_bits
+{
+unsigned char bit0 :1;
+unsigned char bit1 :1;
+unsigned char bit2 :1;
+unsigned char bit3 :1;
+unsigned char bit4 :1;
+unsigned char bit5 :1;
+unsigned char bit6 :1;
+unsigned char bit7 :1;
+unsigned char bit8 :1;
+unsigned char bit9 :1;
+unsigned char bit10 :1;
+unsigned char bit11 :1;
+unsigned char bit12 :1;
+unsigned char bit13 :1;
+unsigned char bit14 :1;
+unsigned char bit15 :1;
+};
+
+struct eight_bits
+{
+unsigned char bit0 :1;
+unsigned char bit1 :1;
+unsigned char bit2 :1;
+unsigned char bit3 :1;
+unsigned char bit4 :1;
+unsigned char bit5 :1;
+unsigned char bit6 :1;
+unsigned char bit7 :1;
+};
+
+struct two_bytes
+{
+unsigned char low;
+unsigned char high;
+};
+
+union wordtype
+{
+unsigned int word;
+struct two_bytes byte;
+struct sixteen_bits part;
+};
+
+union chartype
+{
+unsigned char byte;
+struct eight_bits part;
+};
+
+# 4 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\serial.h"
+void serial_setup(void);
+void putch(unsigned char c);
+unsigned char getch(void);
+void putst(register const char * str);
+unsigned char usart_timeout(void);
+void putchdec(unsigned char c);
+void putchhex(unsigned char c);
+void putinthex(unsigned int c);
+
+# 12 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Main.c"
+void Init()
+{
+SWDTEN=0;
+TRISC0=0;
+ANSEL=0b00011111;
+}
+
+void main()
+{
+SWDTEN=0;
+TRISC0=0;
+ANSEL=0b00011111;
+
+# 30
+SPBRG=51;
+BRGH=1;
+BRG16=0;
+
+SYNC=0;
+SPEN=1;
+CREN=1;
+SREN=0;
+TXIE=0;
+RCIE=0;
+TX9=0;
+RX9=0;
+TXEN=0;
+TXEN=1;
+
+
+
+ANSEL = 0;
+ANSELH = 0;
+
+while(1)
+{
+char read=getch();
+
+putch(read);
+RC0=FERR;
+}
+
+
+while(1)putst("bob");
+
+# 73
+while(1)
+{
+putst("Roeny");
+for(int d=0;d<255;d++)for(int d2=0;d2<255;d2++);
+RC0=!RC0;
+}
+
+# 101
+while(1)
+{
+putst("\n\n\n");
+putst("Serial tester program for PIC18F252 by Shane Tolmie\n\n");
+putst("From: http://www.workingtex.com/htpic\n\n");
+putst("Starting up serial @ 19200 baud, N,8,1, no flow control ...\n\n");
+
+for(int d=0;d<255;d++)for(int d2=0;d2<255;d2++);
+RC0=1;
+for(int d=0;d<255;d++)for(int d2=0;d2<255;d2++);
+RC0=0;
+
+}
+}

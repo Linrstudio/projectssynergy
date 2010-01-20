@@ -1,0 +1,5 @@
+_getch: CODE, 1552 0 50
+_putst: CODE, 1348 0 154
+_main: CODE, 684 0 664
+_putch: CODE, 1502 0 50
+Total: 918
