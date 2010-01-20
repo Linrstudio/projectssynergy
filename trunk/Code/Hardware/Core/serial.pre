@@ -30,10 +30,15 @@ CLRWDT();
 return RCREG;
 }
 
+unsigned int UARTReadBool(void)
+{
+return UARTRead()!='0'?1:0;
+}
+
 unsigned char UARTAvailable(void)
 {
-if (RCIF) return true;
-return false;
+if (RCIF) return 1;
+return 0;
 }
 
 void UARTWrite(unsigned char c)

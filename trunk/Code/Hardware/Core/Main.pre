@@ -835,83 +835,10 @@ extern void _delay(unsigned long);
 #pragma inline(_delay3)
 extern void _delay3(unsigned char);
 
-# 170 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\always.h"
-struct sixteen_bits
+# 1 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Serial.c"
+void UARTInit()
 {
-unsigned char bit0 :1;
-unsigned char bit1 :1;
-unsigned char bit2 :1;
-unsigned char bit3 :1;
-unsigned char bit4 :1;
-unsigned char bit5 :1;
-unsigned char bit6 :1;
-unsigned char bit7 :1;
-unsigned char bit8 :1;
-unsigned char bit9 :1;
-unsigned char bit10 :1;
-unsigned char bit11 :1;
-unsigned char bit12 :1;
-unsigned char bit13 :1;
-unsigned char bit14 :1;
-unsigned char bit15 :1;
-};
 
-struct eight_bits
-{
-unsigned char bit0 :1;
-unsigned char bit1 :1;
-unsigned char bit2 :1;
-unsigned char bit3 :1;
-unsigned char bit4 :1;
-unsigned char bit5 :1;
-unsigned char bit6 :1;
-unsigned char bit7 :1;
-};
-
-struct two_bytes
-{
-unsigned char low;
-unsigned char high;
-};
-
-union wordtype
-{
-unsigned int word;
-struct two_bytes byte;
-struct sixteen_bits part;
-};
-
-union chartype
-{
-unsigned char byte;
-struct eight_bits part;
-};
-
-# 4 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\serial.h"
-void serial_setup(void);
-void putch(unsigned char c);
-unsigned char getch(void);
-void putst(register const char * str);
-unsigned char usart_timeout(void);
-void putchdec(unsigned char c);
-void putchhex(unsigned char c);
-void putinthex(unsigned int c);
-
-# 12 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Main.c"
-void Init()
-{
-SWDTEN=0;
-TRISC0=0;
-ANSEL=0b00011111;
-}
-
-void main()
-{
-SWDTEN=0;
-TRISC0=0;
-ANSEL=0b00011111;
-
-# 30
 SPBRG=51;
 BRGH=1;
 BRG16=0;
@@ -926,43 +853,77 @@ TX9=0;
 RX9=0;
 TXEN=0;
 TXEN=1;
+}
 
+# 26
+unsigned char UARTRead(void)
+{
+while(!RCIF)
+{
+asm(" clrwdt");
+{if (OERR){TXEN=0; TXEN=1; CREN=0; CREN=1;}if (FERR){TXEN=0; TXEN=1;}};
+}
+return RCREG;
+}
 
+unsigned int UARTReadBool(void)
+{
+return UARTRead()!='0'?1:0;
+}
+
+unsigned char UARTAvailable(void)
+{
+if (RCIF) return 1;
+return 0;
+}
+
+void UARTWrite(unsigned char c)
+{
+while(!TXIF)
+{
+{if (OERR){TXEN=0; TXEN=1; CREN=0; CREN=1;}if (FERR){TXEN=0; TXEN=1;}};
+asm(" clrwdt");
+}
+TXREG=c;
+}
+
+void UARTWriteString(register const char *str)
+{
+while((*str)!=0)
+{
+putch(*str);
+if (*str==13) putch(10);
+if (*str==10) putch(13);
+str++;
+}
+}
+
+# 7 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Main.c"
+void main()
+{
+TRISC0=0;
+
+SWDTEN=0;
+
+UARTInit();
 
 ANSEL = 0;
 ANSELH = 0;
 
 while(1)
 {
-char read=getch();
+char read=UARTRead();
 
-putch(read);
-RC0=FERR;
-}
-
-
-while(1)putst("bob");
-
-# 73
-while(1)
+switch(read)
 {
-putst("Roeny");
-for(int d=0;d<255;d++)for(int d2=0;d2<255;d2++);
-RC0=!RC0;
-}
-
-# 101
-while(1)
+case 'l':
 {
-putst("\n\n\n");
-putst("Serial tester program for PIC18F252 by Shane Tolmie\n\n");
-putst("From: http://www.workingtex.com/htpic\n\n");
-putst("Starting up serial @ 19200 baud, N,8,1, no flow control ...\n\n");
+if(UARTReadBool())RC0=1;else RC0=0;
+}
+break;
 
-for(int d=0;d<255;d++)for(int d2=0;d2<255;d2++);
-RC0=1;
-for(int d=0;d<255;d++)for(int d2=0;d2<255;d2++);
-RC0=0;
 
 }
 }
+}
+

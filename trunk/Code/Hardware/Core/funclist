@@ -1,5 +1,5 @@
-_getch: CODE, 1552 0 50
-_putst: CODE, 1348 0 154
-_main: CODE, 684 0 664
-_putch: CODE, 1502 0 50
-Total: 918
+_UARTRead: CODE, 16250 0 46
+_UARTReadBool: CODE, 16186 0 26
+_main: CODE, 16296 0 88
+_UARTInit: CODE, 16212 0 38
+Total: 198
