@@ -8,8 +8,8 @@
 	; Compiler options:
 	;
 	; -oCore.cof -mCore.map --summary=default --output=default Main.p1 \
-	; serial.p1 --chip=18F14K50 -P --runtime=default --opt=default \
-	; -D__DEBUG=1 -g --asmlist --errformat=Error   [%n] %f; %l.%c %s \
+	; --chip=18F14K50 -P --runtime=default --opt=default -D__DEBUG=1 -g \
+	; --asmlist --errformat=Error   [%n] %f; %l.%c %s \
 	; --msgformat=Advisory[%n] %s --warnformat=Warning [%n] %f; %l.%c %s
 	;
 
@@ -105,6 +105,11 @@ _exit:
 
 ; bigdata psect - 0 bytes to load
 
+	GLOBAL	__Lsmallconst
+	movlw	low highword(__Lsmallconst)
+	movwf	tblptru
+	movlw	high(__Lsmallconst)
+	movwf	tblptrh
 	goto	_main		;go do the main stuff
 
 	END	reset_pos
