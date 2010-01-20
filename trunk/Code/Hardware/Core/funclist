@@ -1,5 +1,12 @@
-_UARTRead: CODE, 16250 0 46
-_UARTReadBool: CODE, 16186 0 26
-_main: CODE, 16296 0 88
-_UARTInit: CODE, 16212 0 38
-Total: 198
+_MemoryRead: CODE, 1984 0 20
+_UARTWriteString: CODE, 1612 0 154
+_UARTRead: CODE, 1766 0 46
+_MemoryInit: CODE, 2014 0 6
+_UARTReadBool: CODE, 1936 0 26
+_main: CODE, 542 0 1070
+_MemorySeek: CODE, 2004 0 10
+_UARTWrite: CODE, 1812 0 46
+_UARTInit: CODE, 1898 0 38
+_MemoryWait: CODE, 1962 0 22
+_MemoryWrite: CODE, 1858 0 40
+Total: 1478

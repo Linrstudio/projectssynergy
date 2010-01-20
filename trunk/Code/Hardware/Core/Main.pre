@@ -835,7 +835,7 @@ extern void _delay(unsigned long);
 #pragma inline(_delay3)
 extern void _delay3(unsigned char);
 
-# 1 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Serial.c"
+# 3 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\serial.h"
 void UARTInit()
 {
 
@@ -855,13 +855,13 @@ TXEN=0;
 TXEN=1;
 }
 
-# 26
+# 28
 unsigned char UARTRead(void)
 {
 while(!RCIF)
 {
 asm(" clrwdt");
-{if (OERR){TXEN=0; TXEN=1; CREN=0; CREN=1;}if (FERR){TXEN=0; TXEN=1;}};
+{if (OERR){TXEN=0;TXEN=1;CREN=0;CREN=1;}if (FERR){TXEN=0;TXEN=1;}};
 }
 return RCREG;
 }
@@ -881,7 +881,7 @@ void UARTWrite(unsigned char c)
 {
 while(!TXIF)
 {
-{if (OERR){TXEN=0; TXEN=1; CREN=0; CREN=1;}if (FERR){TXEN=0; TXEN=1;}};
+{if (OERR){TXEN=0;TXEN=1;CREN=0;CREN=1;}if (FERR){TXEN=0;TXEN=1;}};
 asm(" clrwdt");
 }
 TXREG=c;
@@ -891,14 +891,57 @@ void UARTWriteString(register const char *str)
 {
 while((*str)!=0)
 {
-putch(*str);
-if (*str==13) putch(10);
-if (*str==10) putch(13);
+UARTWrite(*str);
+if(*str==13)UARTWrite(10);
+if(*str==10)UARTWrite(13);
 str++;
 }
 }
 
-# 7 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Main.c"
+# 3 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Memory.h"
+void MemoryInit()
+{
+EEPGD=0;
+CFGS=0;
+}
+
+void MemoryWait()
+{
+while(RD);
+while(WR);
+}
+
+void MemorySeek(unsigned char _Addr)
+{
+MemoryWait();
+EEADR=_Addr;
+}
+
+unsigned char MemoryRead()
+{
+unsigned char data;
+MemoryWait();
+RD=1;
+data=EEDATA;
+return data;
+}
+
+void MemoryWrite(unsigned char _Data)
+{
+MemoryWait();
+EEDATA=_Data;
+GIE=0;
+WREN=1;
+EECON2=0x55;
+EECON2=0xAA;
+WR=1;
+while(WR);
+EEIF=0;
+WREN=0;
+GIE=1;
+}
+
+# 8 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Main.c"
 void main()
 {
 TRISC0=0;
@@ -906,9 +949,19 @@ TRISC0=0;
 SWDTEN=0;
 
 UARTInit();
+MemoryInit();
 
 ANSEL = 0;
 ANSELH = 0;
+
+UARTWriteString("UART Started");
+
+for(int i=0;i<255;i++)
+{
+MemorySeek(i);
+
+UARTWrite(MemoryRead());
+}
 
 while(1)
 {
@@ -922,8 +975,64 @@ if(UARTReadBool())RC0=1;else RC0=0;
 }
 break;
 
+case 't':
+{
+MemorySeek(0);MemoryWrite('R');
+MemorySeek(1);MemoryWrite('o');
+MemorySeek(2);MemoryWrite('e');
+MemorySeek(3);MemoryWrite('n');
+MemorySeek(4);MemoryWrite('y');
+RC0=1;
+}
+break;
 
+case 'w':
+{
+int addr=UARTRead();
+int buffer[16];
+for(int i=0;i<16;i++)
+{
+buffer[i]=UARTRead();
+}
+for(int i=0;i<16;i++)
+{
+MemorySeek(i+addr);
+MemoryWrite(buffer[i]);
 }
 }
-}
+break;
 
+case 'r':
+{
+int addr=UARTRead();
+for(int i=0;i<16;i++)
+{
+MemorySeek(i+addr);
+UARTWrite(MemoryRead());
+}
+}
+break;
+
+case 'c':
+{
+for(int i=0;i<255;i++)
+{
+MemorySeek(i);
+MemoryWrite(0);
+}
+UARTWriteString("Memory Cleared");
+}
+break;
+
+case 'd':
+{
+for(int i=0;i<255;i++)
+{
+MemorySeek(i);
+UARTWrite(MemoryRead());
+}
+}
+break;
+}
+}
+}
