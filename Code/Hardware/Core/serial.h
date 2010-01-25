@@ -1,4 +1,5 @@
 #include <pic18.h>
+#include "Default.h"
 
 void UARTInit()
 {
@@ -25,7 +26,7 @@ if (OERR){TXEN=0;TXEN=1;CREN=0;CREN=1;}\
 if (FERR){TXEN=0;TXEN=1;}\
 }
 
-unsigned char UARTRead(void)
+unsigned char UARTReadInt8(void)
 {
 	while(!RCIF)
 	{
@@ -35,9 +36,18 @@ unsigned char UARTRead(void)
 	return RCREG;
 }
 
+unsigned short UARTReadInt16()
+{
+	short bob;
+	char*dat=&bob;
+	dat[1]=UARTReadInt8();
+	dat[0]=UARTReadInt8();
+	return bob;
+}
+
 unsigned int UARTReadBool(void)
 {
-	return UARTRead()!='0'?1:0;
+	return UARTReadInt8()!='0'?1:0;
 }
 
 unsigned char UARTAvailable(void)
@@ -46,7 +56,7 @@ unsigned char UARTAvailable(void)
   return 0;
 }
 
-void UARTWrite(unsigned char c)
+void UARTWriteInt8(int8 c)
 {
 	while(!TXIF)			//set when register is empty
 	{
@@ -60,10 +70,15 @@ void UARTWriteString(register const char *str)
 {
 	while((*str)!=0)
 	{
-	 	UARTWrite(*str);
-	    if(*str==13)UARTWrite(10);
-	    if(*str==10)UARTWrite(13);
+	 	UARTWriteInt8(*str);
 		str++;
 	}
 }
 
+void UARTWriteInt16(int16 _Value)
+{
+    unsigned short bob=_Value;
+	int8*dat = &bob;
+	UARTWriteInt8(dat[1]);
+	UARTWriteInt8(dat[0]);
+}

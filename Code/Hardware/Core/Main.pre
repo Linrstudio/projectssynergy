@@ -835,7 +835,11 @@ extern void _delay(unsigned long);
 #pragma inline(_delay3)
 extern void _delay3(unsigned char);
 
-# 3 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\serial.h"
+# 3 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Default.h"
+typedef unsigned short int16;
+typedef unsigned char int8;
+
+# 4 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\serial.h"
 void UARTInit()
 {
 
@@ -855,8 +859,8 @@ TXEN=0;
 TXEN=1;
 }
 
-# 28
-unsigned char UARTRead(void)
+# 29
+unsigned char UARTReadInt8(void)
 {
 while(!RCIF)
 {
@@ -866,9 +870,18 @@ asm(" clrwdt");
 return RCREG;
 }
 
+unsigned short UARTReadInt16()
+{
+short bob;
+char*dat=&bob;
+dat[1]=UARTReadInt8();
+dat[0]=UARTReadInt8();
+return bob;
+}
+
 unsigned int UARTReadBool(void)
 {
-return UARTRead()!='0'?1:0;
+return UARTReadInt8()!='0'?1:0;
 }
 
 unsigned char UARTAvailable(void)
@@ -877,7 +890,7 @@ if (RCIF) return 1;
 return 0;
 }
 
-void UARTWrite(unsigned char c)
+void UARTWriteInt8(int8 c)
 {
 while(!TXIF)
 {
@@ -891,14 +904,24 @@ void UARTWriteString(register const char *str)
 {
 while((*str)!=0)
 {
-UARTWrite(*str);
-if(*str==13)UARTWrite(10);
-if(*str==10)UARTWrite(13);
+UARTWriteInt8(*str);
 str++;
 }
 }
 
-# 3 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Memory.h"
+void UARTWriteInt16(int16 _Value)
+{
+unsigned short bob=_Value;
+int8*dat = &bob;
+UARTWriteInt8(dat[1]);
+UARTWriteInt8(dat[0]);
+}
+
+# 3 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Default.h"
+typedef unsigned short int16;
+typedef unsigned char int8;
+
+# 8 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Memory.h"
 void MemoryInit()
 {
 EEPGD=0;
@@ -911,10 +934,11 @@ while(RD);
 while(WR);
 }
 
-void MemorySeek(unsigned char _Addr)
+void MemorySeek(unsigned short _Addr)
 {
+unsigned char*dat=&_Addr;
 MemoryWait();
-EEADR=_Addr;
+EEADR=dat[0];
 }
 
 unsigned char MemoryRead()
@@ -924,6 +948,25 @@ MemoryWait();
 RD=1;
 data=EEDATA;
 return data;
+}
+
+int8 MemoryReadInt8(int16 _Addr)
+{
+MemorySeek(_Addr);
+unsigned char data;
+MemoryWait();
+RD=1;
+data=EEDATA;
+return data;
+}
+
+unsigned int16 MemoryReadInt16(int16 _Addr)
+{
+short bob;
+int8*dat=&bob;
+dat[1]=MemoryReadInt8(_Addr);_Addr++;
+dat[0]=MemoryReadInt8(_Addr);
+return bob;
 }
 
 void MemoryWrite(unsigned char _Data)
@@ -941,75 +984,173 @@ WREN=0;
 GIE=1;
 }
 
-# 8 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Main.c"
-void main()
+# 3 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Default.h"
+typedef unsigned short int16;
+typedef unsigned char int8;
+
+# 4 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Kismet.h"
+static union
 {
-TRISC0=0;
+int8 int8 [16];
+int16 int16[ 8];
+}Registers;
 
-SWDTEN=0;
-
-UARTInit();
-MemoryInit();
-
-ANSEL = 0;
-ANSELH = 0;
-
-UARTWriteString("UART Started");
-
-for(int i=0;i<255;i++)
+void KismetSetReg8(int8 _Register,int8 _Value)
 {
-MemorySeek(i);
-
-UARTWrite(MemoryRead());
+Registers.int8[_Register]=_Value;
 }
+
+void KismetSetReg16(int8 _Register,int16 _Value)
+{
+Registers.int16[_Register>>1]=_Value;
+}
+
+# 25
+void KismetDo(int8 _Op,int16 _ParameterAddr)
+{
+int8 reg1 = 0;
+int8 reg2 = 0;
+
+switch(_Op)
+{
+case 1:
+{
+Registers.int8[reg1]+=Registers.int8[reg2];
+}break;
+case 2:
+{
+Registers.int16[reg1>>1]+=Registers.int16[reg2>>1];
+}break;
+case 3:
+{
+Registers.int8[reg1]-=Registers.int8[reg2];
+}break;
+case 4:
+{
+Registers.int16[reg1>>1]-=Registers.int16[reg2>>1];
+}break;
+}
+}
+
+void KismetExecuteMethod(int16 _Deviceid,int16 _MethodAddr)
+{
+
+
+UARTWriteInt16(_Deviceid);
+UARTWriteInt16(_MethodAddr);
+for(int i=0;i<16;i++)UARTWriteInt8(Registers.int8[i]);
+}
+
+void KismetExecuteEvent(int16 _DeviceID,int8 _EventID,int16 _EventArgs)
+{
+
+# 67
+int16 deviceaddr = 0;
+int16 eventaddr = 0;
+int16 methodaddr = 0;
+while(1)
+{
+int16 readid = MemoryReadInt16(deviceaddr);
+
+if((((int8*)&readid)[0]==((int8*)&_DeviceID)[0]&&((int8*)&readid)[1]==((int8*)&_DeviceID)[1]))
+{
+eventaddr = MemoryReadInt16(deviceaddr+2);
+break;
+}
+int16 zero = 0;
+if((((int8*)&readid)[0]==((int8*)&zero)[0]&&((int8*)&readid)[1]==((int8*)&zero)[1])) { UARTWriteString("failed to find device"); return; }
+deviceaddr+=4;
+}
+
+
 
 while(1)
 {
-char read=UARTRead();
+int8 readid = MemoryReadInt8(eventaddr);
+if(readid==_EventID)
+{
+methodaddr = MemoryReadInt16(eventaddr+1);
+break;
+}
+int8 zero = 0;
+if(readid==zero) { UARTWriteString("failed to find event"); return; }
+eventaddr+=3;
+}
+RC0=1;
 
+
+
+Registers.int16[0]=_EventArgs;
+KismetExecuteMethod(_DeviceID,methodaddr);
+}
+
+# 9 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\Core\Main.c"
+typedef unsigned short ushort;
+
+struct Int16
+{
+unsigned char Hi;
+unsigned char Lo;
+};
+
+void HandleUART()
+{
+if(UARTAvailable())
+{
+char read=UARTReadInt8();
 switch(read)
 {
+case 'h':
+{
+UARTWriteInt16(256);
+}
+break;
+
 case 'l':
 {
 if(UARTReadBool())RC0=1;else RC0=0;
 }
 break;
 
-case 't':
-{
-MemorySeek(0);MemoryWrite('R');
-MemorySeek(1);MemoryWrite('o');
-MemorySeek(2);MemoryWrite('e');
-MemorySeek(3);MemoryWrite('n');
-MemorySeek(4);MemoryWrite('y');
-RC0=1;
-}
-break;
-
 case 'w':
 {
-int addr=UARTRead();
+ushort addr=UARTReadInt16();
 int buffer[16];
 for(int i=0;i<16;i++)
 {
-buffer[i]=UARTRead();
+buffer[i]=UARTReadInt8();
 }
 for(int i=0;i<16;i++)
 {
 MemorySeek(i+addr);
 MemoryWrite(buffer[i]);
 }
+UARTWriteInt8('w');
 }
 break;
 
 case 'r':
 {
-int addr=UARTRead();
+ushort addr=UARTReadInt16();
 for(int i=0;i<16;i++)
 {
-MemorySeek(i+addr);
-UARTWrite(MemoryRead());
+MemorySeek(addr);
+UARTWriteInt8(MemoryRead());
+addr++;
 }
+}
+break;
+
+case 'e':
+{
+int16 deviceid=UARTReadInt16();
+int8 eventid =UARTReadInt8();
+int16 eventargs=UARTReadInt16();
+
+# 75
+KismetExecuteEvent(deviceid,eventid,eventargs);
+
+
 }
 break;
 
@@ -1023,16 +1164,27 @@ MemoryWrite(0);
 UARTWriteString("Memory Cleared");
 }
 break;
+}
+}
+}
 
-case 'd':
+void main()
 {
-for(int i=0;i<255;i++)
+TRISC0=0;
+
+SWDTEN=0;
+
+UARTInit();
+MemoryInit();
+
+ANSEL = 0;
+ANSELH = 0;
+
+RC0=0;
+
+while(1)
 {
-MemorySeek(i);
-UARTWrite(MemoryRead());
-}
-}
-break;
-}
+HandleUART();
+
 }
 }

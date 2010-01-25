@@ -2,70 +2,79 @@
 
 #include "serial.h"
 #include "Memory.h"
+#include "Kismet.h"
 
 #define LED1 RC0
 
-void main()
+typedef unsigned short ushort;
+
+struct Int16
 {
-	TRISC0=0;
+	unsigned char Hi;
+	unsigned char Lo;
+};
 
-	SWDTEN=0;
-
-	UARTInit();
-	MemoryInit();
-
-	ANSEL = 0; 
-	ANSELH = 0; 
-
-	UARTWriteString("UART Started");
-
-	while(1)//main uber duber loop
+void HandleUART()
+{
+	if(UARTAvailable())
 	{
-		char read=UARTRead();
-
+		char read=UARTReadInt8();
 		switch(read)
 		{
+			case 'h':
+			{				
+				UARTWriteInt16(EEPROMSIZE);
+			}
+			break;
+
 			case 'l'://Set LED
 			{
 				if(UARTReadBool())LED1=1;else LED1=0;
 			}
 			break;
-			
-			case 't'://test
-			{
-				MemorySeek(0);MemoryWrite('R');
-				MemorySeek(1);MemoryWrite('o');
-				MemorySeek(2);MemoryWrite('e');
-				MemorySeek(3);MemoryWrite('n');
-				MemorySeek(4);MemoryWrite('y');
-				LED1=1;
-			}
-			break;
 
 			case 'w'://write to eeprom
 			{
-				int addr=UARTRead();
+				ushort addr=UARTReadInt16();
 				int buffer[16];
 				for(int i=0;i<16;i++)
 				{
-					buffer[i]=UARTRead();
+					buffer[i]=UARTReadInt8();
 				}
 				for(int i=0;i<16;i++)
 				{
 					MemorySeek(i+addr);
 					MemoryWrite(buffer[i]);
 				}
+				UARTWriteInt8('w');//send a W back to confirm we are done
 			}
 			break;
 
 			case 'r':
 			{
-				int addr=UARTRead();
+				ushort addr=UARTReadInt16();
 				for(int i=0;i<16;i++)
 				{
-					MemorySeek(i+addr);
-					UARTWrite(MemoryRead());
+					MemorySeek(addr);
+					UARTWriteInt8(MemoryRead());
+					addr++;
 				}
+			}
+			break;
+
+			case 'e':
+			{
+				int16 deviceid=UARTReadInt16();
+				int8  eventid =UARTReadInt8();
+				int16 eventargs=UARTReadInt16();
+
+				//UARTWriteInt16(deviceid);
+				//UARTWriteInt8(eventid);
+				//UARTWriteInt16(eventargs);
+
+				KismetExecuteEvent(deviceid,eventid,eventargs);
+				
+				//UARTWriteInt16(UARTReadInt16());
 			}
 			break;
 
@@ -79,16 +88,27 @@ void main()
 				UARTWriteString("Memory Cleared");
 			}
 			break;
-
-			case 'd'://dump EEPROM
-			{
-				for(int i=0;i<255;i++)
-				{
-					MemorySeek(i);
-					UARTWrite(MemoryRead());
-				}
-			}
-			break;
 		}
+	}
+}
+
+void main()
+{
+	TRISC0=0;
+
+	SWDTEN=0;
+
+	UARTInit();
+	MemoryInit();
+
+	ANSEL = 0; 
+	ANSELH = 0;
+
+	LED1=0;
+
+	while(1)//main uber duber loop
+	{
+		HandleUART();
+		//DoKismet();
 	}
 }

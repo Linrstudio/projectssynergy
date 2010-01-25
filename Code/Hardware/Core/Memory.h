@@ -1,4 +1,9 @@
 #include <pic18.h>
+#include "Default.h"
+
+//for now we use the internal EEPROM even though it is only 256 byte, we use 16bits addresses
+
+#define EEPROMSIZE 256
 
 void MemoryInit()
 {
@@ -12,10 +17,11 @@ void MemoryWait()
 	while(WR);
 }
 
-void MemorySeek(unsigned char _Addr)
+void MemorySeek(unsigned short _Addr)
 {
+	unsigned char*dat=&_Addr;
  	MemoryWait();
-	EEADR=_Addr;
+	EEADR=dat[0];
 }
 
 unsigned char MemoryRead()
@@ -25,6 +31,25 @@ unsigned char MemoryRead()
 	RD=1;//read data
 	data=EEDATA;
 	return data;
+}
+
+int8 MemoryReadInt8(int16 _Addr)
+{
+	MemorySeek(_Addr);
+	unsigned char data;
+	MemoryWait();
+	RD=1;//read data
+	data=EEDATA;
+	return data;
+}
+
+unsigned int16 MemoryReadInt16(int16 _Addr)
+{
+	short bob;
+	int8*dat=&bob;
+	dat[1]=MemoryReadInt8(_Addr);_Addr++;
+	dat[0]=MemoryReadInt8(_Addr);
+	return bob;
 }
 
 void MemoryWrite(unsigned char _Data)
