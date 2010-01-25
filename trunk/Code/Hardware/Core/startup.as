@@ -105,11 +105,24 @@ _exit:
 
 ; bigdata psect - 0 bytes to load
 
+	lfsr	0,0
+	lfsr	1,16
+	call	clear_ram
+	PSECT	end_init
 	GLOBAL	__Lsmallconst
 	movlw	low highword(__Lsmallconst)
 	movwf	tblptru
 	movlw	high(__Lsmallconst)
 	movwf	tblptrh
 	goto	_main		;go do the main stuff
+; Clear these memory locations
+clear_ram:
+	clrf	postinc0	;clear, increment FSR0
+	movf	postdec1,w	;decrement loop variable
+	movf	fsr1l,w
+	bnz	clear_ram
+	movf	fsr1h,w
+	bnz	clear_ram
+	return
 
 	END	reset_pos
