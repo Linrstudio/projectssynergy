@@ -34,6 +34,13 @@ namespace BaseFrontEnd
             SetDebugLed led = new SetDebugLed(); blocks.Add(led);
             Compare comp = new Compare(); blocks.Add(comp);
 
+            blocks.Add(new ConstantWeekDay());
+            blocks.Add(new GetHour());
+            blocks.Add(new GetMinute());
+            blocks.Add(new GetSecond());
+            blocks.Add(new GetDay());
+
+#if false
             Connect(root.Outputs[0], A.Inputs[0]);
             Connect(root.Outputs[0], comp.Inputs[1]);
 
@@ -41,7 +48,7 @@ namespace BaseFrontEnd
             //Connect(B.Outputs[0], comp.Inputs[1]);
 
             Connect(comp.Outputs[0], led.Inputs[0]);
-
+#endif
             Format();
         }
 
@@ -51,10 +58,12 @@ namespace BaseFrontEnd
 
             foreach (CodeBlock b in blocks)
             {
-                b.x = b.GetDepth() * 200;
+                b.x = 100 + b.GetDepth() * 200;
+                b.x -= b.width / 2;
                 List<CodeBlock> siblings = new List<CodeBlock>(b.GetSibblings(blocks.ToArray()));
                 int idx = siblings.IndexOf(b);
-                b.y = (Height / 2) + (int)(((float)idx / siblings.Count) * 200);
+                b.y = 100 + (int)((float)idx * 50);
+                b.y -= b.height / 2;
             }
         }
 

@@ -50,6 +50,7 @@
     <Compile Include="KismetEditor.Designer.cs">
       <DependentUpon>KismetEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="KismetSequence.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="KismetEditor.resx">

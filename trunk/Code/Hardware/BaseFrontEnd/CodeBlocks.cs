@@ -23,11 +23,107 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, 100, 50));
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("DebugLed", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class GetHour : CodeBlock
+    {
+        public GetHour()
+            : base(2)
+        {
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            width = 100;
+            height = 25;
+        }
+
+        public override void Assamble() { Code = new byte[] { 6, Inputs[0].Connected.RegisterIndex }; }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Hour", new Font("Arial", 10), Brushes.Black, x + width / 2, y + height / 2, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class GetMinute : CodeBlock
+    {
+        public GetMinute()
+            : base(2)
+        {
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            width = 100;
+            height = 25;
+        }
+
+        public override void Assamble() { Code = new byte[] { 7, Inputs[0].Connected.RegisterIndex }; }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Minute", new Font("Arial", 10), Brushes.Black, x + width / 2, y + height / 2, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class GetSecond : CodeBlock
+    {
+        public GetSecond()
+            : base(2)
+        {
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            width = 100;
+            height = 25;
+        }
+
+        public override void Assamble() { Code = new byte[] { 8, Inputs[0].Connected.RegisterIndex }; }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Second", new Font("Arial", 10), Brushes.Black, x + width / 2, y + height / 2, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class GetDay : CodeBlock
+    {
+        public GetDay()
+            : base(2)
+        {
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            width = 100;
+            height = 25;
+        }
+
+        public override void Assamble() { Code = new byte[] { 9, Inputs[0].Connected.RegisterIndex }; }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Day", new Font("Arial", 10), Brushes.Black, x + width / 2, y + height / 2, sf);
             base.Draw(_Graphics);
         }
     }
@@ -107,6 +203,47 @@ namespace BaseFrontEnd
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString(Value.ToString(), new Font("Arial", 20, FontStyle.Bold), Brushes.Black, x + 25, y + 25, sf);
+
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class ConstantWeekDay : CodeBlock
+    {
+        DayOfWeek val;
+
+        [Browsable(true), CategoryAttribute("Constant")]
+        public DayOfWeek Value
+        {
+            get { return val; }
+            set { val = value; }
+        }
+
+        public ConstantWeekDay()
+            : base(3)
+        {
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+
+            width = 50;
+            height = 50;
+        }
+
+        public override void Assamble()
+        {
+            Code[0] = 1;
+            Code[1] = Outputs[0].RegisterIndex;
+            Code[2] = (byte)((int)Value);
+            base.Assamble();
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawEllipse(Pens.Black, new Rectangle(x, y, 50, 50));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString(Value.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x + 25, y + 25, sf);
 
             base.Draw(_Graphics);
         }

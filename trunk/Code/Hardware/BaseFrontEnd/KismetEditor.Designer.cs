@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.PropertyGrid = new System.Windows.Forms.PropertyGrid();
             this.statusStrip1.SuspendLayout();
@@ -42,22 +42,22 @@
             this.toolStripStatusLabel1,
             this.toolStripProgressBar1,
             this.toolStripStatusLabel2});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 536);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 526);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(731, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1512, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStripProgressBar1
-            // 
-            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
-            this.toolStripProgressBar1.Size = new System.Drawing.Size(500, 16);
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(53, 17);
             this.toolStripStatusLabel1.Text = "EEPROM";
+            // 
+            // toolStripProgressBar1
+            // 
+            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
+            this.toolStripProgressBar1.Size = new System.Drawing.Size(500, 16);
             // 
             // toolStripStatusLabel2
             // 
@@ -67,16 +67,16 @@
             // PropertyGrid
             // 
             this.PropertyGrid.Dock = System.Windows.Forms.DockStyle.Right;
-            this.PropertyGrid.Location = new System.Drawing.Point(499, 0);
+            this.PropertyGrid.Location = new System.Drawing.Point(1280, 0);
             this.PropertyGrid.Name = "PropertyGrid";
-            this.PropertyGrid.Size = new System.Drawing.Size(232, 536);
+            this.PropertyGrid.Size = new System.Drawing.Size(232, 526);
             this.PropertyGrid.TabIndex = 1;
             // 
             // KismetEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(731, 558);
+            this.ClientSize = new System.Drawing.Size(1512, 548);
             this.Controls.Add(this.PropertyGrid);
             this.Controls.Add(this.statusStrip1);
             this.Name = "KismetEditor";
