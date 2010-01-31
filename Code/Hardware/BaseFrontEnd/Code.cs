@@ -23,7 +23,9 @@ namespace BaseFrontEnd
         public int y;
         public int width = 200;
         public int height = 100;
+        [Browsable(false)]
         public int Width { get { return width; } }
+        [Browsable(false)]
         public int Height { get { return height; } }
 
         //used for assambling

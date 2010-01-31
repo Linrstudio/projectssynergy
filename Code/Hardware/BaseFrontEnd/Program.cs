@@ -13,8 +13,6 @@ namespace BaseFrontEnd
         static void Main()
         {
             Base b = new Base();
-
-            
 /*
             PushEvent root = new PushEvent();
             Constant on = new Constant(); on.Value = 1;
@@ -49,6 +47,12 @@ namespace BaseFrontEnd
                         break;
                     case "t2":
                         b.ExecuteRemoteEvent(123, 46, 0);
+                        break;
+                    case "readtime":
+                        b.ReadTime();
+                        break;
+                    case "synctime":
+                        b.SetTime(DateTime.Now);
                         break;
                     case "dumpregisters":
                         b.ExecuteRemoteEvent(1, 1, 0);

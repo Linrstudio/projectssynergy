@@ -143,6 +143,29 @@ namespace BaseFrontEnd
             for (int i = 0; i < EEPROM.Length; i++) EEPROM[i] = (byte)i;
         }
 
+        public void ReadTime()
+        {
+            Write('t');
+            Write('r');
+            byte hour = Read(1)[0];
+            byte minute = Read(1)[0];
+            byte second = Read(1)[0];
+            byte day = Read(1)[0];
+
+            Console.WriteLine("[{0}:{1}:{2} day:{3}]", hour, minute, second,(DayOfWeek)day);
+        }
+
+        public void SetTime(DateTime _Time)
+        {
+            Write('t');
+            Write('w');
+
+            Write((byte)_Time.Hour);
+            Write((byte)_Time.Minute);
+            Write((byte)_Time.Second);
+            Write((byte)((int)_Time.DayOfWeek));
+        }
+
         public void BuildEEPROM()
         {
             byte[] buffer = new byte[EEPROM.Length];
