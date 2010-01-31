@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
+using System.IO.Ports;
 using System.Net;
 using System.Net.Sockets;
 
@@ -16,7 +18,7 @@ namespace BaseFrontEnd
         {
             public ushort addr = 0;
             public byte ID;
-            public Method method;
+            public Method method = new Method();
 
             public Event(byte _ID)
             {
@@ -25,23 +27,31 @@ namespace BaseFrontEnd
 
             public class Method
             {
+                public Method() { ByteCode = new byte[] { 0 }; }
                 public ushort addr;
+                public byte[] ByteCode;
+            }
+
+            public virtual void Update()
+            {
+
             }
         }
     }
 
     public class Base
     {
-        TcpClient client;
+        SerialPort port;
 
         byte[] EEPROM = new byte[] { };
 
         public List<Device> devices = new List<Device>();
 
 
-        public Base(string _IP, ushort _Port)
+        public Base()
         {
-            client = new TcpClient(_IP, _Port);
+            port = new SerialPort("COM2", 1200, Parity.None, 8, StopBits.One);
+            port.Open();
 
             Write('h');//hello
             EEPROM = new byte[ReadShort()];
@@ -52,24 +62,42 @@ namespace BaseFrontEnd
             //UploadEEPROM();
             //DownloadEEPROM();
 
-            ExecuteRemoteEvent(devices[0].ID, devices[0].events[0].ID, 123);
-        }
-
-        public Base()
-        {
-            EEPROM = new byte[256];
-
-            BuildEEPROM();
+            //ExecuteRemoteEvent(devices[0].ID, devices[0].events[0].ID, 123);
         }
 
         public void AddSomeRandomStuff()
         {
-            Device d = new Device();
-            d.ID = 123;
-            d.events.Add(new Device.Event(45));
-            d.events.Add(new Device.Event(46));
-            d.events.Add(new Device.Event(47));
-            devices.Add(d);
+            {
+                Device d = new Device();
+                d.ID = 1;
+                {//dump registers
+                    Device.Event e = new Device.Event(1);
+                    e.method.ByteCode = new byte[] { 3, 0 };
+                    d.events.Add(e);
+                }
+                {//dump registers
+                    Device.Event e = new Device.Event(2);
+                    e.method.ByteCode = new byte[] { 2, 0, 0 };
+                    d.events.Add(e);
+                }
+                devices.Add(d);
+            }
+            {
+                Device d = new Device();
+                d.ID = 123;
+                {
+                    Device.Event e = new Device.Event(45);
+                    e.method.ByteCode = new byte[] { 1, 4, 137, 2, 4, 0 };
+                    d.events.Add(e);
+                }
+                {
+                    Device.Event e = new Device.Event(46);
+                    e.method.ByteCode = new byte[] { 2, 1, 0 };
+                    d.events.Add(e);
+                }
+                //d.events.Add(new Device.Event(47));
+                devices.Add(d);
+            }
         }
 
         public void DownloadEEPROM()
@@ -77,7 +105,6 @@ namespace BaseFrontEnd
             for (ushort b = 0; b < EEPROM.Length; b += 16)
             {
                 Write('r');
-                if (Available() > 0) Read(Available());
                 WriteShort(b);
                 for (int i = 0; i < 16; i++)
                 {
@@ -143,30 +170,46 @@ namespace BaseFrontEnd
                     addr += 3;
                 }
             }
-
-
+            addr += 2;
+            foreach (Device d in devices)
+            {
+                foreach (Device.Event e in d.events)
+                {
+                    e.method.addr = addr;
+                    for (int i = 0; i < e.method.ByteCode.Length; i++)
+                        buffer[addr + i] = e.method.ByteCode[i];
+                    addr += (ushort)e.method.ByteCode.Length;
+                }
+            }
+            addr += 2;
 
             //fillin addresses
             foreach (Device d in devices)
             {
-                byte[] shrt = GetShort(d.events[0].addr);
-                buffer[d.addr + 2] = shrt[0];
-                buffer[d.addr + 3] = shrt[1];
+                {
+                    byte[] shrt = GetShort(d.events[0].addr);
+                    buffer[d.addr + 2] = shrt[0];
+                    buffer[d.addr + 3] = shrt[1];
+                }
                 foreach (Device.Event e in d.events)
                 {
-
+                    byte[] shrt = GetShort(e.method.addr);
+                    buffer[e.addr + 1] = shrt[0];
+                    buffer[e.addr + 2] = shrt[1];
                 }
             }
+
+            Console.WriteLine("EEPROM used {0} out of {1} byte ({2}%)", addr, EEPROM.Length, ((float)addr / (float)EEPROM.Length) * 100);
 
             EEPROM = buffer;
         }
 
-        public void ExecuteRemoteEvent(ushort _DeviceID, byte _EventID, ushort _EventArgs)
+        public void ExecuteRemoteEvent(ushort _DeviceID, byte _EventID, byte _EventArgs)
         {
             Write('e');
             WriteShort(_DeviceID);
             Write(_EventID);
-            WriteShort(_EventArgs);
+            Write(_EventArgs);
         }
 
 
@@ -202,15 +245,31 @@ namespace BaseFrontEnd
 
         public void Write(byte[] _Buffer)
         {
-            client.GetStream().Write(_Buffer, 0, _Buffer.Length);
+            byte[] buf = _Buffer;
+            port.Write(_Buffer, 0, _Buffer.Length);
+
+            if (Console.ForegroundColor != ConsoleColor.Green) Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Green;
+            foreach (byte b in buf)
+            {
+                Console.Write(b.ToString() + " ");
+            }
         }
 
-        public int Available() { return client.Available; }
+        public int Available() { return port.BytesToRead; }
 
         public byte[] Read(int _Count)
         {
             byte[] buf = new byte[_Count];
-            client.GetStream().Read(buf, 0, _Count);
+            port.Read(buf, 0, _Count);
+
+            if (Console.ForegroundColor != ConsoleColor.Red) Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Red;
+            foreach (byte b in buf)
+            {
+                Console.Write(b.ToString() + " ");
+            }
+
             return buf;
         }
     }
