@@ -64,9 +64,9 @@ void HandleUART()
 
 			case 'e':
 			{
-				int16 deviceid=UARTReadInt16();
-				int8  eventid =UARTReadInt8();
-				int16 eventargs=UARTReadInt16();
+				int16 deviceid =UARTReadInt16();
+				int8  eventid  =UARTReadInt8();
+				int16 eventargs=UARTReadInt8();
 
 				//UARTWriteInt16(deviceid);
 				//UARTWriteInt8(eventid);

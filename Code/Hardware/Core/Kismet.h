@@ -12,52 +12,78 @@ void KismetSetReg8(int8 _Register,int8 _Value)
 	Registers.int8[_Register]=_Value;
 }
 
+int8 KismetGetReg8(int8 _Register)
+{
+	return Registers.int8[_Register];
+}
+
 void KismetSetReg16(int8 _Register,int16 _Value)
 {
 	Registers.int16[_Register>>1]=_Value;
 }
 
-
-
-
-
-
-void KismetDo(int8 _Op,int16 _ParameterAddr)
+void KismetExecuteMethod(int16 _Deviceid,int16 _MethodAddr)
 {
-	int8 reg1 = 0;//_Registers&15;
-	int8 reg2 = 0;//_Registers>>4;
-	
-	switch(_Op)
+	//UARTWriteInt16(_Deviceid);
+	//UARTWriteInt16(_MethodAddr);
+
+	//for(int i=0;i<16;i++)UARTWriteInt8(Registers.int8[i]);
+
+	int16 BlockAddr=_MethodAddr;
+
+	while(1)
 	{
-		case 1://BADD int8 add
+		int8 blocktype=MemoryReadInt8(BlockAddr);
+		//UARTWriteInt8(BlockAddr);//debug
+		//#=EEPROM DATA $=REGISTER DATA
+		switch(blocktype)
 		{
-			Registers.int8[reg1]+=Registers.int8[reg2];
-		}break;
-		case 2://SADD int16 add
-		{
-			Registers.int16[reg1>>1]+=Registers.int16[reg2>>1];
-		}break;
-		case 3://BSUB int8 sub
-		{
-			Registers.int8[reg1]-=Registers.int8[reg2];
-		}break;
-		case 4://SSUB int16 sub
-		{
-			Registers.int16[reg1>>1]-=Registers.int16[reg2>>1];
-		}break;
+			case 0://end of code
+			{
+				return;
+			}break;
+			case 1://assign int8data #reg #value
+			{
+				int8 reg  =MemoryReadInt8(BlockAddr+1);
+				int8 value=MemoryReadInt8(BlockAddr+2);
+				KismetSetReg8(reg,value);
+				BlockAddr+=3;
+			}break;
+			case 2://set debug led $on ?
+			{
+				int8 reg=MemoryReadInt8(BlockAddr+1);
+				int8 on =KismetGetReg8(reg);
+				RC0=on;
+				BlockAddr+=2;
+			}break;
+			case 3://dump registers
+			{
+				for(int i=0;i<16;i++)UARTWriteInt8(Registers.int8[i]);
+				BlockAddr+=1;
+			}break;
+			case 4:// JUMP #target addr
+			{
+				int8 addr=MemoryReadInt8(BlockAddr+1);
+				BlockAddr = _MethodAddr+addr;
+			}break;
+			case 5:// $a $b $equal?
+			{
+				int8 addr1=MemoryReadInt8(BlockAddr+1);
+				int8 addr2=MemoryReadInt8(BlockAddr+2);
+				int8 addr3=MemoryReadInt8(BlockAddr+3);
+				KismetSetReg8(addr3,KismetGetReg8(addr1)==KismetGetReg8(addr2));
+				BlockAddr+=4;
+			}break;
+			default:
+			{
+				return;
+			}
+			break;
+		}
 	}
 }
 
-void KismetExecuteMethod(int16 _Deviceid,int16 _MethodAddr)
-{
-	//bla
-	//UARTWriteString("about to execute");
-	UARTWriteInt16(_Deviceid);
-	UARTWriteInt16(_MethodAddr);
-	for(int i=0;i<16;i++)UARTWriteInt8(Registers.int8[i]);
-}
-
-void KismetExecuteEvent(int16 _DeviceID,int8 _EventID,int16 _EventArgs)
+void KismetExecuteEvent(int16 _DeviceID,int8 _EventID,int8 _EventArgs)
 {
 /*
 	UARTWriteInt16(_DeviceID);
@@ -95,10 +121,10 @@ void KismetExecuteEvent(int16 _DeviceID,int8 _EventID,int16 _EventArgs)
 		if(readid==zero) { UARTWriteString("failed to find event"); return; }
 		eventaddr+=3;
 	}
-	RC0=1;
 	//UARTWriteInt16(methodaddr);
 
 	//i already push our arguments into register one and two
-	Registers.int16[0]=_EventArgs;
+	for(int i=0;i<16;i++)Registers.int8[i]=0;//clear all registers ( for EEPROM optimalisation reasons )
+	Registers.int8[0]=_EventArgs;
 	KismetExecuteMethod(_DeviceID,methodaddr);
 }

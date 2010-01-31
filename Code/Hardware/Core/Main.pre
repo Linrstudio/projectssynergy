@@ -1000,51 +1000,78 @@ void KismetSetReg8(int8 _Register,int8 _Value)
 Registers.int8[_Register]=_Value;
 }
 
+int8 KismetGetReg8(int8 _Register)
+{
+return Registers.int8[_Register];
+}
+
 void KismetSetReg16(int8 _Register,int16 _Value)
 {
 Registers.int16[_Register>>1]=_Value;
 }
 
-# 25
-void KismetDo(int8 _Op,int16 _ParameterAddr)
-{
-int8 reg1 = 0;
-int8 reg2 = 0;
-
-switch(_Op)
-{
-case 1:
-{
-Registers.int8[reg1]+=Registers.int8[reg2];
-}break;
-case 2:
-{
-Registers.int16[reg1>>1]+=Registers.int16[reg2>>1];
-}break;
-case 3:
-{
-Registers.int8[reg1]-=Registers.int8[reg2];
-}break;
-case 4:
-{
-Registers.int16[reg1>>1]-=Registers.int16[reg2>>1];
-}break;
-}
-}
-
 void KismetExecuteMethod(int16 _Deviceid,int16 _MethodAddr)
 {
 
+# 32
+int16 BlockAddr=_MethodAddr;
 
-UARTWriteInt16(_Deviceid);
-UARTWriteInt16(_MethodAddr);
+while(1)
+{
+int8 blocktype=MemoryReadInt8(BlockAddr);
+
+
+switch(blocktype)
+{
+case 0:
+{
+return;
+}break;
+case 1:
+{
+int8 reg =MemoryReadInt8(BlockAddr+1);
+int8 value=MemoryReadInt8(BlockAddr+2);
+KismetSetReg8(reg,value);
+BlockAddr+=3;
+}break;
+case 2:
+{
+int8 reg=MemoryReadInt8(BlockAddr+1);
+int8 on =KismetGetReg8(reg);
+RC0=on;
+BlockAddr+=2;
+}break;
+case 3:
+{
 for(int i=0;i<16;i++)UARTWriteInt8(Registers.int8[i]);
+BlockAddr+=1;
+}break;
+case 4:
+{
+int8 addr=MemoryReadInt8(BlockAddr+1);
+BlockAddr = _MethodAddr+addr;
+}break;
+case 5:
+{
+int8 addr1=MemoryReadInt8(BlockAddr+1);
+int8 addr2=MemoryReadInt8(BlockAddr+2);
+int8 addr3=MemoryReadInt8(BlockAddr+3);
+KismetSetReg8(addr3,KismetGetReg8(addr1)==KismetGetReg8(addr2));
+BlockAddr+=4;
+}break;
+default:
+{
+return;
+}
+break;
+}
+}
 }
 
-void KismetExecuteEvent(int16 _DeviceID,int8 _EventID,int16 _EventArgs)
+void KismetExecuteEvent(int16 _DeviceID,int8 _EventID,int8 _EventArgs)
 {
 
-# 67
+# 93
 int16 deviceaddr = 0;
 int16 eventaddr = 0;
 int16 methodaddr = 0;
@@ -1076,11 +1103,11 @@ int8 zero = 0;
 if(readid==zero) { UARTWriteString("failed to find event"); return; }
 eventaddr+=3;
 }
-RC0=1;
 
 
 
-Registers.int16[0]=_EventArgs;
+for(int i=0;i<16;i++)Registers.int8[i]=0;
+Registers.int8[0]=_EventArgs;
 KismetExecuteMethod(_DeviceID,methodaddr);
 }
 
@@ -1145,7 +1172,7 @@ case 'e':
 {
 int16 deviceid=UARTReadInt16();
 int8 eventid =UARTReadInt8();
-int16 eventargs=UARTReadInt16();
+int16 eventargs=UARTReadInt8();
 
 # 75
 KismetExecuteEvent(deviceid,eventid,eventargs);
