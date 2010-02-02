@@ -2,6 +2,7 @@
 
 #include "serial.h"
 #include "Memory.h"
+#include "RTC.h"
 #include "Kismet.h"
 
 #define LED1 RC0
@@ -24,14 +25,12 @@ void HandleUART()
 			case 'h':
 			{				
 				UARTWriteInt16(EEPROMSIZE);
-			}
-			break;
+			}break;
 
 			case 'l'://Set LED
 			{
 				if(UARTReadBool())LED1=1;else LED1=0;
-			}
-			break;
+			}break;
 
 			case 'w'://write to eeprom
 			{
@@ -47,8 +46,30 @@ void HandleUART()
 					MemoryWrite(buffer[i]);
 				}
 				UARTWriteInt8('w');//send a W back to confirm we are done
-			}
-			break;
+			}break;
+
+			case 't'://time stuff
+			{
+				int8 op = UARTReadInt8();
+				switch(op)
+				{
+					case 'r'://read time
+					{
+						UARTWriteInt8(RTCHour  );
+						UARTWriteInt8(RTCMinute);
+						UARTWriteInt8(RTCSecond);
+						UARTWriteInt8(RTCDay   );
+					}break;
+
+					case 'w'://read time
+					{
+						RTCHour  =UARTReadInt8();
+						RTCMinute=UARTReadInt8();
+						RTCSecond=UARTReadInt8();
+						RTCDay   =UARTReadInt8();
+					}break;
+				}
+			}break;
 
 			case 'r':
 			{
@@ -59,8 +80,7 @@ void HandleUART()
 					UARTWriteInt8(MemoryRead());
 					addr++;
 				}
-			}
-			break;
+			}break;
 
 			case 'e':
 			{
@@ -75,8 +95,7 @@ void HandleUART()
 				KismetExecuteEvent(deviceid,eventid,eventargs);
 				
 				//UARTWriteInt16(UARTReadInt16());
-			}
-			break;
+			}break;
 
 			case 'c':
 			{
@@ -86,8 +105,7 @@ void HandleUART()
 					MemoryWrite(0);
 				}
 				UARTWriteString("Memory Cleared");
-			}
-			break;
+			}break;
 		}
 	}
 }
@@ -100,6 +118,7 @@ void main()
 
 	UARTInit();
 	MemoryInit();
+	RTCInit();
 
 	ANSEL = 0; 
 	ANSELH = 0;
@@ -109,6 +128,8 @@ void main()
 	while(1)//main uber duber loop
 	{
 		HandleUART();
+
+		HandleRTC();
 		//DoKismet();
 	}
 }
