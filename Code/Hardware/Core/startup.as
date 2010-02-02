@@ -106,7 +106,7 @@ _exit:
 ; bigdata psect - 0 bytes to load
 
 	lfsr	0,0
-	lfsr	1,16
+	lfsr	1,20
 	call	clear_ram
 	PSECT	end_init
 	GLOBAL	__Lsmallconst

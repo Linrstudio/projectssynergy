@@ -74,6 +74,30 @@ void KismetExecuteMethod(int16 _Deviceid,int16 _MethodAddr)
 				KismetSetReg8(addr3,KismetGetReg8(addr1)==KismetGetReg8(addr2));
 				BlockAddr+=4;
 			}break;
+			case 6:// GetHour $targetreg
+			{
+				int8 reg=MemoryReadInt8(BlockAddr+1);
+				KismetSetReg8(reg,RTCHour);
+				BlockAddr+=2;
+			}break;
+			case 7:// GetMinute $targetreg
+			{
+				int8 reg=MemoryReadInt8(BlockAddr+1);
+				KismetSetReg8(reg,RTCMinute);
+				BlockAddr+=2;
+			}break;
+			case 8:// GetSecond $targetreg
+			{
+				int8 reg=MemoryReadInt8(BlockAddr+1);
+				KismetSetReg8(reg,RTCSecond);
+				BlockAddr+=2;
+			}break;
+			case 9:// GetWeekDay $targetreg
+			{
+				int8 reg=MemoryReadInt8(BlockAddr+1);
+				KismetSetReg8(reg,RTCDay);
+				BlockAddr+=2;
+			}break;
 			default:
 			{
 				return;
