@@ -9,7 +9,7 @@ namespace BaseFrontEnd
     public class SetDebugLed : CodeBlock
     {
         public SetDebugLed()
-            : base(2)
+            : base(2, 2)
         {
             Inputs.Add(new Input(this));
             width = 100;
@@ -35,7 +35,7 @@ namespace BaseFrontEnd
     public class GetHour : CodeBlock
     {
         public GetHour()
-            : base(2)
+            : base(2, 6)
         {
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
@@ -55,11 +55,10 @@ namespace BaseFrontEnd
             base.Draw(_Graphics);
         }
     }
-
     public class GetMinute : CodeBlock
     {
         public GetMinute()
-            : base(2)
+            : base(2, 7)
         {
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
@@ -79,11 +78,10 @@ namespace BaseFrontEnd
             base.Draw(_Graphics);
         }
     }
-
     public class GetSecond : CodeBlock
     {
         public GetSecond()
-            : base(2)
+            : base(2, 8)
         {
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
@@ -103,11 +101,10 @@ namespace BaseFrontEnd
             base.Draw(_Graphics);
         }
     }
-
     public class GetDay : CodeBlock
     {
         public GetDay()
-            : base(2)
+            : base(2, 9)
         {
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
@@ -131,7 +128,7 @@ namespace BaseFrontEnd
     public class Compare : CodeBlock
     {
         public Compare()
-            : base(4)
+            : base(4, 5)
         {
             Inputs.Add(new Input(this));
             Inputs.Add(new Input(this));
@@ -179,7 +176,7 @@ namespace BaseFrontEnd
         }
 
         public ConstantByte()
-            : base(3)
+            : base(3, 1)
         {
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
@@ -220,7 +217,7 @@ namespace BaseFrontEnd
         }
 
         public ConstantWeekDay()
-            : base(3)
+            : base(3, 1)
         {
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
@@ -252,7 +249,7 @@ namespace BaseFrontEnd
     public class PushEvent : CodeBlock
     {
         public PushEvent()
-            : base(0)
+            : base(0, 0)
         {
             Outputs.Add(new Output(this));
 

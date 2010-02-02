@@ -10,10 +10,7 @@ namespace BaseFrontEnd
 {
     public partial class KismetEditor : Form
     {
-        int width = 100;
-        int height = 50;
-        CodeBlock root = null;
-        List<CodeBlock> blocks = new List<CodeBlock>();
+        KismetSequence sequence = new KismetSequence();
 
         int mouseX;
         int mouseY;
@@ -28,50 +25,37 @@ namespace BaseFrontEnd
 
         private void KismetEditor_Load(object sender, EventArgs e)
         {
-            root = new PushEvent(); blocks.Add(root);
-            ConstantByte A = new ConstantByte(); blocks.Add(A); A.Value = 102;
-            ConstantByte B = new ConstantByte(); blocks.Add(B); B.Value = 65;
-            SetDebugLed led = new SetDebugLed(); blocks.Add(led);
-            Compare comp = new Compare(); blocks.Add(comp);
+            sequence.root = new PushEvent();
+            sequence.codeblocks.Add(sequence.root);
+            sequence.codeblocks.Add(new SetDebugLed());
+            sequence.codeblocks.Add(new Compare());
+            sequence.codeblocks.Add(new ConstantWeekDay());
+            sequence.codeblocks.Add(new ConstantByte());
+            sequence.codeblocks.Add(new GetHour());
+            sequence.codeblocks.Add(new GetMinute());
+            sequence.codeblocks.Add(new GetSecond());
+            sequence.codeblocks.Add(new GetDay());
 
-            blocks.Add(new ConstantWeekDay());
-            blocks.Add(new GetHour());
-            blocks.Add(new GetMinute());
-            blocks.Add(new GetSecond());
-            blocks.Add(new GetDay());
-
-#if false
-            Connect(root.Outputs[0], A.Inputs[0]);
-            Connect(root.Outputs[0], comp.Inputs[1]);
-
-            Connect(A.Outputs[0], comp.Inputs[0]);
-            //Connect(B.Outputs[0], comp.Inputs[1]);
-
-            Connect(comp.Outputs[0], led.Inputs[0]);
-#endif
             Format();
         }
 
         public void Format()
         {
-            CodeAssambler.Assamble(root);
+            byte[] bytecode = sequence.GetByteCode();
 
-            foreach (CodeBlock b in blocks)
+            foreach (CodeBlock b in sequence.codeblocks)
             {
                 b.x = 100 + b.GetDepth() * 200;
                 b.x -= b.width / 2;
-                List<CodeBlock> siblings = new List<CodeBlock>(b.GetSibblings(blocks.ToArray()));
+                List<CodeBlock> siblings = new List<CodeBlock>(b.GetSibblings(sequence.codeblocks.ToArray()));
                 int idx = siblings.IndexOf(b);
                 b.y = 100 + (int)((float)idx * 50);
                 b.y -= b.height / 2;
             }
-        }
 
-        public void Connect(CodeBlock.Output _Out, CodeBlock.Input _In)
-        {
-            foreach (CodeBlock b in blocks) foreach (CodeBlock.Output o in b.Outputs) foreach (CodeBlock.Input i in o.Connected.ToArray()) if (i == _In) o.Connected.Remove(i);
-            _Out.Connected.Add(_In);
-            _In.Connected = _Out;
+
+            toolStripProgressBar1.Maximum = 256;
+            toolStripProgressBar1.Value = bytecode.Length;
         }
 
         public Point GetInputPosition(CodeBlock.Input _Input)
@@ -98,19 +82,19 @@ namespace BaseFrontEnd
 
         private void KismetEditor_Paint(object sender, PaintEventArgs e)
         {
-            foreach (CodeBlock b in blocks)
+            foreach (CodeBlock b in sequence.codeblocks)
             {
                 List<CodeBlock> dependencies = new List<CodeBlock>();
                 if (selected != null) dependencies.AddRange(selected.Owner.GetDependencies());
-                
+
                 //e.Graphics.DrawRectangle(Pens.Red, b.x, b.y, 100, 50);
                 float p = 0;
                 foreach (CodeBlock.Input i in b.Inputs)
                 {
                     p += 1 / (float)(b.Inputs.Count + 1);
                     Point pos = GetInputPosition(i);
-                    if(!dependencies.Contains(i.Owner))
-                    e.Graphics.FillRectangle(Brushes.Black, new Rectangle(pos.X - 10, pos.Y - 5, 10, 10));
+                    if (!dependencies.Contains(i.Owner))
+                        e.Graphics.FillRectangle(Brushes.Black, new Rectangle(pos.X - 10, pos.Y - 5, 10, 10));
 
                     if (i.Connected != null)
                     {
@@ -125,7 +109,7 @@ namespace BaseFrontEnd
                     p += 1 / (float)(b.Inputs.Count + 1);
                     Point pos = GetOutputPosition(i);
                     if (!dependencies.Contains(i.Owner))
-                    e.Graphics.FillRectangle(Brushes.Black, new Rectangle(pos.X, pos.Y - 5, 10, 10));
+                        e.Graphics.FillRectangle(Brushes.Black, new Rectangle(pos.X, pos.Y - 5, 10, 10));
                 }
 
                 //e.Graphics.DrawString(b.GetType().Name, Font, Brushes.Black, b.x, b.y);
@@ -145,7 +129,7 @@ namespace BaseFrontEnd
 
         public byte[] GetCode()
         {
-            return CodeAssambler.Assamble(root);
+            return sequence.GetByteCode();
         }
 
         private void KismetEditor_ResizeEnd(object sender, EventArgs e)
@@ -204,7 +188,7 @@ namespace BaseFrontEnd
                 if (selected != null)
                 {
                     CodeBlock.Input nearest = GetNearestInput(new Point(mouseX, mouseY));
-                    if (nearest != null) { Connect(selected, nearest); Format(); }
+                    if (nearest != null) { sequence.Connect(selected, nearest); Format(); }
                     selected = null;
                     Refresh();
                 }
@@ -213,7 +197,7 @@ namespace BaseFrontEnd
 
         public CodeBlock.Input GetNearestInput(Point _pos)
         {
-            foreach (CodeBlock d in blocks)
+            foreach (CodeBlock d in sequence.codeblocks)
             {
                 foreach (CodeBlock.Input o in d.Inputs)
                 {
@@ -228,7 +212,7 @@ namespace BaseFrontEnd
 
         public CodeBlock.Output GetNearestOutput(Point _pos)
         {
-            foreach (CodeBlock d in blocks)
+            foreach (CodeBlock d in sequence.codeblocks)
             {
                 foreach (CodeBlock.Output o in d.Outputs)
                 {

@@ -7,11 +7,13 @@ namespace BaseFrontEnd
 {
     public class CodeBlock
     {
-        public CodeBlock(byte _CodeSize)
+        public CodeBlock(byte _CodeSize, byte _BlockID)
         {
             Code = new byte[_CodeSize];
+            BlockID = _BlockID;
         }
         public bool NeedsTriggerIn;
+        public byte BlockID;
 
         public List<Input> Inputs = new List<Input>();
         public List<Output> Outputs = new List<Output>();
@@ -32,6 +34,11 @@ namespace BaseFrontEnd
         public byte[] Code = null;
         public int index = 0;
         public byte address;
+
+        public virtual void DisAssamble(byte[] _ByteCode)
+        {
+
+        }
 
         public virtual void Assamble()
         {
@@ -121,6 +128,25 @@ namespace BaseFrontEnd
         public virtual void Draw(System.Drawing.Graphics _Graphics)
         {
 
+        }
+
+
+
+        public static Dictionary<byte, Type> CodeBlocks = null;
+        public static void Initialize()
+        {
+            if (CodeBlocks == null)
+            {
+                CodeBlocks = new Dictionary<byte, Type>();
+                CodeBlocks.Add(1, typeof(ConstantByte));
+                CodeBlocks.Add(2, typeof(SetDebugLed));
+                CodeBlocks.Add(5, typeof(Compare));
+
+                CodeBlocks.Add(6, typeof(GetHour));
+                CodeBlocks.Add(7, typeof(GetMinute));
+                CodeBlocks.Add(8, typeof(GetSecond));
+                CodeBlocks.Add(9, typeof(GetDay));
+            }
         }
     }
 
