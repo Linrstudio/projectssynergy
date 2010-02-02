@@ -13,26 +13,30 @@ namespace BaseFrontEnd
         static void Main()
         {
             Base b = new Base();
-/*
-            PushEvent root = new PushEvent();
-            Constant on = new Constant(); on.Value = 1;
-            SetDebugLed led = new SetDebugLed();
-            root.Outputs[0].Connected.Add(on.Inputs[0]);
-            on.Inputs[0].Connected = root.Outputs[0];
+            /*
+                        PushEvent root = new PushEvent();
+                        Constant on = new Constant(); on.Value = 1;
+                        SetDebugLed led = new SetDebugLed();
+                        root.Outputs[0].Connected.Add(on.Inputs[0]);
+                        on.Inputs[0].Connected = root.Outputs[0];
 
-            on.Outputs[0].Connected.Add(led.Inputs[0]);
-            led.Inputs[0].Connected = on.Outputs[0];
+                        on.Outputs[0].Connected.Add(led.Inputs[0]);
+                        led.Inputs[0].Connected = on.Outputs[0];
 
-            byte[] ledcode = CodeAssambler.Assamble(root);
+                        byte[] ledcode = CodeAssambler.Assamble(root);
 
-            b.devices[0].events[0].method.ByteCode = ledcode;
-            */
-           
-            
+                        b.devices[0].events[0].method.ByteCode = ledcode;
+                        */
+
+
             while (true)
             {
                 switch (Console.ReadLine().ToLower())
                 {
+                    case "disassamble":
+                        EEPROM eeprom = BaseFrontEnd.EEPROM.FromEEPROM(b.EEPROM);
+
+                        break;
                     case "downloadeeprom":
                         b.DownloadEEPROM();
                         break;

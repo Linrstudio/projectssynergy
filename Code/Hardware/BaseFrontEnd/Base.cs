@@ -43,7 +43,7 @@ namespace BaseFrontEnd
     {
         SerialPort port;
 
-        byte[] EEPROM = new byte[] { };
+        public byte[] EEPROM = new byte[] { };
 
         public List<Device> devices = new List<Device>();
 
@@ -59,6 +59,7 @@ namespace BaseFrontEnd
             AddSomeRandomStuff();
 
             BuildEEPROM();
+            BaseFrontEnd.EEPROM.FromEEPROM(EEPROM);
             //UploadEEPROM();
             //DownloadEEPROM();
 
