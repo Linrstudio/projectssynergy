@@ -6,19 +6,19 @@ using System.Drawing;
 
 namespace BaseFrontEnd
 {
-    public class SetDebugLed : CodeBlock
+    public class SetDebugLed1 : CodeBlock
     {
-        public SetDebugLed()
+        public SetDebugLed1()
             : base(2, 2)
         {
             Inputs.Add(new Input(this));
             width = 100;
-            height = 50;
+            height = 25;
         }
 
         public override void Assamble()
         {
-            Code = new byte[] { 2, Inputs[0].Connected.RegisterIndex };
+            Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex };
         }
 
         public override void Draw(Graphics _Graphics)
@@ -27,7 +27,33 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("DebugLed", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            _Graphics.DrawString("DebugLed1", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class SetDebugLed2 : CodeBlock
+    {
+        public SetDebugLed2()
+            : base(2, 3)
+        {
+            Inputs.Add(new Input(this));
+            width = 100;
+            height = 25;
+        }
+
+        public override void Assamble()
+        {
+            Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex };
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("DebugLed2", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
             base.Draw(_Graphics);
         }
     }
@@ -43,7 +69,7 @@ namespace BaseFrontEnd
             height = 25;
         }
 
-        public override void Assamble() { Code = new byte[] { 6, Inputs[0].Connected.RegisterIndex }; }
+        public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
 
         public override void Draw(Graphics _Graphics)
         {
@@ -66,7 +92,7 @@ namespace BaseFrontEnd
             height = 25;
         }
 
-        public override void Assamble() { Code = new byte[] { 7, Inputs[0].Connected.RegisterIndex }; }
+        public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
 
         public override void Draw(Graphics _Graphics)
         {
@@ -89,7 +115,7 @@ namespace BaseFrontEnd
             height = 25;
         }
 
-        public override void Assamble() { Code = new byte[] { 8, Inputs[0].Connected.RegisterIndex }; }
+        public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
 
         public override void Draw(Graphics _Graphics)
         {
@@ -112,7 +138,7 @@ namespace BaseFrontEnd
             height = 25;
         }
 
-        public override void Assamble() { Code = new byte[] { 9, Inputs[0].Connected.RegisterIndex }; }
+        public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
 
         public override void Draw(Graphics _Graphics)
         {
@@ -142,7 +168,7 @@ namespace BaseFrontEnd
         {
             try
             {
-                Code = new byte[] { 5, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
+                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
             }
             catch { }
         }
@@ -175,6 +201,16 @@ namespace BaseFrontEnd
             set { val = value; }
         }
 
+        public override string GetValues()
+        {
+            return val.ToString();
+        }
+
+        public override void SetValues(string _Values)
+        {
+            val = byte.Parse(_Values);
+        }
+
         public ConstantByte()
             : base(3, 1)
         {
@@ -187,9 +223,7 @@ namespace BaseFrontEnd
 
         public override void Assamble()
         {
-            Code[0] = 1;
-            Code[1] = Outputs[0].RegisterIndex;
-            Code[2] = Value;
+            Code = new byte[] { BlockID, Outputs[0].RegisterIndex, Value };
             base.Assamble();
         }
 
@@ -216,8 +250,20 @@ namespace BaseFrontEnd
             set { val = value; }
         }
 
+
+        public override string GetValues()
+        {
+            return ((int)val).ToString();
+        }
+
+        public override void SetValues(string _Values)
+        {
+            val = (DayOfWeek)int.Parse(_Values);
+        }
+
+
         public ConstantWeekDay()
-            : base(3, 1)
+            : base(3, 14)
         {
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
@@ -228,9 +274,7 @@ namespace BaseFrontEnd
 
         public override void Assamble()
         {
-            Code[0] = 1;
-            Code[1] = Outputs[0].RegisterIndex;
-            Code[2] = (byte)((int)Value);
+            Code = new byte[] { BlockID, Outputs[0].RegisterIndex, (byte)((int)Value) };
             base.Assamble();
         }
 
@@ -242,6 +286,170 @@ namespace BaseFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString(Value.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x + 25, y + 25, sf);
 
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class BlockAdd : CodeBlock
+    {
+        public BlockAdd()
+            : base(4, 10)
+        {
+            Inputs.Add(new Input(this));
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            width = 100;
+            height = 50;
+        }
+
+        public override void Assamble()
+        {
+            try
+            {
+                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
+            }
+            catch { }
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Add", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class BlockSubstract : CodeBlock
+    {
+        public BlockSubstract()
+            : base(4, 11)
+        {
+            Inputs.Add(new Input(this));
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            width = 100;
+            height = 50;
+        }
+
+        public override void Assamble()
+        {
+            try
+            {
+                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
+            }
+            catch { }
+        }
+
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Substract", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class BlockMultiply : CodeBlock
+    {
+        public BlockMultiply()
+            : base(4, 12)
+        {
+            Inputs.Add(new Input(this));
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            width = 100;
+            height = 50;
+        }
+
+        public override void Assamble()
+        {
+            try
+            {
+                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
+            }
+            catch { }
+        }
+
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Multiply", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class BlockDivide : CodeBlock
+    {
+        public BlockDivide()
+            : base(4, 13)
+        {
+            Inputs.Add(new Input(this));
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            width = 100;
+            height = 50;
+        }
+
+        public override void Assamble()
+        {
+            try
+            {
+                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
+            }
+            catch { }
+        }
+
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Divide", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class BlockBitMask : CodeBlock
+    {
+        public BlockBitMask()
+            : base(4, 15)
+        {
+            Inputs.Add(new Input(this));
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            width = 100;
+            height = 50;
+        }
+
+        public override void Assamble()
+        {
+            try
+            {
+                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
+            }
+            catch { }
+        }
+
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("BitMask", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
             base.Draw(_Graphics);
         }
     }
@@ -263,11 +471,11 @@ namespace BaseFrontEnd
         {
             _Graphics.DrawLines(Pens.Black,
                 new Point[]{
-            new Point(x + 50, y),
-            new Point(x + 100, y+100),
-            new Point(x + 50, y+200),
-            new Point(x , y+100),
-            new Point(x + 50, y)
+            new Point(x + 50 , y      ),
+            new Point(x + 100, y + 100),
+            new Point(x + 50 , y + 200),
+            new Point(x      , y + 100),
+            new Point(x + 50 , y      )
                 });
 
             StringFormat sf = new StringFormat();

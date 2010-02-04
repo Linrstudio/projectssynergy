@@ -12,7 +12,8 @@ namespace BaseFrontEnd
         [STAThread]
         static void Main()
         {
-            Base b = new Base();
+            Base b = new Base("COM2");
+
             /*
                         PushEvent root = new PushEvent();
                         Constant on = new Constant(); on.Value = 1;
@@ -27,24 +28,22 @@ namespace BaseFrontEnd
 
                         b.devices[0].events[0].method.ByteCode = ledcode;
                         */
-
-
+            //b.eeprom = EEPROM.FromFile("test.eeprom");
             while (true)
             {
                 switch (Console.ReadLine().ToLower())
                 {
-                    case "disassamble":
-                        EEPROM eeprom = BaseFrontEnd.EEPROM.FromEEPROM(b.EEPROM);
-
+                    case "save":
+                        b.eeprom.Save("test.eeprom");
+                        break;
+                    case "load":
+                        b.eeprom = EEPROM.FromFile("test.eeprom");
                         break;
                     case "downloadeeprom":
                         b.DownloadEEPROM();
                         break;
                     case "uploadeeprom":
                         b.UploadEEPROM();
-                        break;
-                    case "build":
-                        b.BuildEEPROM();
                         break;
                     case "t":
                         b.ExecuteRemoteEvent(123, 45, 243);
@@ -58,9 +57,6 @@ namespace BaseFrontEnd
                     case "synctime":
                         b.SetTime(DateTime.Now);
                         break;
-                    case "dumpregisters":
-                        b.ExecuteRemoteEvent(1, 1, 0);
-                        break;
                     case "ledon":
                         b.ExecuteRemoteEvent(1, 2, 255);
                         break;
@@ -70,14 +66,26 @@ namespace BaseFrontEnd
                     case "break":
                         System.Diagnostics.Debugger.Break();
                         break;
-                    case "edit":
-                        KismetEditor editor = new KismetEditor();
-                        editor.ShowDialog();
-                        b.devices[0].events[0].method.ByteCode = editor.GetCode();
+                    case "disablekismet":
+                        b.KismetDisable();
                         break;
-                    case "test":
-                        Console.Write("eventargs:");
-                        b.ExecuteRemoteEvent(b.devices[0].ID, b.devices[0].events[0].ID, byte.Parse(Console.ReadLine()));
+                    case "enabledkismet":
+                        b.KismetEnable();
+                        break;
+                    case "edit":
+                        {
+                            KismetEditor editor = new KismetEditor(b.eeprom);
+                            editor.ShowDialog();
+                        }
+                        break;
+                    case "invoke":
+                        Console.Write("DeviceID:");
+                        ushort deviceid = ushort.Parse(Console.ReadLine());
+                        Console.Write("EventID:");
+                        byte eventid = byte.Parse(Console.ReadLine());
+                        Console.Write("EventArgs:");
+                        byte eventargs = byte.Parse(Console.ReadLine());
+                        b.ExecuteRemoteEvent(deviceid, eventid, eventargs);
                         break;
                 }
                 b.Read(b.Available());

@@ -1,25 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace BaseFrontEnd
 {
     public class EEPROM
     {
-        ushort Size;
-        Dictionary<ushort, Device> Devices = new Dictionary<ushort, Device>();
+        ushort size;
+        ushort bytesused;
+        public ushort Size { get { return size; } }
+        public ushort BytesUsed { get { return bytesused; } }
+
+        public EEPROM(ushort _EEPROMSize)
+        {
+            size = _EEPROMSize;
+        }
+
+        public Dictionary<ushort, Device> Devices = new Dictionary<ushort, Device>();
 
         public class Device
         {
             public Device(EEPROM _EEPROM, ushort _ID)
             {
                 eeprom = _EEPROM;
+                ID = _ID;
             }
             public EEPROM eeprom;
             public ushort addr = 0;
             public ushort eventaddr = 0;
             public ushort ID;
-            public Dictionary<byte, Event> events = new Dictionary<byte, Event>();
+            public Dictionary<byte, Event> Events = new Dictionary<byte, Event>();
 
             public class Event
             {
@@ -32,13 +45,166 @@ namespace BaseFrontEnd
                 }
 
                 public ushort SequenceAddr;
-                public KismetSequence sequence = null;
+                public KismetSequence sequence = new KismetSequence();
             }
+        }
+
+        public byte[] Assamble()
+        {
+            byte[] buffer = new byte[Size];
+            ushort idx = 0;
+            ushort eventlistaddr = 0;
+            foreach (Device d in Devices.Values)
+            {
+                d.addr = (ushort)(idx * 4);
+                byte[] shrt = Utilities.FromShort(d.ID);
+                buffer[d.addr + 0] = shrt[0];
+                buffer[d.addr + 1] = shrt[1];
+                idx++;
+                eventlistaddr = (ushort)(d.addr + 4);
+            }
+            eventlistaddr += 2;//add two
+            ushort addr = eventlistaddr;
+            foreach (Device d in Devices.Values)
+            {
+                d.eventaddr = addr;
+                foreach (Device.Event e in d.Events.Values)
+                {
+                    e.addr = addr;
+                    buffer[e.addr] = e.ID;
+                    buffer[e.addr + 1] = 1;
+                    buffer[e.addr + 2] = 1;
+                    addr += 3;
+                }
+            }
+            addr += 2;
+            foreach (Device d in Devices.Values)
+            {
+                foreach (Device.Event e in d.Events.Values)
+                {
+                    e.SequenceAddr = addr;
+                    byte[] seqcode = e.sequence.GetByteCode();
+                    for (int i = 0; i < seqcode.Length; i++)
+                        buffer[addr + i] = seqcode[i];
+                    addr += (ushort)seqcode.Length;
+                }
+            }
+            addr += 2;
+            bytesused = addr;
+
+            //fillin addresses
+            foreach (Device d in Devices.Values)
+            {
+                {
+                    byte[] shrt = Utilities.FromShort(d.eventaddr);
+                    buffer[d.addr + 2] = shrt[0];
+                    buffer[d.addr + 3] = shrt[1];
+                }
+                foreach (Device.Event e in d.Events.Values)
+                {
+                    byte[] shrt = Utilities.FromShort(e.SequenceAddr);
+                    buffer[e.addr + 1] = shrt[0];
+                    buffer[e.addr + 2] = shrt[1];
+                }
+            }
+
+            Console.WriteLine("EEPROM used {0} out of {1} byte ({2}%)", addr, Size, (int)(((float)addr / (float)Size) * 100));
+
+            return buffer;
+        }
+
+        public void Save(string _FileName)
+        {
+            XElement file = new XElement("EEPROM");
+
+            foreach (Device d in Devices.Values)
+            {
+                XElement device = new XElement("Device");
+                device.SetAttributeValue("ID", d.ID.ToString());
+                foreach (Device.Event e in d.Events.Values)
+                {
+                    XElement method = new XElement("Event");
+                    method.SetAttributeValue("ID", e.ID);
+                    foreach (CodeBlock b in e.sequence.codeblocks)
+                    {
+                        XElement block = new XElement("Block");
+                        block.SetAttributeValue("GUID", b.index);
+                        block.SetAttributeValue("Type", b.BlockID);
+                        block.SetAttributeValue("Values", b.GetValues());
+                        method.Add(block);
+                    }
+                    foreach (CodeBlock b in e.sequence.codeblocks)
+                    {
+                        foreach (CodeBlock.Input i in b.Inputs)
+                        {
+                            XElement connection = new XElement("Connect");
+                            connection.SetAttributeValue("Input", i.Owner.Inputs.IndexOf(i).ToString());
+                            connection.SetAttributeValue("InputOwner", e.sequence.codeblocks.IndexOf(i.Owner).ToString());
+                            connection.SetAttributeValue("Output", i.Connected.Owner.Outputs.IndexOf(i.Connected).ToString());
+                            connection.SetAttributeValue("OutputOwner", e.sequence.codeblocks.IndexOf(i.Connected.Owner).ToString());
+                            method.Add(connection);
+                        }
+                    }
+                    device.Add(method);
+                }
+
+                file.Add(device);
+            }
+            file.Save(_FileName);
+        }
+
+        public static EEPROM FromFile(string _FileName)
+        {
+            CodeBlock.Initialize();
+            EEPROM eeprom = new EEPROM(256);
+            XElement file = XElement.Load(_FileName);
+            foreach (XElement device in file.Elements("Device"))
+            {
+                ushort deviceid = ushort.Parse(device.Attribute("ID").Value);
+                Device d = new Device(eeprom, deviceid);
+                eeprom.Devices.Add(deviceid, d);
+
+                foreach (XElement method in device.Elements("Event"))
+                {
+                    byte methodid = byte.Parse(method.Attribute("ID").Value);
+                    Device.Event e = new Device.Event(methodid);
+                    e.sequence = new KismetSequence();
+
+                    foreach (XElement block in method.Elements("Block"))
+                    {
+                        byte blocktype = byte.Parse(block.Attribute("Type").Value);
+                        int index = byte.Parse(block.Attribute("GUID").Value);
+                        CodeBlock b = (CodeBlock)CodeBlock.CodeBlocks[blocktype].GetConstructor(new Type[] { }).Invoke(new object[] { });
+                        b.index = index;
+                        b.SetValues(block.Attribute("Values").Value);
+                        if (index == 0)
+                        {
+                            e.sequence.codeblocks.Remove(e.sequence.root);
+                            e.sequence.root = b;//root!
+                        }
+                        e.sequence.codeblocks.Add(b);
+                    }
+
+                    foreach (XElement connection in method.Elements("Connect"))
+                    {
+                        int input = int.Parse(connection.Attribute("Input").Value);
+                        int inputowner = int.Parse(connection.Attribute("InputOwner").Value);
+                        int output = int.Parse(connection.Attribute("Output").Value);
+                        int outputowner = int.Parse(connection.Attribute("OutputOwner").Value);
+
+                        e.sequence.Connect(e.sequence.codeblocks[outputowner].Outputs[output], e.sequence.codeblocks[inputowner].Inputs[input]);
+                    }
+
+                    d.Events.Add(methodid, e);
+                }
+            }
+
+            return eeprom;
         }
 
         public static EEPROM FromEEPROM(byte[] _EEPROM)
         {
-            EEPROM eeprom = new EEPROM();
+            EEPROM eeprom = new EEPROM((ushort)_EEPROM.Length);
             {
                 int idx = 0;
                 while (true)
@@ -59,14 +225,14 @@ namespace BaseFrontEnd
                     ushort sequenceaddr = Utilities.ToShort(_EEPROM, idx + 1);
                     byte id = _EEPROM[idx];
                     if (id == 0) break;
-                    d.events.Add(id, new Device.Event(id));
-                    d.events[id].SequenceAddr = sequenceaddr;
+                    d.Events.Add(id, new Device.Event(id));
+                    d.Events[id].SequenceAddr = sequenceaddr;
                     idx += 3;
                 }
             }
             foreach (Device d in eeprom.Devices.Values)
             {
-                foreach (Device.Event e in d.events.Values)
+                foreach (Device.Event e in d.Events.Values)
                 {
                     e.sequence = KismetSequence.FromByteCode(Utilities.Cut(_EEPROM, e.SequenceAddr));
                 }
@@ -78,8 +244,13 @@ namespace BaseFrontEnd
 
     public class KismetSequence
     {
-        public CodeBlock root;
+        public CodeBlock root = new PushEvent();
         public List<CodeBlock> codeblocks = new List<CodeBlock>();
+
+        public KismetSequence()
+        {
+            if (!codeblocks.Contains(root)) codeblocks.Add(root);
+        }
 
         public void Connect(CodeBlock.Output _Out, CodeBlock.Input _In)
         {
@@ -157,6 +328,7 @@ namespace BaseFrontEnd
         {
             CodeBlock.Initialize();//compile a list with avaiable codeblocks
             KismetSequence sequence = new KismetSequence();
+            sequence.root = new PushEvent();
             int idx = 0;
             while (true)
             {
