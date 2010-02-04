@@ -20,6 +20,13 @@ namespace BaseFrontEnd
             DoubleBuffered = true;
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.EnableNotifyMessage, true);
             SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+
+            s_WorkingArea.OnBlockSelect += new SequenceEditWindow.OnBlockSelectHandler(s_WorkingArea_OnBlockSelect);
+        }
+
+        void s_WorkingArea_OnBlockSelect(CodeBlock _SelectedBlock)
+        {
+            PropertyGrid.SelectedObject = _SelectedBlock;
         }
 
         protected override void OnNotifyMessage(Message m)
@@ -43,7 +50,7 @@ namespace BaseFrontEnd
                 }
                 t_Contents.Nodes.Add(node);
             }
-
+            t_Contents.ExpandAll();
         }
 
         private void KismetEditor_Load(object sender, EventArgs e)
@@ -56,8 +63,6 @@ namespace BaseFrontEnd
         {
             s_WorkingArea.Format();
         }
-
-
 
         private void t_Contents_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -85,7 +90,7 @@ namespace BaseFrontEnd
             }
             if (!eeprom.Devices[addevent.DeviceID].Events.ContainsKey(addevent.EventID))
             {
-                eeprom.Devices[addevent.DeviceID].Events.Add(addevent.EventID, new EEPROM.Device.Event(addevent.EventID));
+                eeprom.Devices[addevent.DeviceID].Events.Add(addevent.EventID, new EEPROM.Device.Event(eeprom.Devices[addevent.DeviceID], addevent.EventID));
             }
             s_WorkingArea.Sequence = eeprom.Devices[addevent.DeviceID].Events[addevent.EventID].sequence;
             UpdateTree();

@@ -8,12 +8,13 @@ namespace BaseFrontEnd
 {
     public class SetDebugLed1 : CodeBlock
     {
-        public SetDebugLed1()
-            : base(2, 2)
+        public SetDebugLed1(KismetSequence _Sequence)
+            : base(_Sequence, 2, 2)
         {
-            Inputs.Add(new Input(this));
             width = 100;
             height = 25;
+            Inputs.Add(new Input(this));
+            UpdateConnectors();
         }
 
         public override void Assamble()
@@ -23,23 +24,24 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("DebugLed1", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            _Graphics.DrawString("DebugLed1", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
 
     public class SetDebugLed2 : CodeBlock
     {
-        public SetDebugLed2()
-            : base(2, 3)
+        public SetDebugLed2(KismetSequence _Sequence)
+            : base(_Sequence, 2, 3)
         {
-            Inputs.Add(new Input(this));
             width = 100;
             height = 25;
+            Inputs.Add(new Input(this));
+            UpdateConnectors();
         }
 
         public override void Assamble()
@@ -49,119 +51,124 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("DebugLed2", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            _Graphics.DrawString("DebugLed2", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
 
     public class GetHour : CodeBlock
     {
-        public GetHour()
-            : base(2, 6)
+        public GetHour(KismetSequence _Sequence)
+            : base(_Sequence, 2, 6)
         {
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
             width = 100;
             height = 25;
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            UpdateConnectors();
         }
 
         public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Hour", new Font("Arial", 10), Brushes.Black, x + width / 2, y + height / 2, sf);
+            _Graphics.DrawString("Hour", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
     public class GetMinute : CodeBlock
     {
-        public GetMinute()
-            : base(2, 7)
+        public GetMinute(KismetSequence _Sequence)
+            : base(_Sequence, 2, 7)
         {
+            width = 75;
+            height = 25;
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
-            width = 100;
-            height = 25;
+            UpdateConnectors();
         }
 
         public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Minute", new Font("Arial", 10), Brushes.Black, x + width / 2, y + height / 2, sf);
+            _Graphics.DrawString("Minute", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
     public class GetSecond : CodeBlock
     {
-        public GetSecond()
-            : base(2, 8)
+        public GetSecond(KismetSequence _Sequence)
+            : base(_Sequence, 2, 8)
         {
+            width = 75;
+            height = 25;
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
-            width = 100;
-            height = 25;
+            UpdateConnectors();
         }
 
         public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Second", new Font("Arial", 10), Brushes.Black, x + width / 2, y + height / 2, sf);
+            _Graphics.DrawString("Second", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
     public class GetDay : CodeBlock
     {
-        public GetDay()
-            : base(2, 9)
+        public GetDay(KismetSequence _Sequence)
+            : base(_Sequence, 2, 9)
         {
+            width = 75;
+            height = 25;
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
-            width = 100;
-            height = 25;
+            UpdateConnectors();
         }
 
         public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Day", new Font("Arial", 10), Brushes.Black, x + width / 2, y + height / 2, sf);
+            _Graphics.DrawString("Day", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
 
     public class Compare : CodeBlock
     {
-        public Compare()
-            : base(4, 5)
+        public Compare(KismetSequence _Sequence)
+            : base(_Sequence, 4, 5)
         {
+            width = 100;
+            height = 50;
             Inputs.Add(new Input(this));
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
 
-            width = 100;
-            height = 75;
+            UpdateConnectors();
         }
 
         public override void Assamble()
@@ -177,15 +184,15 @@ namespace BaseFrontEnd
         {
             _Graphics.DrawLines(Pens.Black, new Point[]
             {
-            new Point(x,y),
-            new Point(x+100,y+75/2),
-            new Point(x,y+75),
-            new Point(x,y)
+            new Point(x-50,y-75/2),
+            new Point(x+50,y),
+            new Point(x-50,y+75/2),
+            new Point(x-50,y-75/2)
             });
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Compare", new Font("Arial", 10), Brushes.Black, x + width / 3, y + height / 2, sf);
+            _Graphics.DrawString("Compare", new Font("Arial", 10), Brushes.Black, x , y, sf);
             base.Draw(_Graphics);
         }
     }
@@ -211,14 +218,14 @@ namespace BaseFrontEnd
             val = byte.Parse(_Values);
         }
 
-        public ConstantByte()
-            : base(3, 1)
+        public ConstantByte(KismetSequence _Sequence)
+            : base(_Sequence, 3, 1)
         {
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
-
             width = 50;
             height = 50;
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            UpdateConnectors();
         }
 
         public override void Assamble()
@@ -229,11 +236,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawEllipse(Pens.Black, new Rectangle(x, y, 50, 50));
+            _Graphics.DrawEllipse(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString(Value.ToString(), new Font("Arial", 20, FontStyle.Bold), Brushes.Black, x + 25, y + 25, sf);
+            _Graphics.DrawString(Value.ToString(), new Font("Arial", 20, FontStyle.Bold), Brushes.Black, x, y, sf);
 
             base.Draw(_Graphics);
         }
@@ -262,14 +269,14 @@ namespace BaseFrontEnd
         }
 
 
-        public ConstantWeekDay()
-            : base(3, 14)
+        public ConstantWeekDay(KismetSequence _Sequence)
+            : base(_Sequence, 3, 14)
         {
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
-
             width = 50;
             height = 50;
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            UpdateConnectors();
         }
 
         public override void Assamble()
@@ -280,11 +287,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawEllipse(Pens.Black, new Rectangle(x, y, 50, 50));
+            _Graphics.DrawEllipse(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString(Value.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x + 25, y + 25, sf);
+            _Graphics.DrawString(Value.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y, sf);
 
             base.Draw(_Graphics);
         }
@@ -292,14 +299,15 @@ namespace BaseFrontEnd
 
     public class BlockAdd : CodeBlock
     {
-        public BlockAdd()
-            : base(4, 10)
+        public BlockAdd(KismetSequence _Sequence)
+            : base(_Sequence, 4, 10)
         {
+            width = 100;
+            height = 50;
             Inputs.Add(new Input(this));
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
-            width = 100;
-            height = 50;
+            UpdateConnectors();
         }
 
         public override void Assamble()
@@ -313,7 +321,7 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
@@ -321,17 +329,17 @@ namespace BaseFrontEnd
             base.Draw(_Graphics);
         }
     }
-
     public class BlockSubstract : CodeBlock
     {
-        public BlockSubstract()
-            : base(4, 11)
+        public BlockSubstract(KismetSequence _Sequence)
+            : base(_Sequence, 4, 11)
         {
+            width = 100;
+            height = 50;
             Inputs.Add(new Input(this));
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
-            width = 100;
-            height = 50;
+            UpdateConnectors();
         }
 
         public override void Assamble()
@@ -346,7 +354,7 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
@@ -354,17 +362,17 @@ namespace BaseFrontEnd
             base.Draw(_Graphics);
         }
     }
-
     public class BlockMultiply : CodeBlock
     {
-        public BlockMultiply()
-            : base(4, 12)
+        public BlockMultiply(KismetSequence _Sequence)
+            : base(_Sequence, 4, 12)
         {
+            width = 100;
+            height = 50;
             Inputs.Add(new Input(this));
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
-            width = 100;
-            height = 50;
+            UpdateConnectors();
         }
 
         public override void Assamble()
@@ -379,7 +387,7 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
@@ -387,17 +395,17 @@ namespace BaseFrontEnd
             base.Draw(_Graphics);
         }
     }
-
     public class BlockDivide : CodeBlock
     {
-        public BlockDivide()
-            : base(4, 13)
+        public BlockDivide(KismetSequence _Sequence)
+            : base(_Sequence, 4, 13)
         {
+            width = 100;
+            height = 50;
             Inputs.Add(new Input(this));
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
-            width = 100;
-            height = 50;
+            UpdateConnectors();
         }
 
         public override void Assamble()
@@ -412,7 +420,7 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
@@ -420,17 +428,17 @@ namespace BaseFrontEnd
             base.Draw(_Graphics);
         }
     }
-
     public class BlockBitMask : CodeBlock
     {
-        public BlockBitMask()
-            : base(4, 15)
+        public BlockBitMask(KismetSequence _Sequence)
+            : base(_Sequence, 4, 15)
         {
+            width = 100;
+            height = 50;
             Inputs.Add(new Input(this));
             Inputs.Add(new Input(this));
             Outputs.Add(new Output(this));
-            width = 100;
-            height = 50;
+            UpdateConnectors();
         }
 
         public override void Assamble()
@@ -445,43 +453,139 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x, y, width, height));
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("BitMask", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            _Graphics.DrawString("BitMask", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class BlockGetVariable : CodeBlock
+    {
+        string name;
+
+        [Browsable(true)]
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+        public override string GetValues()
+        {
+            return name;
+        }
+
+        public override void SetValues(string _Values)
+        {
+            name = _Values;
+        }
+
+        public BlockGetVariable(KismetSequence _Sequence)
+            : base(_Sequence, 3, 17)
+        {
+            height = 50;
+            width = 100;
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            UpdateConnectors();
+        }
+
+        public override void Assamble()
+        {
+            Code = new byte[] { BlockID, Sequence.Event.device.eeprom.GetVariableAddress(name), Outputs[0].RegisterIndex };
+            base.Assamble();
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Get Variable", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y - 8, sf);
+            _Graphics.DrawString(Name, new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y + 8, sf);
+
+            base.Draw(_Graphics);
+        }
+    }
+    public class BlockSetVariable : CodeBlock
+    {
+        string name;
+
+        [Browsable(true)]
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+        public override string GetValues()
+        {
+            return name;
+        }
+
+        public override void SetValues(string _Values)
+        {
+            name = _Values;
+        }
+
+        public BlockSetVariable(KismetSequence _Sequence)
+            : base(_Sequence, 3, 16)
+        {
+            width = 100;
+            height = 50;
+            Inputs.Add(new Input(this));
+            UpdateConnectors();
+        }
+
+        public override void Assamble()
+        {
+            Code = new byte[] { BlockID, Sequence.Event.device.eeprom.GetVariableAddress(name), Inputs[0].Connected.RegisterIndex };
+            base.Assamble();
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Set Variable", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y - 8, sf);
+            _Graphics.DrawString(Name, new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y + 8, sf);
+
             base.Draw(_Graphics);
         }
     }
 
     public class PushEvent : CodeBlock
     {
-        public PushEvent()
-            : base(0, 0)
+        public PushEvent(KismetSequence _Sequence)
+            : base(_Sequence, 0, 0)
         {
-            Outputs.Add(new Output(this));
-
             width = 100;
             height = 200;
+            Outputs.Add(new Output(this));
+            UpdateConnectors();
         }
-
-
 
         public override void Draw(Graphics _Graphics)
         {
             _Graphics.DrawLines(Pens.Black,
                 new Point[]{
-            new Point(x + 50 , y      ),
-            new Point(x + 100, y + 100),
-            new Point(x + 50 , y + 200),
-            new Point(x      , y + 100),
-            new Point(x + 50 , y      )
+            new Point(x    ,y-100),
+            new Point(x+50 ,y    ),
+            new Point(x    ,y+100),
+            new Point(x-50 ,y    ),
+            new Point(x    ,y-100)
                 });
 
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("On Push", new Font("Arial", 10), Brushes.Black, x + width / 2, y + height / 2, sf);
+            _Graphics.DrawString("On Push", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
