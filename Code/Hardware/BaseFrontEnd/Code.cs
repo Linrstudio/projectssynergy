@@ -15,6 +15,9 @@ namespace BaseFrontEnd
         public bool NeedsTriggerIn;
         public byte BlockID;
 
+        //indicates weather this codeblock will jump to the next block by itself
+        public bool WillJump = false;
+
         public List<Input> Inputs = new List<Input>();
         public List<Output> Outputs = new List<Output>();
 
@@ -34,6 +37,16 @@ namespace BaseFrontEnd
         public byte[] Code = null;
         public int index = 0;
         public byte address;
+
+        public virtual void SetValues(string _Values)
+        {
+
+        }
+
+        public virtual string GetValues()
+        {
+            return "";
+        }
 
         public virtual void DisAssamble(byte[] _ByteCode)
         {
@@ -130,92 +143,32 @@ namespace BaseFrontEnd
 
         }
 
-
-
         public static Dictionary<byte, Type> CodeBlocks = null;
         public static void Initialize()
         {
             if (CodeBlocks == null)
             {
                 CodeBlocks = new Dictionary<byte, Type>();
+                CodeBlocks.Add(0, typeof(PushEvent));
                 CodeBlocks.Add(1, typeof(ConstantByte));
-                CodeBlocks.Add(2, typeof(SetDebugLed));
+                CodeBlocks.Add(2, typeof(SetDebugLed1));
+                CodeBlocks.Add(3, typeof(SetDebugLed2));
                 CodeBlocks.Add(5, typeof(Compare));
 
                 CodeBlocks.Add(6, typeof(GetHour));
                 CodeBlocks.Add(7, typeof(GetMinute));
                 CodeBlocks.Add(8, typeof(GetSecond));
                 CodeBlocks.Add(9, typeof(GetDay));
+
+                CodeBlocks.Add(10, typeof(BlockAdd));
+                CodeBlocks.Add(11, typeof(BlockSubstract));
+                CodeBlocks.Add(12, typeof(BlockMultiply));
+                CodeBlocks.Add(13, typeof(BlockDivide));
+
+                CodeBlocks.Add(14, typeof(ConstantWeekDay));
+
+                CodeBlocks.Add(15, typeof(BlockBitMask));
             }
         }
-    }
-
-    public static class CodeAssambler
-    {
-        public static byte[] Assamble(CodeBlock _Head)
-        {
-            List<CodeBlock> blocks = new List<CodeBlock>(_Head.GetAllChildren());
-            blocks.Add(_Head);
-            for (int i = 0; i < blocks.Count; i++) blocks[i].index = i + 1;
-            _Head.index = 0;
-
-            bool changed = true;
-            while (changed)
-            {
-                changed = false;
-
-                foreach (CodeBlock b in blocks)
-                {
-
-                    foreach (CodeBlock d in b.GetDependencies())
-                    {
-                        if (d.index > b.index)
-                        {
-                            int t = d.index;
-                            d.index = b.index;
-                            b.index = t;
-                        }
-                    }
-
-                }
-            }
-            CodeBlock[] blockssorted = new CodeBlock[blocks.Count];
-            foreach (CodeBlock b in blocks) { blockssorted[b.index] = b; }
-            byte addr = 0;
-            foreach (CodeBlock b in blockssorted)
-            {
-                b.Assamble();
-                b.address = addr;
-                addr += (byte)b.Code.Length;
-            }
-
-
-            //heuristic to determine register indices
-            byte registeridx = 0;
-            foreach (CodeBlock b in blockssorted)
-            {
-                foreach (CodeBlock.Output r in b.Outputs)
-                {
-                    r.RegisterIndex = registeridx;
-                    registeridx++;
-                }
-            }
-
-            foreach (CodeBlock b in blockssorted)
-            {
-                b.Assamble();
-            }
-
-            List<byte> output = new List<byte>();
-
-            foreach (CodeBlock b in blockssorted)
-            {
-                output.AddRange(b.Code);
-            }
-            output.Add(0);//add a zero instruction, this is a return aka stop the event
-
-            return output.ToArray();
-        }
-
     }
 }

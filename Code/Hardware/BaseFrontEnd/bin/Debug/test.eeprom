@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<EEPROM>
+  <Device ID="1">
+    <Event ID="1">
+      <Block GUID="0" Type="0" Values="" />
+      <Block GUID="1" Type="1" Values="1" />
+      <Block GUID="4" Type="2" Values="" />
+      <Block GUID="3" Type="15" Values="" />
+      <Block GUID="6" Type="15" Values="" />
+      <Block GUID="7" Type="3" Values="" />
+      <Block GUID="2" Type="8" Values="" />
+      <Block GUID="5" Type="1" Values="2" />
+      <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="2" Output="0" OutputOwner="3" />
+      <Connect Input="0" InputOwner="3" Output="0" OutputOwner="1" />
+      <Connect Input="1" InputOwner="3" Output="0" OutputOwner="6" />
+      <Connect Input="0" InputOwner="4" Output="0" OutputOwner="6" />
+      <Connect Input="1" InputOwner="4" Output="0" OutputOwner="7" />
+      <Connect Input="0" InputOwner="5" Output="0" OutputOwner="4" />
+      <Connect Input="0" InputOwner="6" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="7" Output="0" OutputOwner="0" />
+    </Event>
+    <Event ID="2">
+      <Block GUID="0" Type="0" Values="" />
+      <Block GUID="1" Type="3" Values="" />
+      <Block GUID="2" Type="2" Values="" />
+      <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="2" Output="0" OutputOwner="0" />
+    </Event>
+  </Device>
+</EEPROM>

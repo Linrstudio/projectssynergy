@@ -8,157 +8,96 @@ using System.Net.Sockets;
 
 namespace BaseFrontEnd
 {
-    public class Device
-    {
-        public ushort addr = 0;
-        public ushort ID;
-        public List<Event> events = new List<Event>();
-
-        public class Event
-        {
-            public ushort addr = 0;
-            public byte ID;
-            public Method method = new Method();
-
-            public Event(byte _ID)
-            {
-                ID = _ID;
-            }
-
-            public class Method
-            {
-                public Method() { ByteCode = new byte[] { 0 }; }
-                public ushort addr;
-                public byte[] ByteCode;
-            }
-
-            public virtual void Update()
-            {
-
-            }
-        }
-    }
-
     public class Base
     {
-        SerialPort port;
+        SerialPort port = null;
 
-        public byte[] EEPROM = new byte[] { };
+        public EEPROM eeprom = null;
 
-        public List<Device> devices = new List<Device>();
+        byte[] eepromdata;
 
-
-        public Base()
+        public Base(string _PortName)
         {
-            port = new SerialPort("COM2", 1200, Parity.None, 8, StopBits.One);
-            port.Open();
+            ushort eepromsize = 256;
+            try
+            {
+                port = new SerialPort(_PortName, 1200, Parity.None, 8, StopBits.One);
+                port.Open();
 
-            Write('h');//hello
-            EEPROM = new byte[ReadShort()];
-
-            AddSomeRandomStuff();
-
-            BuildEEPROM();
-            BaseFrontEnd.EEPROM.FromEEPROM(EEPROM);
-            //UploadEEPROM();
-            //DownloadEEPROM();
-
-            //ExecuteRemoteEvent(devices[0].ID, devices[0].events[0].ID, 123);
+                Write('h');//hello?
+                WaitForY();
+                eepromsize = ReadShort();
+            }
+            catch { port = null; Console.WriteLine("Failed to open port:{0}", _PortName); }
+            eeprom = new EEPROM(eepromsize);
+            eepromdata = new byte[eepromsize];
         }
 
-        public void AddSomeRandomStuff()
+        public void KismetEnable()
         {
-            {
-                Device d = new Device();
-                d.ID = 1;
-                {//dump registers
-                    Device.Event e = new Device.Event(1);
-                    e.method.ByteCode = new byte[] { 3, 0 };
-                    d.events.Add(e);
-                }
-                {//dump registers
-                    Device.Event e = new Device.Event(2);
-                    e.method.ByteCode = new byte[] { 2, 0, 0 };
-                    d.events.Add(e);
-                }
-                devices.Add(d);
-            }
-            {
-                Device d = new Device();
-                d.ID = 123;
-                {
-                    Device.Event e = new Device.Event(45);
-                    e.method.ByteCode = new byte[] { 1, 4, 137, 2, 4, 0 };
-                    d.events.Add(e);
-                }
-                {
-                    Device.Event e = new Device.Event(46);
-                    e.method.ByteCode = new byte[] { 2, 1, 0 };
-                    d.events.Add(e);
-                }
-                //d.events.Add(new Device.Event(47));
-                devices.Add(d);
-            }
+            Write('k');
+            WaitForY();
+            Write('e');
+        }
+        public void KismetDisable()
+        {
+            Write('k');
+            WaitForY();
+            Write('d');
         }
 
         public void DownloadEEPROM()
         {
-            for (ushort b = 0; b < EEPROM.Length; b += 16)
+            for (ushort b = 0; b < eepromdata.Length; b += 16)
             {
+                Write('m');
+                WaitForY();
                 Write('r');
                 WriteShort(b);
                 for (int i = 0; i < 16; i++)
                 {
-                    EEPROM[i + b] = Read(1)[0];
+                    eepromdata[i + b] = Read(1)[0];
                 }
+                eeprom = EEPROM.FromEEPROM(eepromdata);
             }
-        }
-
-        public void CheckEEPROM()
-        {
-            DownloadEEPROM();
-            int checksum = 0;
-            foreach (byte b in EEPROM) checksum += b;
-            DownloadEEPROM();
-            int checksum2 = 0;
-            foreach (byte b in EEPROM) checksum2 += b;
-            if (checksum != checksum2) throw new Exception("EEPROM error detected");
         }
 
         public void UploadEEPROM()
         {
-            for (ushort b = 0; b < EEPROM.Length; b += 16)
+            eepromdata = eeprom.Assamble();
+            KismetDisable();
+            for (ushort b = 0; b < eeprom.BytesUsed; b += 16)
             {
+                Write('m');
+                WaitForY();
                 Write('w');
                 WriteShort(b);
                 for (int i = 0; i < 16; i++)
                 {
-                    Write(new byte[] { EEPROM[i + b] });
+                    Write(new byte[] { eepromdata[i + b] });
                 }
                 while (Read(1)[0] != (byte)'w') ;
             }
-        }
-
-        public void BuildEEPROMSequential()
-        {
-            for (int i = 0; i < EEPROM.Length; i++) EEPROM[i] = (byte)i;
+            KismetEnable();
         }
 
         public void ReadTime()
         {
             Write('t');
+            WaitForY();
             Write('r');
             byte hour = Read(1)[0];
             byte minute = Read(1)[0];
             byte second = Read(1)[0];
             byte day = Read(1)[0];
 
-            Console.WriteLine("[{0}:{1}:{2} day:{3}]", hour, minute, second,(DayOfWeek)day);
+            Console.WriteLine("[{0}:{1}:{2} day:{3}]", hour, minute, second, (DayOfWeek)day);
         }
 
         public void SetTime(DateTime _Time)
         {
             Write('t');
+            WaitForY();
             Write('w');
 
             Write((byte)_Time.Hour);
@@ -167,76 +106,15 @@ namespace BaseFrontEnd
             Write((byte)((int)_Time.DayOfWeek));
         }
 
-        public void BuildEEPROM()
-        {
-            byte[] buffer = new byte[EEPROM.Length];
-            ushort idx = 0;
-            ushort eventlistaddr = 0;
-            foreach (Device d in devices)
-            {
-                d.addr = (ushort)(idx * 4);
-                byte[] shrt = GetShort(d.ID);
-                buffer[d.addr + 0] = shrt[0];
-                buffer[d.addr + 1] = shrt[1];
-                idx++;
-                eventlistaddr = (ushort)(d.addr + 4);
-            }
-            eventlistaddr += 2;//add two
-            ushort addr = eventlistaddr;
-            foreach (Device d in devices)
-            {
-                foreach (Device.Event e in d.events)
-                {
-                    e.addr = addr;
-                    buffer[e.addr] = e.ID;
-                    buffer[e.addr + 1] = 1;
-                    buffer[e.addr + 2] = 1;
-                    addr += 3;
-                }
-            }
-            addr += 2;
-            foreach (Device d in devices)
-            {
-                foreach (Device.Event e in d.events)
-                {
-                    e.method.addr = addr;
-                    for (int i = 0; i < e.method.ByteCode.Length; i++)
-                        buffer[addr + i] = e.method.ByteCode[i];
-                    addr += (ushort)e.method.ByteCode.Length;
-                }
-            }
-            addr += 2;
-
-            //fillin addresses
-            foreach (Device d in devices)
-            {
-                {
-                    byte[] shrt = GetShort(d.events[0].addr);
-                    buffer[d.addr + 2] = shrt[0];
-                    buffer[d.addr + 3] = shrt[1];
-                }
-                foreach (Device.Event e in d.events)
-                {
-                    byte[] shrt = GetShort(e.method.addr);
-                    buffer[e.addr + 1] = shrt[0];
-                    buffer[e.addr + 2] = shrt[1];
-                }
-            }
-
-            Console.WriteLine("EEPROM used {0} out of {1} byte ({2}%)", addr, EEPROM.Length, ((float)addr / (float)EEPROM.Length) * 100);
-
-            EEPROM = buffer;
-        }
-
         public void ExecuteRemoteEvent(ushort _DeviceID, byte _EventID, byte _EventArgs)
         {
-            Write('e');
+            Write('k');
+            WaitForY();
+            Write('x');
             WriteShort(_DeviceID);
             Write(_EventID);
             Write(_EventArgs);
         }
-
-
 
         public byte[] GetShort(ushort _V)
         {
@@ -280,7 +158,16 @@ namespace BaseFrontEnd
             }
         }
 
-        public int Available() { return port.BytesToRead; }
+        public void WaitForY()
+        {
+            while (Read(1)[0] != 121) ;
+        }
+
+        public int Available() 
+        {
+            if (port == null) return 0;
+            return port.BytesToRead; 
+        }
 
         public byte[] Read(int _Count)
         {
