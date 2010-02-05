@@ -55,7 +55,7 @@ namespace BaseFrontEnd
 
         public byte GetVariableAddress(string _GlobalName)
         {
-            if(!Globals.Contains(_GlobalName))Globals.Add(_GlobalName);
+            if (!Globals.Contains(_GlobalName)) Globals.Add(_GlobalName);
             return (byte)Globals.IndexOf(_GlobalName);
         }
 
@@ -306,9 +306,9 @@ namespace BaseFrontEnd
                             int t = d.index;
                             d.index = b.index;
                             b.index = t;
+                            changed = true;
                         }
                     }
-
                 }
             }
             CodeBlock[] blockssorted = new CodeBlock[blocks.Count];
@@ -318,6 +318,7 @@ namespace BaseFrontEnd
             {
                 b.Assamble();
                 b.address = addr;
+                b.Assamble();
                 addr += (byte)b.Code.Length;
             }
 
@@ -332,7 +333,7 @@ namespace BaseFrontEnd
                     registeridx++;
                 }
             }
-
+            Console.WriteLine("Sequence used {0} registers", registeridx);
             foreach (CodeBlock b in blockssorted)
             {
                 b.Assamble();
@@ -345,7 +346,7 @@ namespace BaseFrontEnd
                 output.AddRange(b.Code);
             }
             output.Add(0);//add a zero instruction, this is a return aka stop the event
-
+            Console.WriteLine("Sequence used {0} bytes", output.Count);
             return output.ToArray();
         }
 
@@ -361,7 +362,7 @@ namespace BaseFrontEnd
                 if (!CodeBlock.CodeBlocks.ContainsKey(_Code[idx])) break;
 
                 Type t = CodeBlock.CodeBlocks[_Code[idx]];
-                CodeBlock block = (CodeBlock)t.GetConstructor(new Type[] { }).Invoke(new object[] { });
+                CodeBlock block = (CodeBlock)t.GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { _Event.sequence });
                 block.DisAssamble(Utilities.Cut(_Code, idx));
                 sequence.codeblocks.Add(block);
                 idx += block.Code.Length;

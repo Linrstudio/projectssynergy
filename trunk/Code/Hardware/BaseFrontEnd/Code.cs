@@ -7,10 +7,9 @@ namespace BaseFrontEnd
 {
     public class CodeBlock
     {
-        public CodeBlock(KismetSequence _Sequence,byte _CodeSize, byte _BlockID)
+        public CodeBlock(KismetSequence _Sequence, byte _BlockID)
         {
             Sequence = _Sequence;
-            Code = new byte[_CodeSize];
             BlockID = _BlockID;
         }
 
@@ -37,7 +36,7 @@ namespace BaseFrontEnd
         public int Height { get { return height; } }
 
         //used for assambling
-        public byte[] Code = null;
+        public byte[] Code = new byte[]{};
         public int index = 0;
         public byte address;
 
@@ -232,27 +231,29 @@ namespace BaseFrontEnd
             {
                 CodeBlocks = new Dictionary<byte, Type>();
                 CodeBlocks.Add(0, typeof(PushEvent));
-                CodeBlocks.Add(1, typeof(ConstantByte));
-                CodeBlocks.Add(2, typeof(SetDebugLed1));
-                CodeBlocks.Add(3, typeof(SetDebugLed2));
-                CodeBlocks.Add(5, typeof(Compare));
+                CodeBlocks.Add(1, typeof(BlockConstantByte));
+                CodeBlocks.Add(2, typeof(BlockSetDebugLed1));
+                CodeBlocks.Add(3, typeof(BlockSetDebugLed2));
+                CodeBlocks.Add(5, typeof(BlockEquals));
 
-                CodeBlocks.Add(6, typeof(GetHour));
-                CodeBlocks.Add(7, typeof(GetMinute));
-                CodeBlocks.Add(8, typeof(GetSecond));
-                CodeBlocks.Add(9, typeof(GetDay));
+                CodeBlocks.Add(6, typeof(BlockGetHour));
+                CodeBlocks.Add(7, typeof(BlockGetMinute));
+                CodeBlocks.Add(8, typeof(BlockGetSecond));
+                CodeBlocks.Add(9, typeof(BlockGetDay));
 
                 CodeBlocks.Add(10, typeof(BlockAdd));
                 CodeBlocks.Add(11, typeof(BlockSubstract));
                 CodeBlocks.Add(12, typeof(BlockMultiply));
                 CodeBlocks.Add(13, typeof(BlockDivide));
 
-                CodeBlocks.Add(14, typeof(ConstantWeekDay));
+                CodeBlocks.Add(14, typeof(BlockConstantWeekDay));
 
                 CodeBlocks.Add(15, typeof(BlockBitMask));
 
                 CodeBlocks.Add(16, typeof(BlockSetVariable));
                 CodeBlocks.Add(17, typeof(BlockGetVariable));
+
+                CodeBlocks.Add(18, typeof(BlockDiffers));
             }
         }
     }

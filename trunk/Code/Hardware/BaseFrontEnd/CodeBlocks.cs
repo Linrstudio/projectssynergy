@@ -6,10 +6,43 @@ using System.Drawing;
 
 namespace BaseFrontEnd
 {
-    public class SetDebugLed1 : CodeBlock
+    //Archetypes
+    public class BaseBlockConditions : CodeBlock
     {
-        public SetDebugLed1(KismetSequence _Sequence)
-            : base(_Sequence, 2, 2)
+        public BaseBlockConditions(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+    }
+
+    public class BaseBlockMath : CodeBlock
+    {
+        public BaseBlockMath(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+    }
+
+    public class BaseBlockConstant : CodeBlock
+    {
+        public BaseBlockConstant(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+    }
+
+    public class BaseBlockVariable : CodeBlock
+    {
+        public BaseBlockVariable(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+    }
+
+    public class BaseBlockOther : CodeBlock
+    {
+        public BaseBlockOther(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+    }
+
+    public class BaseBlockEvent : CodeBlock
+    {
+        public BaseBlockEvent(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+    }
+
+
+
+    public class BlockSetDebugLed1 : BaseBlockOther
+    {
+        public BlockSetDebugLed1(KismetSequence _Sequence)
+            : base(_Sequence, 2)
         {
             width = 100;
             height = 25;
@@ -33,10 +66,10 @@ namespace BaseFrontEnd
         }
     }
 
-    public class SetDebugLed2 : CodeBlock
+    public class BlockSetDebugLed2 : BaseBlockOther
     {
-        public SetDebugLed2(KismetSequence _Sequence)
-            : base(_Sequence, 2, 3)
+        public BlockSetDebugLed2(KismetSequence _Sequence)
+            : base(_Sequence, 3)
         {
             width = 100;
             height = 25;
@@ -60,10 +93,10 @@ namespace BaseFrontEnd
         }
     }
 
-    public class GetHour : CodeBlock
+    public class BlockGetHour : BaseBlockVariable
     {
-        public GetHour(KismetSequence _Sequence)
-            : base(_Sequence, 2, 6)
+        public BlockGetHour(KismetSequence _Sequence)
+            : base(_Sequence, 6)
         {
             width = 100;
             height = 25;
@@ -84,10 +117,10 @@ namespace BaseFrontEnd
             base.Draw(_Graphics);
         }
     }
-    public class GetMinute : CodeBlock
+    public class BlockGetMinute : BaseBlockVariable
     {
-        public GetMinute(KismetSequence _Sequence)
-            : base(_Sequence, 2, 7)
+        public BlockGetMinute(KismetSequence _Sequence)
+            : base(_Sequence, 7)
         {
             width = 75;
             height = 25;
@@ -108,10 +141,10 @@ namespace BaseFrontEnd
             base.Draw(_Graphics);
         }
     }
-    public class GetSecond : CodeBlock
+    public class BlockGetSecond : BaseBlockVariable
     {
-        public GetSecond(KismetSequence _Sequence)
-            : base(_Sequence, 2, 8)
+        public BlockGetSecond(KismetSequence _Sequence)
+            : base(_Sequence, 8)
         {
             width = 75;
             height = 25;
@@ -132,10 +165,10 @@ namespace BaseFrontEnd
             base.Draw(_Graphics);
         }
     }
-    public class GetDay : CodeBlock
+    public class BlockGetDay : BaseBlockVariable
     {
-        public GetDay(KismetSequence _Sequence)
-            : base(_Sequence, 2, 9)
+        public BlockGetDay(KismetSequence _Sequence)
+            : base(_Sequence, 9)
         {
             width = 75;
             height = 25;
@@ -157,10 +190,10 @@ namespace BaseFrontEnd
         }
     }
 
-    public class Compare : CodeBlock
+    public class BlockEquals : BaseBlockConditions
     {
-        public Compare(KismetSequence _Sequence)
-            : base(_Sequence, 4, 5)
+        public BlockEquals(KismetSequence _Sequence)
+            : base(_Sequence, 5)
         {
             width = 100;
             height = 50;
@@ -192,12 +225,52 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Compare", new Font("Arial", 10), Brushes.Black, x , y, sf);
+            _Graphics.DrawString("Equals", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
 
-    public class ConstantByte : CodeBlock
+    public class BlockDiffers : BaseBlockConditions
+    {
+        public BlockDiffers(KismetSequence _Sequence)
+            : base(_Sequence, 18)
+        {
+            width = 100;
+            height = 50;
+            Inputs.Add(new Input(this));
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+
+            UpdateConnectors();
+        }
+
+        public override void Assamble()
+        {
+            try
+            {
+                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
+            }
+            catch { }
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawLines(Pens.Black, new Point[]
+            {
+            new Point(x-50,y-75/2),
+            new Point(x+50,y),
+            new Point(x-50,y+75/2),
+            new Point(x-50,y-75/2)
+            });
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Differs", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class BlockConstantByte : BaseBlockConstant
     {
         byte val;
 
@@ -218,8 +291,8 @@ namespace BaseFrontEnd
             val = byte.Parse(_Values);
         }
 
-        public ConstantByte(KismetSequence _Sequence)
-            : base(_Sequence, 3, 1)
+        public BlockConstantByte(KismetSequence _Sequence)
+            : base(_Sequence, 1)
         {
             width = 50;
             height = 50;
@@ -246,7 +319,7 @@ namespace BaseFrontEnd
         }
     }
 
-    public class ConstantWeekDay : CodeBlock
+    public class BlockConstantWeekDay : BaseBlockConstant
     {
         DayOfWeek val;
 
@@ -269,8 +342,8 @@ namespace BaseFrontEnd
         }
 
 
-        public ConstantWeekDay(KismetSequence _Sequence)
-            : base(_Sequence, 3, 14)
+        public BlockConstantWeekDay(KismetSequence _Sequence)
+            : base(_Sequence, 14)
         {
             width = 50;
             height = 50;
@@ -297,10 +370,10 @@ namespace BaseFrontEnd
         }
     }
 
-    public class BlockAdd : CodeBlock
+    public class BlockAdd : BaseBlockMath
     {
         public BlockAdd(KismetSequence _Sequence)
-            : base(_Sequence, 4, 10)
+            : base(_Sequence, 10)
         {
             width = 100;
             height = 50;
@@ -325,14 +398,14 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Add", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            _Graphics.DrawString("Add", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
-    public class BlockSubstract : CodeBlock
+    public class BlockSubstract : BaseBlockMath
     {
         public BlockSubstract(KismetSequence _Sequence)
-            : base(_Sequence, 4, 11)
+            : base(_Sequence, 11)
         {
             width = 100;
             height = 50;
@@ -358,14 +431,14 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Substract", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            _Graphics.DrawString("Substract", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
-    public class BlockMultiply : CodeBlock
+    public class BlockMultiply : BaseBlockMath
     {
         public BlockMultiply(KismetSequence _Sequence)
-            : base(_Sequence, 4, 12)
+            : base(_Sequence, 12)
         {
             width = 100;
             height = 50;
@@ -391,14 +464,14 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Multiply", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            _Graphics.DrawString("Multiply", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
-    public class BlockDivide : CodeBlock
+    public class BlockDivide : BaseBlockMath
     {
         public BlockDivide(KismetSequence _Sequence)
-            : base(_Sequence, 4, 13)
+            : base(_Sequence, 13)
         {
             width = 100;
             height = 50;
@@ -424,14 +497,14 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Divide", new Font("Arial", 10), Brushes.Black, x + width / 2, y + 10, sf);
+            _Graphics.DrawString("Divide", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
-    public class BlockBitMask : CodeBlock
+    public class BlockBitMask : BaseBlockMath
     {
         public BlockBitMask(KismetSequence _Sequence)
-            : base(_Sequence, 4, 15)
+            : base(_Sequence, 15)
         {
             width = 100;
             height = 50;
@@ -462,7 +535,7 @@ namespace BaseFrontEnd
         }
     }
 
-    public class BlockGetVariable : CodeBlock
+    public class BlockGetVariable : BaseBlockVariable
     {
         string name;
 
@@ -484,7 +557,7 @@ namespace BaseFrontEnd
         }
 
         public BlockGetVariable(KismetSequence _Sequence)
-            : base(_Sequence, 3, 17)
+            : base(_Sequence, 17)
         {
             height = 50;
             width = 100;
@@ -496,7 +569,6 @@ namespace BaseFrontEnd
         public override void Assamble()
         {
             Code = new byte[] { BlockID, Sequence.Event.device.eeprom.GetVariableAddress(name), Outputs[0].RegisterIndex };
-            base.Assamble();
         }
 
         public override void Draw(Graphics _Graphics)
@@ -511,7 +583,7 @@ namespace BaseFrontEnd
             base.Draw(_Graphics);
         }
     }
-    public class BlockSetVariable : CodeBlock
+    public class BlockSetVariable : BaseBlockVariable
     {
         string name;
 
@@ -533,7 +605,7 @@ namespace BaseFrontEnd
         }
 
         public BlockSetVariable(KismetSequence _Sequence)
-            : base(_Sequence, 3, 16)
+            : base(_Sequence, 16)
         {
             width = 100;
             height = 50;
@@ -544,7 +616,6 @@ namespace BaseFrontEnd
         public override void Assamble()
         {
             Code = new byte[] { BlockID, Sequence.Event.device.eeprom.GetVariableAddress(name), Inputs[0].Connected.RegisterIndex };
-            base.Assamble();
         }
 
         public override void Draw(Graphics _Graphics)
@@ -560,10 +631,10 @@ namespace BaseFrontEnd
         }
     }
 
-    public class PushEvent : CodeBlock
+    public class PushEvent : BaseBlockEvent
     {
         public PushEvent(KismetSequence _Sequence)
-            : base(_Sequence, 0, 0)
+            : base(_Sequence, 0)
         {
             width = 100;
             height = 200;

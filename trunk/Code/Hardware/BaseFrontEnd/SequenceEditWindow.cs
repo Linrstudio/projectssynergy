@@ -119,12 +119,6 @@ namespace BaseFrontEnd
                         if (!dependencies.Contains(i.Owner))
                             e.Graphics.FillRectangle(Brushes.Black, new Rectangle(pos.X, pos.Y - 5, 5, 10));
                     }
-
-                    //e.Graphics.DrawString(b.GetType().Name, Font, Brushes.Black, b.x, b.y);
-                    if (b is ConstantByte)
-                    {
-                        //e.Graphics.DrawString(((ConstantByte)b).Value.ToString(), Font, Brushes.Black, b.x, b.y + 32);
-                    }
                     b.Draw(e.Graphics);
                 }
                 if (Selected != null)
@@ -245,9 +239,9 @@ namespace BaseFrontEnd
 
             foreach (Type t in CodeBlock.CodeBlocks.Values)
             {
-                if (t.Name == item.Text)
+                if (t == item.Tag)
                 {
-                    Sequence.codeblocks.Add((CodeBlock)t.GetConstructor(new Type[] {typeof(KismetSequence) }).Invoke(new object[] { Sequence}));
+                    Sequence.codeblocks.Add((CodeBlock)t.GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { Sequence }));
                     NeedsRecompile = true;
                     Format();
                 }
@@ -257,15 +251,22 @@ namespace BaseFrontEnd
 
         public void ShowContextMenu(int x, int y)
         {
-            List<MenuItem> menuitems = new List<MenuItem>();
+            Dictionary<Type, MenuItem> menuitems = new Dictionary<Type, MenuItem>();
 
             CodeBlock.Initialize();
             foreach (Type t in CodeBlock.CodeBlocks.Values)
             {
-                if (t.FullName != typeof(PushEvent).FullName)
-                    menuitems.Add(new MenuItem(t.Name, OnContextMenuItemClicked));
+                if (t.BaseType != typeof(BaseBlockEvent))
+                {
+                    if (!menuitems.ContainsKey(t.BaseType))
+                        menuitems.Add(t.BaseType, new MenuItem(t.BaseType.Name.Remove(0, 9)));
+
+                    MenuItem item = new MenuItem(t.Name.Remove(0, 5), OnContextMenuItemClicked);
+                    item.Tag = t;
+                    menuitems[t.BaseType].MenuItems.Add(item);
+                }
             }
-            ContextMenu menu = new ContextMenu(menuitems.ToArray());
+            ContextMenu menu = new ContextMenu(menuitems.Values.ToArray());
 
             menu.Show(this, new Point(x, y));
         }

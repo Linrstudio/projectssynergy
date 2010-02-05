@@ -40,10 +40,13 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.t_AddNode = new System.Windows.Forms.ToolStrip();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.s_WorkingArea = new BaseFrontEnd.SequenceEditWindow();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -52,9 +55,9 @@
             this.toolStripStatusLabel1,
             this.toolStripProgressBar1,
             this.toolStripStatusLabel2});
-            this.statusStrip1.Location = new System.Drawing.Point(152, 526);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 554);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1383, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(837, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -77,9 +80,9 @@
             // PropertyGrid
             // 
             this.PropertyGrid.Dock = System.Windows.Forms.DockStyle.Right;
-            this.PropertyGrid.Location = new System.Drawing.Point(1303, 0);
+            this.PropertyGrid.Location = new System.Drawing.Point(605, 0);
             this.PropertyGrid.Name = "PropertyGrid";
-            this.PropertyGrid.Size = new System.Drawing.Size(232, 526);
+            this.PropertyGrid.Size = new System.Drawing.Size(232, 554);
             this.PropertyGrid.TabIndex = 1;
             this.PropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.PropertyGrid_PropertyValueChanged);
             // 
@@ -88,7 +91,7 @@
             this.t_Contents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.t_Contents.Location = new System.Drawing.Point(0, 25);
             this.t_Contents.Name = "t_Contents";
-            this.t_Contents.Size = new System.Drawing.Size(152, 523);
+            this.t_Contents.Size = new System.Drawing.Size(152, 529);
             this.t_Contents.TabIndex = 2;
             this.t_Contents.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.t_Contents_AfterSelect);
             // 
@@ -96,16 +99,16 @@
             // 
             this.splitter1.Location = new System.Drawing.Point(152, 0);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 526);
+            this.splitter1.Size = new System.Drawing.Size(3, 554);
             this.splitter1.TabIndex = 3;
             this.splitter1.TabStop = false;
             // 
             // splitter2
             // 
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.splitter2.Location = new System.Drawing.Point(1300, 0);
+            this.splitter2.Location = new System.Drawing.Point(602, 0);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 526);
+            this.splitter2.Size = new System.Drawing.Size(3, 554);
             this.splitter2.TabIndex = 4;
             this.splitter2.TabStop = false;
             // 
@@ -116,7 +119,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(152, 548);
+            this.panel1.Size = new System.Drawing.Size(152, 554);
             this.panel1.TabIndex = 3;
             // 
             // toolStrip1
@@ -138,26 +141,44 @@
             this.toolStripButton1.Text = "Add Event";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
+            // t_AddNode
+            // 
+            this.t_AddNode.Location = new System.Drawing.Point(0, 0);
+            this.t_AddNode.Name = "t_AddNode";
+            this.t_AddNode.Size = new System.Drawing.Size(447, 25);
+            this.t_AddNode.TabIndex = 6;
+            this.t_AddNode.Text = "toolStrip2";
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.s_WorkingArea);
+            this.panel2.Controls.Add(this.t_AddNode);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(155, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(447, 554);
+            this.panel2.TabIndex = 7;
+            // 
             // s_WorkingArea
             // 
             this.s_WorkingArea.BackColor = System.Drawing.Color.Transparent;
             this.s_WorkingArea.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.s_WorkingArea.Location = new System.Drawing.Point(155, 0);
+            this.s_WorkingArea.Location = new System.Drawing.Point(0, 25);
             this.s_WorkingArea.Name = "s_WorkingArea";
-            this.s_WorkingArea.Size = new System.Drawing.Size(1145, 526);
+            this.s_WorkingArea.Size = new System.Drawing.Size(447, 529);
             this.s_WorkingArea.TabIndex = 5;
             // 
             // KismetEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1535, 548);
-            this.Controls.Add(this.s_WorkingArea);
+            this.ClientSize = new System.Drawing.Size(837, 576);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.splitter2);
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.PropertyGrid);
-            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.panel1);
+            this.Controls.Add(this.statusStrip1);
             this.DoubleBuffered = true;
             this.Name = "KismetEditor";
             this.Text = "KismetEditor";
@@ -169,6 +190,8 @@
             this.panel1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -188,5 +211,7 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private SequenceEditWindow s_WorkingArea;
+        private System.Windows.Forms.ToolStrip t_AddNode;
+        private System.Windows.Forms.Panel panel2;
     }
 }
