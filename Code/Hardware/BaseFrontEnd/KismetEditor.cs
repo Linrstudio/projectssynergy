@@ -95,5 +95,10 @@ namespace BaseFrontEnd
             s_WorkingArea.Sequence = eeprom.Devices[addevent.DeviceID].Events[addevent.EventID].sequence;
             UpdateTree();
         }
+
+        private void toolStripComboBox1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Blaat");
+        }
     }
 }

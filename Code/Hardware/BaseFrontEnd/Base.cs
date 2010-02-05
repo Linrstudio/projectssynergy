@@ -46,6 +46,17 @@ namespace BaseFrontEnd
             Write('d');
         }
 
+        public void ReadVariables()
+        {
+            Write('v');
+            WaitForY();
+            Write('r');
+            for (int i = 0; i < 256; i++)
+            {
+                Read(1);
+            }
+        }
+
         public void DownloadEEPROM()
         {
             for (ushort b = 0; b < eepromdata.Length; b += 16)
@@ -76,7 +87,7 @@ namespace BaseFrontEnd
                 {
                     Write(new byte[] { eepromdata[i + b] });
                 }
-                while (Read(1)[0] != (byte)'w') ;
+                //while (Read(1)[0] != (byte)'w') ;
             }
             KismetEnable();
         }

@@ -12,7 +12,7 @@ namespace BaseFrontEnd
         [STAThread]
         static void Main()
         {
-            Base b = new Base("COM2");
+            Base b = new Base("COM69");
 
             /*
                         PushEvent root = new PushEvent();
@@ -57,11 +57,8 @@ namespace BaseFrontEnd
                     case "synctime":
                         b.SetTime(DateTime.Now);
                         break;
-                    case "ledon":
-                        b.ExecuteRemoteEvent(1, 2, 255);
-                        break;
-                    case "ledoff":
-                        b.ExecuteRemoteEvent(1, 2, 0);
+                    case "readvariables":
+                        b.ReadVariables();
                         break;
                     case "break":
                         System.Diagnostics.Debugger.Break();
