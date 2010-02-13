@@ -1,3 +1,9 @@
 Bas
 ********************
 
+
+
+
+find a way to propperly comment wires in EAGLE
+
+testen of dat met die ulns werekt
