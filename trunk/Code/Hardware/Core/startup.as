@@ -8,9 +8,10 @@
 	; Compiler options:
 	;
 	; -oCore.cof -mCore.map --summary=default --output=default Main.p1 \
-	; --chip=18F14K50 -P --runtime=default --opt=default -D__DEBUG=1 -g \
-	; --asmlist --errformat=Error   [%n] %f; %l.%c %s \
-	; --msgformat=Advisory[%n] %s --warnformat=Warning [%n] %f; %l.%c %s
+	; RTC.p1 Kismet.p1 Memory.p1 UART.p1 PLC.p1 --chip=18F14K50 -P \
+	; --runtime=default --opt=default -D__DEBUG=1 -g --asmlist \
+	; --errformat=Error   [%n] %f; %l.%c %s --msgformat=Advisory[%n] %s \
+	; --warnformat=Warning [%n] %f; %l.%c %s
 	;
 
 
@@ -105,15 +106,27 @@ _exit:
 
 ; bigdata psect - 0 bytes to load
 
+; data0 psect - 2 bytes to load
+GLOBAL	__Ldata0,__Lidata
+	lfsr	0,__Ldata0
+	; load TBLPTR registers with __Lidata
+	movlw	low (__Lidata)
+	movwf	tblptrl
+	movlw	high(__Lidata)
+	movwf	tblptrh
+	lfsr	1,2	; loop variable
+	call	copy_data
+
 	lfsr	0,0
-	lfsr	1,20
+	lfsr	1,40
+	call	clear_ram
+	lfsr	0,256
+	lfsr	1,256
 	call	clear_ram
 	PSECT	end_init
-	GLOBAL	__Lsmallconst
-	movlw	low highword(__Lsmallconst)
+	GLOBAL	__Lmediumconst
+	movlw	low highword(__Lmediumconst)
 	movwf	tblptru
-	movlw	high(__Lsmallconst)
-	movwf	tblptrh
 	goto	_main		;go do the main stuff
 ; Clear these memory locations
 clear_ram:
@@ -123,6 +136,16 @@ clear_ram:
 	bnz	clear_ram
 	movf	fsr1h,w
 	bnz	clear_ram
+	return
+; Copy the ROM data image to destination in RAM
+copy_data:
+	tblrd	*+
+	movff	tablat,postinc0
+	movf	postdec1,w	;decrement loop variable
+	movf	fsr1l,w
+	bnz	copy_data
+	movf	fsr1h,w
+	bnz	copy_data
 	return
 
 	END	reset_pos

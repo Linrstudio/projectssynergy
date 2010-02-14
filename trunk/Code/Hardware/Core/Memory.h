@@ -1,68 +1,37 @@
-#include <pic18.h>
+#ifndef MEMORY_H
+#define MEMORY_H
 #include "Default.h"
 
 //for now we use the internal EEPROM even though it is only 256 byte, we use 16bits addresses
 
-#define EEPROMSIZE 256
+#define MEMORYSIZE 1024
 
-void MemoryInit()
-{
-	EEPGD=0;
-	CFGS=0;
-}
+#define MEMORYEXTERNAL
 
-void MemoryWait()
-{
-	while(RD);
-	while(WR);
-}
+#define MEMORYRXDIR  	TRISC1
+#define MEMORYTXDIR  	TRISC2
+#define MEMORYCLKDIR 	TRISC0
+#define MEMORYCSDIR 	TRISB4
 
-void MemorySeek(unsigned short _Addr)
-{
-	unsigned char*dat=&_Addr;
- 	MemoryWait();
-	EEADR=dat[0];
-}
+#define MEMORYRX  		RC1
+#define MEMORYTX  		RC2
+#define MEMORYCLK 		RC0
+#define MEMORYCS 		RB4
 
-unsigned char MemoryRead()
-{
-	unsigned char data;
-	MemoryWait();
-	RD=1;//read data
-	data=EEDATA;
-	return data;
-}
+extern void MemoryInit();
+extern void MemoryWait();
+extern int8 MemoryReadInt8(int16 _Addr);
+extern int16 MemoryReadInt16(int16 _Addr);
+extern void MemoryWriteInt8(int16 _Addr,int8 _Data);
 
-int8 MemoryReadInt8(int16 _Addr)
-{
-	MemorySeek(_Addr);
-	unsigned char data;
-	MemoryWait();
-	RD=1;//read data
-	data=EEDATA;
-	return data;
-}
+extern void MemorySPIDelay();
+extern void MemorySPIWrite(int16 _Addr,int8 _Data);
+extern int8 MemorySPIRead(int16 _Addr);
+extern void MemorySPIWriteRaw(int8 _Data);
+extern int8 MemorySPIReadRaw();
+extern void MemorySPIWriteEnable();
+extern void MemorySPIWriteDisable();
 
-unsigned int16 MemoryReadInt16(int16 _Addr)
-{
-	short bob;
-	int8*dat=&bob;
-	dat[1]=MemoryReadInt8(_Addr);_Addr++;
-	dat[0]=MemoryReadInt8(_Addr);
-	return bob;
-}
+extern int8 MemorySPIReadStatus();
 
-void MemoryWrite(unsigned char _Data)
-{
-	MemoryWait();
-	EEDATA=_Data;
-	GIE=0;//disable interrupts
-	WREN=1;//enable writes
-	EECON2=0x55;//required sequence for EEPROM update
-	EECON2=0xAA;
-	WR=1;
-	while(WR);
-	EEIF=0;
-	WREN=0;
-	GIE=1;//re-enable interrupts
-}
+#endif
