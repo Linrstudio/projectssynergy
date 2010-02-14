@@ -1,16 +1,26 @@
+#ifndef PLC_H
+#define PLC_H
+
 #include <pic18.h>
 #include "Default.h"
 
-void PLCInit()
-{
-	//our PLC needs a high frequenty signal, say 1Mhz ?
+#define PLCRXDIR TRISC0
+#define PLCTXDIR TRISC1
+#define PLCCLKDIR TRISC2
 
-	TMR0ON=1;//enable timer
-	T08BIT=1;//use 8bit devider
-	T0CS=0;//use internal clock
-	T0CE=0;//choose edge ( doesnt really matter )
-	PSA=0;
-	T0PS0=0;
-	T0PS1=0;
-	T0PS2=1;
-}
+#define PLCRX  RC0
+#define PLCTX  RC1
+#define PLCCLK RC2
+
+int8 PLCReadBuffer;
+int8 PLCReadIndex=8;
+int8 PLCWriteBuffer;
+int8 PLCWriteIndex=8;
+
+extern void PLCInit();
+extern int8 PLCReadInt8(void);
+extern int8 PLCAvailable(void);
+extern void PLCWriteInt8(int8 c);
+extern void PLCDelay();
+extern void PLCUpdate();
+#endif
