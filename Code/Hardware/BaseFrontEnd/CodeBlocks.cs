@@ -10,6 +10,17 @@ namespace BaseFrontEnd
     public class BaseBlockConditions : CodeBlock
     {
         public BaseBlockConditions(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawLines(Pens.Black, new Point[]
+            {
+            new Point(x-50,y-75/2),
+            new Point(x+50,y),
+            new Point(x-50,y+75/2),
+            new Point(x-50,y-75/2)
+            }); 
+            base.Draw(_Graphics);
+        }
     }
 
     public class BaseBlockMath : CodeBlock
@@ -20,6 +31,12 @@ namespace BaseFrontEnd
     public class BaseBlockConstant : CodeBlock
     {
         public BaseBlockConstant(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawEllipse(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            base.Draw(_Graphics);
+        }
     }
 
     public class BaseBlockVariable : CodeBlock
@@ -215,13 +232,6 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawLines(Pens.Black, new Point[]
-            {
-            new Point(x-50,y-75/2),
-            new Point(x+50,y),
-            new Point(x-50,y+75/2),
-            new Point(x-50,y-75/2)
-            });
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
@@ -255,13 +265,6 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawLines(Pens.Black, new Point[]
-            {
-            new Point(x-50,y-75/2),
-            new Point(x+50,y),
-            new Point(x-50,y+75/2),
-            new Point(x-50,y-75/2)
-            });
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
@@ -309,7 +312,6 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawEllipse(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
@@ -341,7 +343,6 @@ namespace BaseFrontEnd
             val = (DayOfWeek)int.Parse(_Values);
         }
 
-
         public BlockConstantWeekDay(KismetSequence _Sequence)
             : base(_Sequence, 14)
         {
@@ -360,12 +361,10 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawEllipse(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString(Value.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y, sf);
-
             base.Draw(_Graphics);
         }
     }

@@ -20,7 +20,7 @@ namespace BaseFrontEnd
             size = _EEPROMSize;
         }
 
-        public Dictionary<ushort, Device> Devices = new Dictionary<ushort, Device>();
+        public SortedDictionary<ushort, Device> Devices = new SortedDictionary<ushort, Device>();
 
         public class Device
         {
@@ -33,7 +33,7 @@ namespace BaseFrontEnd
             public ushort addr = 0;
             public ushort eventaddr = 0;
             public ushort ID;
-            public Dictionary<byte, Event> Events = new Dictionary<byte, Event>();
+            public SortedDictionary<byte, Event> Events = new SortedDictionary<byte, Event>();
 
             public class Event
             {
@@ -168,7 +168,7 @@ namespace BaseFrontEnd
         public static EEPROM FromFile(string _FileName)
         {
             CodeBlock.Initialize();
-            EEPROM eeprom = new EEPROM(256);
+            EEPROM eeprom = new EEPROM(2048);
             XElement file = XElement.Load(_FileName);
             foreach (XElement device in file.Elements("Device"))
             {

@@ -39,17 +39,20 @@ namespace BaseFrontEnd
                     case "load":
                         b.eeprom = EEPROM.FromFile("test.eeprom");
                         break;
-                    case "downloadeeprom":
+                    case "downloadmemory":
                         b.DownloadEEPROM();
                         break;
-                    case "uploadeeprom":
+                    case "build":
+                        b.AssambleEEPROM();
+                        break;
+                    case "uploadmemory":
                         b.UploadEEPROM();
                         break;
-                    case "t":
-                        b.ExecuteRemoteEvent(123, 45, 243);
+                    case "uploadmemory2":
+                        b.UploadEEPROMBruteForce();
                         break;
-                    case "t2":
-                        b.ExecuteRemoteEvent(123, 46, 0);
+                    case "checkmemory":
+                        Console.WriteLine("Check okay:{0}", b.CheckEEPROM());
                         break;
                     case "readtime":
                         b.ReadTime();
@@ -69,6 +72,9 @@ namespace BaseFrontEnd
                     case "enabledkismet":
                         b.KismetEnable();
                         break;
+                    case "plcwrite":
+                        b.PLCWrite(byte.Parse(Console.ReadLine()));
+                        break;
                     case "edit":
                         {
                             KismetEditor editor = new KismetEditor(b.eeprom);
@@ -83,6 +89,34 @@ namespace BaseFrontEnd
                         Console.Write("EventArgs:");
                         byte eventargs = byte.Parse(Console.ReadLine());
                         b.ExecuteRemoteEvent(deviceid, eventid, eventargs);
+                        break;
+                    case "w":
+                        {
+                            Console.WriteLine("Address:");
+                            ushort addr = ushort.Parse(Console.ReadLine());
+                            Console.WriteLine("Data:");
+                            byte data = byte.Parse(Console.ReadLine());
+                            b.Write('m'); b.WaitForY(); b.Write('x');
+                            b.WriteShort(addr);
+                            b.Write(data);
+                        }
+                        break;
+                    case "r":
+                        {
+                            Console.WriteLine("Address:");
+                            ushort addr = ushort.Parse(Console.ReadLine());
+                            b.Write('m'); b.WaitForY(); b.Write('y');
+                            b.WriteShort(addr);
+                            Console.Write("[{0}]", b.Read(1)[0]);
+                        }
+                        break;
+                    case "t":
+                        b.Write('0'); b.WaitForY();
+                        b.WriteShort(1220);
+                        //b.Read(1);
+                        Console.WriteLine("[{0}]",b.ReadShort());
+                        //Console.WriteLine();
+
                         break;
                 }
                 b.Read(b.Available());

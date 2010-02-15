@@ -1,15 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <EEPROM>
   <Device ID="1">
+    <Event ID="5">
+      <Root GUID="0" Type="0" Values="" />
+      <Block GUID="1" Type="16" Values="Blink" />
+      <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+    </Event>
     <Event ID="1">
       <Root GUID="0" Type="0" Values="" />
-      <Block GUID="7" Type="1" Values="1" />
-      <Block GUID="12" Type="2" Values="" />
-      <Block GUID="9" Type="15" Values="" />
+      <Block GUID="6" Type="1" Values="1" />
+      <Block GUID="11" Type="2" Values="" />
+      <Block GUID="10" Type="15" Values="" />
       <Block GUID="8" Type="15" Values="" />
-      <Block GUID="10" Type="3" Values="" />
+      <Block GUID="9" Type="3" Values="" />
       <Block GUID="1" Type="8" Values="" />
-      <Block GUID="6" Type="1" Values="2" />
+      <Block GUID="7" Type="1" Values="2" />
       <Block GUID="2" Type="17" Values="Blink" />
       <Block GUID="5" Type="12" Values="" />
       <Block GUID="3" Type="1" Values="0" />
@@ -32,7 +37,17 @@
     </Event>
     <Event ID="2">
       <Root GUID="0" Type="0" Values="" />
-      <Block GUID="1" Type="16" Values="Blink" />
+      <Block GUID="1" Type="16" Values="q" />
+      <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+    </Event>
+    <Event ID="3">
+      <Root GUID="0" Type="0" Values="" />
+      <Block GUID="1" Type="16" Values="q" />
+      <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+    </Event>
+    <Event ID="4">
+      <Root GUID="0" Type="0" Values="" />
+      <Block GUID="1" Type="16" Values="q" />
       <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
     </Event>
   </Device>
