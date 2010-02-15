@@ -21,7 +21,7 @@ namespace BaseFrontEnd
             ushort eepromsize = 256;
             try
             {
-                port = new SerialPort(_PortName, 1200, Parity.None, 8, StopBits.One);
+                port = new SerialPort(_PortName, 19200, Parity.None, 8, StopBits.One);
                 port.Open();
 
                 Write('h');//hello?
@@ -51,14 +51,102 @@ namespace BaseFrontEnd
             Write('v');
             WaitForY();
             Write('r');
+            Console.WriteLine();
             for (int i = 0; i < 256; i++)
             {
-                Read(1);
+                Console.Write(Read(1)[0].ToString("000 "));
             }
         }
 
+        public void PLCWrite(byte _b)
+        {
+            Write('p');
+            WaitForY();
+            Write('w');
+            Write(_b);
+        }
+
+        public byte PLCRead()
+        {
+            Write('p');
+            WaitForY();
+            Write('r');
+            return Read(1)[0];
+        }
+
+        public void AssambleEEPROM()
+        {
+            eepromdata = eeprom.Assamble();
+        }
+
+        public void PrintEEPROMData()
+        {
+            for (int i = 0; i < eepromdata.Length; i++)
+            {
+                Console.Write("{0} ", eepromdata[i].ToString("000"));
+            }
+        }
+
+        public bool CheckEEPROM()
+        {
+            Random random = new Random(Environment.TickCount);
+
+            int size = eeprom.Size;//size=256;
+            byte[] from = new byte[size];
+            byte[] to = new byte[size];
+            //fill memory sequential
+            for (int i = 0; i < from.Length; i++)
+                from[i] = (byte)random.Next(256);
+
+            //disable kismet execution
+            KismetDisable();
+
+            //upload eeprom
+            for (ushort b = 0; b < from.Length; b += 16)
+            {
+                Write('m');
+                WaitForY();
+                Write('w');
+                WriteShort(b);
+                for (int i = 0; i < 16; i++)
+                {
+                    Write(new byte[] { from[i + b] });
+                }
+            }
+            //download eeprom
+            for (ushort b = 0; b <to.Length; b += 16)
+            {
+                Write('m');
+                WaitForY();
+                Write('r');
+                WriteShort(b);
+                for (int i = 0; i < 16; i++)
+                {
+                    to[i + b] = Read(1)[0];
+                }
+            }
+
+            //enable kismet execution
+            KismetEnable();
+            return Compare(to, from);
+        }
+
+        public bool Compare(byte[] a, byte[] b)
+        {
+            bool okay = true;
+            //check if memory is still sequential
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (a[i] != b[i]) okay = false;
+                Console.ForegroundColor = (a[i] == b[i]) ? ConsoleColor.Green : ConsoleColor.Red;
+                Console.WriteLine("{0} > {1} | {2}", i.ToString("000"), a[i].ToString("000"), b[i].ToString("000"));
+            }
+            return okay;
+        }
+        
         public void DownloadEEPROM()
         {
+            byte[] buf = new byte[eeprom.Size];
             for (ushort b = 0; b < eepromdata.Length; b += 16)
             {
                 Write('m');
@@ -67,17 +155,37 @@ namespace BaseFrontEnd
                 WriteShort(b);
                 for (int i = 0; i < 16; i++)
                 {
-                    eepromdata[i + b] = Read(1)[0];
+                    buf[i + b] = Read(1)[0];
                 }
-                eeprom = EEPROM.FromEEPROM(eepromdata);
             }
+            Compare(eepromdata, buf);
+            //eeprom = EEPROM.FromEEPROM(eepromdata);
         }
 
         public void UploadEEPROM()
         {
-            eepromdata = eeprom.Assamble();
+            AssambleEEPROM();
             KismetDisable();
             for (ushort b = 0; b < eeprom.BytesUsed; b += 16)
+            {
+                Write('m');
+                WaitForY();
+                Write('w');
+                WriteShort(b);
+                for (int i = 0; i < 16; i++)
+                {
+                    Write(new byte[] { eepromdata[i + b] });
+                }
+                //while (Read(1)[0] != (byte)'w') ;
+            }
+            KismetEnable();
+        }
+
+        public void UploadEEPROMBruteForce()
+        {
+            AssambleEEPROM();
+            KismetDisable();
+            for (ushort b = 0; b < eeprom.Size; b += 16)
             {
                 Write('m');
                 WaitForY();
@@ -160,13 +268,14 @@ namespace BaseFrontEnd
         {
             byte[] buf = _Buffer;
             port.Write(_Buffer, 0, _Buffer.Length);
-
+#if CONSOLESTUFF
             if (Console.ForegroundColor != ConsoleColor.Green) Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Green;
             foreach (byte b in buf)
             {
                 Console.Write(b.ToString() + " ");
             }
+#endif
         }
 
         public void WaitForY()
@@ -182,16 +291,17 @@ namespace BaseFrontEnd
 
         public byte[] Read(int _Count)
         {
+            while (Available() < _Count) ;
             byte[] buf = new byte[_Count];
             port.Read(buf, 0, _Count);
-
+#if CONSOLESTUFF
             if (Console.ForegroundColor != ConsoleColor.Red) Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Red;
             foreach (byte b in buf)
             {
                 Console.Write(b.ToString() + " ");
             }
-
+#endif
             return buf;
         }
     }

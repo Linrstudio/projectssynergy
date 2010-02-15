@@ -36,7 +36,7 @@ namespace BaseFrontEnd
         public int Height { get { return height; } }
 
         //used for assambling
-        public byte[] Code = new byte[]{};
+        public byte[] Code = new byte[] { };
         public int index = 0;
         public byte address;
 
@@ -221,7 +221,7 @@ namespace BaseFrontEnd
 
         public virtual void Draw(System.Drawing.Graphics _Graphics)
         {
-
+            _Graphics.DrawString(index.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, x, y - 25);
         }
 
         public static Dictionary<byte, Type> CodeBlocks = null;
