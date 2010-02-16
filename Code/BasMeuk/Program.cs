@@ -14,6 +14,9 @@ namespace FrontEnd
         static void Main()
         {
             Framework.NetworkManager.Initialize();
+            //Framework.PluginManager.LoadPlugin(@".\plugins\k8055.cs");
+            var bob = new Framework.LocalPlugin("k8055", System.IO.File.ReadAllText(@".\plugins\k8055.cs"));
+            bob.InvokeEntries();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FrontEnd());

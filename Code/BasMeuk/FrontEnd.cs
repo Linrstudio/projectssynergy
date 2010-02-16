@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Framework;
+using SynergyTemplate;
 
 namespace FrontEnd
 {
@@ -66,7 +67,7 @@ namespace FrontEnd
             DataGridView log = dataGridView1;
             log.Rows.Clear();
             log.Text = "";
-            foreach (Log.Line line in Log.AllEntries)
+            foreach (Log.Line line in Log.AllLines)
             {
                 if (line.LogName != null && enabledlogs.ContainsKey(line.LogName) && enabledlogs[line.LogName].Checked)
                 {
@@ -96,7 +97,7 @@ namespace FrontEnd
             RebuildEnabledLogsList();
             RebuildLogText();
             Log.OnLogAdded += OnLogAdded;
-            Log.OnLogWrite += OnLogWrite;
+            Log.OnWriteLine += OnLogWrite;
             c_Input.Select();
             ExecuteCommand(@"openui");
         }
@@ -118,7 +119,7 @@ namespace FrontEnd
                 switch (split[0].ToLower())
                 {
                     case "try":
-                        NetworkManager.LocalNode.NetworkClasses["analog out 1"].GetMethods();
+                        //NetworkManager.LocalNode.NetworkClasses["analog out 1"].GetMethods();
                         break;
                     case "connect":
                         if (split.Length > 1)
