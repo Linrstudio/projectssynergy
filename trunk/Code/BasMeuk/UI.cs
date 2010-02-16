@@ -15,7 +15,7 @@ namespace FrontEnd
         public UI()
         {
             InitializeComponent();
-            PluginManager.LoadPlugin(@".\plugins\k8055.cs");
+
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -29,26 +29,30 @@ namespace FrontEnd
 
         public void Update()
         {
-            bool three = (bool)NetworkManager.LocalNode.NetworkClasses["digital in 3"].GetField("On");
-            bool four = (bool)NetworkManager.LocalNode.NetworkClasses["digital in 4"].GetField("On");
-
-            if (three != lastthree && three)
+            try
             {
-                Turn(0, false);
-                Turn(1, false);
+                bool three = (bool)NetworkManager.LocalNode.NetworkClasses["digital in 3"].GetField("On");
+                bool four = (bool)NetworkManager.LocalNode.NetworkClasses["digital in 4"].GetField("On");
+
+                if (three != lastthree && three)
+                {
+                    Turn(0, false);
+                    Turn(1, false);
+                }
+
+                if (four != lastfour && four)
+                {
+                    Turn(0, true);
+                    Turn(1, true);
+                }
+
+                lastthree = three;
+                lastfour = four;
+
+                pictureBox1.BackColor = (bool)NetworkManager.LocalNode.NetworkClasses["digital in 1"].GetField("On") ? Color.Green : Color.Red;
+                pictureBox2.BackColor = (bool)NetworkManager.LocalNode.NetworkClasses["digital in 2"].GetField("On") ? Color.Green : Color.Red;
             }
-
-            if (four != lastfour && four)
-            {
-                Turn(0, true);
-                Turn(1, true);    
-            }
-
-            lastthree = three;
-            lastfour = four;
-
-            pictureBox1.BackColor = (bool)NetworkManager.LocalNode.NetworkClasses["digital in 1"].GetField("On") ? Color.Green : Color.Red;
-            pictureBox2.BackColor = (bool)NetworkManager.LocalNode.NetworkClasses["digital in 2"].GetField("On") ? Color.Green : Color.Red;
+            catch { }
         }
 
         public void Toggle(int Channel)
