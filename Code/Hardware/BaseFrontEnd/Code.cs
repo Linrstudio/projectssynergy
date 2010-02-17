@@ -233,43 +233,87 @@ namespace BaseFrontEnd
             _Graphics.DrawString(index.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, x, y - 25);
         }
 
-        public static Dictionary<byte, Type> CodeBlocks = null;
+        public class Prototype
+        {
+            public string BlockName;
+            public string GroupName;
+            public bool UserCanAdd;
+            public Type Type;
+
+            public Prototype(string _BlockName, string _GroupName, Type _Type, bool _UserCanAdd)
+            {
+                BlockName = _BlockName;
+                GroupName = _GroupName;
+                Type = _Type;
+                UserCanAdd = _UserCanAdd;
+            }
+        }
+
+        public static List<Prototype> CodeBlocks = null;
         public static void Initialize()
         {
             if (CodeBlocks == null)
             {
-                CodeBlocks = new Dictionary<byte, Type>();
-                CodeBlocks.Add(0, typeof(PushEvent));
-                CodeBlocks.Add(1, typeof(BlockConstantByte));
-                CodeBlocks.Add(2, typeof(BlockSetDebugLed1));
-                CodeBlocks.Add(3, typeof(BlockSetDebugLed2));
-                CodeBlocks.Add(5, typeof(BlockEquals));
+                CodeBlocks = new List<Prototype>();
 
-                CodeBlocks.Add(6, typeof(BlockGetHour));
-                CodeBlocks.Add(7, typeof(BlockGetMinute));
-                CodeBlocks.Add(8, typeof(BlockGetSecond));
-                CodeBlocks.Add(9, typeof(BlockGetDay));
+                AddCodeBlock("Event", "", typeof(PushEvent), false);
 
-                CodeBlocks.Add(10, typeof(BlockAdd));
-                CodeBlocks.Add(11, typeof(BlockSubstract));
-                CodeBlocks.Add(12, typeof(BlockMultiply));
-                CodeBlocks.Add(13, typeof(BlockDivide));
+                //Constants
+                AddCodeBlock("Constant weekday", "Contant", typeof(BlockConstantWeekDay));
+                AddCodeBlock("Constant", "Contant", typeof(BlockConstantByte));
 
-                CodeBlocks.Add(14, typeof(BlockConstantWeekDay));
+                //Debug stuff
+                AddCodeBlock("Set DebugLed 1", "Debug stuff", typeof(BlockSetDebugLed1));
+                AddCodeBlock("Set DebugLed 2", "Debug stuff", typeof(BlockSetDebugLed2));
 
-                CodeBlocks.Add(15, typeof(BlockBitMask));
+                //compare
+                AddCodeBlock("Equals", "Compare", typeof(BlockEquals));
+                AddCodeBlock("Differs", "Compare", typeof(BlockDiffers));
+                AddCodeBlock("Smaller Than", "Compare", typeof(BlockSmallerThan));
+                AddCodeBlock("Larget Than", "Compare", typeof(BlockLargerThan));
 
-                CodeBlocks.Add(16, typeof(BlockSetVariable));
-                CodeBlocks.Add(17, typeof(BlockGetVariable));
+                //Time stuff
+                AddCodeBlock("Get current hour", "Time", typeof(BlockGetHour));
+                AddCodeBlock("Get current minute", "Time", typeof(BlockGetMinute));
+                AddCodeBlock("Get current second", "Time", typeof(BlockGetSecond));
+                AddCodeBlock("Get current weekday", "Time", typeof(BlockGetDay));
 
-                CodeBlocks.Add(18, typeof(BlockDiffers));
+                //math
+                AddCodeBlock("Add", "Math", typeof(BlockAdd));
+                AddCodeBlock("Substract", "Math", typeof(BlockSubstract));
+                AddCodeBlock("Multiply", "Math", typeof(BlockMultiply));
+                AddCodeBlock("Divide", "Math", typeof(BlockDivide));
+                AddCodeBlock("Bitmask", "Math", typeof(BlockBitMask));
 
-                CodeBlocks.Add(19, typeof(BlockIf));
-                CodeBlocks.Add(20, typeof(BlockIfNot));
+                //Variable
+                AddCodeBlock("Set variable", "Variable", typeof(BlockSetVariable));
+                AddCodeBlock("Get variable", "Variable", typeof(BlockGetVariable));
 
-                CodeBlocks.Add(21, typeof(BlockSmallerThan));
-                CodeBlocks.Add(22, typeof(BlockLargerThan));
+                //Branching
+                AddCodeBlock("If", "Branches", typeof(BlockIf));
+                AddCodeBlock("If not", "Branches", typeof(BlockIfNot));
+
             }
+        }
+
+        public static Prototype GetCodeBlock(Type _Type)
+        {
+            Initialize();
+            foreach (Prototype p in CodeBlocks)
+            {
+                if (p.Type == _Type) return p;
+            }
+            return null;
+        }
+
+        private static void AddCodeBlock(string _BlockName, string _Group, Type _Type)
+        {
+            CodeBlocks.Add(new Prototype(_BlockName, _Group, _Type, true));
+        }
+
+        private static void AddCodeBlock(string _BlockName, string _Group, Type _Type, bool _UserCanAdd)
+        {
+            CodeBlocks.Add(new Prototype(_BlockName, _Group, _Type, _UserCanAdd));
         }
     }
 }

@@ -237,11 +237,11 @@ namespace BaseFrontEnd
         {
             MenuItem item = (MenuItem)sender;
 
-            foreach (Type t in CodeBlock.CodeBlocks.Values)
+            foreach (CodeBlock.Prototype p in CodeBlock.CodeBlocks)
             {
-                if (t == item.Tag)
+                if (p.Type == item.Tag)
                 {
-                    Sequence.codeblocks.Add((CodeBlock)t.GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { Sequence }));
+                    Sequence.codeblocks.Add((CodeBlock)p.Type.GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { Sequence }));
                     NeedsRecompile = true;
                     Format();
                 }
@@ -254,16 +254,16 @@ namespace BaseFrontEnd
             Dictionary<Type, MenuItem> menuitems = new Dictionary<Type, MenuItem>();
 
             CodeBlock.Initialize();
-            foreach (Type t in CodeBlock.CodeBlocks.Values)
+            foreach (CodeBlock.Prototype p in CodeBlock.CodeBlocks)
             {
-                if (t.BaseType != typeof(BaseBlockEvent))
+                if (p.Type.BaseType != typeof(BaseBlockEvent))
                 {
-                    if (!menuitems.ContainsKey(t.BaseType))
-                        menuitems.Add(t.BaseType, new MenuItem(t.BaseType.Name.Remove(0, 9)));
+                    if (!menuitems.ContainsKey(p.Type.BaseType))
+                        menuitems.Add(p.Type.BaseType, new MenuItem(p.GroupName));
 
-                    MenuItem item = new MenuItem(t.Name.Remove(0, 5), OnContextMenuItemClicked);
-                    item.Tag = t;
-                    menuitems[t.BaseType].MenuItems.Add(item);
+                    MenuItem item = new MenuItem(p.BlockName, OnContextMenuItemClicked);
+                    item.Tag = p.Type;
+                    menuitems[p.Type.BaseType].MenuItems.Add(item);
                 }
             }
             ContextMenu menu = new ContextMenu(menuitems.Values.ToArray());

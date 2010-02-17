@@ -141,7 +141,7 @@ namespace BaseFrontEnd
                         XElement block = null;
                         if (b == e.sequence.root) block = new XElement("Root"); else block = new XElement("Block");
                         block.SetAttributeValue("GUID", b.index);
-                        block.SetAttributeValue("Type", b.BlockID);
+                        block.SetAttributeValue("Type", CodeBlock.GetCodeBlock(b.GetType()).Type.FullName);
                         block.SetAttributeValue("Values", b.GetValues());
                         method.Add(block);
                     }
@@ -182,9 +182,9 @@ namespace BaseFrontEnd
                     Device.Event e = new Device.Event(d, methodid);
                     {
                         XElement block = method.Element("Root");
-                        byte blocktype = byte.Parse(block.Attribute("Type").Value);
-                        int index = byte.Parse(block.Attribute("GUID").Value);
-                        CodeBlock b = (CodeBlock)CodeBlock.CodeBlocks[blocktype].GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { e.sequence });
+                        string blocktype = (string)block.Attribute("Type").Value;
+                        byte index = byte.Parse(block.Attribute("GUID").Value);
+                        CodeBlock b = (CodeBlock)Type.GetType(blocktype).GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { e.sequence });
                         b.index = index;
                         b.SetValues(block.Attribute("Values").Value);
                         e.sequence = new KismetSequence(e, b);
@@ -192,9 +192,9 @@ namespace BaseFrontEnd
 
                     foreach (XElement block in method.Elements("Block"))
                     {
-                        byte blocktype = byte.Parse(block.Attribute("Type").Value);
-                        int index = byte.Parse(block.Attribute("GUID").Value);
-                        CodeBlock b = (CodeBlock)CodeBlock.CodeBlocks[blocktype].GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { e.sequence });
+                        string blocktype = (string)block.Attribute("Type").Value;
+                        byte index = byte.Parse(block.Attribute("GUID").Value);
+                        CodeBlock b = (CodeBlock)Type.GetType(blocktype).GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { e.sequence });
                         b.index = index;
                         b.SetValues(block.Attribute("Values").Value);
                         e.sequence.codeblocks.Add(b);
@@ -211,45 +211,6 @@ namespace BaseFrontEnd
                     }
 
                     d.Events.Add(methodid, e);
-                }
-            }
-
-            return eeprom;
-        }
-
-        public static EEPROM FromEEPROM(byte[] _EEPROM)
-        {
-            EEPROM eeprom = new EEPROM((ushort)_EEPROM.Length);
-            {
-                int idx = 0;
-                while (true)
-                {
-                    ushort ID = Utilities.ToShort(_EEPROM, idx);
-                    if (ID == 0) break;
-                    eeprom.Devices.Add(ID, new Device(eeprom, ID));
-                    eeprom.Devices[ID].addr = (ushort)idx;
-                    eeprom.Devices[ID].eventaddr = Utilities.ToShort(_EEPROM, idx + 2);
-                    idx += 4;
-                }
-            }
-            foreach (Device d in eeprom.Devices.Values)
-            {
-                int idx = d.eventaddr;
-                while (true)
-                {
-                    ushort sequenceaddr = Utilities.ToShort(_EEPROM, idx + 1);
-                    byte id = _EEPROM[idx];
-                    if (id == 0) break;
-                    d.Events.Add(id, new Device.Event(d, id));
-                    d.Events[id].SequenceAddr = sequenceaddr;
-                    idx += 3;
-                }
-            }
-            foreach (Device d in eeprom.Devices.Values)
-            {
-                foreach (Device.Event e in d.Events.Values)
-                {
-                    e.sequence = KismetSequence.FromByteCode(e, Utilities.Cut(_EEPROM, e.SequenceAddr));
                 }
             }
 
@@ -348,26 +309,6 @@ namespace BaseFrontEnd
             output.Add(0);//add a zero instruction, this is a return aka stop the event
             Console.WriteLine("Sequence used {0} bytes", output.Count);
             return output.ToArray();
-        }
-
-        public static KismetSequence FromByteCode(EEPROM.Device.Event _Event, byte[] _Code)
-        {
-            CodeBlock.Initialize();//compile a list with avaiable codeblocks
-            KismetSequence sequence = new KismetSequence(_Event);
-            sequence.root = new PushEvent(sequence);
-            int idx = 0;
-            while (true)
-            {
-                if (_Code[idx] == 0) break;
-                if (!CodeBlock.CodeBlocks.ContainsKey(_Code[idx])) break;
-
-                Type t = CodeBlock.CodeBlocks[_Code[idx]];
-                CodeBlock block = (CodeBlock)t.GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { _Event.sequence });
-                block.DisAssamble(Utilities.Cut(_Code, idx));
-                sequence.codeblocks.Add(block);
-                idx += block.Code.Length;
-            }
-            return sequence;
         }
     }
 }
