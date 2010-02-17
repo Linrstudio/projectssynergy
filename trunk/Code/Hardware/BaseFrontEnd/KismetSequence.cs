@@ -318,7 +318,6 @@ namespace BaseFrontEnd
             {
                 b.Assamble();
                 b.address = addr;
-                b.Assamble();
                 addr += (byte)b.Code.Length;
             }
 
@@ -343,6 +342,7 @@ namespace BaseFrontEnd
 
             foreach (CodeBlock b in blockssorted)
             {
+                b.Assamble();//reassamble code ( so branching blocks know where to jump to )
                 output.AddRange(b.Code);
             }
             output.Add(0);//add a zero instruction, this is a return aka stop the event

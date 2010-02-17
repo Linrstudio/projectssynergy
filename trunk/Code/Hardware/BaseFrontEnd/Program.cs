@@ -12,7 +12,7 @@ namespace BaseFrontEnd
         [STAThread]
         static void Main()
         {
-            Base b = new Base("COM69");
+            Base b = new Base("COM1");
 
             /*
                         PushEvent root = new PushEvent();
@@ -34,10 +34,12 @@ namespace BaseFrontEnd
                 switch (Console.ReadLine().ToLower())
                 {
                     case "save":
-                        b.eeprom.Save("test.eeprom");
+                        Console.Write("Filename:");
+                        b.eeprom.Save(Console.ReadLine() + ".eeprom");
                         break;
                     case "load":
-                        b.eeprom = EEPROM.FromFile("test.eeprom");
+                        Console.Write("Filename:");
+                        b.eeprom = EEPROM.FromFile(Console.ReadLine() + ".eeprom");
                         break;
                     case "downloadmemory":
                         b.DownloadEEPROM();
@@ -82,13 +84,15 @@ namespace BaseFrontEnd
                         }
                         break;
                     case "invoke":
-                        Console.Write("DeviceID:");
-                        ushort deviceid = ushort.Parse(Console.ReadLine());
-                        Console.Write("EventID:");
-                        byte eventid = byte.Parse(Console.ReadLine());
-                        Console.Write("EventArgs:");
-                        byte eventargs = byte.Parse(Console.ReadLine());
-                        b.ExecuteRemoteEvent(deviceid, eventid, eventargs);
+                        {
+                            Console.Write("DeviceID:");
+                            ushort deviceid = ushort.Parse(Console.ReadLine());
+                            Console.Write("EventID:");
+                            byte eventid = byte.Parse(Console.ReadLine());
+                            Console.Write("EventArgs:");
+                            byte eventargs = byte.Parse(Console.ReadLine());
+                            b.ExecuteRemoteEvent(deviceid, eventid, eventargs);
+                        }
                         break;
                     case "w":
                         {
@@ -110,13 +114,9 @@ namespace BaseFrontEnd
                             Console.Write("[{0}]", b.Read(1)[0]);
                         }
                         break;
-                    case "t":
-                        b.Write('0'); b.WaitForY();
-                        b.WriteShort(1220);
-                        //b.Read(1);
-                        Console.WriteLine("[{0}]",b.ReadShort());
-                        //Console.WriteLine();
-
+                    case "seteepromsize":
+                        b.Write('s'); b.WaitForY(); b.Write('e');
+                        b.WriteShort(2048);
                         break;
                 }
                 b.Read(b.Available());

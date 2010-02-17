@@ -18,7 +18,7 @@ namespace BaseFrontEnd
             new Point(x+50,y),
             new Point(x-50,y+75/2),
             new Point(x-50,y-75/2)
-            }); 
+            });
             base.Draw(_Graphics);
         }
     }
@@ -269,6 +269,73 @@ namespace BaseFrontEnd
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Differs", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class BlockSmallerThan : BaseBlockConditions
+    {
+        public BlockSmallerThan(KismetSequence _Sequence)
+            : base(_Sequence, 21)
+        {
+            width = 100;
+            height = 50;
+            Inputs.Add(new Input(this));
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+
+            UpdateConnectors();
+        }
+
+        public override void Assamble()
+        {
+            try
+            {
+                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
+            }
+            catch { }
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Smaller Than", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+
+    public class BlockLargerThan : BaseBlockConditions
+    {
+        public BlockLargerThan(KismetSequence _Sequence)
+            : base(_Sequence, 22)
+        {
+            width = 100;
+            height = 50;
+            Inputs.Add(new Input(this));
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+
+            UpdateConnectors();
+        }
+
+        public override void Assamble()
+        {
+            try
+            {
+                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
+            }
+            catch { }
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Larger Than", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
@@ -645,17 +712,93 @@ namespace BaseFrontEnd
         {
             _Graphics.DrawLines(Pens.Black,
                 new Point[]{
-            new Point(x    ,y-100),
-            new Point(x+50 ,y    ),
-            new Point(x    ,y+100),
-            new Point(x-50 ,y    ),
-            new Point(x    ,y-100)
+            new Point(x    ,y-height/2),
+            new Point(x+width/2 ,y    ),
+            new Point(x    ,y+height/2),
+            new Point(x-width/2 ,y    ),
+            new Point(x    ,y-height/2)
                 });
 
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("On Push", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class BlockIf : BaseBlockOther
+    {
+        public BlockIf(KismetSequence _Sequence)
+            : base(_Sequence, 19)
+        {
+            width = 50;
+            height = 100;
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            UpdateConnectors();
+        }
+
+        public override void Assamble()
+        {
+            CodeBlock cwhi = GetChildWithHighestIndex();
+            int target = (byte)(cwhi.address + cwhi.Code.Length);
+            Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, (byte)target };
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawLines(Pens.Black,
+                new Point[]{
+            new Point(x    ,y-height/2),
+            new Point(x+width/2 ,y    ),
+            new Point(x    ,y+height/2),
+            new Point(x-width/2 ,y    ),
+            new Point(x    ,y-height/2)
+                });
+
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("If", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            base.Draw(_Graphics);
+        }
+    }
+
+    public class BlockIfNot : BaseBlockOther
+    {
+        public BlockIfNot(KismetSequence _Sequence)
+            : base(_Sequence, 20)
+        {
+            width = 50;
+            height = 100;
+            Inputs.Add(new Input(this));
+            Outputs.Add(new Output(this));
+            UpdateConnectors();
+        }
+
+        public override void Assamble()
+        {
+            CodeBlock cwhi = GetChildWithHighestIndex();
+            int target = (byte)(cwhi.address + cwhi.Code.Length);
+            Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, (byte)target };
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            _Graphics.DrawLines(Pens.Black,
+                new Point[]{
+            new Point(x    ,y-height/2),
+            new Point(x+width/2 ,y    ),
+            new Point(x    ,y+height/2),
+            new Point(x-width/2 ,y    ),
+            new Point(x    ,y-height/2)
+                });
+
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("IfNot", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
