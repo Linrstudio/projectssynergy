@@ -50,9 +50,18 @@ namespace BaseFrontEnd
             return "";
         }
 
-        public virtual void DisAssamble(byte[] _ByteCode)
+        public CodeBlock GetChildWithHighestIndex()
         {
-
+            CodeBlock c = this;
+            foreach (Output o in Outputs)
+            {
+                foreach (Input i in o.Connected)
+                {
+                    CodeBlock f = i.Owner.GetChildWithHighestIndex();
+                    if (f.index > c.index) c = f;
+                }
+            }
+            return c;
         }
 
         public void UpdateConnectors()
@@ -254,6 +263,12 @@ namespace BaseFrontEnd
                 CodeBlocks.Add(17, typeof(BlockGetVariable));
 
                 CodeBlocks.Add(18, typeof(BlockDiffers));
+
+                CodeBlocks.Add(19, typeof(BlockIf));
+                CodeBlocks.Add(20, typeof(BlockIfNot));
+
+                CodeBlocks.Add(21, typeof(BlockSmallerThan));
+                CodeBlocks.Add(22, typeof(BlockLargerThan));
             }
         }
     }

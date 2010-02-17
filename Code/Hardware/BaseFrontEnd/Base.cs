@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define CONSOLESTUFF
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -31,6 +33,7 @@ namespace BaseFrontEnd
             catch { port = null; Console.WriteLine("Failed to open port:{0}", _PortName); }
             eeprom = new EEPROM(eepromsize);
             eepromdata = new byte[eepromsize];
+            Console.WriteLine("EEPROM Size : {0}",eeprom.Size);
         }
 
         public void KismetEnable()
@@ -280,7 +283,7 @@ namespace BaseFrontEnd
 
         public void WaitForY()
         {
-            while (Read(1)[0] != 121) ;
+            while (Read(1)[0] != 121);
         }
 
         public int Available() 
@@ -293,7 +296,7 @@ namespace BaseFrontEnd
         {
             while (Available() < _Count) ;
             byte[] buf = new byte[_Count];
-            port.Read(buf, 0, _Count);
+            if(port!=null) port.Read(buf, 0, _Count);
 #if CONSOLESTUFF
             if (Console.ForegroundColor != ConsoleColor.Red) Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Red;
