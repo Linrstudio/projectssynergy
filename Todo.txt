@@ -6,7 +6,15 @@ Bas
 
 find a way to propperly comment wires in EAGLE
 
-testen of dat met die ulns werekt
+test maaken dat de voltasje kunen detekteeren ondernol
+
+na de hijpas vilter kijken voor een voltasje vergelijker
+
+ets printer en ligt
+
+idialen ferkwensie foor zenden plc
+
+
 
 
 
