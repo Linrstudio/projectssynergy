@@ -25,7 +25,11 @@ namespace BaseFrontEnd
 
     public class BaseBlockMath : CodeBlock
     {
-        public BaseBlockMath(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+        public BaseBlockMath(KismetSequence _Sequence, byte _BlockID)
+            : base(_Sequence, _BlockID)
+        {
+
+        }
     }
 
     public class BaseBlockConstant : CodeBlock
@@ -63,7 +67,7 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 25;
-            Inputs.Add(new Input(this));
+            Inputs.Add(new Input(this, "On?"));
             UpdateConnectors();
         }
 
@@ -90,7 +94,7 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 25;
-            Inputs.Add(new Input(this));
+            Inputs.Add(new Input(this, "On?"));
             UpdateConnectors();
         }
 
@@ -117,8 +121,8 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 25;
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, ""));
+            Outputs.Add(new Output(this, "Current Hour"));
             UpdateConnectors();
         }
 
@@ -141,8 +145,8 @@ namespace BaseFrontEnd
         {
             width = 75;
             height = 25;
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, ""));
+            Outputs.Add(new Output(this, "Current Minute"));
             UpdateConnectors();
         }
 
@@ -165,8 +169,8 @@ namespace BaseFrontEnd
         {
             width = 75;
             height = 25;
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, ""));
+            Outputs.Add(new Output(this, "Current Second"));
             UpdateConnectors();
         }
 
@@ -189,8 +193,8 @@ namespace BaseFrontEnd
         {
             width = 75;
             height = 25;
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, ""));
+            Outputs.Add(new Output(this, "Current Weekday"));
             UpdateConnectors();
         }
 
@@ -214,9 +218,9 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this));
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, "A"));
+            Inputs.Add(new Input(this, "B"));
+            Outputs.Add(new Output(this, "A equals B"));
 
             UpdateConnectors();
         }
@@ -247,9 +251,9 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this));
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, "A"));
+            Inputs.Add(new Input(this, "B"));
+            Outputs.Add(new Output(this, "A differs from B"));
 
             UpdateConnectors();
         }
@@ -280,9 +284,9 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this));
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, "A"));
+            Inputs.Add(new Input(this, "B"));
+            Outputs.Add(new Output(this, "A smaller than B"));
 
             UpdateConnectors();
         }
@@ -314,9 +318,9 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this));
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, "A"));
+            Inputs.Add(new Input(this, "B"));
+            Outputs.Add(new Output(this, "A larger than B"));
 
             UpdateConnectors();
         }
@@ -342,10 +346,10 @@ namespace BaseFrontEnd
 
     public class BlockConstantByte : BaseBlockConstant
     {
-        byte val;
+        ushort val;
 
         [Browsable(true), CategoryAttribute("Constant")]
-        public byte Value
+        public ushort Value
         {
             get { return val; }
             set { val = value; }
@@ -358,7 +362,7 @@ namespace BaseFrontEnd
 
         public override void SetValues(string _Values)
         {
-            val = byte.Parse(_Values);
+            val = ushort.Parse(_Values);
         }
 
         public BlockConstantByte(KismetSequence _Sequence)
@@ -366,14 +370,15 @@ namespace BaseFrontEnd
         {
             width = 50;
             height = 50;
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, ""));
+            Outputs.Add(new Output(this, "Constant"));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = new byte[] { BlockID, Outputs[0].RegisterIndex, Value };
+            byte[] val = Utilities.FromShort(Value);
+            Code = new byte[] { BlockID, Outputs[0].RegisterIndex, val[0], val[1] };
             base.Assamble();
         }
 
@@ -411,18 +416,18 @@ namespace BaseFrontEnd
         }
 
         public BlockConstantWeekDay(KismetSequence _Sequence)
-            : base(_Sequence, 14)
+            : base(_Sequence, 1)
         {
             width = 50;
             height = 50;
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, ""));
+            Outputs.Add(new Output(this, "Constant Weekday"));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = new byte[] { BlockID, Outputs[0].RegisterIndex, (byte)((int)Value) };
+            Code = new byte[] { BlockID, Outputs[0].RegisterIndex, 0, (byte)((int)Value) };
             base.Assamble();
         }
 
@@ -443,9 +448,9 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this));
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, "A"));
+            Inputs.Add(new Input(this, "B"));
+            Outputs.Add(new Output(this, "A + B"));
             UpdateConnectors();
         }
 
@@ -475,9 +480,9 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this));
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, "A"));
+            Inputs.Add(new Input(this, "B"));
+            Outputs.Add(new Output(this, "A-B"));
             UpdateConnectors();
         }
 
@@ -508,9 +513,9 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this));
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, "A"));
+            Inputs.Add(new Input(this, "B"));
+            Outputs.Add(new Output(this, "A*B"));
             UpdateConnectors();
         }
 
@@ -541,9 +546,9 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this));
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, "A"));
+            Inputs.Add(new Input(this, "B"));
+            Outputs.Add(new Output(this, "A/B"));
             UpdateConnectors();
         }
 
@@ -574,9 +579,9 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this));
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, "A"));
+            Inputs.Add(new Input(this, "B"));
+            Outputs.Add(new Output(this, "A and B"));
             UpdateConnectors();
         }
 
@@ -596,7 +601,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("BitMask", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Bitwise And", new Font("Arial", 10), Brushes.Black, x, y, sf);
             base.Draw(_Graphics);
         }
     }
@@ -627,8 +632,8 @@ namespace BaseFrontEnd
         {
             height = 50;
             width = 100;
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, ""));
+            Outputs.Add(new Output(this, "Value"));
             UpdateConnectors();
         }
 
@@ -675,7 +680,7 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this));
+            Inputs.Add(new Input(this, "Value"));
             UpdateConnectors();
         }
 
@@ -704,7 +709,7 @@ namespace BaseFrontEnd
         {
             width = 100;
             height = 200;
-            Outputs.Add(new Output(this));
+            Outputs.Add(new Output(this, "Pushed ?"));
             UpdateConnectors();
         }
 
@@ -734,8 +739,8 @@ namespace BaseFrontEnd
         {
             width = 50;
             height = 100;
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, "Condition"));
+            Outputs.Add(new Output(this, ""));
             UpdateConnectors();
         }
 
@@ -772,8 +777,8 @@ namespace BaseFrontEnd
         {
             width = 50;
             height = 100;
-            Inputs.Add(new Input(this));
-            Outputs.Add(new Output(this));
+            Inputs.Add(new Input(this, "Condition"));
+            Outputs.Add(new Output(this, ""));
             UpdateConnectors();
         }
 

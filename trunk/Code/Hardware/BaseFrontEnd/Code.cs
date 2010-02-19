@@ -144,11 +144,16 @@ namespace BaseFrontEnd
 
         public class Input
         {
-            public Input(CodeBlock _Owner)
+            public Input(CodeBlock _Owner,string _Text)
             {
                 Owner = _Owner;
                 x = -Owner.width / 2;
+                Text = _Text;
             }
+            public string Text;
+
+            public System.Windows.Forms.ToolTip tooptip = new System.Windows.Forms.ToolTip();
+
             //position in codeblock
             public int x;
             public int y;
@@ -169,7 +174,11 @@ namespace BaseFrontEnd
         }
         public class Output
         {
-            public Output(CodeBlock _Owner) { Owner = _Owner; x = Owner.width / 2; }
+            public Output(CodeBlock _Owner, string _Text) { Owner = _Owner; x = Owner.width / 2; Text = _Text;  }
+            
+            public string Text;
+            public System.Windows.Forms.ToolTip tooptip = new System.Windows.Forms.ToolTip();
+
             //position in codeblock
             public int x;
             public int y;
@@ -230,7 +239,7 @@ namespace BaseFrontEnd
 
         public virtual void Draw(System.Drawing.Graphics _Graphics)
         {
-            _Graphics.DrawString(index.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, x, y - 25);
+            //_Graphics.DrawString(index.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, x, y - 25);
         }
 
         public class Prototype
@@ -259,8 +268,8 @@ namespace BaseFrontEnd
                 AddCodeBlock("Event", "", typeof(PushEvent), false);
 
                 //Constants
-                AddCodeBlock("Constant weekday", "Contant", typeof(BlockConstantWeekDay));
-                AddCodeBlock("Constant", "Contant", typeof(BlockConstantByte));
+                AddCodeBlock("weekday", "Contant", typeof(BlockConstantWeekDay));
+                AddCodeBlock("byte", "Contant", typeof(BlockConstantByte));
 
                 //Debug stuff
                 AddCodeBlock("Set DebugLed 1", "Debug stuff", typeof(BlockSetDebugLed1));
@@ -283,7 +292,7 @@ namespace BaseFrontEnd
                 AddCodeBlock("Substract", "Math", typeof(BlockSubstract));
                 AddCodeBlock("Multiply", "Math", typeof(BlockMultiply));
                 AddCodeBlock("Divide", "Math", typeof(BlockDivide));
-                AddCodeBlock("Bitmask", "Math", typeof(BlockBitMask));
+                AddCodeBlock("Bitwise And", "Math", typeof(BlockBitMask));
 
                 //Variable
                 AddCodeBlock("Set variable", "Variable", typeof(BlockSetVariable));
