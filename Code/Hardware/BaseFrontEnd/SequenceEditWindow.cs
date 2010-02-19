@@ -95,6 +95,9 @@ namespace BaseFrontEnd
                     List<CodeBlock> dependencies = new List<CodeBlock>();
                     if (Selected != null) dependencies.AddRange(Selected.Owner.GetDependencies());
 
+                    CodeBlock.Input input = GetNearestInput(new Point(MouseX, MouseY));
+                    CodeBlock.Output output = GetNearestOutput(new Point(MouseX, MouseY));
+
                     //e.Graphics.DrawRectangle(Pens.Red, b.x, b.y, 100, 50);
                     float p = 0;
                     foreach (CodeBlock.Input i in b.Inputs)
@@ -110,6 +113,11 @@ namespace BaseFrontEnd
                             Point y = i.Connected.GetPosition();
                             DrawPwettyLine(e.Graphics, y, x);
                         }
+
+                        if (i == input)
+                        {
+                            i.tooptip.Show(i.Text, this, new Point(pos.X, pos.Y), 1000);
+                        }
                     }
                     p = 0;
                     foreach (CodeBlock.Output i in b.Outputs)
@@ -118,6 +126,11 @@ namespace BaseFrontEnd
                         Point pos = i.GetPosition();
                         if (!dependencies.Contains(i.Owner))
                             e.Graphics.FillRectangle(Brushes.Black, new Rectangle(pos.X, pos.Y - 5, 5, 10));
+
+                        if (i == output)
+                        {
+                            i.tooptip.Show(i.Text, this, new Point(pos.X, pos.Y), 1000);
+                        }
                     }
                     b.Draw(e.Graphics);
                 }
@@ -177,7 +190,6 @@ namespace BaseFrontEnd
                 SelectedBlock = null;
                 if (nearestout != null && SelectedBlock != nearestout.Owner) { SelectedBlock = nearestout.Owner; if (OnBlockSelect != null)OnBlockSelect(SelectedBlock); }
                 if (nearestin != null && SelectedBlock != nearestin.Owner) { SelectedBlock = nearestin.Owner; if (OnBlockSelect != null)OnBlockSelect(SelectedBlock); }
-                Format();
             }
             if (e.Button == MouseButtons.Right)
             {
@@ -202,6 +214,7 @@ namespace BaseFrontEnd
                         }
                         else
                         {
+                            foreach (CodeBlock.Output o in input.Owner.Outputs) o.Connected.Clear();
                             Sequence.codeblocks.Remove(input.Owner);
                         }
                     }
@@ -210,13 +223,12 @@ namespace BaseFrontEnd
                         ShowContextMenu(MouseX, MouseY);
                     }
                 }
-                Format();
             }
             if (e.Button == MouseButtons.None)
             {
+                CodeBlock.Input nearest = GetNearestInput(new Point(MouseX, MouseY));
                 if (Selected != null)
                 {
-                    CodeBlock.Input nearest = GetNearestInput(new Point(MouseX, MouseY));
                     if (nearest != null)
                     {
                         List<CodeBlock> dependencies = new List<CodeBlock>();
@@ -228,9 +240,9 @@ namespace BaseFrontEnd
                         }
                     }
                     Selected = null;
-                    Format();
                 }
             }
+            Format();
         }
 
         public void OnContextMenuItemClicked(object sender, EventArgs e)
@@ -246,24 +258,23 @@ namespace BaseFrontEnd
                     Format();
                 }
             }
-
         }
 
         public void ShowContextMenu(int x, int y)
         {
-            Dictionary<Type, MenuItem> menuitems = new Dictionary<Type, MenuItem>();
+            Dictionary<string, MenuItem> menuitems = new Dictionary<string, MenuItem>();
 
             CodeBlock.Initialize();
             foreach (CodeBlock.Prototype p in CodeBlock.CodeBlocks)
             {
                 if (p.Type.BaseType != typeof(BaseBlockEvent))
                 {
-                    if (!menuitems.ContainsKey(p.Type.BaseType))
-                        menuitems.Add(p.Type.BaseType, new MenuItem(p.GroupName));
+                    if (!menuitems.ContainsKey(p.GroupName))
+                        menuitems.Add(p.GroupName, new MenuItem(p.GroupName));
 
                     MenuItem item = new MenuItem(p.BlockName, OnContextMenuItemClicked);
                     item.Tag = p.Type;
-                    menuitems[p.Type.BaseType].MenuItems.Add(item);
+                    menuitems[p.GroupName].MenuItems.Add(item);
                 }
             }
             ContextMenu menu = new ContextMenu(menuitems.Values.ToArray());

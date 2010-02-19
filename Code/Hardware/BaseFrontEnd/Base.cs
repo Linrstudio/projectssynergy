@@ -1,4 +1,4 @@
-﻿#define CONSOLESTUFF
+﻿//#define CONSOLESTUFF
 
 using System;
 using System.Collections.Generic;
@@ -33,47 +33,44 @@ namespace BaseFrontEnd
             catch { port = null; Console.WriteLine("Failed to open port:{0}", _PortName); }
             eeprom = new EEPROM(eepromsize);
             eepromdata = new byte[eepromsize];
-            Console.WriteLine("EEPROM Size : {0}",eeprom.Size);
+            Console.WriteLine("EEPROM Size : {0}", eeprom.Size);
+        }
+
+        public void SendCommand(char _Category, char _Command)
+        {
+            Write(_Category);
+            WaitForY();
+            Write(_Command);
         }
 
         public void KismetEnable()
         {
-            Write('k');
-            WaitForY();
-            Write('e');
+            SendCommand('k', 'e');
         }
         public void KismetDisable()
         {
-            Write('k');
-            WaitForY();
-            Write('d');
+            SendCommand('k', 'd');
         }
 
         public void ReadVariables()
         {
-            Write('v');
-            WaitForY();
-            Write('r');
+            SendCommand('k', 'v');
             Console.WriteLine();
-            for (int i = 0; i < 256; i++)
+            for (int i = 0; i < 64; i++)
             {
-                Console.Write(Read(1)[0].ToString("000 "));
+                Console.Write(ReadShort().ToString("00000 "));
             }
         }
 
         public void PLCWrite(byte _b)
         {
-            Write('p');
-            WaitForY();
-            Write('w');
+            SendCommand('p', 'w');
             Write(_b);
         }
 
         public byte PLCRead()
         {
-            Write('p');
-            WaitForY();
-            Write('r');
+            SendCommand('p', 'r');
             return Read(1)[0];
         }
 
@@ -107,9 +104,7 @@ namespace BaseFrontEnd
             //upload eeprom
             for (ushort b = 0; b < from.Length; b += 16)
             {
-                Write('m');
-                WaitForY();
-                Write('w');
+                SendCommand('m', 'w');
                 WriteShort(b);
                 for (int i = 0; i < 16; i++)
                 {
@@ -117,11 +112,9 @@ namespace BaseFrontEnd
                 }
             }
             //download eeprom
-            for (ushort b = 0; b <to.Length; b += 16)
+            for (ushort b = 0; b < to.Length; b += 16)
             {
-                Write('m');
-                WaitForY();
-                Write('r');
+                SendCommand('m', 'r');
                 WriteShort(b);
                 for (int i = 0; i < 16; i++)
                 {
@@ -146,15 +139,13 @@ namespace BaseFrontEnd
             }
             return okay;
         }
-        
+
         public void DownloadEEPROM()
         {
             byte[] buf = new byte[eeprom.Size];
             for (ushort b = 0; b < eepromdata.Length; b += 16)
             {
-                Write('m');
-                WaitForY();
-                Write('r');
+                SendCommand('m', 'r');
                 WriteShort(b);
                 for (int i = 0; i < 16; i++)
                 {
@@ -171,9 +162,7 @@ namespace BaseFrontEnd
             KismetDisable();
             for (ushort b = 0; b < eeprom.BytesUsed; b += 16)
             {
-                Write('m');
-                WaitForY();
-                Write('w');
+                SendCommand('m', 'w');
                 WriteShort(b);
                 for (int i = 0; i < 16; i++)
                 {
@@ -190,9 +179,7 @@ namespace BaseFrontEnd
             KismetDisable();
             for (ushort b = 0; b < eeprom.Size; b += 16)
             {
-                Write('m');
-                WaitForY();
-                Write('w');
+                SendCommand('m', 'w');
                 WriteShort(b);
                 for (int i = 0; i < 16; i++)
                 {
@@ -205,9 +192,7 @@ namespace BaseFrontEnd
 
         public void ReadTime()
         {
-            Write('t');
-            WaitForY();
-            Write('r');
+            SendCommand('t', 'r');
             byte hour = Read(1)[0];
             byte minute = Read(1)[0];
             byte second = Read(1)[0];
@@ -218,9 +203,7 @@ namespace BaseFrontEnd
 
         public void SetTime(DateTime _Time)
         {
-            Write('t');
-            WaitForY();
-            Write('w');
+            SendCommand('t', 'w');
 
             Write((byte)_Time.Hour);
             Write((byte)_Time.Minute);
@@ -228,14 +211,12 @@ namespace BaseFrontEnd
             Write((byte)((int)_Time.DayOfWeek));
         }
 
-        public void ExecuteRemoteEvent(ushort _DeviceID, byte _EventID, byte _EventArgs)
+        public void ExecuteRemoteEvent(ushort _DeviceID, byte _EventID, ushort _EventArgs)
         {
-            Write('k');
-            WaitForY();
-            Write('x');
+            SendCommand('k', 'x');
             WriteShort(_DeviceID);
             Write(_EventID);
-            Write(_EventArgs);
+            WriteShort(_EventArgs);
         }
 
         public byte[] GetShort(ushort _V)
@@ -283,20 +264,20 @@ namespace BaseFrontEnd
 
         public void WaitForY()
         {
-            while (Read(1)[0] != 121);
+            while (Read(1)[0] != 121) ;
         }
 
-        public int Available() 
+        public int Available()
         {
             if (port == null) return 0;
-            return port.BytesToRead; 
+            return port.BytesToRead;
         }
 
         public byte[] Read(int _Count)
         {
             while (Available() < _Count) ;
             byte[] buf = new byte[_Count];
-            if(port!=null) port.Read(buf, 0, _Count);
+            if (port != null) port.Read(buf, 0, _Count);
 #if CONSOLESTUFF
             if (Console.ForegroundColor != ConsoleColor.Red) Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Red;
