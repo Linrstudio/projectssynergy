@@ -1,20 +1,43 @@
+Roeny
+********************
+//het grote plan!
+een protocol voor het PLC netwerk bedenken
+
+//WIP
+Add Kismet Editor to new Frontend
+codeblocks per categorie een andere kleur geven
+
+Make new kismet compiler
+
+
+
+
 Bas
 ********************
+//het grote plan!
+een PLC bus maken ( de electronica )
+
+//WIP
+circuit/board van test eindapparaat in EAGLE zetten -> isolate IC's -> doorgeluste 2 data stekkers!
+highpass filters
+
+if(pickit) { oscillator bouwen 60Hz; PICje }
 
 
 
 
-find a way to propperly comment wires in EAGLE
+//research stuff:
+find a way to propperly create a bus
 
-test maaken dat de voltasje kunen detekteeren ondernol
 
 na de hijpas vilter kijken voor een voltasje vergelijker
 
-ets printer en ligt
 
-idealen frequentie voor zenden plc
+etch printer en licht
+
+
+idealen frequentie voor zenden plc burst zoeken
 
 
 research doen naar X-10
-
-http://www.edcheung.com/automa/circuit.htm
+	http://www.edcheung.com/automa/circuit.htm
