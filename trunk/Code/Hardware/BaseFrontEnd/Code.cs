@@ -93,7 +93,7 @@ namespace BaseFrontEnd
 
         private static int CompareCodeBlockByTargetHeight(CodeBlock A, CodeBlock B)
         {
-            if (A.GetTargetHeight() < B.GetTargetHeight()) return -1; else return 1;
+            if (A.GetTargetHeight() + A.height < B.GetTargetHeight() + B.height) return -1; else return 1;
         }
 
         public CodeBlock[] GetSibblings(CodeBlock[] _BlocksInGraph)
@@ -144,7 +144,7 @@ namespace BaseFrontEnd
 
         public class Input
         {
-            public Input(CodeBlock _Owner,string _Text)
+            public Input(CodeBlock _Owner, string _Text)
             {
                 Owner = _Owner;
                 x = -Owner.width / 2;
@@ -174,8 +174,8 @@ namespace BaseFrontEnd
         }
         public class Output
         {
-            public Output(CodeBlock _Owner, string _Text) { Owner = _Owner; x = Owner.width / 2; Text = _Text;  }
-            
+            public Output(CodeBlock _Owner, string _Text) { Owner = _Owner; x = Owner.width / 2; Text = _Text; }
+
             public string Text;
             public System.Windows.Forms.ToolTip tooptip = new System.Windows.Forms.ToolTip();
 

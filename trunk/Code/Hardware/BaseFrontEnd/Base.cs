@@ -15,9 +15,7 @@ namespace BaseFrontEnd
         SerialPort port = null;
 
         public EEPROM eeprom = null;
-
         byte[] eepromdata;
-
         public Base(string _PortName)
         {
             ushort eepromsize = 256;
@@ -30,7 +28,7 @@ namespace BaseFrontEnd
                 WaitForY();
                 eepromsize = ReadShort();
             }
-            catch { port = null; Console.WriteLine("Failed to open port:{0}", _PortName); }
+            catch { port = null; Console.WriteLine("Failed to open port : {0}", _PortName); }
             eeprom = new EEPROM(eepromsize);
             eepromdata = new byte[eepromsize];
             Console.WriteLine("EEPROM Size : {0}", eeprom.Size);
@@ -94,9 +92,11 @@ namespace BaseFrontEnd
             int size = eeprom.Size;//size=256;
             byte[] from = new byte[size];
             byte[] to = new byte[size];
-            //fill memory sequential
+            //fill memory randomly
             for (int i = 0; i < from.Length; i++)
                 from[i] = (byte)random.Next(256);
+
+            from[0] = from[1] = 0;
 
             //disable kismet execution
             KismetDisable();

@@ -74,7 +74,7 @@ namespace BaseFrontEnd
                 idx++;
                 eventlistaddr = (ushort)(d.addr + 4);
             }
-            eventlistaddr += 2;//add two
+            eventlistaddr += 2;//add two blanks, indicating a null address
             ushort addr = eventlistaddr;
             foreach (Device d in Devices.Values)
             {
@@ -88,7 +88,7 @@ namespace BaseFrontEnd
                     addr += 3;
                 }
             }
-            addr += 2;
+            addr += 2;//add two blanks, indicating a null event
             foreach (Device d in Devices.Values)
             {
                 foreach (Device.Event e in d.Events.Values)
