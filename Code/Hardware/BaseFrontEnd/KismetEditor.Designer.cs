@@ -33,7 +33,6 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.PropertyGrid = new System.Windows.Forms.PropertyGrid();
             this.t_Contents = new System.Windows.Forms.TreeView();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.splitter2 = new System.Windows.Forms.Splitter();
@@ -43,6 +42,7 @@
             this.t_AddNode = new System.Windows.Forms.ToolStrip();
             this.panel2 = new System.Windows.Forms.Panel();
             this.s_WorkingArea = new BaseFrontEnd.SequenceEditWindow();
+            this.PropertyGrid = new System.Windows.Forms.PropertyGrid();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -55,9 +55,9 @@
             this.toolStripStatusLabel1,
             this.toolStripProgressBar1,
             this.toolStripStatusLabel2});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 554);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 503);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(837, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1020, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -77,21 +77,12 @@
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
             this.toolStripStatusLabel2.Size = new System.Drawing.Size(0, 17);
             // 
-            // PropertyGrid
-            // 
-            this.PropertyGrid.Dock = System.Windows.Forms.DockStyle.Right;
-            this.PropertyGrid.Location = new System.Drawing.Point(605, 0);
-            this.PropertyGrid.Name = "PropertyGrid";
-            this.PropertyGrid.Size = new System.Drawing.Size(232, 554);
-            this.PropertyGrid.TabIndex = 1;
-            this.PropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.PropertyGrid_PropertyValueChanged);
-            // 
             // t_Contents
             // 
             this.t_Contents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.t_Contents.Location = new System.Drawing.Point(0, 25);
             this.t_Contents.Name = "t_Contents";
-            this.t_Contents.Size = new System.Drawing.Size(152, 529);
+            this.t_Contents.Size = new System.Drawing.Size(152, 478);
             this.t_Contents.TabIndex = 2;
             this.t_Contents.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.t_Contents_AfterSelect);
             // 
@@ -99,16 +90,16 @@
             // 
             this.splitter1.Location = new System.Drawing.Point(152, 0);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 554);
+            this.splitter1.Size = new System.Drawing.Size(3, 503);
             this.splitter1.TabIndex = 3;
             this.splitter1.TabStop = false;
             // 
             // splitter2
             // 
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.splitter2.Location = new System.Drawing.Point(602, 0);
+            this.splitter2.Location = new System.Drawing.Point(785, 0);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 554);
+            this.splitter2.Size = new System.Drawing.Size(3, 503);
             this.splitter2.TabIndex = 4;
             this.splitter2.TabStop = false;
             // 
@@ -119,7 +110,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(152, 554);
+            this.panel1.Size = new System.Drawing.Size(152, 503);
             this.panel1.TabIndex = 3;
             // 
             // toolStrip1
@@ -145,7 +136,7 @@
             // 
             this.t_AddNode.Location = new System.Drawing.Point(0, 0);
             this.t_AddNode.Name = "t_AddNode";
-            this.t_AddNode.Size = new System.Drawing.Size(447, 25);
+            this.t_AddNode.Size = new System.Drawing.Size(630, 25);
             this.t_AddNode.TabIndex = 6;
             this.t_AddNode.Text = "toolStrip2";
             // 
@@ -156,7 +147,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(155, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(447, 554);
+            this.panel2.Size = new System.Drawing.Size(630, 503);
             this.panel2.TabIndex = 7;
             // 
             // s_WorkingArea
@@ -165,14 +156,23 @@
             this.s_WorkingArea.Dock = System.Windows.Forms.DockStyle.Fill;
             this.s_WorkingArea.Location = new System.Drawing.Point(0, 25);
             this.s_WorkingArea.Name = "s_WorkingArea";
-            this.s_WorkingArea.Size = new System.Drawing.Size(447, 529);
+            this.s_WorkingArea.Size = new System.Drawing.Size(630, 478);
             this.s_WorkingArea.TabIndex = 5;
+            // 
+            // PropertyGrid
+            // 
+            this.PropertyGrid.Dock = System.Windows.Forms.DockStyle.Right;
+            this.PropertyGrid.Location = new System.Drawing.Point(788, 0);
+            this.PropertyGrid.Name = "PropertyGrid";
+            this.PropertyGrid.Size = new System.Drawing.Size(232, 503);
+            this.PropertyGrid.TabIndex = 1;
+            this.PropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.PropertyGrid_PropertyValueChanged);
             // 
             // KismetEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(837, 576);
+            this.ClientSize = new System.Drawing.Size(1020, 525);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.splitter2);
             this.Controls.Add(this.splitter1);
@@ -203,7 +203,6 @@
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
-        private System.Windows.Forms.PropertyGrid PropertyGrid;
         private System.Windows.Forms.TreeView t_Contents;
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.Splitter splitter2;
@@ -213,5 +212,6 @@
         private SequenceEditWindow s_WorkingArea;
         private System.Windows.Forms.ToolStrip t_AddNode;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.PropertyGrid PropertyGrid;
     }
 }

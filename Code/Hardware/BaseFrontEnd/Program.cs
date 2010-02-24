@@ -118,6 +118,10 @@ namespace BaseFrontEnd
                         b.Write('s'); b.WaitForY(); b.Write('e');
                         b.WriteShort(2048);
                         break;
+                    case "mainwindow":
+                        var w = new MainWindow(b);
+                        w.ShowDialog();
+                        break;
                 }
                 b.Read(b.Available());
                 Console.WriteLine("Done");
