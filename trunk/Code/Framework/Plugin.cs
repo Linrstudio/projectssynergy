@@ -25,16 +25,16 @@ namespace Framework
         public static Dictionary<string, SlavePlugin> SlavePlugins = new Dictionary<string, SlavePlugin>();
 
 
-        public static Assembly LoadPlugin(string _Filename)
+        public static Assembly Compile(string _Filename)
         {
             string _PluginSource = File.ReadAllText(_Filename);
             if (Path.GetExtension(_Filename) == ".vb")
-                return LoadPlugin(_PluginSource, PluginManager.CompilerType.VisualBasic);
+                return Compile(_PluginSource, PluginManager.CompilerType.VisualBasic);
             else
-                return LoadPlugin(_PluginSource, PluginManager.CompilerType.CSharp);
+                return Compile(_PluginSource, PluginManager.CompilerType.CSharp);
         }
 
-        public static Assembly LoadPlugin(string _Source, PluginManager.CompilerType _Compiler)
+        public static Assembly Compile(string _Source, PluginManager.CompilerType _Compiler)
         {
             CodeDomProvider compiler = null;
             switch (_Compiler)
@@ -85,12 +85,12 @@ namespace Framework
 
         public Plugin(string _PluginName, string _SourceCode)
         {
-            assambly = PluginManager.LoadPlugin(_SourceCode, PluginManager.CompilerType.CSharp);
+            assambly = PluginManager.Compile(_SourceCode, PluginManager.CompilerType.CSharp);
             foreach (Type t in assambly.GetTypes())
             {
                 Log.Write("Plugin Compiler", "Type compiled {0}", t.FullName);
             }
-
+            PluginManager.plugins.Add(this);
             CheckPluginAttributes();
 
         }
@@ -119,9 +119,9 @@ namespace Framework
         }
     }
 
-    public class LocalPlugin : Plugin
+    public class MasterPlugin : Plugin
     {
-        public LocalPlugin(string _PluginName, string _SourceCode)
+        public MasterPlugin(string _PluginName, string _SourceCode)
             : base(_PluginName, _SourceCode)
         {
             InvokeEntries();

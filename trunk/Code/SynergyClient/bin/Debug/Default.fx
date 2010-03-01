@@ -14,14 +14,13 @@ struct PSin
 texture2D DiffuseMap;
 sampler2D DiffuseSampler=sampler_state{Texture = <DiffuseMap>;MinFilter=Linear;MagFilter=Linear;MipFilter=Linear;};
 
-float2 Scale;
+float4x4 View;
 
 PSin MainVS(VSin input)
 {
     PSin output;
-    //output.Position = mul(float4(input.Position.xyz,1),mul(World,mul(View,Projection)));
-	output.Position=input.Position*2-1;
-	output.Position.xy*=Scale;
+	output.Position=float4(0,0,1,1);
+	output.Position.xy=mul(float4(input.Position.xy,0,1),View);
 	output.UV=input.UV;
     return output;
 }
@@ -36,7 +35,7 @@ technique Main
 {
     pass Pass1
     {
-        VertexShader= compile vs_3_0 MainVS();
-        PixelShader = compile ps_3_0 MainPS();
+        VertexShader= compile vs_2_0 MainVS();
+        PixelShader = compile ps_2_0 MainPS();
     }
 }

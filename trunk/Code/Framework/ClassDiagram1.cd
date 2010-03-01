@@ -36,58 +36,6 @@
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
-    <NestedTypes>
-      <Class Name="Framework.Converter.ByteStreamConverter" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Converter.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Class Name="Framework.Converter.FloatConverter" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Converter.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Class Name="Framework.Converter.IntConverter" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Converter.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Class Name="Framework.Converter.BoolConverter" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Converter.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Class Name="Framework.Converter.StringArrayConverter" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Converter.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Class Name="Framework.Converter.UIntConverter" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Converter.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Class Name="Framework.Converter.ByteArrayConverter" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Converter.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Class Name="Framework.Converter.StringConverter" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Converter.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Class Name="Framework.Converter.UShortConverter" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Converter.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Class Name="Framework.Converter.ByteConverter" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Converter.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-    </NestedTypes>
     <TypeIdentifier>
       <HashCode>AACAAAIAIBAAAQAAAAAAAAAgAAAAAAAgAAAAAAEAAAA=</HashCode>
       <FileName>Converter.cs</FileName>
@@ -151,13 +99,6 @@
   </Class>
   <Class Name="Framework.NetworkManager" Collapsed="true">
     <Position X="28.75" Y="0.5" Width="1.5" />
-    <NestedTypes>
-      <Class Name="Framework.NetworkManager.ActionBlackList" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>NetworkManager.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-    </NestedTypes>
     <TypeIdentifier>
       <HashCode>gAQIIAAAAAAAAQAAAAABAAAAAEAAEACIAAQAAACAAAQ=</HashCode>
       <FileName>NetworkManager.cs</FileName>
@@ -196,15 +137,8 @@
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
-    <NestedTypes>
-      <Enum Name="Framework.PluginManager.CompilerType">
-        <TypeIdentifier>
-          <NewMemberFileName>Plugin.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Enum>
-    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAQAAgAAAAAAAAAAAAAAAAAAAAACAAABAAAAAAAAAAA=</HashCode>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAACAAABAAAAAAAAAEA=</HashCode>
       <FileName>Plugin.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -215,7 +149,7 @@
       <FileName>Plugin.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Framework.LocalPlugin">
+  <Class Name="Framework.MasterPlugin">
     <Position X="0.5" Y="4.75" Width="3.75" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>

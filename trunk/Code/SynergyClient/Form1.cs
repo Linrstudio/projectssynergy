@@ -29,7 +29,18 @@ namespace SynergyClient
 
         void Root_OnRefresh()
         {
-            Root.SetViewFit(Graphics.defaultshader);
+            //draw a background of some sorts
+            Graphics.defaultshader.Begin();
+
+            Graphics.defaultshader.SetParameter("View", new Float2x3(2, 0, 0, 2, -1, -1));
+            Graphics.defaultshader.SetParameter("DiffuseMap", ClientResources.Background);
+
+            Graphics.DrawRectangle(new Float2(0, 0), new Float2(1, 0), new Float2(0, 1), new Float2(1, 1), 0.5f);
+
+            Graphics.defaultshader.End();
+
+
+            //Root.SetViewFit(Graphics.defaultshader);
             Root.Draw();
             SynergyGraphics.Graphics.Present(p_WorkingArea.Handle);
         }
@@ -44,9 +55,11 @@ namespace SynergyClient
             Root.Resolution.X = Bounds.Width;
             Root.Resolution.Y = Bounds.Height;
             Root.Update();
+
+            Root_OnRefresh();
         }
 
-        
+
 
         private void Form1_Load(object sender, EventArgs e)
         {

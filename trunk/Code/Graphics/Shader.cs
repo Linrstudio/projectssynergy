@@ -41,6 +41,17 @@ namespace SynergyGraphics
             shader.Parameters[_FieldName].SetValue(new Vector4(_Float4.X, _Float4.Y, _Float4.Z, _Float4.W));
         }
 
+        public void SetParameter(string _FieldName, Float2x3 _Float4)
+        {
+            shader.Parameters[_FieldName].SetValue(
+                new float[]{
+                _Float4.X.X,_Float4.Y.X,0,0,
+                _Float4.X.Y,_Float4.Y.Y,0,0,
+                0,0,1,0,
+                _Float4.T.X,_Float4.T.Y,0,1
+                });
+        }
+
         public void Begin()
         {
             shader.Begin();

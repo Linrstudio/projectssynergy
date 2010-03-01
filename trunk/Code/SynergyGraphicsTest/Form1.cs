@@ -18,6 +18,8 @@ namespace SynergyGraphicsTest
 
         Rect DesktopBounds = Graphics.GetTotalDesktopSize();
 
+        Float2 Pos;
+
         public Form1()
         {
             InitializeComponent();
@@ -51,22 +53,14 @@ namespace SynergyGraphicsTest
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
+            Pos.X = ((float)MousePosition.X - (float)DesktopBounds.From.X) / (float)DesktopBounds.Size.X;
+            Pos.Y = ((float)MousePosition.Y - (float)DesktopBounds.From.Y) / (float)DesktopBounds.Size.Y;
             SynergyGraphics.Graphics.Clear(new Float4(0, 0, 0, 1));
             shader.SetParameter("DiffuseMap", test);
-
+            shader.SetParameter("View", new Float2x3(2, 0, 0, 2, 0, 0));
             Graphics.SetAlphaBlending(true);
 
             shader.Begin();
-            SynergyGraphics.Graphics.DrawRectangle(
-                new Float3(-0.5f, -0.5f, 0),
-                new Float3(0.5f, -0.5f, 0),
-                new Float3(-0.5f, 0.5f, 0),
-                new Float3(0.5f, 0.5f, 0));
-            SynergyGraphics.Graphics.DrawRectangle(
-                new Float3(-0.25f, -0.25f, 0),
-                new Float3(0.75f, -0.25f, 0),
-                new Float3(-0.25f, 0.75f, 0),
-                new Float3(0.75f, 0.75f, 0));
             SynergyGraphics.Graphics.DrawRectangle(
                 new Float3(0, 0, 0),
                 new Float3(1, 0, 0),
@@ -87,6 +81,11 @@ namespace SynergyGraphicsTest
                     new Int2(w.Bounds.Width, w.Bounds.Height)
                     );
             }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            Refresh();
         }
     }
 }
