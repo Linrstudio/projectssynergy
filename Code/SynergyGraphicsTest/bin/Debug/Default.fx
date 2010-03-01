@@ -14,11 +14,15 @@ struct PSin
 texture2D DiffuseMap;
 sampler2D DiffuseSampler=sampler_state{Texture = <DiffuseMap>;MinFilter=Linear;MagFilter=Linear;MipFilter=Linear;};
 
+float2x3 View;
+
 PSin MainVS(VSin input)
 {
     PSin output;
     //output.Position = mul(float4(input.Position.xyz,1),mul(World,mul(View,Projection)));
-	output.Position=input.Position*float4(1,-1,1,1);
+	//output.Position=input.Position*float4(1,-1,1,1);
+	output.Position=float4(0,0,1,1);
+	output.Position.xy=mul(input.Position.xy,View).xy;
 	output.UV=input.UV;
     return output;
 }

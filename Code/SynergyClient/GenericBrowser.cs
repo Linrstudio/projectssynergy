@@ -25,14 +25,14 @@ namespace SynergyClient
 
         void GenericBrowser_OnRefresh()
         {
-            SetViewFit(Graphics.defaultshader);
+            //SetViewRelativeToParent(Graphics.defaultshader);
             Graphics.defaultshader.SetParameter("DiffuseMap", ClientResources.Background);
             Graphics.defaultshader.Begin();
             Graphics.DrawRectangle(
                 new Float2(0, 0),
-                new Float2(1, 0),
-                new Float2(0, 1),
-                new Float2(1, 1),
+                new Float2(Size.X, 0),
+                new Float2(0, Size.Y),
+                Size,
                 0.5f);
             Graphics.defaultshader.End();
         }
@@ -110,7 +110,7 @@ namespace SynergyClient
         }
         public void OnDraw()
         {
-            SetViewFit(Graphics.defaultshader);
+            //SetViewRelativeToParent(Graphics.defaultshader);
             Graphics.defaultshader.SetParameter("DiffuseMap", ClientResources.GenericBrowserHeaderBackground);
             Graphics.defaultshader.Begin();
             Graphics.DrawRectangle(
@@ -136,7 +136,7 @@ namespace SynergyClient
         }
         public void OnDraw()
         {
-            SetViewFit(Graphics.defaultshader);
+            //SetViewRelativeToParent(Graphics.defaultshader);
             Graphics.defaultshader.SetParameter("DiffuseMap", ClientResources.GenericBrowserElementBackground);
             Graphics.defaultshader.Begin();
             Graphics.DrawRectangle(

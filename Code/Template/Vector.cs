@@ -25,6 +25,9 @@ namespace SynergyTemplate
         public static Int2 operator /(Int2 _A, Int2 _B) { return new Int2(_A.X / _B.X, _A.Y / _B.Y); }
         public static Int2 operator /(Int2 _A, int _B) { return new Int2(_A.X / _B, _A.Y / _B); }
         public static Int2 operator -(Int2 _A) { return new Int2(-_A.X, -_A.Y); }
+
+        //casts
+        //public static implicit operator Int2(Float2 _V) { return new Int2((int)_V.X, (int)_V.Y); }
     }
 
     public struct Float2
@@ -50,8 +53,11 @@ namespace SynergyTemplate
 
         public float Length() { return (float)Math.Sqrt(X * X + Y * Y); }
 
+        //casts
+        public static implicit operator Float2(Int2 _V) { return new Float2((float)_V.X, (float)_V.Y); }
+
         //Methods
-        public static float Dot(Float2 _A, Float2 _B){return _A.X * _B.X + _A.Y + _B.Y;}
+        public static float Dot(Float2 _A, Float2 _B) { return _A.X * _B.X + _A.Y + _B.Y; }
         public static Float2 Normalize(Float2 _A) { return _A / _A.Length(); }
     }
 

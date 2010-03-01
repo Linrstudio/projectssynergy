@@ -194,7 +194,7 @@ namespace FrontEnd
                             new TCPListener(1000);
                         break;
                     case "load":
-                        new LocalPlugin("k8055", System.IO.File.ReadAllText(split[1]));
+                        new MasterPlugin("k8055", System.IO.File.ReadAllText(split[1]));
                         break;
                     case "deletenetworkclasses":
                         NetworkManager.LocalNode.NetworkClasses.Clear();
