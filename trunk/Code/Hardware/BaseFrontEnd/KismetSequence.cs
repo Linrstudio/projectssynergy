@@ -15,37 +15,53 @@ namespace BaseFrontEnd
         public ushort BytesUsed { get { return bytesused; } }
         public List<string> Globals = new List<string>();//index == address;
 
+        public delegate void OnAssambleHandler();
+        public event OnAssambleHandler OnAssamble;
+
         public EEPROM(ushort _EEPROMSize)
         {
             size = _EEPROMSize;
+        }
+
+        public Device RegisterDevice(ProductDataBase.Device _Device, ushort _DeviceID)
+        {
+            Device d = new Device(this, _Device, _DeviceID);
+            foreach (ProductDataBase.Device.Event e in _Device.events)
+            {
+                d.Events.Add(e.ID, new Device.Event(d, e));
+            }
+            Devices.Add(_DeviceID, d);
+            return d;
         }
 
         public SortedDictionary<ushort, Device> Devices = new SortedDictionary<ushort, Device>();
 
         public class Device
         {
-            public Device(EEPROM _EEPROM, ushort _ID)
+            public Device(EEPROM _EEPROM, ProductDataBase.Device _Device, ushort _ID)
             {
                 eeprom = _EEPROM;
                 ID = _ID;
+                device = _Device;
             }
             public EEPROM eeprom;
             public ushort addr = 0;
             public ushort eventaddr = 0;
             public ushort ID;
+            public ProductDataBase.Device device;
             public SortedDictionary<byte, Event> Events = new SortedDictionary<byte, Event>();
 
             public class Event
             {
                 public Device device;
                 public ushort addr = 0;
-                public byte ID;
+                public ProductDataBase.Device.Event eventtype;
 
-                public Event(Device _Device, byte _ID)
+                public Event(Device _Device, ProductDataBase.Device.Event _Event)
                 {
                     device = _Device;
-                    ID = _ID;
                     sequence = new KismetSequence(this);
+                    eventtype = _Event;
                 }
 
                 public ushort SequenceAddr;
@@ -82,7 +98,7 @@ namespace BaseFrontEnd
                 foreach (Device.Event e in d.Events.Values)
                 {
                     e.addr = addr;
-                    buffer[e.addr] = e.ID;
+                    buffer[e.addr] = e.eventtype.ID;
                     buffer[e.addr + 1] = 1;
                     buffer[e.addr + 2] = 1;
                     addr += 3;
@@ -121,6 +137,8 @@ namespace BaseFrontEnd
 
             Console.WriteLine("EEPROM used {0} out of {1} byte ({2}%)", addr, Size, (int)(((float)addr / (float)Size) * 100));
 
+            if (OnAssamble != null) OnAssamble();
+
             return buffer;
         }
 
@@ -131,11 +149,12 @@ namespace BaseFrontEnd
             foreach (Device d in Devices.Values)
             {
                 XElement device = new XElement("Device");
-                device.SetAttributeValue("ID", d.ID.ToString());
+                device.SetAttributeValue("TypeID", d.device.ID.ToString());
+                device.SetAttributeValue("DeviceID", d.ID.ToString());
                 foreach (Device.Event e in d.Events.Values)
                 {
                     XElement method = new XElement("Event");
-                    method.SetAttributeValue("ID", e.ID);
+                    method.SetAttributeValue("ID", e.eventtype.ID);
                     foreach (CodeBlock b in e.sequence.codeblocks)
                     {
                         XElement block = null;
@@ -172,14 +191,14 @@ namespace BaseFrontEnd
             XElement file = XElement.Load(_FileName);
             foreach (XElement device in file.Elements("Device"))
             {
-                ushort deviceid = ushort.Parse(device.Attribute("ID").Value);
-                Device d = new Device(eeprom, deviceid);
-                eeprom.Devices.Add(deviceid, d);
+                ushort typeid = ushort.Parse(device.Attribute("TypeID").Value);
+                ushort deviceid = ushort.Parse(device.Attribute("DeviceID").Value);
+                Device d = eeprom.RegisterDevice(ProductDataBase.GetDeviceByID(typeid), deviceid);
 
                 foreach (XElement method in device.Elements("Event"))
                 {
                     byte methodid = byte.Parse(method.Attribute("ID").Value);
-                    Device.Event e = new Device.Event(d, methodid);
+                    Device.Event e = d.Events[methodid];
                     {
                         XElement block = method.Element("Root");
                         string blocktype = (string)block.Attribute("Type").Value;
@@ -206,11 +225,8 @@ namespace BaseFrontEnd
                         int inputowner = int.Parse(connection.Attribute("InputOwner").Value);
                         int output = int.Parse(connection.Attribute("Output").Value);
                         int outputowner = int.Parse(connection.Attribute("OutputOwner").Value);
-
                         e.sequence.Connect(e.sequence.codeblocks[outputowner].Outputs[output], e.sequence.codeblocks[inputowner].Inputs[input]);
                     }
-
-                    d.Events.Add(methodid, e);
                 }
             }
 
@@ -227,7 +243,7 @@ namespace BaseFrontEnd
         public KismetSequence(EEPROM.Device.Event _Event)
         {
             Event = _Event;
-            root = new PushEvent(this);
+            root = new DefaultEvent(this);
             if (!codeblocks.Contains(root)) codeblocks.Add(root);
         }
 

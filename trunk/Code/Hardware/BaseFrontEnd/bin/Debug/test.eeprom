@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <EEPROM>
-  <Device ID="1">
+  <Device TypeID="1" DeviceID="1">
     <Event ID="1">
-      <Root GUID="0" Type="BaseFrontEnd.PushEvent" Values="" />
+      <Root GUID="0" Type="BaseFrontEnd.DefaultEvent" Values="" />
       <Block GUID="1" Type="BaseFrontEnd.BlockGetVariable" Values="Blink" />
       <Block GUID="2" Type="BaseFrontEnd.BlockIf" Values="" />
       <Block GUID="3" Type="BaseFrontEnd.BlockGetSecond" Values="" />
@@ -25,17 +25,19 @@
       <Connect Input="0" InputOwner="9" Output="0" OutputOwner="4" />
     </Event>
     <Event ID="2">
-      <Root GUID="0" Type="BaseFrontEnd.PushEvent" Values="" />
+      <Root GUID="0" Type="BaseFrontEnd.DefaultEvent" Values="" />
     </Event>
     <Event ID="3">
-      <Root GUID="0" Type="BaseFrontEnd.PushEvent" Values="" />
+      <Root GUID="0" Type="BaseFrontEnd.DefaultEvent" Values="" />
     </Event>
     <Event ID="4">
-      <Root GUID="0" Type="BaseFrontEnd.PushEvent" Values="" />
+      <Root GUID="0" Type="BaseFrontEnd.DefaultEvent" Values="" />
     </Event>
-    <Event ID="5">
-      <Root GUID="0" Type="BaseFrontEnd.PushEvent" Values="" />
-      <Block GUID="1" Type="BaseFrontEnd.BlockSetVariable" Values="Blink" />
+  </Device>
+  <Device TypeID="2" DeviceID="2">
+    <Event ID="1">
+      <Root GUID="0" Type="BaseFrontEnd.DefaultEvent" Values="" />
+      <Block GUID="0" Type="BaseFrontEnd.BlockSetVariable" Values="Blink" />
       <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
     </Event>
   </Device>

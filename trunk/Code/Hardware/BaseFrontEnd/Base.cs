@@ -190,7 +190,7 @@ namespace BaseFrontEnd
             KismetEnable();
         }
 
-        public void ReadTime()
+        public string ReadTime()
         {
             SendCommand('t', 'r');
             byte hour = Read(1)[0];
@@ -199,6 +199,7 @@ namespace BaseFrontEnd
             byte day = Read(1)[0];
 
             Console.WriteLine("[{0}:{1}:{2} day:{3}]", hour, minute, second, (DayOfWeek)day);
+            return string.Format("{3} {0}:{1}:{2}", hour.ToString("00"), minute.ToString("00"), second.ToString("00"), (DayOfWeek)day);
         }
 
         public void SetTime(DateTime _Time)
