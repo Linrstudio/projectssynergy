@@ -12,13 +12,11 @@ namespace BaseFrontEnd
         public BaseBlockConditions(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawLines(Pens.Black, new Point[]
-            {
-            new Point(x-50,y-75/2),
-            new Point(x+50,y),
-            new Point(x-50,y+75/2),
-            new Point(x-50,y-75/2)
-            });
+            DrawShape(_Graphics,
+            new Point( - 50,  - 75 / 2),
+            new Point( + 50, 0),
+            new Point( - 50,  + 75 / 2),
+            new Point( - 50,  - 75 / 2));
             base.Draw(_Graphics);
         }
     }
@@ -38,7 +36,7 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawEllipse(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            DrawCircle(_Graphics, new Point(x, y), new Point(width, height));
             base.Draw(_Graphics);
         }
     }
@@ -46,6 +44,16 @@ namespace BaseFrontEnd
     public class BaseBlockVariable : CodeBlock
     {
         public BaseBlockVariable(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            DrawShape(_Graphics,
+                new Point(-width / 2, -height / 2),
+                new Point(-width / 2, height / 2),
+                new Point(width / 2, height / 2),
+                new Point(width / 2, -height / 2));
+            base.Draw(_Graphics);
+        }
     }
 
     public class BaseBlockOther : CodeBlock
@@ -57,8 +65,6 @@ namespace BaseFrontEnd
     {
         public BaseBlockEvent(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
     }
-
-
 
     public class BlockSetDebugLed1 : BaseBlockOther
     {
@@ -78,12 +84,16 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            base.Draw(_Graphics);
+            DrawShape(_Graphics,
+                new Point(-width / 2, -height / 2),
+                new Point(-width / 2, height / 2),
+                new Point(width / 2, height / 2),
+                new Point(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("DebugLed1", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
 
@@ -105,12 +115,16 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            base.Draw(_Graphics);
+            DrawShape(_Graphics,
+                new Point(-width / 2, -height / 2),
+                new Point(-width / 2, height / 2),
+                new Point(width / 2, height / 2),
+                new Point(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("DebugLed2", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
 
@@ -130,12 +144,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            base.Draw(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Hour", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
     public class BlockGetMinute : BaseBlockVariable
@@ -154,12 +167,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            base.Draw(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Minute", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
     public class BlockGetSecond : BaseBlockVariable
@@ -178,12 +190,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            base.Draw(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Second", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
     public class BlockGetDay : BaseBlockVariable
@@ -202,12 +213,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            base.Draw(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Day", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
 
@@ -236,11 +246,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
+            base.Draw(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Equals", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
 
@@ -254,7 +264,6 @@ namespace BaseFrontEnd
             Inputs.Add(new Input(this, "A"));
             Inputs.Add(new Input(this, "B"));
             Outputs.Add(new Output(this, "A differs from B"));
-
             UpdateConnectors();
         }
 
@@ -269,11 +278,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
+            base.Draw(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Differs", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
 
@@ -287,7 +296,6 @@ namespace BaseFrontEnd
             Inputs.Add(new Input(this, "A"));
             Inputs.Add(new Input(this, "B"));
             Outputs.Add(new Output(this, "A smaller than B"));
-
             UpdateConnectors();
         }
 
@@ -302,14 +310,13 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
+            base.Draw(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Smaller Than", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
-
 
     public class BlockLargerThan : BaseBlockConditions
     {
@@ -321,7 +328,6 @@ namespace BaseFrontEnd
             Inputs.Add(new Input(this, "A"));
             Inputs.Add(new Input(this, "B"));
             Outputs.Add(new Output(this, "A larger than B"));
-
             UpdateConnectors();
         }
 
@@ -336,11 +342,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
+            base.Draw(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Larger Than", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
 
@@ -384,12 +390,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
+            base.Draw(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString(Value.ToString(), new Font("Arial", 20, FontStyle.Bold), Brushes.Black, x, y, sf);
-
-            base.Draw(_Graphics);
         }
     }
 
@@ -433,11 +438,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
+            base.Draw(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString(Value.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
 
@@ -465,12 +470,16 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            base.Draw(_Graphics);
+            DrawShape(_Graphics,
+                new Point(-width / 2, -height / 2),
+                new Point(-width / 2, height / 2),
+                new Point(width / 2, height / 2),
+                new Point(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Add", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
     public class BlockSubstract : BaseBlockMath
@@ -498,12 +507,16 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            base.Draw(_Graphics);
+            DrawShape(_Graphics,
+                new Point(-width / 2, -height / 2),
+                new Point(-width / 2, height / 2),
+                new Point(width / 2, height / 2),
+                new Point(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Substract", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
     public class BlockMultiply : BaseBlockMath
@@ -531,7 +544,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            DrawShape(_Graphics,
+    new Point(-width / 2, -height / 2),
+    new Point(-width / 2, height / 2),
+    new Point(width / 2, height / 2),
+    new Point(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
@@ -564,7 +581,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            DrawShape(_Graphics,
+                new Point(-width / 2, -height / 2),
+                new Point(-width / 2, height / 2),
+                new Point(width / 2, height / 2),
+                new Point(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
@@ -597,7 +618,11 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            DrawShape(_Graphics,
+                new Point(-width / 2, -height / 2),
+                new Point(-width / 2, height / 2),
+                new Point(width / 2, height / 2),
+                new Point(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
@@ -644,14 +669,12 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            base.Draw(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Get Variable", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y - 8, sf);
             _Graphics.DrawString(Name, new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y + 8, sf);
-
-            base.Draw(_Graphics);
         }
     }
     public class BlockSetVariable : BaseBlockVariable
@@ -691,20 +714,18 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(Pens.Black, new Rectangle(x - width / 2, y - height / 2, width, height));
+            base.Draw(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Set Variable", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y - 8, sf);
             _Graphics.DrawString(Name, new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y + 8, sf);
-
-            base.Draw(_Graphics);
         }
     }
 
-    public class PushEvent : BaseBlockEvent
+    public class DefaultEvent : BaseBlockEvent
     {
-        public PushEvent(KismetSequence _Sequence)
+        public DefaultEvent(KismetSequence _Sequence)
             : base(_Sequence, 0)
         {
             width = 100;
@@ -715,20 +736,17 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawLines(Pens.Black,
-                new Point[]{
-            new Point(x    ,y-height/2),
-            new Point(x+width/2 ,y    ),
-            new Point(x    ,y+height/2),
-            new Point(x-width/2 ,y    ),
-            new Point(x    ,y-height/2)
-                });
-
+            base.Draw(_Graphics);
+            DrawShape(_Graphics,
+                new Point(0, -height / 2),
+                new Point(width / 2, 0),
+                new Point(0, height / 2),
+                new Point(-width / 2, 0)
+                );
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("On Push", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
+            _Graphics.DrawString(Sequence.Event.eventtype.Name, new Font("Arial", 10), Brushes.Black, x, y, sf);
         }
     }
 
@@ -753,20 +771,18 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawLines(Pens.Black,
-                new Point[]{
-            new Point(x    ,y-height/2),
-            new Point(x+width/2 ,y    ),
-            new Point(x    ,y+height/2),
-            new Point(x-width/2 ,y    ),
-            new Point(x    ,y-height/2)
-                });
+            base.Draw(_Graphics);
+            DrawShape(_Graphics,
+                new Point(0, -height / 2),
+                new Point(width / 2, 0),
+                new Point(0, height / 2),
+                new Point(-width / 2, 0)
+                );
 
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("If", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
 
@@ -791,20 +807,18 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            _Graphics.DrawLines(Pens.Black,
-                new Point[]{
-            new Point(x    ,y-height/2),
-            new Point(x+width/2 ,y    ),
-            new Point(x    ,y+height/2),
-            new Point(x-width/2 ,y    ),
-            new Point(x    ,y-height/2)
-                });
+            base.Draw(_Graphics);
+            DrawShape(_Graphics,
+                new Point(0, -height / 2),
+                new Point(width / 2, 0),
+                new Point(0, height / 2),
+                new Point(-width / 2, 0)
+                );
 
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("IfNot", new Font("Arial", 10), Brushes.Black, x, y, sf);
-            base.Draw(_Graphics);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using System.Drawing;
 
 namespace BaseFrontEnd
 {
@@ -62,6 +63,23 @@ namespace BaseFrontEnd
                 }
             }
             return c;
+        }
+
+        public void DrawShape(Graphics _Graphics, params Point[] _Points)
+        {
+            for (int i = 0; i < _Points.Length; i++)
+            {
+                _Points[i].X += x;
+                _Points[i].Y += y;
+            }
+            _Graphics.FillPolygon(new SolidBrush(Color.FromArgb(150, 150, 255)), _Points);
+            _Graphics.DrawPolygon(new Pen(Brushes.Black, 2), _Points);
+        }
+
+        public void DrawCircle(Graphics _Graphics, Point _Position, Point _Size)
+        {
+            _Graphics.FillEllipse(new SolidBrush(Color.FromArgb(150, 150, 255)), new Rectangle(x - _Size.X / 2, y - _Size.Y / 2, _Size.X, _Size.Y));
+            _Graphics.DrawEllipse(new Pen(Brushes.Black, 2), new Rectangle(x - _Size.X / 2, y - _Size.Y / 2, _Size.X, _Size.Y));
         }
 
         public void UpdateConnectors()
@@ -218,10 +236,14 @@ namespace BaseFrontEnd
             return list.ToArray();
         }
 
+        /// <summary>
+        /// returns a list of codeblocks this code block is dependent on, also this codeblock can never connect anything to one of these codeblocks
+        /// </summary>
+        /// <returns></returns>
         public CodeBlock[] GetDependencies()
         {
             List<CodeBlock> list = new List<CodeBlock>();
-
+            list.Add(this);
             foreach (Input i in Inputs)
             {
                 if (i.Connected != null)
@@ -265,7 +287,7 @@ namespace BaseFrontEnd
             {
                 CodeBlocks = new List<Prototype>();
 
-                AddCodeBlock("Event", "", typeof(PushEvent), false);
+                AddCodeBlock("Event", "", typeof(DefaultEvent), false);
 
                 //Constants
                 AddCodeBlock("weekday", "Contant", typeof(BlockConstantWeekDay));

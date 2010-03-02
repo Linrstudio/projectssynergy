@@ -12,6 +12,7 @@ namespace BaseFrontEnd
         [STAThread]
         static void Main()
         {
+            ProductDataBase.Load(@"Products.xml");
             Base b = new Base("COM1");
 
             /*
@@ -29,6 +30,14 @@ namespace BaseFrontEnd
                         b.devices[0].events[0].method.ByteCode = ledcode;
                         */
             //b.eeprom = EEPROM.FromFile("test.eeprom");
+#if true
+            {
+                b.eeprom = EEPROM.FromFile("test.eeprom");
+                var w = new MainWindow(b);
+                w.ShowDialog();
+            }
+#endif
+
             while (true)
             {
                 switch (Console.ReadLine().ToLower())
@@ -77,12 +86,6 @@ namespace BaseFrontEnd
                     case "plcwrite":
                         b.PLCWrite(byte.Parse(Console.ReadLine()));
                         break;
-                    case "edit":
-                        {
-                            KismetEditor editor = new KismetEditor(b.eeprom);
-                            editor.ShowDialog();
-                        }
-                        break;
                     case "invoke":
                         {
                             Console.Write("DeviceID:");
@@ -119,9 +122,11 @@ namespace BaseFrontEnd
                         b.WriteShort(2048);
                         break;
                     case "mainwindow":
-                        var w = new MainWindow(b);
-                        w.ShowDialog();
-                        break;
+                        {
+                            var w = new MainWindow(b);
+                            w.ShowDialog();
+                            break;
+                        }
                 }
                 b.Read(b.Available());
                 Console.WriteLine("Done");

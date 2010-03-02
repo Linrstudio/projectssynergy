@@ -54,7 +54,7 @@ namespace BaseFrontEnd
             return best;
         }
 
-        public CodeBlock.Output GetNearestOutput(Point _pos)
+        private CodeBlock.Output GetNearestOutput(Point _pos)
         {
             if (Sequence == null) return null;
 
@@ -73,7 +73,7 @@ namespace BaseFrontEnd
             return best;
         }
 
-        public void DrawPwettyLine(Graphics g, Point A, Point B)
+        private void DrawPwettyLine(Graphics g, Point A, Point B)
         {
             B.X -= 15;
             Point c = new Point((A.X + B.X) / 2, (A.Y + B.Y) / 2);
@@ -147,16 +147,26 @@ namespace BaseFrontEnd
             if (Sequence == null) return;
             //if (NeedsRecompile) eeprom.Assamble();
             NeedsRecompile = false;
+            int siblingdist = 75;
+            int totalheight = 0;
+            int totalwidth = 0;
             foreach (CodeBlock b in Sequence.codeblocks)
             {
                 b.x = 100 + b.GetDepth() * 150;
+                totalwidth = Math.Max(totalwidth, b.x);
                 List<CodeBlock> siblings = new List<CodeBlock>(b.GetSibblings(Sequence.codeblocks.ToArray()));
                 int idx = siblings.IndexOf(b);
-                b.y = idx * 75;
-                b.y -= siblings.Count * (75 / 2);
+                b.y = idx * siblingdist;
+                b.y -= siblings.Count * (siblingdist / 2);
+                int h = siblings.Count * siblingdist;
+                totalheight = Math.Max(h, totalheight);
+            }
+            Height = totalheight + 200;//plus 200 so the blocks them selfs dont fall off
+            Width = totalwidth + 100;
+            foreach (CodeBlock b in Sequence.codeblocks)
+            {
                 b.y += Height / 2;
             }
-
             /*
             toolStripProgressBar1.Maximum = eeprom.Size;
             toolStripProgressBar1.Value = eeprom.BytesUsed;
