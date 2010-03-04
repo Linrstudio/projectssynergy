@@ -40,6 +40,12 @@ namespace BaseFrontEnd
         public byte[] Code = new byte[] { };
         public int index = 0;
         public byte address;
+        /// <summary>
+        /// branch this block is connected to ( events/ifstatements are branches of some kind )
+        /// </summary>
+        public CodeBlock Branch;
+
+        public bool IsBranch = false;
 
         public virtual void SetValues(string _Values)
         {
@@ -49,6 +55,20 @@ namespace BaseFrontEnd
         public virtual string GetValues()
         {
             return "";
+        }
+
+        public int GetAvarageParentHeight()
+        {
+            int h = 0;
+            int c = 0;
+            foreach (Input i in Inputs)
+            {
+                if (i.Connected != null) { h += i.Connected.Owner.y; c++; }
+            }
+            if (c > 0)
+                return h / c;
+            else 
+                return y;
         }
 
         public CodeBlock GetChildWithHighestIndex()
@@ -82,6 +102,19 @@ namespace BaseFrontEnd
             _Graphics.DrawEllipse(new Pen(Brushes.Black, 2), new Rectangle(x - _Size.X / 2, y - _Size.Y / 2, _Size.X, _Size.Y));
         }
 
+        public void DrawBranch(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(new Pen(Brushes.Black, 2), x, y - height / 2, width / 2, height);
+
+            DrawShape(_Graphics,
+                new Point(-50, 10),
+                new Point(-50, -10),
+                new Point(0, -20),
+                new Point(50, -10),
+                new Point(50, 10),
+                new Point(0, 20));
+        }
+
         public void UpdateConnectors()
         {
             foreach (Input i in Inputs) i.UpdatePosition();
@@ -111,9 +144,20 @@ namespace BaseFrontEnd
 
         private static int CompareCodeBlockByTargetHeight(CodeBlock A, CodeBlock B)
         {
-            if (A.GetTargetHeight() + A.height < B.GetTargetHeight() + B.height) return -1; else return 1;
+            if (A.GetTargetHeight() < B.GetTargetHeight()) return -1; else return 1;
         }
-
+#if true
+        public CodeBlock[] GetSibblings(CodeBlock[] _BlocksInGraph)
+        {
+            List<CodeBlock> blocksfound = new List<CodeBlock>();
+            int depth = GetDepth();
+            foreach (CodeBlock b in _BlocksInGraph)
+            {
+                if (b.GetDepth() == depth) blocksfound.Add(b);
+            }
+            return blocksfound.ToArray();
+        }
+#else
         public CodeBlock[] GetSibblings(CodeBlock[] _BlocksInGraph)
         {
             List<CodeBlock> blocksfound = new List<CodeBlock>();
@@ -141,7 +185,7 @@ namespace BaseFrontEnd
             blocksfound.Sort(CompareCodeBlockByTargetHeight);
             return blocksfound.ToArray();
         }
-
+#endif
         public int GetTargetHeight()
         {
             int outcount = 0;
@@ -236,6 +280,19 @@ namespace BaseFrontEnd
             return list.ToArray();
         }
 
+        public void ConcatenateSizeWithChildren()
+        {
+            height = 200;
+            width = 200;
+            foreach (CodeBlock c in GetAllChildren())
+            {
+                height = Math.Max(height, (Math.Abs(c.y - y) + (c.height / 2)) * 2);
+                width = Math.Max(width, (c.x - x + c.width / 2) * 2);
+            }
+            height += 10;
+            width += 10;
+        }
+
         /// <summary>
         /// returns a list of codeblocks this code block is dependent on, also this codeblock can never connect anything to one of these codeblocks
         /// </summary>
@@ -261,7 +318,8 @@ namespace BaseFrontEnd
 
         public virtual void Draw(System.Drawing.Graphics _Graphics)
         {
-            //_Graphics.DrawString(index.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, x, y - 25);
+            _Graphics.DrawString("idx:"+index.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, x, y - 25);
+            _Graphics.DrawString("depth:"+GetDepth().ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, x, y - 35);
         }
 
         public class Prototype
