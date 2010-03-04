@@ -56,7 +56,7 @@
             // s_WorkingArea
             // 
             this.s_WorkingArea.BackColor = System.Drawing.Color.Transparent;
-            this.s_WorkingArea.Location = new System.Drawing.Point(0, 0);
+            this.s_WorkingArea.Location = new System.Drawing.Point(56, 46);
             this.s_WorkingArea.Name = "s_WorkingArea";
             this.s_WorkingArea.Size = new System.Drawing.Size(531, 238);
             this.s_WorkingArea.TabIndex = 5;

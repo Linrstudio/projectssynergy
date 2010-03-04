@@ -79,7 +79,7 @@ namespace BaseFrontEnd
             Point c = new Point((A.X + B.X) / 2, (A.Y + B.Y) / 2);
             g.DrawBezier(Pens.Black, A.X, A.Y, c.X, A.Y, c.X, B.Y, B.X, B.Y);
             g.FillPolygon(Brushes.Black, new Point[]{
-                new Point(B.X+15, B.Y),
+                new Point(B.X + 15, B.Y),
                 new Point(B.X, B.Y - 5),
                 new Point(B.X, B.Y + 5)
             }, System.Drawing.Drawing2D.FillMode.Alternate);
@@ -147,25 +147,25 @@ namespace BaseFrontEnd
             if (Sequence == null) return;
             //if (NeedsRecompile) eeprom.Assamble();
             NeedsRecompile = false;
-            int siblingdist = 75;
-            int totalheight = 0;
-            int totalwidth = 0;
+            int siblingdist = 150;
             foreach (CodeBlock b in Sequence.codeblocks)
             {
                 b.x = 100 + b.GetDepth() * 150;
-                totalwidth = Math.Max(totalwidth, b.x);
                 List<CodeBlock> siblings = new List<CodeBlock>(b.GetSibblings(Sequence.codeblocks.ToArray()));
                 int idx = siblings.IndexOf(b);
                 b.y = idx * siblingdist;
-                b.y -= siblings.Count * (siblingdist / 2);
+                b.y -= (int)((float)siblings.Count * (float)(siblingdist / 2));
+                b.y += Height / 2;
+                b.y = (b.y + b.GetAvarageParentHeight()) / 2;
                 int h = siblings.Count * siblingdist;
-                totalheight = Math.Max(h, totalheight);
             }
-            Height = totalheight + 200;//plus 200 so the blocks them selfs dont fall off
-            Width = totalwidth + 100;
+
+            Width = Math.Max(Parent.Bounds.Width, Sequence.root.width + 20);
+            Height = Math.Max(Parent.Bounds.Height, Sequence.root.height + 100);
+
             foreach (CodeBlock b in Sequence.codeblocks)
             {
-                b.y += Height / 2;
+
             }
             /*
             toolStripProgressBar1.Maximum = eeprom.Size;

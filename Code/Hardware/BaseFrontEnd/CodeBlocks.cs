@@ -728,21 +728,18 @@ namespace BaseFrontEnd
         public DefaultEvent(KismetSequence _Sequence)
             : base(_Sequence, 0)
         {
+            IsBranch = true;
             width = 100;
             height = 200;
-            Outputs.Add(new Output(this, "Pushed ?"));
+            Outputs.Add(new Output(this, ""));
             UpdateConnectors();
         }
 
         public override void Draw(Graphics _Graphics)
         {
             base.Draw(_Graphics);
-            DrawShape(_Graphics,
-                new Point(0, -height / 2),
-                new Point(width / 2, 0),
-                new Point(0, height / 2),
-                new Point(-width / 2, 0)
-                );
+            ConcatenateSizeWithChildren();
+            DrawBranch(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
@@ -755,7 +752,8 @@ namespace BaseFrontEnd
         public BlockIf(KismetSequence _Sequence)
             : base(_Sequence, 19)
         {
-            width = 50;
+            IsBranch = true;
+            width = 100;
             height = 100;
             Inputs.Add(new Input(this, "Condition"));
             Outputs.Add(new Output(this, ""));
@@ -772,12 +770,8 @@ namespace BaseFrontEnd
         public override void Draw(Graphics _Graphics)
         {
             base.Draw(_Graphics);
-            DrawShape(_Graphics,
-                new Point(0, -height / 2),
-                new Point(width / 2, 0),
-                new Point(0, height / 2),
-                new Point(-width / 2, 0)
-                );
+            ConcatenateSizeWithChildren();
+            DrawBranch(_Graphics);
 
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
@@ -791,7 +785,8 @@ namespace BaseFrontEnd
         public BlockIfNot(KismetSequence _Sequence)
             : base(_Sequence, 20)
         {
-            width = 50;
+            IsBranch = true;
+            width = 100;
             height = 100;
             Inputs.Add(new Input(this, "Condition"));
             Outputs.Add(new Output(this, ""));
@@ -808,12 +803,8 @@ namespace BaseFrontEnd
         public override void Draw(Graphics _Graphics)
         {
             base.Draw(_Graphics);
-            DrawShape(_Graphics,
-                new Point(0, -height / 2),
-                new Point(width / 2, 0),
-                new Point(0, height / 2),
-                new Point(-width / 2, 0)
-                );
+            ConcatenateSizeWithChildren();
+            DrawBranch(_Graphics);
 
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
