@@ -259,6 +259,50 @@ namespace BaseFrontEnd
             foreach (CodeBlock b in codeblocks) foreach (CodeBlock.Output o in b.Outputs) foreach (CodeBlock.Input i in o.Connected.ToArray()) if (i == _In) o.Connected.Remove(i);
             _Out.Connected.Add(_In);
             _In.Connected = _Out;
+            root.UpdateScope();
+            FixIndices();
+        }
+
+        public void FixIndices()
+        {
+            for (int i = 0; i < codeblocks.Count; i++) codeblocks[i].index = i + 1;
+            root.index = 0;
+
+            bool changed = true;
+            while (changed)
+            {
+                changed = false;
+
+                foreach (CodeBlock b in codeblocks)
+                {
+
+                    foreach (CodeBlock d in b.GetDependencies())
+                    {
+                        if (d.index > b.index)
+                        {
+                            int t = d.index;
+                            d.index = b.index;
+                            b.index = t;
+                            changed = true;
+                        }
+                    }
+
+
+                    if (b.IsScope)
+                    {
+                        foreach (CodeBlock d in codeblocks)
+                        {
+                            if (b.Scope == d.Scope && d.index > b.index && !d.IsScope)
+                            {
+                                int t = d.index;
+                                d.index = b.index;
+                                b.index = t;
+                                changed = true;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public byte[] GetByteCode()

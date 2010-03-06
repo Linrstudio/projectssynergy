@@ -13,10 +13,10 @@ namespace BaseFrontEnd
         public override void Draw(Graphics _Graphics)
         {
             DrawShape(_Graphics,
-            new Point( - 50,  - 75 / 2),
-            new Point( + 50, 0),
-            new Point( - 50,  + 75 / 2),
-            new Point( - 50,  - 75 / 2));
+            new Point(-50, -75 / 2),
+            new Point(+50, 0),
+            new Point(-50, +75 / 2),
+            new Point(-50, -75 / 2));
             base.Draw(_Graphics);
         }
     }
@@ -36,7 +36,7 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            DrawCircle(_Graphics, new Point(x, y), new Point(width, height));
+            DrawCircle(_Graphics, new PointF(X, Y), new PointF(width, height));
             base.Draw(_Graphics);
         }
     }
@@ -48,10 +48,10 @@ namespace BaseFrontEnd
         public override void Draw(Graphics _Graphics)
         {
             DrawShape(_Graphics,
-                new Point(-width / 2, -height / 2),
-                new Point(-width / 2, height / 2),
-                new Point(width / 2, height / 2),
-                new Point(width / 2, -height / 2));
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
             base.Draw(_Graphics);
         }
     }
@@ -86,14 +86,14 @@ namespace BaseFrontEnd
         {
             base.Draw(_Graphics);
             DrawShape(_Graphics,
-                new Point(-width / 2, -height / 2),
-                new Point(-width / 2, height / 2),
-                new Point(width / 2, height / 2),
-                new Point(width / 2, -height / 2));
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("DebugLed1", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Debug Led 1", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
 
@@ -117,14 +117,14 @@ namespace BaseFrontEnd
         {
             base.Draw(_Graphics);
             DrawShape(_Graphics,
-                new Point(-width / 2, -height / 2),
-                new Point(-width / 2, height / 2),
-                new Point(width / 2, height / 2),
-                new Point(width / 2, -height / 2));
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("DebugLed2", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Debug Led 2", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
 
@@ -148,7 +148,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Hour", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Hour", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
     public class BlockGetMinute : BaseBlockVariable
@@ -171,7 +171,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Minute", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Minute", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
     public class BlockGetSecond : BaseBlockVariable
@@ -194,7 +194,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Second", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Second", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
     public class BlockGetDay : BaseBlockVariable
@@ -217,7 +217,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Day", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Day", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
 
@@ -250,7 +250,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Equals", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Equals", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
 
@@ -282,7 +282,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Differs", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Differs", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
 
@@ -314,7 +314,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Smaller Than", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Smaller Than", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
 
@@ -346,7 +346,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Larger Than", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Larger Than", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
 
@@ -394,7 +394,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString(Value.ToString(), new Font("Arial", 20, FontStyle.Bold), Brushes.Black, x, y, sf);
+            _Graphics.DrawString(Value.ToString(), new Font("Arial", 20, FontStyle.Bold), Brushes.Black, X, Y, sf);
         }
     }
 
@@ -442,7 +442,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString(Value.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y, sf);
+            _Graphics.DrawString(Value.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y, sf);
         }
     }
 
@@ -472,14 +472,14 @@ namespace BaseFrontEnd
         {
             base.Draw(_Graphics);
             DrawShape(_Graphics,
-                new Point(-width / 2, -height / 2),
-                new Point(-width / 2, height / 2),
-                new Point(width / 2, height / 2),
-                new Point(width / 2, -height / 2));
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Add", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Add", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
     public class BlockSubstract : BaseBlockMath
@@ -509,14 +509,14 @@ namespace BaseFrontEnd
         {
             base.Draw(_Graphics);
             DrawShape(_Graphics,
-                new Point(-width / 2, -height / 2),
-                new Point(-width / 2, height / 2),
-                new Point(width / 2, height / 2),
-                new Point(width / 2, -height / 2));
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Substract", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Substract", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
     public class BlockMultiply : BaseBlockMath
@@ -545,14 +545,14 @@ namespace BaseFrontEnd
         public override void Draw(Graphics _Graphics)
         {
             DrawShape(_Graphics,
-    new Point(-width / 2, -height / 2),
-    new Point(-width / 2, height / 2),
-    new Point(width / 2, height / 2),
-    new Point(width / 2, -height / 2));
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Multiply", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Multiply", new Font("Arial", 10), Brushes.Black, X, Y, sf);
             base.Draw(_Graphics);
         }
     }
@@ -582,14 +582,14 @@ namespace BaseFrontEnd
         public override void Draw(Graphics _Graphics)
         {
             DrawShape(_Graphics,
-                new Point(-width / 2, -height / 2),
-                new Point(-width / 2, height / 2),
-                new Point(width / 2, height / 2),
-                new Point(width / 2, -height / 2));
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Divide", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Divide", new Font("Arial", 10), Brushes.Black, X, Y, sf);
             base.Draw(_Graphics);
         }
     }
@@ -619,14 +619,14 @@ namespace BaseFrontEnd
         public override void Draw(Graphics _Graphics)
         {
             DrawShape(_Graphics,
-                new Point(-width / 2, -height / 2),
-                new Point(-width / 2, height / 2),
-                new Point(width / 2, height / 2),
-                new Point(width / 2, -height / 2));
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Bitwise And", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("Bitwise And", new Font("Arial", 10), Brushes.Black, X, Y, sf);
             base.Draw(_Graphics);
         }
     }
@@ -673,8 +673,8 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Get Variable", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y - 8, sf);
-            _Graphics.DrawString(Name, new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y + 8, sf);
+            _Graphics.DrawString("Get Variable", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y - 8, sf);
+            _Graphics.DrawString(Name, new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y + 8, sf);
         }
     }
     public class BlockSetVariable : BaseBlockVariable
@@ -718,8 +718,8 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Set Variable", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y - 8, sf);
-            _Graphics.DrawString(Name, new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, y + 8, sf);
+            _Graphics.DrawString("Set Variable", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y - 8, sf);
+            _Graphics.DrawString(Name, new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y + 8, sf);
         }
     }
 
@@ -728,7 +728,7 @@ namespace BaseFrontEnd
         public DefaultEvent(KismetSequence _Sequence)
             : base(_Sequence, 0)
         {
-            IsBranch = true;
+            IsScope = true;
             width = 100;
             height = 200;
             Outputs.Add(new Output(this, ""));
@@ -743,7 +743,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString(Sequence.Event.eventtype.Name, new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString(Sequence.Event.eventtype.Name, new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
 
@@ -752,7 +752,7 @@ namespace BaseFrontEnd
         public BlockIf(KismetSequence _Sequence)
             : base(_Sequence, 19)
         {
-            IsBranch = true;
+            IsScope = true;
             width = 100;
             height = 100;
             Inputs.Add(new Input(this, "Condition"));
@@ -776,7 +776,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("If", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("If", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
 
@@ -785,7 +785,7 @@ namespace BaseFrontEnd
         public BlockIfNot(KismetSequence _Sequence)
             : base(_Sequence, 20)
         {
-            IsBranch = true;
+            IsScope = true;
             width = 100;
             height = 100;
             Inputs.Add(new Input(this, "Condition"));
@@ -809,7 +809,7 @@ namespace BaseFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("IfNot", new Font("Arial", 10), Brushes.Black, x, y, sf);
+            _Graphics.DrawString("If not", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
 }

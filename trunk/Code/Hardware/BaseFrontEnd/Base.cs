@@ -246,8 +246,8 @@ namespace BaseFrontEnd
         public void Write(byte _Byte)
         {
             Write(new byte[] { _Byte });
-        }
 
+        }
 
         public void Write(byte[] _Buffer)
         {

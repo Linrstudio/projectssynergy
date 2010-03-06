@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.IO.Ports;
 
 namespace BaseFrontEnd
 {
@@ -12,8 +13,9 @@ namespace BaseFrontEnd
         [STAThread]
         static void Main()
         {
+            Resources.Load();
             ProductDataBase.Load(@"Products.xml");
-            Base b = new Base("COM1");
+            Base b = new Base(SerialPort.GetPortNames()[0]);
 
             /*
                         PushEvent root = new PushEvent();

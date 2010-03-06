@@ -93,9 +93,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="f_AddDevice.resx">
       <DependentUpon>f_AddDevice.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="f_Connect.resx">
       <DependentUpon>f_Connect.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="EventEditForm.resx">
       <DependentUpon>EventEditForm.cs</DependentUpon>
@@ -112,6 +114,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SequenceEditWindow.resx">
       <DependentUpon>SequenceEditWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -126,6 +129,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Resources.cs" />
     <Compile Include="SequenceEditWindow.cs">
       <SubType>UserControl</SubType>
     </Compile>
