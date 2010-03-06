@@ -28,7 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this.t_Update = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
+            // 
+            // t_Update
+            // 
+            this.t_Update.Enabled = true;
+            this.t_Update.Tick += new System.EventHandler(this.t_Update_Tick);
             // 
             // SequenceEditWindow
             // 
@@ -43,5 +50,7 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.Timer t_Update;
     }
 }

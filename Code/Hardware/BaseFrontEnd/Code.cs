@@ -18,23 +18,27 @@ namespace BaseFrontEnd
         public bool NeedsTriggerIn;
         public byte BlockID;
 
-        //indicates weather this codeblock will jump to the next block by itself
-        public bool WillJump = false;
-
         public List<Input> Inputs = new List<Input>();
         public List<Output> Outputs = new List<Output>();
 
         List<int> InputRegisters = new List<int>();
 
+        /// <summary>
+        /// indicates the codeblock that defines the scope this codeblock is in
+        /// </summary>
+        public CodeBlock Scope = null;
+
         //editor stuff
-        public int x;
-        public int y;
-        public int width = 200;
-        public int height = 100;
+        public float targetX;
+        public float targetY;
+        public float X;
+        public float Y;
+        public float width = 200;
+        public float height = 100;
         [Browsable(false)]
-        public int Width { get { return width; } }
+        public float Width { get { return width; } }
         [Browsable(false)]
-        public int Height { get { return height; } }
+        public float Height { get { return height; } }
 
         //used for assambling
         public byte[] Code = new byte[] { };
@@ -43,9 +47,9 @@ namespace BaseFrontEnd
         /// <summary>
         /// branch this block is connected to ( events/ifstatements are branches of some kind )
         /// </summary>
-        public CodeBlock Branch;
 
-        public bool IsBranch = false;
+        public bool IsScope = false;
+        public int ScopeDepth = 0;
 
         public virtual void SetValues(string _Values)
         {
@@ -57,18 +61,51 @@ namespace BaseFrontEnd
             return "";
         }
 
-        public int GetAvarageParentHeight()
+        public float GetAvarageParentHeight()
         {
-            int h = 0;
+            float h = 0;
             int c = 0;
             foreach (Input i in Inputs)
             {
-                if (i.Connected != null) { h += i.Connected.Owner.y; c++; }
+                if (i.Connected != null) { h += i.Connected.Owner.Y; c++; }
             }
             if (c > 0)
                 return h / c;
-            else 
-                return y;
+            else
+                return Y;
+        }
+
+        public void UpdateScope()
+        {
+            int bestdepth = 0;
+            CodeBlock bestscope = null;
+
+            foreach (Input i in Inputs)
+            {
+                if (i.Connected != null)
+                {
+                    CodeBlock pscope = i.Connected.Owner.IsScope ? i.Connected.Owner : i.Connected.Owner.Scope;
+                    if (pscope != null)
+                    {
+                        if (bestscope == null || pscope.ScopeDepth > bestdepth)
+                        {
+                            bestscope = pscope;
+                        }
+                    }
+                }
+            }
+
+            Scope = bestscope;
+            if (Scope != null) ScopeDepth = Scope.ScopeDepth;
+            if (IsScope)
+            {
+                if (Scope != null)
+                {
+                    ScopeDepth = Scope.ScopeDepth + 1;
+                }
+            }
+
+            foreach (Output o in Outputs) foreach (Input i in o.Connected) i.Owner.UpdateScope();
         }
 
         public CodeBlock GetChildWithHighestIndex()
@@ -85,26 +122,32 @@ namespace BaseFrontEnd
             return c;
         }
 
-        public void DrawShape(Graphics _Graphics, params Point[] _Points)
+        public void Update()
+        {
+            X -= (X - targetX) / 2;
+            Y -= (Y - targetY) / 2;
+        }
+
+        public void DrawShape(Graphics _Graphics, params PointF[] _Points)
         {
             for (int i = 0; i < _Points.Length; i++)
             {
-                _Points[i].X += x;
-                _Points[i].Y += y;
+                _Points[i].X += X;
+                _Points[i].Y += Y;
             }
             _Graphics.FillPolygon(new SolidBrush(Color.FromArgb(150, 150, 255)), _Points);
             _Graphics.DrawPolygon(new Pen(Brushes.Black, 2), _Points);
         }
 
-        public void DrawCircle(Graphics _Graphics, Point _Position, Point _Size)
+        public void DrawCircle(Graphics _Graphics, PointF _Position, PointF _Size)
         {
-            _Graphics.FillEllipse(new SolidBrush(Color.FromArgb(150, 150, 255)), new Rectangle(x - _Size.X / 2, y - _Size.Y / 2, _Size.X, _Size.Y));
-            _Graphics.DrawEllipse(new Pen(Brushes.Black, 2), new Rectangle(x - _Size.X / 2, y - _Size.Y / 2, _Size.X, _Size.Y));
+            _Graphics.FillEllipse(new SolidBrush(Color.FromArgb(150, 150, 255)), new RectangleF(X - _Size.X / 2, Y - _Size.Y / 2, _Size.X, _Size.Y));
+            _Graphics.DrawEllipse(new Pen(Brushes.Black, 2), new RectangleF(X - _Size.X / 2, Y - _Size.Y / 2, _Size.X, _Size.Y));
         }
 
         public void DrawBranch(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(new Pen(Brushes.Black, 2), x, y - height / 2, width / 2, height);
+            _Graphics.DrawRectangle(new Pen(Brushes.Black, 2), X, Y - height / 2, width / 2, height);
 
             DrawShape(_Graphics,
                 new Point(-50, 10),
@@ -186,10 +229,10 @@ namespace BaseFrontEnd
             return blocksfound.ToArray();
         }
 #endif
-        public int GetTargetHeight()
+        public float GetTargetHeight()
         {
-            int outcount = 0;
-            int outheight = 0;
+            float outcount = 0;
+            float outheight = 0;
             foreach (Output o in Outputs)
             {
                 foreach (Input c in o.Connected)
@@ -209,7 +252,7 @@ namespace BaseFrontEnd
             public Input(CodeBlock _Owner, string _Text)
             {
                 Owner = _Owner;
-                x = -Owner.width / 2;
+                X = -Owner.width / 2;
                 Text = _Text;
             }
             public string Text;
@@ -217,8 +260,8 @@ namespace BaseFrontEnd
             public System.Windows.Forms.ToolTip tooptip = new System.Windows.Forms.ToolTip();
 
             //position in codeblock
-            public int x;
-            public int y;
+            public float X;
+            public float Y;
             public Output Connected = null;
             public CodeBlock Owner;
 
@@ -226,24 +269,24 @@ namespace BaseFrontEnd
             {
                 float cnt = Owner.Inputs.Count;
                 float idx = (float)Owner.Inputs.IndexOf(this) - ((cnt - 1) / 2);
-                y = (int)((idx / cnt) * Owner.height);
+                Y = (int)((idx / cnt) * Owner.height);
             }
 
-            public System.Drawing.Point GetPosition()
+            public System.Drawing.PointF GetPosition()
             {
-                return new System.Drawing.Point(Owner.x + x, Owner.y + y);
+                return new System.Drawing.PointF(Owner.X + X, Owner.Y + Y);
             }
         }
         public class Output
         {
-            public Output(CodeBlock _Owner, string _Text) { Owner = _Owner; x = Owner.width / 2; Text = _Text; }
+            public Output(CodeBlock _Owner, string _Text) { Owner = _Owner; X = Owner.width / 2; Text = _Text; }
 
             public string Text;
             public System.Windows.Forms.ToolTip tooptip = new System.Windows.Forms.ToolTip();
 
             //position in codeblock
-            public int x;
-            public int y;
+            public float X;
+            public float Y;
             public List<Input> Connected = new List<Input>();
             public CodeBlock Owner;
             public byte RegisterIndex;
@@ -252,12 +295,12 @@ namespace BaseFrontEnd
             {
                 float cnt = Owner.Outputs.Count;
                 float idx = (float)Owner.Outputs.IndexOf(this) - ((cnt - 1) / 2);
-                y = (int)((idx / cnt) * Owner.height);
+                Y = (int)((idx / cnt) * Owner.height);
             }
 
-            public System.Drawing.Point GetPosition()
+            public System.Drawing.PointF GetPosition()
             {
-                return new System.Drawing.Point(Owner.x + x, Owner.y + y);
+                return new System.Drawing.PointF(Owner.X + X, Owner.Y + Y);
             }
         }
 
@@ -282,12 +325,12 @@ namespace BaseFrontEnd
 
         public void ConcatenateSizeWithChildren()
         {
-            height = 200;
+            height = 50;
             width = 200;
             foreach (CodeBlock c in GetAllChildren())
             {
-                height = Math.Max(height, (Math.Abs(c.y - y) + (c.height / 2)) * 2);
-                width = Math.Max(width, (c.x - x + c.width / 2) * 2);
+                height = Math.Max(height, (Math.Abs(c.Y - Y) + (c.height / 2)) * 2);
+                width = Math.Max(width, (c.X - X + c.width / 2) * 2);
             }
             height += 10;
             width += 10;
@@ -318,8 +361,11 @@ namespace BaseFrontEnd
 
         public virtual void Draw(System.Drawing.Graphics _Graphics)
         {
-            _Graphics.DrawString("idx:"+index.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, x, y - 25);
-            _Graphics.DrawString("depth:"+GetDepth().ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, x, y - 35);
+#if true
+            _Graphics.DrawString("idx:" + index.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, X, Y - 25);
+            _Graphics.DrawString("depth:" + GetDepth().ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, X, Y - 35);
+            if (Scope != null) _Graphics.DrawString("scope:" + Scope.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, X, Y - 45);
+#endif
         }
 
         public class Prototype

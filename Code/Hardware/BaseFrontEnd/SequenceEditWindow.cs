@@ -35,7 +35,7 @@ namespace BaseFrontEnd
             SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
         }
 
-        public CodeBlock.Input GetNearestInput(Point _pos)
+        public CodeBlock.Input GetNearestInput(PointF _pos)
         {
             if (Sequence == null) return null;
 
@@ -45,8 +45,8 @@ namespace BaseFrontEnd
             {
                 foreach (CodeBlock.Input o in d.Inputs)
                 {
-                    Point pos = o.GetPosition();
-                    int dx = pos.X - _pos.X; int dy = pos.Y - _pos.Y;
+                    PointF pos = o.GetPosition();
+                    float dx = pos.X - _pos.X; float dy = pos.Y - _pos.Y;
                     float dist = (float)Math.Sqrt(dx * dx + dy * dy);
                     if (dist < bestdist) { bestdist = dist; best = o; }
                 }
@@ -54,7 +54,7 @@ namespace BaseFrontEnd
             return best;
         }
 
-        private CodeBlock.Output GetNearestOutput(Point _pos)
+        private CodeBlock.Output GetNearestOutput(PointF _pos)
         {
             if (Sequence == null) return null;
 
@@ -64,8 +64,8 @@ namespace BaseFrontEnd
             {
                 foreach (CodeBlock.Output o in d.Outputs)
                 {
-                    Point pos = o.GetPosition();
-                    int dx = pos.X - _pos.X; int dy = pos.Y - _pos.Y;
+                    PointF pos = o.GetPosition();
+                    float dx = pos.X - _pos.X; float dy = pos.Y - _pos.Y;
                     float dist = (float)Math.Sqrt(dx * dx + dy * dy);
                     if (dist < bestdist) { bestdist = dist; best = o; }
                 }
@@ -73,20 +73,21 @@ namespace BaseFrontEnd
             return best;
         }
 
-        private void DrawPwettyLine(Graphics g, Point A, Point B)
+        private void DrawPwettyLine(Graphics g, PointF A, PointF B)
         {
             B.X -= 15;
-            Point c = new Point((A.X + B.X) / 2, (A.Y + B.Y) / 2);
+            PointF c = new PointF((A.X + B.X) / 2, (A.Y + B.Y) / 2);
             g.DrawBezier(Pens.Black, A.X, A.Y, c.X, A.Y, c.X, B.Y, B.X, B.Y);
-            g.FillPolygon(Brushes.Black, new Point[]{
-                new Point(B.X + 15, B.Y),
-                new Point(B.X, B.Y - 5),
-                new Point(B.X, B.Y + 5)
+            g.FillPolygon(Brushes.Black, new PointF[]{
+                new PointF(B.X + 15, B.Y),
+                new PointF(B.X, B.Y - 5),
+                new PointF(B.X, B.Y + 5)
             }, System.Drawing.Drawing2D.FillMode.Alternate);
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            e.Graphics.DrawImage(Resources.Background, new Rectangle(0, 0, Width, Height));
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             if (Sequence != null)
             {
@@ -103,33 +104,33 @@ namespace BaseFrontEnd
                     foreach (CodeBlock.Input i in b.Inputs)
                     {
                         p += 1 / (float)(b.Inputs.Count + 1);
-                        Point pos = i.GetPosition();
+                        PointF pos = i.GetPosition();
                         if (!dependencies.Contains(i.Owner))
-                            e.Graphics.FillRectangle(Brushes.Black, new Rectangle(pos.X - 5, pos.Y - 5, 5, 10));
+                            e.Graphics.FillRectangle(Brushes.Black, new RectangleF(pos.X - 5, pos.Y - 5, 5, 10));
 
                         if (i.Connected != null)
                         {
-                            Point x = i.GetPosition();
-                            Point y = i.Connected.GetPosition();
+                            PointF x = i.GetPosition();
+                            PointF y = i.Connected.GetPosition();
                             DrawPwettyLine(e.Graphics, y, x);
                         }
 
                         if (i == input)
                         {
-                            i.tooptip.Show(i.Text, this, new Point(pos.X, pos.Y), 1000);
+                            i.tooptip.Show(i.Text, this, new Point((int)pos.X, (int)pos.Y), 1000);
                         }
                     }
                     p = 0;
                     foreach (CodeBlock.Output i in b.Outputs)
                     {
                         p += 1 / (float)(b.Inputs.Count + 1);
-                        Point pos = i.GetPosition();
+                        PointF pos = i.GetPosition();
                         if (!dependencies.Contains(i.Owner))
-                            e.Graphics.FillRectangle(Brushes.Black, new Rectangle(pos.X, pos.Y - 5, 5, 10));
+                            e.Graphics.FillRectangle(Brushes.Black, new RectangleF(pos.X, pos.Y - 5, 5, 10));
 
                         if (i == output)
                         {
-                            i.tooptip.Show(i.Text, this, new Point(pos.X, pos.Y), 1000);
+                            i.tooptip.Show(i.Text, this, new Point((int)pos.X, (int)pos.Y), 1000);
                         }
                     }
                     b.Draw(e.Graphics);
@@ -150,18 +151,18 @@ namespace BaseFrontEnd
             int siblingdist = 150;
             foreach (CodeBlock b in Sequence.codeblocks)
             {
-                b.x = 100 + b.GetDepth() * 150;
+                b.targetX = 100 + b.GetDepth() * 150;
                 List<CodeBlock> siblings = new List<CodeBlock>(b.GetSibblings(Sequence.codeblocks.ToArray()));
                 int idx = siblings.IndexOf(b);
-                b.y = idx * siblingdist;
-                b.y -= (int)((float)siblings.Count * (float)(siblingdist / 2));
-                b.y += Height / 2;
-                b.y = (b.y + b.GetAvarageParentHeight()) / 2;
+                b.targetY = idx * siblingdist;
+                b.targetY -= (int)((float)siblings.Count * (float)(siblingdist / 2));
+                b.targetY += Height / 2;
+                b.targetY = (b.targetY + b.GetAvarageParentHeight()) / 2;
                 int h = siblings.Count * siblingdist;
             }
 
-            Width = Math.Max(Parent.Bounds.Width, Sequence.root.width + 20);
-            Height = Math.Max(Parent.Bounds.Height, Sequence.root.height + 100);
+            Width = (int)Math.Max(Parent.Bounds.Width, Sequence.root.width + 20);
+            Height = (int)Math.Max(Parent.Bounds.Height, Sequence.root.height + 100);
 
             foreach (CodeBlock b in Sequence.codeblocks)
             {
@@ -200,39 +201,6 @@ namespace BaseFrontEnd
                 SelectedBlock = null;
                 if (nearestout != null && SelectedBlock != nearestout.Owner) { SelectedBlock = nearestout.Owner; if (OnBlockSelect != null)OnBlockSelect(SelectedBlock); }
                 if (nearestin != null && SelectedBlock != nearestin.Owner) { SelectedBlock = nearestin.Owner; if (OnBlockSelect != null)OnBlockSelect(SelectedBlock); }
-            }
-            if (e.Button == MouseButtons.Right)
-            {
-
-                CodeBlock.Output output = GetNearestOutput(new Point(MouseX, MouseY));
-                if (output != null)
-                {
-                    foreach (CodeBlock.Input i in output.Connected) i.Connected = null;
-                    output.Connected.Clear();
-                    NeedsRecompile = true;
-                }
-                else
-                {
-                    CodeBlock.Input input = GetNearestInput(new Point(MouseX, MouseY));
-                    if (input != null)
-                    {
-                        if (input.Connected != null)
-                        {
-                            input.Connected.Connected.Remove(input);
-                            input.Connected = null;
-                            NeedsRecompile = true;
-                        }
-                        else
-                        {
-                            foreach (CodeBlock.Output o in input.Owner.Outputs) o.Connected.Clear();
-                            Sequence.codeblocks.Remove(input.Owner);
-                        }
-                    }
-                    else
-                    {
-                        ShowContextMenu(MouseX, MouseY);
-                    }
-                }
             }
             if (e.Button == MouseButtons.None)
             {
@@ -306,6 +274,46 @@ namespace BaseFrontEnd
         private void SequenceEditWindow_MouseDown(object sender, MouseEventArgs e)
         {
             MouseEvent(e);
+
+            if (e.Button == MouseButtons.Right)
+            {
+
+                CodeBlock.Output output = GetNearestOutput(new Point(MouseX, MouseY));
+                if (output != null)
+                {
+                    foreach (CodeBlock.Input i in output.Connected) i.Connected = null;
+                    output.Connected.Clear();
+                    NeedsRecompile = true;
+                }
+                else
+                {
+                    CodeBlock.Input input = GetNearestInput(new Point(MouseX, MouseY));
+                    if (input != null)
+                    {
+                        if (input.Connected != null)
+                        {
+                            input.Connected.Connected.Remove(input);
+                            input.Connected = null;
+                            NeedsRecompile = true;
+                        }
+                        else
+                        {
+                            foreach (CodeBlock.Output o in input.Owner.Outputs) o.Connected.Clear();
+                            Sequence.codeblocks.Remove(input.Owner);
+                        }
+                    }
+                    else
+                    {
+                        ShowContextMenu(MouseX, MouseY);
+                    }
+                }
+            }
+        }
+
+        private void t_Update_Tick(object sender, EventArgs e)
+        {
+            foreach (CodeBlock c in Sequence.codeblocks) c.Update();
+            Format();
         }
     }
 }
