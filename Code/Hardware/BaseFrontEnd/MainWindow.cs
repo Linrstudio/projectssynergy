@@ -41,6 +41,9 @@ namespace BaseFrontEnd
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
+            
+            toolStrip1.Top = 0;
+            toolStrip2.Top = 0;
             ProductDataBase.Load(@"products.xml");
             UpdateTree();
             UpdateStatusStrip();

@@ -259,81 +259,35 @@ namespace BaseFrontEnd
             foreach (CodeBlock b in codeblocks) foreach (CodeBlock.Output o in b.Outputs) foreach (CodeBlock.Input i in o.Connected.ToArray()) if (i == _In) o.Connected.Remove(i);
             _Out.Connected.Add(_In);
             _In.Connected = _Out;
+            if (!codeblocks.Contains(_Out.Owner)) codeblocks.Add(_Out.Owner);
+            if (!codeblocks.Contains(_In.Owner)) codeblocks.Add(_In.Owner);
+            _In.Owner.Sequence = _Out.Owner.Sequence = this;
             root.UpdateScope();
             FixIndices();
         }
 
+        public CodeBlock[] GetChildrenInScope(CodeBlock _Scope)
+        {
+            List<CodeBlock> found = new List<CodeBlock>();
+            foreach (CodeBlock c in codeblocks)
+            {
+                if (c.Scope == _Scope) found.Add(c);
+            }
+            return found.ToArray();
+        }
+
         public void FixIndices()
         {
-            for (int i = 0; i < codeblocks.Count; i++) codeblocks[i].index = i + 1;
             root.index = 0;
-
-            bool changed = true;
-            while (changed)
-            {
-                changed = false;
-
-                foreach (CodeBlock b in codeblocks)
-                {
-
-                    foreach (CodeBlock d in b.GetDependencies())
-                    {
-                        if (d.index > b.index)
-                        {
-                            int t = d.index;
-                            d.index = b.index;
-                            b.index = t;
-                            changed = true;
-                        }
-                    }
-
-
-                    if (b.IsScope)
-                    {
-                        foreach (CodeBlock d in codeblocks)
-                        {
-                            if (b.Scope == d.Scope && d.index > b.index && !d.IsScope)
-                            {
-                                int t = d.index;
-                                d.index = b.index;
-                                b.index = t;
-                                changed = true;
-                            }
-                        }
-                    }
-                }
-            }
+            int idx = 1;
+            root.FixIndices(ref idx);
         }
 
         public byte[] GetByteCode()
         {
-            List<CodeBlock> blocks = new List<CodeBlock>(root.GetAllChildren());
-            blocks.Add(root);
-            for (int i = 0; i < blocks.Count; i++) blocks[i].index = i + 1;
-            root.index = 0;
-
-            bool changed = true;
-            while (changed)
-            {
-                changed = false;
-
-                foreach (CodeBlock b in blocks)
-                {
-
-                    foreach (CodeBlock d in b.GetDependencies())
-                    {
-                        if (d.index > b.index)
-                        {
-                            int t = d.index;
-                            d.index = b.index;
-                            b.index = t;
-                            changed = true;
-                        }
-                    }
-                }
-            }
-            CodeBlock[] blockssorted = new CodeBlock[blocks.Count];
-            foreach (CodeBlock b in blocks) { blockssorted[b.index] = b; }
+            FixIndices();
+            CodeBlock[] blockssorted = new CodeBlock[codeblocks.Count];
+            foreach (CodeBlock b in codeblocks) { blockssorted[b.index] = b; }
             byte addr = 0;
             foreach (CodeBlock b in blockssorted)
             {
