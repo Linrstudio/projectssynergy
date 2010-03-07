@@ -15,7 +15,6 @@ namespace BaseFrontEnd
         }
 
         public KismetSequence Sequence;
-        public bool NeedsTriggerIn;
         public byte BlockID;
 
         public List<Input> Inputs = new List<Input>();
@@ -51,11 +50,11 @@ namespace BaseFrontEnd
         public bool IsScope = false;
         public int ScopeDepth = 0;
 
+        //for save and load purposes
         public virtual void SetValues(string _Values)
         {
 
         }
-
         public virtual string GetValues()
         {
             return "";
@@ -75,6 +74,7 @@ namespace BaseFrontEnd
                 return Y;
         }
 
+        //determines the scope for this object
         public void UpdateScope()
         {
             int bestdepth = 0;
@@ -108,6 +108,10 @@ namespace BaseFrontEnd
             foreach (Output o in Outputs) foreach (Input i in o.Connected) i.Owner.UpdateScope();
         }
 
+        /// <summary>
+        /// returns the ( possibly indirect ) child with the highest index
+        /// </summary>
+        /// <returns></returns>
         public CodeBlock GetChildWithHighestIndex()
         {
             CodeBlock c = this;
@@ -169,11 +173,72 @@ namespace BaseFrontEnd
 
         }
 
-        public int GetDepth()
+        public void FixIndices(ref int _CurrentIndex)
         {
-            return getdepth(0);
+            if (IsScope)
+            {
+                CodeBlock[] samescope = Sequence.GetChildrenInScope(this);
+                foreach (CodeBlock c in samescope)
+                {
+                    if (!c.IsScope) c.index = _CurrentIndex++;
+                }
+                bool found = true;
+                while (found)
+                {
+                    found = false;
+                    foreach (CodeBlock a in samescope)
+                    {
+                        if (!a.IsScope)
+                        {
+                            foreach (CodeBlock b in a.GetInputs())
+                            {
+                                if (b.Scope == this)//if the block is in the same scope
+                                {
+                                    if (a.index < b.index)
+                                    {
+                                        int i = a.index;
+                                        a.index = b.index;
+                                        b.index = i;
+                                        found = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (CodeBlock c in samescope)
+                {
+                    if (c.IsScope)
+                    {
+                        c.index = _CurrentIndex++;
+                        c.FixIndices(ref _CurrentIndex);
+                    }
+                }
+            }
         }
 
+        public CodeBlock[] GetInputs()
+        {
+            List<CodeBlock> inputs = new List<CodeBlock>();
+            foreach (Input i in Inputs)
+                if (i.Connected != null) inputs.Add(i.Connected.Owner);
+            return inputs.ToArray();
+        }
+
+        public CodeBlock[] GetOutputs()
+        {
+            List<CodeBlock> outputs = new List<CodeBlock>();
+            foreach (Output o in Outputs)
+                foreach (Input i in o.Connected)
+                    outputs.Add(i.Connected.Owner);
+            return outputs.ToArray();
+        }
+
+        /// <summary>
+        /// retrive depth
+        /// </summary>
+        /// <returns></returns>
+        public int GetDepth() { return getdepth(0); }
         private int getdepth(int curdepth)
         {
             int depth = curdepth;
@@ -189,7 +254,7 @@ namespace BaseFrontEnd
         {
             if (A.GetTargetHeight() < B.GetTargetHeight()) return -1; else return 1;
         }
-#if true
+
         public CodeBlock[] GetSibblings(CodeBlock[] _BlocksInGraph)
         {
             List<CodeBlock> blocksfound = new List<CodeBlock>();
@@ -200,35 +265,7 @@ namespace BaseFrontEnd
             }
             return blocksfound.ToArray();
         }
-#else
-        public CodeBlock[] GetSibblings(CodeBlock[] _BlocksInGraph)
-        {
-            List<CodeBlock> blocksfound = new List<CodeBlock>();
-            int depth = GetDepth();
 
-            foreach (CodeBlock b in _BlocksInGraph)
-            {
-                if (b.GetDepth() == depth) blocksfound.Add(b);
-            }
-            //add parents children
-            foreach (Output o in Outputs)
-            {
-                foreach (Input i in o.Connected)
-                {
-                    foreach (Input c in i.Owner.Inputs)
-                    {
-                        if (c.Connected != null)
-                        {
-                            if (!blocksfound.Contains(c.Connected.Owner)) blocksfound.Add(c.Connected.Owner);
-                        }
-                    }
-                }
-            }
-
-            blocksfound.Sort(CompareCodeBlockByTargetHeight);
-            return blocksfound.ToArray();
-        }
-#endif
         public float GetTargetHeight()
         {
             float outcount = 0;

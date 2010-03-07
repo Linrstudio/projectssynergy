@@ -15,7 +15,7 @@ namespace BaseFrontEnd
         {
             Resources.Load();
             ProductDataBase.Load(@"Products.xml");
-            Base b = new Base(SerialPort.GetPortNames()[0]);
+            Base b = new Base("COM1");
 
             /*
                         PushEvent root = new PushEvent();

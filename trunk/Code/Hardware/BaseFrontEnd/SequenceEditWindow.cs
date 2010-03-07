@@ -87,7 +87,10 @@ namespace BaseFrontEnd
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            e.Graphics.DrawImage(Resources.Background, new Rectangle(0, 0, Width, Height));
+            if (Resources.Background != null)//to keep visual studio from crashing on us
+            {
+                e.Graphics.DrawImage(Resources.Background, new Rectangle(0, 0, Width, Height));
+            }
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             if (Sequence != null)
             {
