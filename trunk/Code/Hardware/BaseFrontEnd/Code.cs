@@ -143,7 +143,7 @@ namespace BaseFrontEnd
                 {
                     if (c.Scope == this)
                     {
-                        int d = c.GetDepth() - c.Scope.GetDepth();
+                        int d = (c.GetDepth() - c.Scope.GetDepth())+1;
                         if (d > bestdepth) bestdepth = d;
                     }
                 }
@@ -183,8 +183,8 @@ namespace BaseFrontEnd
                 sibblings.Sort(CompareCodeBlockByTargetHeight);
                 int idx = sibblings.IndexOf(this);
                 int d = GetDepth() - Scope.GetDepth();
-                targetY = Scope.targetY + idx * 150;
-                targetY -= (sibblings.Count - 1) * 150 / 2;
+                targetY = Scope.targetY + idx * KismetSequence.VecticalSpaceBetweenBlocks;
+                targetY -= (sibblings.Count - 1) * (KismetSequence.VecticalSpaceBetweenBlocks / 2);
                 targetX = Scope.targetX + (d * 150);
             }
         }
@@ -193,6 +193,15 @@ namespace BaseFrontEnd
         {
             X -= (X - targetX) / 2;
             Y -= (Y - targetY) / 2;
+
+            if (IsScope) ConcatenateSizeWithChildren();
+        }
+
+        public PointF GetShadowOffset()
+        {
+            //float h = (float)Math.Sqrt(ScopeDepth + 1);
+            float h = ScopeDepth + 1;
+            return new PointF(h * 5, h * 10);
         }
 
         public void DrawShape(Graphics _Graphics, params PointF[] _Points)
@@ -206,22 +215,85 @@ namespace BaseFrontEnd
             _Graphics.DrawPolygon(new Pen(Brushes.Black, 2), _Points);
         }
 
-        public void DrawCircle(Graphics _Graphics, PointF _Position, PointF _Size)
+        public void DrawShapeShadow(Graphics _Graphics, params PointF[] _Points)
         {
-            _Graphics.FillEllipse(new SolidBrush(Color.FromArgb(150, 150, 255)), new RectangleF(X - _Size.X / 2, Y - _Size.Y / 2, _Size.X, _Size.Y));
-            _Graphics.DrawEllipse(new Pen(Brushes.Black, 2), new RectangleF(X - _Size.X / 2, Y - _Size.Y / 2, _Size.X, _Size.Y));
+            for (int i = 0; i < _Points.Length; i++)
+            {
+                _Points[i].X += X + GetShadowOffset().X;
+                _Points[i].Y += Y + GetShadowOffset().Y;
+            }
+            _Graphics.FillPolygon(new SolidBrush(KismetSequence.ShadowColor), _Points);
         }
 
-        public void DrawBranch(Graphics _Graphics)
+        public void DrawTriangle(Graphics _Graphics)
+        {
+            DrawShape(_Graphics,
+                new Point(-50, -75 / 2),
+                new Point(50, 0),
+                new Point(-50, 75 / 2),
+                new Point(-50, -75 / 2));
+        }
+
+        public void DrawBlock(Graphics _Graphics)
+        {
+            DrawShape(_Graphics,
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
+        }
+        public void DrawBlockShadow(Graphics _Graphics)
+        {
+            DrawShapeShadow(_Graphics,
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
+        }
+
+        public void DrawTriangleShadow(Graphics _Graphics)
+        {
+            DrawShapeShadow(_Graphics,
+                new Point(-50, -75 / 2),
+                new Point(50, 0),
+                new Point(-50, 75 / 2),
+                new Point(-50, -75 / 2));
+        }
+
+        public void DrawConstant(Graphics _Graphics)
+        {
+            _Graphics.FillEllipse(new SolidBrush(Color.FromArgb(150, 150, 255)), new RectangleF(X - Width / 2, Y - Height / 2, Width, Height));
+            _Graphics.DrawEllipse(new Pen(Brushes.Black, 2), new RectangleF(X - Width / 2, Y - Height / 2, Width, Height));
+        }
+
+        public void DrawConstantShadow(Graphics _Graphics)
+        {
+            _Graphics.FillEllipse(new SolidBrush(KismetSequence.ShadowColor), new RectangleF(GetShadowOffset().X + X - Width / 2, GetShadowOffset().Y + Y - Height / 2, Width, Height));
+        }
+
+        public void DrawScope(Graphics _Graphics)
         {
             _Graphics.DrawRectangle(new Pen(Brushes.Black, 2), X, Y - height / 2, width / 2, height);
 
             DrawShape(_Graphics,
-                new Point(-50, 10),
-                new Point(-50, -10),
+                new Point(-60, 10),
+                new Point(-60, -10),
                 new Point(0, -20),
-                new Point(50, -10),
-                new Point(50, 10),
+                new Point(60, -10),
+                new Point(60, 10),
+                new Point(0, 20));
+        }
+
+        public void DrawScopeShadow(Graphics _Graphics)
+        {
+            _Graphics.DrawRectangle(new Pen(KismetSequence.ShadowColor, 2), X + GetShadowOffset().X, Y + GetShadowOffset().Y - height / 2, width / 2, height);
+
+            DrawShapeShadow(_Graphics,
+                new Point(-60, 10),
+                new Point(-60, -10),
+                new Point(0, -20),
+                new Point(60, -10),
+                new Point(60, 10),
                 new Point(0, 20));
         }
 
@@ -399,6 +471,15 @@ namespace BaseFrontEnd
                 Y = (int)((idx / cnt) * Owner.height);
             }
 
+            public void DisconnectAll()
+            {
+                foreach (Input i in Connected)
+                {
+                    i.Connected = null;
+                }
+                Connected.Clear();
+            }
+
             public System.Drawing.PointF GetPosition()
             {
                 return new System.Drawing.PointF(Owner.X + X, Owner.Y + Y);
@@ -433,6 +514,7 @@ namespace BaseFrontEnd
                 height = Math.Max(height, (Math.Abs(c.Y - Y) + (c.height / 2)) * 2);
                 width = Math.Max(width, (c.X - X + c.width / 2) * 2);
             }
+            //create spacing around scopes
             height += KismetSequence.SpaceBetweenScopes;
             width += KismetSequence.SpaceBetweenScopes;
         }
@@ -467,6 +549,11 @@ namespace BaseFrontEnd
             _Graphics.DrawString("depth:" + GetDepth().ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, X, Y - 35);
             if (Scope != null) _Graphics.DrawString("scope:" + Scope.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, X, Y - 45);
 #endif
+        }
+
+        public virtual void DrawShadow(System.Drawing.Graphics _Graphics)
+        {
+            //            _Graphics.FillEllipse(Brushes.Black, new RectangleF(X + ScopeDepth * 12, Y + ScopeDepth * 50, width, height));
         }
 
         public class Prototype

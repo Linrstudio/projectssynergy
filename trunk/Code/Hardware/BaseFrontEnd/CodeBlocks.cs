@@ -12,12 +12,13 @@ namespace BaseFrontEnd
         public BaseBlockConditions(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
         public override void Draw(Graphics _Graphics)
         {
-            DrawShape(_Graphics,
-            new Point(-50, -75 / 2),
-            new Point(+50, 0),
-            new Point(-50, +75 / 2),
-            new Point(-50, -75 / 2));
+            DrawTriangle(_Graphics);
             base.Draw(_Graphics);
+        }
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawTriangleShadow(_Graphics);
+            base.DrawShadow(_Graphics);
         }
     }
 
@@ -36,8 +37,14 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            DrawCircle(_Graphics, new PointF(X, Y), new PointF(width, height));
+            DrawConstant(_Graphics);
             base.Draw(_Graphics);
+        }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawConstantShadow(_Graphics);
+            base.DrawShadow(_Graphics);
         }
     }
 
@@ -54,11 +61,37 @@ namespace BaseFrontEnd
                 new PointF(width / 2, -height / 2));
             base.Draw(_Graphics);
         }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawShapeShadow(_Graphics,
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
+            base.DrawShadow(_Graphics);
+        }
     }
 
     public class BaseBlockOther : CodeBlock
     {
         public BaseBlockOther(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+    }
+
+    public class BaseBlockBranch : CodeBlock
+    {
+        public BaseBlockBranch(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+        public override void Draw(Graphics _Graphics)
+        {
+            DrawScope(_Graphics);
+            base.Draw(_Graphics);
+        }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawScopeShadow(_Graphics);
+            base.DrawShadow(_Graphics);
+        }
     }
 
     public class BaseBlockEvent : CodeBlock
@@ -95,6 +128,16 @@ namespace BaseFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Debug Led 1", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawShapeShadow(_Graphics,
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
+            base.DrawShadow(_Graphics);
+        }
     }
 
     public class BlockSetDebugLed2 : BaseBlockOther
@@ -126,6 +169,16 @@ namespace BaseFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Debug Led 2", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawShapeShadow(_Graphics,
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
+            base.DrawShadow(_Graphics);
+        }
     }
 
     public class BlockGetHour : BaseBlockVariable
@@ -133,7 +186,7 @@ namespace BaseFrontEnd
         public BlockGetHour(KismetSequence _Sequence)
             : base(_Sequence, 6)
         {
-            width = 100;
+            width = 75;
             height = 25;
             Inputs.Add(new Input(this, ""));
             Outputs.Add(new Output(this, "Current Hour"));
@@ -471,15 +524,17 @@ namespace BaseFrontEnd
         public override void Draw(Graphics _Graphics)
         {
             base.Draw(_Graphics);
-            DrawShape(_Graphics,
-                new PointF(-width / 2, -height / 2),
-                new PointF(-width / 2, height / 2),
-                new PointF(width / 2, height / 2),
-                new PointF(width / 2, -height / 2));
+            DrawBlock(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Add", new Font("Arial", 10), Brushes.Black, X, Y, sf);
+        }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawBlockShadow(_Graphics);
+            base.DrawShadow(_Graphics);
         }
     }
     public class BlockSubstract : BaseBlockMath
@@ -508,15 +563,17 @@ namespace BaseFrontEnd
         public override void Draw(Graphics _Graphics)
         {
             base.Draw(_Graphics);
-            DrawShape(_Graphics,
-                new PointF(-width / 2, -height / 2),
-                new PointF(-width / 2, height / 2),
-                new PointF(width / 2, height / 2),
-                new PointF(width / 2, -height / 2));
+            DrawBlock(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Substract", new Font("Arial", 10), Brushes.Black, X, Y, sf);
+        }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawBlockShadow(_Graphics);
+            base.DrawShadow(_Graphics);
         }
     }
     public class BlockMultiply : BaseBlockMath
@@ -544,16 +601,18 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            DrawShape(_Graphics,
-                new PointF(-width / 2, -height / 2),
-                new PointF(-width / 2, height / 2),
-                new PointF(width / 2, height / 2),
-                new PointF(width / 2, -height / 2));
+            DrawBlock(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Multiply", new Font("Arial", 10), Brushes.Black, X, Y, sf);
             base.Draw(_Graphics);
+        }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawBlockShadow(_Graphics);
+            base.DrawShadow(_Graphics);
         }
     }
     public class BlockDivide : BaseBlockMath
@@ -581,16 +640,18 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            DrawShape(_Graphics,
-                new PointF(-width / 2, -height / 2),
-                new PointF(-width / 2, height / 2),
-                new PointF(width / 2, height / 2),
-                new PointF(width / 2, -height / 2));
+            DrawBlock(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Divide", new Font("Arial", 10), Brushes.Black, X, Y, sf);
             base.Draw(_Graphics);
+        }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawBlockShadow(_Graphics);
+            base.DrawShadow(_Graphics);
         }
     }
     public class BlockBitMask : BaseBlockMath
@@ -618,16 +679,18 @@ namespace BaseFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
-            DrawShape(_Graphics,
-                new PointF(-width / 2, -height / 2),
-                new PointF(-width / 2, height / 2),
-                new PointF(width / 2, height / 2),
-                new PointF(width / 2, -height / 2));
+            DrawBlock(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Bitwise And", new Font("Arial", 10), Brushes.Black, X, Y, sf);
             base.Draw(_Graphics);
+        }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawBlockShadow(_Graphics);
+            base.DrawShadow(_Graphics);
         }
     }
 
@@ -729,7 +792,7 @@ namespace BaseFrontEnd
             : base(_Sequence, 0)
         {
             IsScope = true;
-            width = 100;
+            width = 120;
             height = 200;
             Outputs.Add(new Output(this, ""));
             UpdateConnectors();
@@ -739,21 +802,27 @@ namespace BaseFrontEnd
         {
             base.Draw(_Graphics);
             ConcatenateSizeWithChildren();
-            DrawBranch(_Graphics);
+            DrawScope(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString(Sequence.Event.eventtype.Name, new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawScopeShadow(_Graphics);
+            base.DrawShadow(_Graphics);
+        }
     }
 
-    public class BlockIf : BaseBlockOther
+    public class BlockIf : BaseBlockBranch
     {
         public BlockIf(KismetSequence _Sequence)
             : base(_Sequence, 19)
         {
             IsScope = true;
-            width = 100;
+            width = 120;
             height = 100;
             Inputs.Add(new Input(this, "Condition"));
             Outputs.Add(new Output(this, ""));
@@ -770,8 +839,6 @@ namespace BaseFrontEnd
         public override void Draw(Graphics _Graphics)
         {
             base.Draw(_Graphics);
-            ConcatenateSizeWithChildren();
-            DrawBranch(_Graphics);
 
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
@@ -780,13 +847,13 @@ namespace BaseFrontEnd
         }
     }
 
-    public class BlockIfNot : BaseBlockOther
+    public class BlockIfNot : BaseBlockBranch
     {
         public BlockIfNot(KismetSequence _Sequence)
             : base(_Sequence, 20)
         {
             IsScope = true;
-            width = 100;
+            width = 120;
             height = 100;
             Inputs.Add(new Input(this, "Condition"));
             Outputs.Add(new Output(this, ""));
@@ -803,9 +870,6 @@ namespace BaseFrontEnd
         public override void Draw(Graphics _Graphics)
         {
             base.Draw(_Graphics);
-            ConcatenateSizeWithChildren();
-            DrawBranch(_Graphics);
-
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
