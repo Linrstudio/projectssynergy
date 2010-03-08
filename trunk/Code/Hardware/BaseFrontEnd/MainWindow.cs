@@ -41,9 +41,13 @@ namespace BaseFrontEnd
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
-            
+            if (!Base.Connected)
+            {
+                t_MainStation.Enabled = false;
+                b_Invoke.Enabled = false;
+            }
             toolStrip1.Top = 0;
-            toolStrip2.Top = 0;
+            t_MainStation.Top = 0;
             ProductDataBase.Load(@"products.xml");
             UpdateTree();
             UpdateStatusStrip();
@@ -64,7 +68,7 @@ namespace BaseFrontEnd
             if (Base.eeprom == null) return;
             foreach (EEPROM.Device d in Base.eeprom.Devices.Values)
             {
-                TreeNode node = new TreeNode(string.Format("{0}({1})",d.device.Name,d.device.ID));
+                TreeNode node = new TreeNode(string.Format("{0}({1})",d.device.Name,d.ID));
                 node.ImageIndex = 0;
                 node.SelectedImageIndex = 0;
                 node.ToolTipText = d.device.Description;
@@ -93,11 +97,14 @@ namespace BaseFrontEnd
                 if (t_contentsContextMenuNode.Tag is EEPROM.Device.Event)
                 {
                     EEPROM.Device.Event evnt = (EEPROM.Device.Event)t_contentsContextMenuNode.Tag;
-                    Base.ExecuteRemoteEvent(evnt.device.ID, evnt.eventtype.ID, 1);// the 1 here is hardcoded
+                    Base.ExecuteRemoteEvent(evnt.device.ID, evnt.eventtype.ID, 0);
                 }
             }
         }
 
+        /// <summary>
+        /// showing a context menu the shitty way
+        /// </summary>
         private void t_contents_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)

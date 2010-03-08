@@ -240,6 +240,8 @@ namespace BaseFrontEnd
         public CodeBlock root = null;
         public List<CodeBlock> codeblocks = new List<CodeBlock>();
 
+        public const float SpaceBetweenScopes = 10;
+
         public KismetSequence(EEPROM.Device.Event _Event)
         {
             Event = _Event;
@@ -262,6 +264,7 @@ namespace BaseFrontEnd
             if (!codeblocks.Contains(_Out.Owner)) codeblocks.Add(_Out.Owner);
             if (!codeblocks.Contains(_In.Owner)) codeblocks.Add(_In.Owner);
             _In.Owner.Sequence = _Out.Owner.Sequence = this;
+            root.Scope = root;
             root.UpdateScope();
             FixIndices();
         }

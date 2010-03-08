@@ -66,7 +66,15 @@ namespace BaseFrontEnd
             int c = 0;
             foreach (Input i in Inputs)
             {
-                if (i.Connected != null) { h += i.Connected.Owner.Y; c++; }
+                if (i.Connected != null)
+                {
+
+                    if (i.Connected.Owner.Scope == Scope || Scope == i.Connected.Owner)
+                    {
+                        h += i.Connected.Owner.Y;
+                        c++;
+                    }
+                }
             }
             if (c > 0)
                 return h / c;
@@ -124,6 +132,61 @@ namespace BaseFrontEnd
                 }
             }
             return c;
+        }
+
+        public void UpdateLayout()
+        {
+            if (IsScope)
+            {
+                int bestdepth = 0;
+                foreach (CodeBlock c in Sequence.codeblocks)
+                {
+                    if (c.Scope == this)
+                    {
+                        int d = c.GetDepth() - c.Scope.GetDepth();
+                        if (d > bestdepth) bestdepth = d;
+                    }
+                }
+                float scopeheight = 0;
+                foreach (CodeBlock c in Sequence.codeblocks)
+                {
+                    if (c.Scope == this && c.IsScope)//all children scopes
+                    {
+                        scopeheight += c.Height / 2;
+                        c.targetY = targetY + scopeheight;
+                        c.targetX = targetX + (bestdepth * 150);
+                        scopeheight += c.Height / 2;
+                        scopeheight += KismetSequence.SpaceBetweenScopes / 2;
+                        c.UpdateLayout();
+                    }
+                }
+                scopeheight -= KismetSequence.SpaceBetweenScopes / 2;
+                foreach (CodeBlock c in Sequence.codeblocks)
+                {
+                    if (c.Scope == this && c.IsScope)//all children scopes
+                    {
+                        c.targetY -= scopeheight / 2;
+                        c.UpdateLayout();
+                    }
+                }
+                foreach (CodeBlock c in Sequence.codeblocks)
+                {
+                    if (c.Scope == this)
+                    {
+                        c.UpdateLayout();
+                    }
+                }
+            }
+            else
+            {
+                List<CodeBlock> sibblings = new List<CodeBlock>(GetSibblings());
+                sibblings.Sort(CompareCodeBlockByTargetHeight);
+                int idx = sibblings.IndexOf(this);
+                int d = GetDepth() - Scope.GetDepth();
+                targetY = Scope.targetY + idx * 150;
+                targetY -= (sibblings.Count - 1) * 150 / 2;
+                targetX = Scope.targetX + (d * 150);
+            }
         }
 
         public void Update()
@@ -252,17 +315,18 @@ namespace BaseFrontEnd
 
         private static int CompareCodeBlockByTargetHeight(CodeBlock A, CodeBlock B)
         {
-            if (A.GetTargetHeight() < B.GetTargetHeight()) return -1; else return 1;
+            if (A.GetAvarageParentHeight() < B.GetAvarageParentHeight()) return -1; else return 1;
         }
 
-        public CodeBlock[] GetSibblings(CodeBlock[] _BlocksInGraph)
+        public CodeBlock[] GetSibblings()
         {
             List<CodeBlock> blocksfound = new List<CodeBlock>();
             int depth = GetDepth();
-            foreach (CodeBlock b in _BlocksInGraph)
+            foreach (CodeBlock b in Sequence.codeblocks)
             {
-                if (b.GetDepth() == depth) blocksfound.Add(b);
+                if (b.GetDepth() == depth && b.Scope == Scope) blocksfound.Add(b);
             }
+            blocksfound.Sort(CompareCodeBlockByTargetHeight);
             return blocksfound.ToArray();
         }
 
@@ -369,8 +433,8 @@ namespace BaseFrontEnd
                 height = Math.Max(height, (Math.Abs(c.Y - Y) + (c.height / 2)) * 2);
                 width = Math.Max(width, (c.X - X + c.width / 2) * 2);
             }
-            height += 10;
-            width += 10;
+            height += KismetSequence.SpaceBetweenScopes;
+            width += KismetSequence.SpaceBetweenScopes;
         }
 
         /// <summary>
@@ -398,7 +462,7 @@ namespace BaseFrontEnd
 
         public virtual void Draw(System.Drawing.Graphics _Graphics)
         {
-#if true
+#if false
             _Graphics.DrawString("idx:" + index.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, X, Y - 25);
             _Graphics.DrawString("depth:" + GetDepth().ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, X, Y - 35);
             if (Scope != null) _Graphics.DrawString("scope:" + Scope.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, X, Y - 45);
@@ -463,7 +527,7 @@ namespace BaseFrontEnd
 
                 //Branching
                 AddCodeBlock("If", "Branches", typeof(BlockIf));
-                AddCodeBlock("If not", "Branches", typeof(BlockIfNot));
+                //    AddCodeBlock("If not", "Branches", typeof(BlockIfNot));// there is a small bug in this one
 
             }
         }

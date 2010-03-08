@@ -2,18 +2,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.IO.Ports;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 
 namespace BaseFrontEnd
 {
     public class Base
     {
         SerialPort port = null;
-
+        bool connected = false;
+        public bool Connected { get { return connected; } }
         public EEPROM eeprom = null;
         byte[] eepromdata;
         public Base(string _PortName)
@@ -27,6 +28,7 @@ namespace BaseFrontEnd
                 Write('h');//hello?
                 WaitForY();
                 eepromsize = ReadShort();
+                connected = true;
             }
             catch { port = null; Console.WriteLine("Failed to open port : {0}", _PortName); }
             eeprom = new EEPROM(eepromsize);
@@ -52,6 +54,7 @@ namespace BaseFrontEnd
 
         public void ReadVariables()
         {
+            if (!Connected) return;
             SendCommand('k', 'v');
             Console.WriteLine();
             for (int i = 0; i < 64; i++)
@@ -87,6 +90,7 @@ namespace BaseFrontEnd
 
         public bool CheckEEPROM()
         {
+            if (!Connected) return false;
             Random random = new Random(Environment.TickCount);
 
             int size = eeprom.Size;//size=256;
@@ -142,6 +146,7 @@ namespace BaseFrontEnd
 
         public void DownloadEEPROM()
         {
+            if (!Connected) return;
             byte[] buf = new byte[eeprom.Size];
             for (ushort b = 0; b < eepromdata.Length; b += 16)
             {
@@ -159,6 +164,7 @@ namespace BaseFrontEnd
         public void UploadEEPROM()
         {
             AssambleEEPROM();
+            if (!Connected) return;
             KismetDisable();
             for (ushort b = 0; b < eeprom.BytesUsed; b += 16)
             {
@@ -176,6 +182,7 @@ namespace BaseFrontEnd
         public void UploadEEPROMBruteForce()
         {
             AssambleEEPROM();
+            if (!Connected) return;
             KismetDisable();
             for (ushort b = 0; b < eeprom.Size; b += 16)
             {
@@ -192,6 +199,7 @@ namespace BaseFrontEnd
 
         public string ReadTime()
         {
+            if (!Connected) return "";
             SendCommand('t', 'r');
             byte hour = Read(1)[0];
             byte minute = Read(1)[0];
@@ -204,8 +212,8 @@ namespace BaseFrontEnd
 
         public void SetTime(DateTime _Time)
         {
+            if (!Connected) return;
             SendCommand('t', 'w');
-
             Write((byte)_Time.Hour);
             Write((byte)_Time.Minute);
             Write((byte)_Time.Second);
@@ -214,6 +222,7 @@ namespace BaseFrontEnd
 
         public void ExecuteRemoteEvent(ushort _DeviceID, byte _EventID, ushort _EventArgs)
         {
+            if (!Connected) return;
             SendCommand('k', 'x');
             WriteShort(_DeviceID);
             Write(_EventID);

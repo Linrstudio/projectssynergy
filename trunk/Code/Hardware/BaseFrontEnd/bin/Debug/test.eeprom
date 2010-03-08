@@ -5,22 +5,28 @@
       <Root GUID="0" Type="BaseFrontEnd.DefaultEvent" Values="" />
       <Block GUID="1" Type="BaseFrontEnd.BlockGetVariable" Values="Blink" />
       <Block GUID="2" Type="BaseFrontEnd.BlockConstantByte" Values="1" />
-      <Block GUID="8" Type="BaseFrontEnd.BlockEquals" Values="" />
-      <Block GUID="9" Type="BaseFrontEnd.BlockIf" Values="" />
-      <Block GUID="14" Type="BaseFrontEnd.BlockIf" Values="" />
-      <Block GUID="11" Type="BaseFrontEnd.BlockSetDebugLed1" Values="" />
-      <Block GUID="16" Type="BaseFrontEnd.BlockSetDebugLed1" Values="" />
+      <Block GUID="11" Type="BaseFrontEnd.BlockEquals" Values="" />
+      <Block GUID="12" Type="BaseFrontEnd.BlockIf" Values="" />
+      <Block GUID="17" Type="BaseFrontEnd.BlockIf" Values="" />
+      <Block GUID="14" Type="BaseFrontEnd.BlockSetDebugLed1" Values="" />
+      <Block GUID="19" Type="BaseFrontEnd.BlockSetDebugLed1" Values="" />
+      <Block GUID="18" Type="BaseFrontEnd.BlockConstantByte" Values="0" />
+      <Block GUID="13" Type="BaseFrontEnd.BlockConstantByte" Values="1" />
+      <Block GUID="10" Type="BaseFrontEnd.BlockDiffers" Values="" />
+      <Block GUID="9" Type="BaseFrontEnd.BlockBitMask" Values="" />
+      <Block GUID="8" Type="BaseFrontEnd.BlockGetSecond" Values="" />
+      <Block GUID="7" Type="BaseFrontEnd.BlockIf" Values="" />
       <Block GUID="15" Type="BaseFrontEnd.BlockConstantByte" Values="0" />
-      <Block GUID="10" Type="BaseFrontEnd.BlockConstantByte" Values="1" />
-      <Block GUID="7" Type="BaseFrontEnd.BlockDiffers" Values="" />
-      <Block GUID="6" Type="BaseFrontEnd.BlockBitMask" Values="" />
-      <Block GUID="5" Type="BaseFrontEnd.BlockGetSecond" Values="" />
-      <Block GUID="4" Type="BaseFrontEnd.BlockIf" Values="" />
-      <Block GUID="12" Type="BaseFrontEnd.BlockConstantByte" Values="0" />
-      <Block GUID="17" Type="BaseFrontEnd.BlockConstantByte" Values="1" />
-      <Block GUID="18" Type="BaseFrontEnd.BlockSetDebugLed2" Values="" />
-      <Block GUID="13" Type="BaseFrontEnd.BlockSetDebugLed2" Values="" />
+      <Block GUID="20" Type="BaseFrontEnd.BlockConstantByte" Values="1" />
+      <Block GUID="21" Type="BaseFrontEnd.BlockSetDebugLed2" Values="" />
+      <Block GUID="16" Type="BaseFrontEnd.BlockSetDebugLed2" Values="" />
       <Block GUID="3" Type="BaseFrontEnd.BlockConstantByte" Values="0" />
+      <Block GUID="4" Type="BaseFrontEnd.BlockDiffers" Values="" />
+      <Block GUID="5" Type="BaseFrontEnd.BlockEquals" Values="" />
+      <Block GUID="22" Type="BaseFrontEnd.BlockIf" Values="" />
+      <Block GUID="23" Type="BaseFrontEnd.BlockConstantByte" Values="0" />
+      <Block GUID="24" Type="BaseFrontEnd.BlockSetDebugLed1" Values="" />
+      <Block GUID="25" Type="BaseFrontEnd.BlockSetDebugLed2" Values="" />
       <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
       <Connect Input="0" InputOwner="2" Output="0" OutputOwner="0" />
       <Connect Input="0" InputOwner="3" Output="0" OutputOwner="18" />
@@ -36,12 +42,20 @@
       <Connect Input="0" InputOwner="11" Output="0" OutputOwner="12" />
       <Connect Input="1" InputOwner="11" Output="0" OutputOwner="2" />
       <Connect Input="0" InputOwner="12" Output="0" OutputOwner="13" />
-      <Connect Input="0" InputOwner="13" Output="0" OutputOwner="1" />
+      <Connect Input="0" InputOwner="13" Output="0" OutputOwner="19" />
       <Connect Input="0" InputOwner="14" Output="0" OutputOwner="4" />
       <Connect Input="0" InputOwner="15" Output="0" OutputOwner="5" />
       <Connect Input="0" InputOwner="16" Output="0" OutputOwner="15" />
       <Connect Input="0" InputOwner="17" Output="0" OutputOwner="14" />
       <Connect Input="0" InputOwner="18" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="19" Output="0" OutputOwner="1" />
+      <Connect Input="1" InputOwner="19" Output="0" OutputOwner="18" />
+      <Connect Input="0" InputOwner="20" Output="0" OutputOwner="18" />
+      <Connect Input="1" InputOwner="20" Output="0" OutputOwner="1" />
+      <Connect Input="0" InputOwner="21" Output="0" OutputOwner="20" />
+      <Connect Input="0" InputOwner="22" Output="0" OutputOwner="21" />
+      <Connect Input="0" InputOwner="23" Output="0" OutputOwner="22" />
+      <Connect Input="0" InputOwner="24" Output="0" OutputOwner="22" />
     </Event>
     <Event ID="2">
       <Root GUID="0" Type="BaseFrontEnd.DefaultEvent" Values="" />
