@@ -201,7 +201,7 @@ namespace BaseFrontEnd
         {
             //float h = (float)Math.Sqrt(ScopeDepth + 1);
             float h = ScopeDepth + 1;
-            return new PointF(h * 5, h * 10);
+            return new PointF(h * 2.5f, h * 5);
         }
 
         public void DrawShape(Graphics _Graphics, params PointF[] _Points)
