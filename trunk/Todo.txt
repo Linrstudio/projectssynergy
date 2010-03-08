@@ -9,6 +9,9 @@ codeblocks per categorie een andere kleur geven
 
 Make new kismet compiler
 
+//frontend bugs
+working area word niet geupdate als je een pijl op een input dragged
+je kan aleen outputs aan inputs maken, niet inputs aan outputs
 
 
 
