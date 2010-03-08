@@ -31,8 +31,7 @@ namespace BaseFrontEnd
         private void SequenceEditWindow_Load(object sender, EventArgs e)
         {
             DoubleBuffered = true;
-            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.EnableNotifyMessage, true);
-            SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.EnableNotifyMessage | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
         }
 
         public CodeBlock.Input GetNearestInput(PointF _pos)
@@ -77,7 +76,7 @@ namespace BaseFrontEnd
         {
             B.X -= 15;
             PointF c = new PointF((A.X + B.X) / 2, (A.Y + B.Y) / 2);
-            g.DrawBezier(Pens.Black, A.X, A.Y, c.X, A.Y, c.X, B.Y, B.X, B.Y);
+            g.DrawBezier(new Pen(Brushes.Black, 2), A.X, A.Y, c.X, A.Y, c.X, B.Y, B.X, B.Y);
             g.FillPolygon(Brushes.Black, new PointF[]{
                 new PointF(B.X + 15, B.Y),
                 new PointF(B.X, B.Y - 5),
@@ -151,26 +150,33 @@ namespace BaseFrontEnd
             if (Sequence == null) return;
             //if (NeedsRecompile) eeprom.Assamble();
             NeedsRecompile = false;
+#if true   
+            foreach (CodeBlock c in Sequence.codeblocks)
+            {
+                c.targetX = 100;
+                c.targetY = 100;
+            }
+            Sequence.root.targetY = 500;
+            Sequence.root.targetX = 150;
+            Sequence.root.UpdateScope();
+            Sequence.root.UpdateLayout();
+#else
             int siblingdist = 150;
             foreach (CodeBlock b in Sequence.codeblocks)
             {
+                if (b == Sequence.root) continue;
                 b.targetX = 100 + b.GetDepth() * 150;
                 List<CodeBlock> siblings = new List<CodeBlock>(b.GetSibblings(Sequence.codeblocks.ToArray()));
                 int idx = siblings.IndexOf(b);
                 b.targetY = idx * siblingdist;
-                b.targetY -= (int)((float)siblings.Count * (float)(siblingdist / 2));
-                b.targetY += Height / 2;
-                b.targetY = (b.targetY + b.GetAvarageParentHeight()) / 2;
-                int h = siblings.Count * siblingdist;
+                b.targetY -= (float)(siblings.Count-1) * (float)(siblingdist / 2);
+                b.targetY += b.GetAvarageParentHeight();
             }
-
+#endif
+            Sequence.root.UpdateLayout();
             Width = (int)Math.Max(Parent.Bounds.Width, Sequence.root.width + 20);
             Height = (int)Math.Max(Parent.Bounds.Height, Sequence.root.height + 100);
 
-            foreach (CodeBlock b in Sequence.codeblocks)
-            {
-
-            }
             /*
             toolStripProgressBar1.Maximum = eeprom.Size;
             toolStripProgressBar1.Value = eeprom.BytesUsed;
