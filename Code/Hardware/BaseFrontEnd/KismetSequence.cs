@@ -240,7 +240,11 @@ namespace BaseFrontEnd
         public CodeBlock root = null;
         public List<CodeBlock> codeblocks = new List<CodeBlock>();
 
-        public const float SpaceBetweenScopes = 10;
+        public static float SpaceBetweenScopes = 10;
+
+        public static float VecticalSpaceBetweenBlocks = 75;
+
+        public static System.Drawing.Color ShadowColor = System.Drawing.Color.DarkGray;
 
         public KismetSequence(EEPROM.Device.Event _Event)
         {

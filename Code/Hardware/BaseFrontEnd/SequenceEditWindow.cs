@@ -74,10 +74,20 @@ namespace BaseFrontEnd
 
         private void DrawPwettyLine(Graphics g, PointF A, PointF B)
         {
+            DrawPwettyLine(g, A, B, System.Drawing.Color.Black);
+        }
+
+        private void DrawPwettyLineShadow(Graphics g, PointF A, PointF B)
+        {
+            DrawPwettyLine(g, A, B, KismetSequence.ShadowColor);
+        }
+
+        private void DrawPwettyLine(Graphics g, PointF A, PointF B,System.Drawing.Color _Color)
+        {
             B.X -= 15;
             PointF c = new PointF((A.X + B.X) / 2, (A.Y + B.Y) / 2);
-            g.DrawBezier(new Pen(Brushes.Black, 2), A.X, A.Y, c.X, A.Y, c.X, B.Y, B.X, B.Y);
-            g.FillPolygon(Brushes.Black, new PointF[]{
+            g.DrawBezier(new Pen(new SolidBrush(_Color), 1.5f), A.X, A.Y, c.X, A.Y, c.X, B.Y, B.X, B.Y);
+            g.FillPolygon(new SolidBrush(_Color), new PointF[]{
                 new PointF(B.X + 15, B.Y),
                 new PointF(B.X, B.Y - 5),
                 new PointF(B.X, B.Y + 5)
@@ -93,6 +103,23 @@ namespace BaseFrontEnd
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             if (Sequence != null)
             {
+                foreach (CodeBlock b in Sequence.codeblocks)
+                {
+                    b.DrawShadow(e.Graphics);
+                    foreach (CodeBlock.Input i in b.Inputs)
+                    {
+                        if (i.Connected != null)
+                        {
+                            PointF x = i.GetPosition();
+                            x.X += i.Owner.GetShadowOffset().X;
+                            x.Y += i.Owner.GetShadowOffset().Y;
+                            PointF y = i.Connected.GetPosition();
+                            y.X += i.Connected.Owner.GetShadowOffset().X;
+                            y.Y += i.Connected.Owner.GetShadowOffset().Y;
+                            DrawPwettyLineShadow(e.Graphics, y, x);
+                        }
+                    }
+                }
                 foreach (CodeBlock b in Sequence.codeblocks)
                 {
                     List<CodeBlock> dependencies = new List<CodeBlock>();
@@ -150,14 +177,14 @@ namespace BaseFrontEnd
             if (Sequence == null) return;
             //if (NeedsRecompile) eeprom.Assamble();
             NeedsRecompile = false;
-#if true   
+#if true
             foreach (CodeBlock c in Sequence.codeblocks)
             {
+                if (c == Sequence.root) continue;
                 c.targetX = 100;
                 c.targetY = 100;
             }
-            Sequence.root.targetY = 500;
-            Sequence.root.targetX = 150;
+            Sequence.root.targetX = 100;
             Sequence.root.UpdateScope();
             Sequence.root.UpdateLayout();
 #else
@@ -174,8 +201,9 @@ namespace BaseFrontEnd
             }
 #endif
             Sequence.root.UpdateLayout();
-            Width = (int)Math.Max(Parent.Bounds.Width, Sequence.root.width + 20);
-            Height = (int)Math.Max(Parent.Bounds.Height, Sequence.root.height + 100);
+            Width = (int)Math.Max(Parent.Bounds.Width, Sequence.root.targetX + Sequence.root.width/2 + 20);
+            Height = (int) Sequence.root.height+100;
+            Sequence.root.targetY = Height / 2;
 
             /*
             toolStripProgressBar1.Maximum = eeprom.Size;
@@ -229,7 +257,7 @@ namespace BaseFrontEnd
                     Selected = null;
                 }
             }
-            Format();
+            //Format();
         }
 
         public void OnContextMenuItemClicked(object sender, EventArgs e)
@@ -307,7 +335,7 @@ namespace BaseFrontEnd
                         }
                         else
                         {
-                            foreach (CodeBlock.Output o in input.Owner.Outputs) o.Connected.Clear();
+                            foreach (CodeBlock.Output o in input.Owner.Outputs) o.DisconnectAll();
                             Sequence.codeblocks.Remove(input.Owner);
                         }
                     }
