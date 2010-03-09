@@ -5,40 +5,56 @@
 #include "RTC.h"
 #include "Kismet.h"
 #include "PLC.h"
+#include "Settings.h"
 
 #define LED1 RA4
 #define LED2 RA5
 
+//#define USETICKCOUNTER
+
 void UARTUpdate();
+#ifdef USETICKCOUNTER
+int16 tickcount=0;
+#endif
 
 void main()
 {
+	//set clockspeed
 	IRCF0=1;
 	IRCF1=1;
 	IRCF2=1;
 
+	//configure debug leds
 	TRISA4=0;
 	TRISA5=0;
 
+	//disable analog pins
 	ANSEL = 0; 
 	ANSELH = 0;
-	SWDTEN=0;
 
-	LED1=0;
-	LED2=0;
+	LED1=1;
+	LED2=1;
 
-
-	UARTInit();
 	//PLCInit();
-	MemoryInit();
 	RTCInit();
+	UARTInit();
+	MemoryInit();
 	KismetInit();
+	SettingsInit();
 	
 	while(1)//main uber duber loop
 	{
 		UARTUpdate();//Handle UART crap
 		RTCUpdate ();//Handle realtime clock
 		//PLCUpdate ();//Handle PowerLineCommunications
+#ifdef USETICKCOUNTER
+		tickcount++;
+		if(tickcount>=5000)//each blink indicates 10000Frames
+		{
+			tickcount=0;
+			LED1=!LED1;
+		}
+#endif
 	}
 }
 
@@ -50,28 +66,19 @@ void UARTUpdate()
 		UARTWriteInt8('y');///yea whats up ?
 		switch(read)
 		{
-			case 'h':
+			case 'h'://Hello!
 			{				
-				UARTWriteInt16(MEMORYSIZE);
+				UARTWriteInt16(SettingsReadInt16(0));
 			}break;
 
-			case 'l'://Set LED
-			{
-				if(UARTReadBool())LED1=1;else LED1=0;
-			}break;
-
-			case 'v'://KismetVariable stuff
+			case 's'://Settings stuff
 			{
 				int8 op = UARTReadInt8();
 				switch(op)
 				{
-					case 'r'://read memory
+					case 'e'://Set external EEPROM Size
 					{
-						for(int i=0;i<255;i++)
-						{
-							UARTWriteInt8(KismetVariables[i]);
-						}
-						UARTWriteInt8(KismetVariables[255]);//since our forloop cant reach 255 print it by hard here
+						SettingsWriteInt16(0,UARTReadInt16());
 					}break;
 				}
 			}break;
@@ -81,33 +88,21 @@ void UARTUpdate()
 				int8 op = UARTReadInt8();
 				switch(op)
 				{
-					case 'x'://write to memory
-					{
-						MemorySPIWrite(0,UARTReadInt8());
-					}break;
-					case 'y'://read from memory
-					{
-						UARTWriteInt8(MemorySPIRead(0));
-					}break;
-					case 's'://read from memory
-					{
-						UARTWriteInt8(MemorySPIReadStatus());
-					}break;
 					case 'w'://write to memory
 					{
 						int16 addr=UARTReadInt16();
 						int8 buffer[16];
 						for(int i=0;i<16;i++)
 						{
-							int8 v=UARTReadInt8();
-							
-							buffer[i]=v;
+							buffer[i]=UARTReadInt8();
 						}
+						MemoryWriteEnable();
 						for(int i=0;i<16;i++)
 						{
 							MemoryWriteInt8(addr,buffer[i]);
 							addr++;
 						}
+						MemoryWriteDisable();
 					}break;
 					case 'r'://read from memory
 					{
@@ -148,6 +143,14 @@ void UARTUpdate()
 				int8 op = UARTReadInt8();
 				switch(op)
 				{
+					case 'v'://read variables
+					{
+						for(int i=0;i<64;i++)
+						{
+							UARTWriteInt16(KismetVariables[i]);
+						}
+					}
+					break;
 					case 'e':
 					{
 						KismetEnabled=1;
@@ -162,7 +165,7 @@ void UARTUpdate()
 					{
 						int16 deviceid =UARTReadInt16();
 						int8  eventid  =UARTReadInt8();
-						int16 eventargs=UARTReadInt8();
+						int16 eventargs=UARTReadInt16();
 						KismetExecuteEvent(deviceid,eventid,eventargs);
 					}
 					break;
