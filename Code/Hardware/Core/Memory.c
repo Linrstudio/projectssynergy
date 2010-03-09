@@ -1,78 +1,27 @@
 #include "Default.h"
 #include "Memory.h"
+#include "UART.h"
 
 void MemoryInit()
 {
-	EEPGD=0;
-	CFGS=0;
-
 	MEMORYTXDIR	=0;
 	MEMORYRXDIR	=1;
 	MEMORYCLKDIR=0;
 	MEMORYCSDIR	=0;
-}
 
-void MemoryWait()
-{
-#ifdef MEMORTEXTERNAL
-#else
-	while(RD);
-	while(WR);
-#endif
-}
-
-int8 MemoryReadInt8(int16 _Addr)
-{
-#ifdef MEMORYEXTERNAL
-	return MemorySPIRead(_Addr);
-#else
-	//seek
-	unsigned char*dat=&_Addr;
- 	MemoryWait();
-	EEADR=dat[0];
-	//read stuff
-	unsigned char data;
-	MemoryWait();
-	RD=1;//read data
-	data=EEDATA;
-	return data;
-#endif
+	MemoryWriteEnable();
 }
 
 int16 MemoryReadInt16(int16 _Addr)
 {
-	short bob;
-	int8*dat=&bob;
+	short var;
+	int8*dat=&var;
 	dat[1]=MemoryReadInt8(_Addr);_Addr++;
 	dat[0]=MemoryReadInt8(_Addr);
-	return bob;
+	return var;
 }
 
-void MemoryWriteInt8(int16 _Addr,int8 _Data)
-{
-#ifdef MEMORYEXTERNAL
-	MemorySPIWrite(_Addr,_Data);
-#else
-	//seek
-	unsigned char*dat=&_Addr;
- 	MemoryWait();
-	EEADR=dat[0];
-	//write stuff
-	MemoryWait();
-	EEDATA=_Data;
-	GIE=0;//disable interrupts
-	WREN=1;//enable writes
-	EECON2=0x55;//required sequence for EEPROM update
-	EECON2=0xAA;
-	WR=1;
-	while(WR);
-	EEIF=0;
-	WREN=0;
-	GIE=1;//re-enable interrupts
-#endif
-}
-
-void MemorySPIWriteEnable()
+void MemoryWriteEnable()
 {
 	MEMORYCS=0;
 	MemorySPIWriteRaw(0b0110);//enable writeing
@@ -80,17 +29,17 @@ void MemorySPIWriteEnable()
 	MemorySPIDelay();
 }
 
-void MemorySPIWriteDisable()
+void MemoryWriteDisable()
 {
 	MEMORYCS=0;
 	MemorySPIWriteRaw(0b0100);//disable writeing
 	MEMORYCS=1;
-	MemorySPIDelay();
+	//MemorySPIDelay();
 }
 
-void MemorySPIWrite(int16 _Addr,int8 _Data)
+void MemoryWriteInt8(int16 _Addr,int8 _Data)
 {
-	MemorySPIWriteEnable();
+	MemoryWriteEnable();
 	MEMORYCS=0;
 	MemorySPIWriteRaw(0b0010);
 	int8*addr=&_Addr;
@@ -98,21 +47,21 @@ void MemorySPIWrite(int16 _Addr,int8 _Data)
 	MemorySPIWriteRaw(addr[0]);
 	MemorySPIWriteRaw(_Data);
 	MEMORYCS=1;
-	MemorySPIDelay();
+	while(MemoryReadStatus()&1);//wait for write to complete
 }
 
-int8 MemorySPIReadStatus()
+int8 MemoryReadStatus()
 {
 	MEMORYCS=0;
 	MemorySPIWriteRaw(0b0101);
 	int8 val=MemorySPIReadRaw();
 	MEMORYCS=1;
-	MemorySPIDelay();
 	return val;
 }
 
-int8 MemorySPIRead(int16 _Addr)
+int8 MemoryReadInt8(int16 _Addr)
 {
+	MEMORYCLK=0;
 	MEMORYCS=0;
 	MemorySPIWriteRaw(0b0011);
 	int8*addr=&_Addr;
@@ -120,15 +69,14 @@ int8 MemorySPIRead(int16 _Addr)
 	MemorySPIWriteRaw(addr[0]);
 	int8 val=MemorySPIReadRaw();
 	MEMORYCS=1;
-	MemorySPIDelay();
-
+	MEMORYCLK=1;
 	return val;
 }
 
 void MemorySPIDelay()
 {
 #if 1
-	//for(int i=0;i<16;i++);
+	//for(int i=0;i<2;i++);
 #else
 	for(int i=0;i<255;i++)for(int i1=0;i1<10;i1++);
 #endif
@@ -139,14 +87,15 @@ void MemorySPIWriteRaw(int8 _Data)
 	for(int i=0;i<8;i++)
 	{
 		MEMORYTX=(_Data>>7)?1:0;
-		MemorySPIDelay();
+		//MemorySPIDelay();
 		MEMORYCLK=1;
-		MemorySPIDelay();
-		MemorySPIDelay();
+		//MemorySPIDelay();
+		//MemorySPIDelay();
 		MEMORYCLK=0;
-		MemorySPIDelay();
+		//MemorySPIDelay();
 		_Data<<=1;
 	}
+	MEMORYTX=0;
 }
 
 int8 MemorySPIReadRaw()
@@ -154,14 +103,14 @@ int8 MemorySPIReadRaw()
 	int8 data=0;
 	for(int i=0;i<8;i++)
 	{
-		MemorySPIDelay();
+		//MemorySPIDelay();
 		MEMORYCLK=1;
 		data<<=1;
 		data+=MEMORYRX?1:0;
-		MemorySPIDelay();
-		MemorySPIDelay();
+		//MemorySPIDelay();
+		//MemorySPIDelay();
 		MEMORYCLK=0;
-		MemorySPIDelay();
+		//MemorySPIDelay();
 	}
 	return data;
 }

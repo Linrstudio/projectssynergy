@@ -11,10 +11,10 @@ if (FERR){TXEN=0;TXEN=1;}\
 }
 
 extern void UARTInit();
-extern unsigned char UARTReadInt8(void);
-extern unsigned short UARTReadInt16();
-extern unsigned int UARTReadBool(void);
-extern unsigned char UARTAvailable(void);
+extern int8 UARTReadInt8(void);
+extern int16 UARTReadInt16();
+extern int8 UARTReadBool(void);
+extern int8 UARTAvailable(void);
 extern void UARTWriteInt8(int8 c);
 extern void UARTWriteString(register const char *str);
 extern void UARTWriteInt16(int16 _Value);

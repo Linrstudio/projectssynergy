@@ -47,12 +47,12 @@ void RTCUpdate()
 					{
 						RTCDay=0;
 					}
-					//KismetExecuteEvent(1,4,RTCDay);//trigger day changed event
+					KismetExecuteEvent(1,4,RTCDay);//trigger day changed event
 				}
-				//KismetExecuteEvent(1,3,RTCHour);//trigger hour changed event
+				KismetExecuteEvent(1,3,RTCHour);//trigger hour changed event
 			}
-			//KismetExecuteEvent(1,2,RTCMinute);//trigger minute changed event
+			KismetExecuteEvent(1,2,RTCMinute);//trigger minute changed event
 		}
-		//KismetExecuteEvent(1,1,RTCSecond);//trigger second changed event
+		KismetExecuteEvent(1,1,RTCSecond);//trigger second changed event
 	}
 }

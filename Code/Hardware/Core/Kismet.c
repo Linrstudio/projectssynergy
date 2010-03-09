@@ -8,12 +8,12 @@ void KismetInit()
 	KismetEnabled=1;
 }
 
-void KismetSetRegister(int8 _Register,int8 _Value)
+void KismetSetRegister(int8 _Register,int16 _Value)
 {
 	KismetRegisters[_Register]=_Value;
 }
 
-int8 KismetGetRegister(int8 _Register)
+int16 KismetGetRegister(int8 _Register)
 {
 	return KismetRegisters[_Register];
 }
@@ -45,34 +45,27 @@ void KismetExecuteMethod(int16 _Deviceid,int16 _MethodAddr)
 			case 1://assign int8data $reg #value
 			{
 				int8 reg  =MemoryReadInt8(BlockAddr+1);
-				int8 value=MemoryReadInt8(BlockAddr+2);
+				int16 value=MemoryReadInt16(BlockAddr+2);
 				KismetSetRegister(reg,value);
-				BlockAddr+=3;
+				BlockAddr+=4;
 			}break;
 			case 2://set debug led1 $on
 			{
 				int8 reg=MemoryReadInt8(BlockAddr+1);
 				int8 on =KismetGetRegister(reg);
-				RA4=on!=0?1:0;
+				RA4=on!=0?0:1;
 				BlockAddr+=2;
 			}break;
 			case 3://set debug led2 $on
 			{
 				int8 reg=MemoryReadInt8(BlockAddr+1);
 				int8 on =KismetGetRegister(reg);
-				RA5=on!=0?1:0;
+				RA5=on!=0?0:1;
 				BlockAddr+=2;
 			}break;
-			case 4://IF $condition #pass addr #fail addr
+			case 4://not implemented
 			{
-				int8 addr;
-				if(KismetGetRegister(MemoryReadInt8(BlockAddr+1)))
-				{
-					addr=MemoryReadInt8(BlockAddr+2);
-				}else{
-					addr=MemoryReadInt8(BlockAddr+3);
-				}
-				BlockAddr = _MethodAddr+addr;
+				return;
 			}break;
 			case 5:// $a $b $equal?
 			{
@@ -138,12 +131,9 @@ void KismetExecuteMethod(int16 _Deviceid,int16 _MethodAddr)
 				KismetSetRegister(addr3,KismetGetRegister(addr1)/KismetGetRegister(addr2));
 				BlockAddr+=4;
 			}break;
-			case 14://assign weekday(int8) $reg #value
+			case 14://not implemented
 			{
-				int8 reg  =MemoryReadInt8(BlockAddr+1);
-				int8 value=MemoryReadInt8(BlockAddr+2);
-				KismetSetRegister(reg,value);
-				BlockAddr+=3;
+				return;
 			}break;
 			case 15://Bitmask $a $b $a&b?
 			{
@@ -175,11 +165,43 @@ void KismetExecuteMethod(int16 _Deviceid,int16 _MethodAddr)
 				KismetSetRegister(addr3,KismetGetRegister(addr1)!=KismetGetRegister(addr2)?1:0);
 				BlockAddr+=4;
 			}break;
+			case 19:// $if not goto $here?
+			{
+				int8 addr1=MemoryReadInt8(BlockAddr+1);
+				int8 addr2=MemoryReadInt8(BlockAddr+2);
+				BlockAddr+=3;
+				if(KismetGetRegister(addr1)==0)
+					BlockAddr=_MethodAddr+addr2;					
+			}break;
+			case 20:// $if goto $here?
+			{
+				int8 addr1=MemoryReadInt8(BlockAddr+1);
+				int8 addr2=MemoryReadInt8(BlockAddr+2);
+				BlockAddr+=3;
+				if(KismetGetRegister(addr1)==0)
+					BlockAddr=_MethodAddr+addr2;					
+			}break;
+			case 21:// $a $b $smaller than?
+			{
+				int8 addr1=MemoryReadInt8(BlockAddr+1);
+				int8 addr2=MemoryReadInt8(BlockAddr+2);
+				int8 addr3=MemoryReadInt8(BlockAddr+3);
+				KismetSetRegister(addr3,KismetGetRegister(addr1)<KismetGetRegister(addr2)?1:0);
+				BlockAddr+=4;
+			}break;
+			case 22:// $a $b $larger than?
+			{
+				int8 addr1=MemoryReadInt8(BlockAddr+1);
+				int8 addr2=MemoryReadInt8(BlockAddr+2);
+				int8 addr3=MemoryReadInt8(BlockAddr+3);
+				KismetSetRegister(addr3,KismetGetRegister(addr1)>KismetGetRegister(addr2)?1:0);
+				BlockAddr+=4;
+			}break;
 		}
 	}
 }
 
-void KismetExecuteEvent(int16 _DeviceID,int8 _EventID,int8 _EventArgs)
+void KismetExecuteEvent(int16 _DeviceID,int8 _EventID,int16 _EventArgs)
 {
 	if(!KismetEnabled)return;
 /*
