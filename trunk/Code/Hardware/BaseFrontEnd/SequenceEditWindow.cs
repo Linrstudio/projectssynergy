@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -12,7 +12,9 @@ namespace BaseFrontEnd
     public partial class SequenceEditWindow : UserControl
     {
         public KismetSequence Sequence = null;
-        public CodeBlock.Output Selected = null;
+        public int SelectedStartedAt = 0;
+        public CodeBlock.Output SelectedOutput = null;
+        public CodeBlock.Input SelectedInput = null;
         public CodeBlock SelectedBlock = null;
 
         public int MouseX;
@@ -74,19 +76,19 @@ namespace BaseFrontEnd
 
         private void DrawPwettyLine(Graphics g, PointF A, PointF B)
         {
-            DrawPwettyLine(g, A, B, System.Drawing.Color.Black);
+            DrawPwettyLine(g, A, B, 1.5f, System.Drawing.Color.Black);
         }
 
         private void DrawPwettyLineShadow(Graphics g, PointF A, PointF B)
         {
-            DrawPwettyLine(g, A, B, KismetSequence.ShadowColor);
+            DrawPwettyLine(g, A, B, 1.5f, KismetSequence.ShadowColor);
         }
 
-        private void DrawPwettyLine(Graphics g, PointF A, PointF B,System.Drawing.Color _Color)
+        private void DrawPwettyLine(Graphics g, PointF A, PointF B, float _Width, System.Drawing.Color _Color)
         {
             B.X -= 15;
             PointF c = new PointF((A.X + B.X) / 2, (A.Y + B.Y) / 2);
-            g.DrawBezier(new Pen(new SolidBrush(_Color), 1.5f), A.X, A.Y, c.X, A.Y, c.X, B.Y, B.X, B.Y);
+            g.DrawBezier(new Pen(new SolidBrush(_Color), _Width), A.X, A.Y, c.X, A.Y, c.X, B.Y, B.X, B.Y);
             g.FillPolygon(new SolidBrush(_Color), new PointF[]{
                 new PointF(B.X + 15, B.Y),
                 new PointF(B.X, B.Y - 5),
@@ -123,7 +125,7 @@ namespace BaseFrontEnd
                 foreach (CodeBlock b in Sequence.codeblocks)
                 {
                     List<CodeBlock> dependencies = new List<CodeBlock>();
-                    if (Selected != null) dependencies.AddRange(Selected.Owner.GetDependencies());
+                    if (SelectedOutput != null) dependencies.AddRange(SelectedOutput.Owner.GetDependencies());
 
                     CodeBlock.Input input = GetNearestInput(new Point(MouseX, MouseY));
                     CodeBlock.Output output = GetNearestOutput(new Point(MouseX, MouseY));
@@ -164,9 +166,15 @@ namespace BaseFrontEnd
                     }
                     b.Draw(e.Graphics);
                 }
-                if (Selected != null)
+                if (SelectedOutput != null && SelectedInput != null)
+
+                    DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), SelectedInput.GetPosition(), 2, Color.Black);
+                else
                 {
-                    DrawPwettyLine(e.Graphics, Selected.GetPosition(), new Point(MouseX, MouseY));
+                    if (SelectedInput != null)//input to mouse
+                        DrawPwettyLine(e.Graphics, new Point(MouseX, MouseY), SelectedInput.GetPosition(), 2, Color.Black);
+                    if (SelectedOutput != null)//output to mouse
+                        DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new Point(MouseX, MouseY), 2, Color.Black);
                 }
             }
             base.OnPaint(e);
@@ -201,8 +209,8 @@ namespace BaseFrontEnd
             }
 #endif
             Sequence.root.UpdateLayout();
-            Width = (int)Math.Max(Parent.Bounds.Width, Sequence.root.targetX + Sequence.root.width/2 + 20);
-            Height = (int) Sequence.root.height+100;
+            Width = (int)Math.Max(Parent.Bounds.Width, Sequence.root.targetX + Sequence.root.width / 2 + 20);
+            Height = (int)Math.Max(Parent.Bounds.Height, Sequence.root.height + 100);
             Sequence.root.targetY = Height / 2;
 
             /*
@@ -213,7 +221,7 @@ namespace BaseFrontEnd
             Refresh();
         }
 
-        public void MouseEvent(MouseEventArgs e)
+        public void MouseEvent(MouseEventArgs e, bool _LClick)
         {
             MouseX = e.X;
             MouseY = e.Y;
@@ -224,38 +232,49 @@ namespace BaseFrontEnd
             {
                 CodeBlock.Output nearestout = GetNearestOutput(new Point(MouseX, MouseY));
                 CodeBlock.Input nearestin = GetNearestInput(new Point(MouseX, MouseY));
-                if (Selected == null)
+
+                if (nearestout != null)
                 {
-                    if (nearestout != null)
+                    if (SelectedOutput == null)
                     {
-                        Selected = nearestout;
-                        //PropertyGrid.SelectedObject = Selected.Owner;
-                        NeedsRecompile = true;
+                        SelectedOutput = nearestout;
+                        if (SelectedInput == null) SelectedStartedAt = 1;
                     }
                 }
-                //select nearest codeblock
+                else if (SelectedStartedAt == 2) SelectedOutput = null;
 
-                SelectedBlock = null;
-                if (nearestout != null && SelectedBlock != nearestout.Owner) { SelectedBlock = nearestout.Owner; if (OnBlockSelect != null)OnBlockSelect(SelectedBlock); }
-                if (nearestin != null && SelectedBlock != nearestin.Owner) { SelectedBlock = nearestin.Owner; if (OnBlockSelect != null)OnBlockSelect(SelectedBlock); }
+                if (nearestin != null)
+                {
+                    if (SelectedInput == null)
+                    {
+                        SelectedInput = nearestin;
+                        if (SelectedOutput == null) SelectedStartedAt = 2;
+                    }
+                }
+                else if (SelectedStartedAt == 1) SelectedInput = null;
+
+
+                //select nearest codeblock
+                if (_LClick)
+                {
+                    if (nearestout != null && SelectedBlock != nearestout.Owner) { SelectedBlock = nearestout.Owner; if (OnBlockSelect != null)OnBlockSelect(SelectedBlock); }
+                    if (nearestin != null && SelectedBlock != nearestin.Owner) { SelectedBlock = nearestin.Owner; if (OnBlockSelect != null)OnBlockSelect(SelectedBlock); }
+                }
+                else { SelectedBlock = null; }
             }
             if (e.Button == MouseButtons.None)
             {
-                CodeBlock.Input nearest = GetNearestInput(new Point(MouseX, MouseY));
-                if (Selected != null)
+                if (SelectedOutput != null && SelectedInput != null)
                 {
-                    if (nearest != null)
+                    List<CodeBlock> dependencies = new List<CodeBlock>();
+                    if (SelectedOutput != null) dependencies.AddRange(SelectedOutput.Owner.GetDependencies());
+                    if (!dependencies.Contains(SelectedInput.Owner))
                     {
-                        List<CodeBlock> dependencies = new List<CodeBlock>();
-                        if (Selected != null) dependencies.AddRange(Selected.Owner.GetDependencies());
-                        if (!dependencies.Contains(nearest.Owner))
-                        {
-                            Sequence.Connect(Selected, nearest);
-                            NeedsRecompile = true;
-                        }
+                        Sequence.Connect(SelectedOutput, SelectedInput);
+                        NeedsRecompile = true;
                     }
-                    Selected = null;
                 }
+                SelectedOutput = null; SelectedInput = null;
             }
             //Format();
         }
@@ -305,12 +324,12 @@ namespace BaseFrontEnd
 
         private void SequenceEditWindow_MouseMove(object sender, MouseEventArgs e)
         {
-            MouseEvent(e);
+            MouseEvent(e, false);
         }
 
         private void SequenceEditWindow_MouseDown(object sender, MouseEventArgs e)
         {
-            MouseEvent(e);
+            MouseEvent(e, true);
 
             if (e.Button == MouseButtons.Right)
             {

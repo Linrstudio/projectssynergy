@@ -35,6 +35,7 @@
             // t_Update
             // 
             this.t_Update.Enabled = true;
+            this.t_Update.Interval = 50;
             this.t_Update.Tick += new System.EventHandler(this.t_Update_Tick);
             // 
             // SequenceEditWindow

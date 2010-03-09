@@ -801,7 +801,6 @@ namespace BaseFrontEnd
         public override void Draw(Graphics _Graphics)
         {
             base.Draw(_Graphics);
-            ConcatenateSizeWithChildren();
             DrawScope(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
