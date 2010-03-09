@@ -1,9 +1,0 @@
-c:\documents\projects\synergy\SynergyK8055\obj\Release\ResolveAssemblyReference.cache
-c:\documents\projects\synergy\SynergyK8055\bin\Release\SynergyK8055.exe
-c:\documents\projects\synergy\SynergyK8055\bin\Release\SynergyK8055.pdb
-c:\documents\projects\synergy\SynergyK8055\bin\Release\SynergyNode.dll
-c:\documents\projects\synergy\SynergyK8055\bin\Release\SynergyNode.pdb
-c:\documents\projects\synergy\SynergyK8055\obj\Release\SynergyK8055.exe
-c:\documents\projects\synergy\SynergyK8055\obj\Release\SynergyK8055.pdb
-C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyK8055\obj\Release\ResolveAssemblyReference.cache
-C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyK8055\obj\Release\SynergyK8055.exe

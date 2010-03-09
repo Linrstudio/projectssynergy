@@ -1,7 +1,0 @@
-C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyWiimote\bin\Debug\SynergyWiimote.exe
-C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyWiimote\bin\Debug\SynergyWiimote.pdb
-C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyWiimote\obj\Debug\ResolveAssemblyReference.cache
-C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyWiimote\obj\Debug\SynergyWiimote.exe
-C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyWiimote\obj\Debug\SynergyWiimote.pdb
-C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyWiimote\bin\Debug\SynergyNode.dll
-C:\DOCUMENTS\PROJECTS\synergysvn\Code\SynergyWiimote\bin\Debug\SynergyNode.pdb
