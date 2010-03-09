@@ -143,7 +143,7 @@ namespace BaseFrontEnd
                 {
                     if (c.Scope == this)
                     {
-                        int d = (c.GetDepth() - c.Scope.GetDepth())+1;
+                        int d = (c.GetDepth() - c.Scope.GetDepth()) + 1;
                         if (d > bestdepth) bestdepth = d;
                     }
                 }
@@ -273,7 +273,9 @@ namespace BaseFrontEnd
 
         public void DrawScope(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(new Pen(Brushes.Black, 2), X, Y - height / 2, width / 2, height);
+            _Graphics.DrawRectangle(new Pen(Brushes.Black, 2),
+                X, Y - height / 2,
+                width / 2, height);
 
             DrawShape(_Graphics,
                 new Point(-60, 10),
@@ -286,7 +288,9 @@ namespace BaseFrontEnd
 
         public void DrawScopeShadow(Graphics _Graphics)
         {
-            _Graphics.DrawRectangle(new Pen(KismetSequence.ShadowColor, 2), X + GetShadowOffset().X, Y + GetShadowOffset().Y - height / 2, width / 2, height);
+            _Graphics.DrawRectangle(new Pen(KismetSequence.ShadowColor, 2),
+                X + GetShadowOffset().X, Y + GetShadowOffset().Y - height / 2,
+                width / 2, height);
 
             DrawShapeShadow(_Graphics,
                 new Point(-60, 10),
