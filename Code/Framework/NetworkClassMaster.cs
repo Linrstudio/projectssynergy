@@ -21,16 +21,16 @@ namespace Framework
             Connection.SendToAll("ExecuteSlaveCommand", Name, GetSetFieldCommand(_FieldName, _Value));
         }
 
-        public void UpdateSlaveField(string _FieldName)
+        public void UpdateRemoteField(string _FieldName)
         {
             SetSlaveField(_FieldName, GetField(_FieldName));
         }
 
-        public object GetField(string _Name)
+        public override object GetField(string _FieldName)
         {
-            FieldInfo info = GetNetworkFieldInfo(_Name);
+            FieldInfo info = GetNetworkFieldInfo(_FieldName);
             if (info == null) return null;
-            return GetNetworkFieldInfo(_Name).GetValue(this);
+            return GetNetworkFieldInfo(_FieldName).GetValue(this);
         }
     }
 }

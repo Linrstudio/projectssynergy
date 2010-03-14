@@ -14,24 +14,6 @@ namespace FrontEnd
 {
     public partial class FrontEnd : Form
     {
-        private const int WM_SCROLL = 276; // Horizontal scroll
-        private const int WM_VSCROLL = 277; // Vertical scroll
-        private const int SB_LINEUP = 0; // Scrolls one line up
-        private const int SB_LINELEFT = 0;// Scrolls one cell left
-        private const int SB_LINEDOWN = 1; // Scrolls one line down
-        private const int SB_LINERIGHT = 1;// Scrolls one cell right
-        private const int SB_PAGEUP = 2; // Scrolls one page up
-        private const int SB_PAGELEFT = 2;// Scrolls one page left
-        private const int SB_PAGEDOWN = 3; // Scrolls one page down
-        private const int SB_PAGERIGTH = 3; // Scrolls one page right
-        private const int SB_PAGETOP = 6; // Scrolls to the upper left
-        private const int SB_LEFT = 6; // Scrolls to the left
-        private const int SB_PAGEBOTTOM = 7; // Scrolls to the upper right
-        private const int SB_RIGHT = 7; // Scrolls to the right
-        private const int SB_ENDSCROLL = 8; // Ends scroll
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
-
         public bool update = true;
         public Dictionary<string, CheckBox> enabledlogs = new Dictionary<string, CheckBox>();
         public FrontEnd()
@@ -159,7 +141,8 @@ namespace FrontEnd
 
             Application.Idle += t_Tick_Tick;
             c_Input.Select();
-            ExecuteCommand(@"load .\plugins\K8055.cs");
+            //ExecuteCommand(@"load .\plugins\K8055.cs");
+            ExecuteCommand("connect 192.168.1.93 1000");
         }
 
         private void c_Input_KeyPress(object sender, KeyPressEventArgs e)
@@ -173,13 +156,20 @@ namespace FrontEnd
 
         public void ExecuteCommand(string _Command)
         {
+            c_Input.Items.Add(_Command);
             string[] split = _Command.Split(' ');
             //try
             {
                 switch (split[0].ToLower())
                 {
-                    case "try":
-                        NetworkManager.LocalNode.NetworkClasses["digital in 1"].InvokeSlaveMethod("testfunction");
+                    case "clear":
+                        Log.Clear();
+                        break;
+                    case "setout":
+                        NetworkManager.RemoteNodes["DESKTOP-Roeny"].LocalDevices[string.Format("digital out {0}",split[1])].SetMasterField("On",bool.Parse(split[2]));
+                        break;
+                    case ">":
+                        NetworkManager.InvokeCommand(split[1]);
                         break;
                     case "connect":
                         if (split.Length > 1)

@@ -25,14 +25,17 @@ namespace Framework
                 if (t.FullName == _Type && t.BaseType == typeof(NetworkClassSlave))
                 { type = t; break; }
             }
-            if (type == typeof(NetworkClassSlaveDefault)) Log.Write("NetworkClass", Log.Line.Type.Message, "Type not found or illegal OldType : {0} NewType : {1}", _Type, typeof(NetworkClassSlaveDefault).FullName);
+            if (type == typeof(NetworkClassSlaveDefault))
+            {
+                Log.Write("NetworkClass", Log.Line.Type.Warning, "Type not found or illegal, wil use fallbacktype, OldType : {0} NewType : {1}", _Type, typeof(NetworkClassSlaveDefault).FullName);
+            }
             ConstructorInfo ctr = type.GetConstructor(new Type[] { typeof(string), typeof(string) });
             if (ctr != null)
             {
                 object instance = ctr.Invoke(new object[] { _Name, _Type });
                 return (NetworkClassSlave)instance;
             }
-            else Log.Write("NetworkClass", Log.Line.Type.Warning, "Failed to find usefull constructor for class {0}", type.FullName);
+            else Log.Write("NetworkClass", Log.Line.Type.Error, "Failed to find usefull constructor for class {0}", type.FullName);
             return null;
         }
 
@@ -72,7 +75,11 @@ namespace Framework
             object value;
             public string FieldName { get { return fieldname; } }
             public Type FieldType { get { return fieldtype; } }
-            public object Value { get { return value; } }
+            public object Value
+            {
+                get { return value; }
+                set { this.value = value; networkclass.UpdateRemoteField(fieldname); }
+            }
 
             NetworkClassSlave networkclass = null;
 
@@ -86,7 +93,7 @@ namespace Framework
 
             public void SetValue(object _Value)
             {
-                //networkclass.
+                networkclass.SetMasterField(fieldname, _Value);
             }
 
             public new string ToString()
@@ -113,7 +120,7 @@ namespace Framework
             Connection.SendToAll("ExecuteMasterCommand", Name, GetSetFieldCommand(_FieldName, _Value));
         }
 
-        public void UpdateMasterField(string _FieldName)
+        public override void UpdateRemoteField(string _FieldName)
         {
             SetMasterField(_FieldName, GetField(_FieldName));
         }
@@ -121,6 +128,12 @@ namespace Framework
         public NetworkClassSlave.Method GetMethod(string _MethodName)
         {
             if (Methods.ContainsKey(_MethodName)) return Methods[_MethodName];
+            return null;
+        }
+
+        public override object GetField(string _FieldName)
+        {
+            if (Fields.ContainsKey(_FieldName)) return Fields[_FieldName].Value;
             return null;
         }
     }
