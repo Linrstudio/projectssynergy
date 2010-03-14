@@ -24,7 +24,7 @@ namespace Framework
             base.Update();
         }
 
-        public NetworkNodeRemote(ushort _NodeID)
+        public NetworkNodeRemote(string _NodeID)
             : base(_NodeID)
         {
         }

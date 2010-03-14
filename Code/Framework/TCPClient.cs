@@ -52,10 +52,6 @@ namespace Framework
             Thread.EndCriticalRegion();
         }
 
-        public override ushort GetRemoteNetworkNodeID()
-        {
-            return RemoteNodeID;
-        }
         [Obsolete]
         public TCPConnection(TcpClient _Client, bool _AutoReconnect)
         {
@@ -139,7 +135,7 @@ namespace Framework
         {
             currentpacketsize = 0;//we cant finish our packet, so lets reset this
             ReceiveBuffer.Clear(); SendBuffer.Clear();//trash any data that needs operating
-            RemoteNodeID = 0;//we are not sure who is on the other end
+            remotenodeid = "";//we are not sure who is on the other end
             NetworkManager.RequestNetworkMap();//request a map of the network to check what got left out
             if (AutoReconnect)//attempt resurrection
             {

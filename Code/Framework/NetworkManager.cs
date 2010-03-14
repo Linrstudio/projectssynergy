@@ -16,16 +16,16 @@ namespace Framework
         }
         public static Random random = new Random(Environment.TickCount);
         public static NetworkNodeLocal LocalNode = new NetworkNodeLocal();
-        public static Dictionary<ushort, NetworkNodeRemote> RemoteNodes = new Dictionary<ushort, NetworkNodeRemote>();
+        public static Dictionary<string, NetworkNodeRemote> RemoteNodes = new Dictionary<string, NetworkNodeRemote>();
 
-        public static void AddRemoteNode(ushort _NodeID)
+        public static void AddRemoteNode(string _NodeID)
         {
             if (!NetworkManager.RemoteNodes.ContainsKey(_NodeID)) RemoteNodes.Add(_NodeID, new NetworkNodeRemote(_NodeID));
         }
 
-        public static void AddConnection(ushort _NodeID1, ushort _NodeID2)
+        public static void AddConnection(string _NodeID1, string _NodeID2)
         {
-            if (_NodeID1 == 0 || _NodeID2 == 0)
+            if (_NodeID1 == "" || _NodeID2 == "")
             {
                 Log.Write("Network Manager", "Connections to non initialized Nodes not allowed");
                 return;
