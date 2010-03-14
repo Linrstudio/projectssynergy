@@ -54,6 +54,17 @@ namespace SynergyTemplate
             }
         }
 
+        public static void Clear()
+        {
+            AllLines.Clear();
+            AllVariables.Clear();
+            foreach (Log l in log.Values)
+            {
+                l.Lines.Clear();
+                l.Variables.Clear();
+            }
+        }
+
         public static void Update()
         {
             lock (LineQueue)

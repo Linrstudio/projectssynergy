@@ -138,7 +138,7 @@ namespace Framework
                 }
             }
         }
-
+        #region FieldStuff
         public void SetField(string _Name, object _Value)
         {
             FieldInfo info = GetNetworkFieldInfo(_Name);
@@ -160,7 +160,19 @@ namespace Framework
             }
             else Log.Write("NetworkClass", Log.Line.Type.Error, "Cant find member with name {0}", _Name);
         }
+        public virtual object GetField(string _FieldName)
+        {
+            return null;
+        }
+        /// <summary>
+        /// Updates the remote instance of this field
+        /// </summary>
+        /// <param name="_FieldName">Name of the field</param>
+        public virtual void UpdateRemoteField(string _FieldName)
+        {
 
+        }
+        #endregion
         internal object InvokeMethod(string _Name, params object[] _Parameters)
         {
             MethodInfo method = GetNetworkMethodInfo(_Name);
@@ -205,7 +217,7 @@ namespace Framework
                         {
                             int paramcount = (ushort)Converter.Read(_Stream);
                             object[] parameters = new object[paramcount];
-                            for (int i = 0; i < paramcount; i++) parameters[i]=Converter.Read(_Stream);
+                            for (int i = 0; i < paramcount; i++) parameters[i] = Converter.Read(_Stream);
                             InvokeMethod(methodname, parameters);
                         }
                         else Log.Write("NetworkClass", Log.Line.Type.Error, "Cant find method with name {0}", methodname);
@@ -225,7 +237,7 @@ namespace Framework
                     break;
             }
         }
-
+        #region Commands
         public static ByteStream GetInvokeCommand(string _Name, params object[] _Parameters)
         {
             ByteStream stream = new ByteStream();
@@ -247,11 +259,6 @@ namespace Framework
             Converter.Write(_Value, stream);
             return stream;
         }
-
-        public object GetField(string _FieldName)
-        {
-
-            throw new System.NotImplementedException();
-        }
+        #endregion
     }
 }

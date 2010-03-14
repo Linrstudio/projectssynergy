@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using SynergyTemplate;
 
@@ -72,6 +73,24 @@ namespace Framework
             }
         }
 
+        public static void InvokeCommand(string _Command)
+        {
+            string[] split1 = _Command.Split('.');
+            string nodename = split1[0].Trim();
+            string classname = split1[1].Trim();
+            string[] split2 = split1[2].Split('=');
+            string fieldname = split2[0].Trim();
+            string fieldvalue = split2[1].Trim();
+            if (!RemoteNodes.ContainsKey(nodename)) { Log.Write("NetworkManager", Log.Line.Type.Error, "Failed to find remotenode : {0}", nodename); return; }
+            NetworkNodeRemote node = RemoteNodes[nodename];
+            if (!node.LocalDevices.ContainsKey(classname)) { Log.Write("NetworkManager", Log.Line.Type.Error, "Failed to find class : {0}", classname); return; }
+            NetworkClassSlave slave = node.LocalDevices[classname];
+            if (!slave.Fields.ContainsKey(fieldname)) { Log.Write("NetworkManager", Log.Line.Type.Error, "Failed to find field : {0}", fieldname); return; }
+            object value = slave.Fields[fieldname].FieldType.GetMethod("Parse", new Type[] { typeof(string) }).Invoke(null, new object[] { fieldvalue });
+            if (value == null) { Log.Write("NetworkManager", "Failed to parse value : {0}", Log.Line.Type.Error, fieldvalue); return; }
+            slave.Fields[fieldname].Value = value;
+        }
+
         public static void Update()
         {
             Log.Write(new Log.Variable("NetworkManager", "RemoteNodes", RemoteNodes.Count));
@@ -95,7 +114,7 @@ namespace Framework
                 uint newid = (uint)random.Next() + (uint)random.Next();
                 if (Contains(newid))
                 {
-                    Log.Write("Default","ZOMG! the ID already existed, this was a one out of 43.000.000 chance!");
+                    Log.Write("Default", "ZOMG! the ID already existed, this was a one out of 43.000.000 chance!");
                     newid = GetRandomID();
                 }
                 return newid;
