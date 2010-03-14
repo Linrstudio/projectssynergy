@@ -12,7 +12,7 @@ namespace Framework
         public Dictionary<string, NetworkClassMaster> NetworkClasses = new Dictionary<string, NetworkClassMaster>();
 
         public NetworkNodeLocal()
-            : base((ushort)((NetworkManager.random.Next() % ushort.MaxValue - 1) + 1))
+            : base(Environment.MachineName + "-" + Environment.UserName)
         {
         }
 

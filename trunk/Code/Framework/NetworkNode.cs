@@ -8,12 +8,12 @@ namespace Framework
 {
     public class NetworkNode
     {
-        internal ushort nodeid;
-        public ushort NodeID { get { return nodeid; } }
+        internal string nodeid;
+        public string NodeID { get { return nodeid; } }
 
-        public Dictionary<ushort, NetworkNodeRemote> RemoteNodes = new Dictionary<ushort, NetworkNodeRemote>();
+        public Dictionary<string, NetworkNodeRemote> RemoteNodes = new Dictionary<string, NetworkNodeRemote>();
 
-        public NetworkNode(ushort _NodeID)
+        public NetworkNode(string _NodeID)
         {
             nodeid = _NodeID;
         }

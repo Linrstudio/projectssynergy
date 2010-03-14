@@ -9,7 +9,8 @@ namespace Framework
 {
     public class Connection
     {
-        public ushort RemoteNodeID = 0;
+        internal string remotenodeid = "";
+        public string RemoteNodeID { get { return remotenodeid; } }
         public ConnectionMethods methods = null;
 
         public virtual void Update() { }
@@ -26,7 +27,6 @@ namespace Framework
         public virtual void Send(bool _BroadCast, uint _ActionID, string _FunctionName, params object[] _Parameters) { }
         public virtual void Send(bool _BroadCast, string _FunctionName, params object[] _Parameters) { }
         public virtual void Send(ByteStream _RawData) { }
-        public virtual ushort GetRemoteNetworkNodeID() { return RemoteNodeID; }
 
         public Connection()
         {
@@ -51,21 +51,21 @@ namespace Framework
             }
 
             [Method("Hello")]
-            public void Hello(ushort _NodeID)
+            public void Hello(string _NodeID)
             {
                 Log.Write("Networking", "Hello Node {0}", _NodeID);
-                connection.RemoteNodeID = _NodeID;
+                connection.remotenodeid = _NodeID;
                 connection.Send(true, NetworkManager.ActionBlackList.GetRandomID(), "RequestNetworkMap");
             }
 
             [Method("MapConnection")]
-            public void AddConnection(ushort _NodeID1, ushort _NodeID2)
+            public void AddConnection(string _NodeID1, string _NodeID2)
             {
                 NetworkManager.AddConnection(_NodeID1, _NodeID2);
             }
 
             [Method("MapClass")]
-            public void AddClass(ushort _NodeID, string _ClassName, string _Type)
+            public void AddClass(string _NodeID, string _ClassName, string _Type)
             {
                 NetworkManager.AddRemoteNode(_NodeID);
                 NetworkNodeRemote node = NetworkManager.RemoteNodes[_NodeID];
@@ -74,7 +74,7 @@ namespace Framework
             }
 
             [Method("MapClassMethod")]
-            public void AddClassMethod(ushort _NodeID, string _ClassName, string _MethodName, string _ParameterNames)
+            public void AddClassMethod(string _NodeID, string _ClassName, string _MethodName, string _ParameterNames)
             {
                 NetworkManager.AddRemoteNode(_NodeID);
                 NetworkNodeRemote node = NetworkManager.RemoteNodes[_NodeID];
@@ -94,7 +94,7 @@ namespace Framework
             }
 
             [Method("MapClassField")]
-            public void AddClassField(ushort _NodeID, string _ClassName, string _FieldName, string _FieldType, ByteStream _Value)
+            public void AddClassField(string _NodeID, string _ClassName, string _FieldName, string _FieldType, ByteStream _Value)
             {
                 NetworkManager.AddRemoteNode(_NodeID);
                 NetworkNodeRemote node = NetworkManager.RemoteNodes[_NodeID];
@@ -149,7 +149,7 @@ namespace Framework
                 //send connections
                 foreach (Connection connection in NetworkManager.LocalNode.Connections)
                 {
-                    SendToAll("MapConnection", NetworkManager.LocalNode.NodeID, connection.GetRemoteNetworkNodeID());
+                    SendToAll("MapConnection", NetworkManager.LocalNode.NodeID, connection.RemoteNodeID);
                 }
                 //send classes
                 foreach (NetworkClassMaster networkclass in NetworkManager.LocalNode.NetworkClasses.Values)
