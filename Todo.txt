@@ -33,9 +33,6 @@ find a way to propperly create a bus
 na de hijpas vilter kijken voor een voltasje vergelijker
 
 
-etch printer en licht
-
-
 idealen frequentie voor zenden plc burst zoeken
 
 
