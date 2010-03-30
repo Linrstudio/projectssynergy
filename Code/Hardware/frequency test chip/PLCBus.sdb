@@ -1,0 +1,115 @@
+[p AUTOSTATIC PIC12 PICLOMID LITE_MODE ]
+[d version 1.1 ]
+[d edition pro ]
+[d chip 12F510 ]
+"15 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c
+[v _main `(v  1 e 0 0 ]
+"9
+[v _PLCRXBuffer `i  1 e 2 @30 ]
+"10
+[v _PLCRXIndex `i  1 e 2 @10 ]
+"14 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _INDF `Vuc  1 e 1 @0 ]
+"15
+[v _TMR0 `Vuc  1 e 1 @1 ]
+"16
+[v _PCL `Vuc  1 e 1 @2 ]
+"17
+[v _STATUS `Vuc  1 e 1 @3 ]
+"18
+[v _FSR `uc  1 e 1 @4 ]
+"19
+[v _OSCCAL `uc  1 e 1 @5 ]
+"20
+[v _GPIO `Vuc  1 e 1 @6 ]
+"21
+[v _CM1CON0 `Vuc  1 e 1 @7 ]
+"22
+[v _ADCON0 `Vuc  1 e 1 @8 ]
+"23
+[v _ADRES `Vuc  1 e 1 @9 ]
+"25
+[v _OPTION `Wuc  1 e 1 @0 ]
+"26
+[v _TRIS `VWuc  1 e 1 @6 ]
+"40
+[v _CARRY `Vb  1 e 0 @24 ]
+"41
+[v _DC `Vb  1 e 0 @25 ]
+"42
+[v _ZERO `Vb  1 e 0 @26 ]
+"43
+[v _PD `Vb  1 e 0 @27 ]
+"44
+[v _TO `Vb  1 e 0 @28 ]
+"45
+[v _PA0 `b  1 e 0 @29 ]
+"46
+[v _CWUF `Vb  1 e 0 @30 ]
+"47
+[v _GPWUF `Vb  1 e 0 @31 ]
+"50
+[v _CAL0 `b  1 e 0 @41 ]
+"51
+[v _CAL1 `b  1 e 0 @42 ]
+"52
+[v _CAL2 `b  1 e 0 @43 ]
+"53
+[v _CAL3 `b  1 e 0 @44 ]
+"54
+[v _CAL4 `b  1 e 0 @45 ]
+"55
+[v _CAL5 `b  1 e 0 @46 ]
+"56
+[v _CAL6 `b  1 e 0 @47 ]
+"59
+[v _GP0 `Vb  1 e 0 @48 ]
+"60
+[v _GP1 `Vb  1 e 0 @49 ]
+"61
+[v _GP2 `Vb  1 e 0 @50 ]
+"62
+[v _GP3 `Vb  1 e 0 @51 ]
+"63
+[v _GP4 `Vb  1 e 0 @52 ]
+"64
+[v _GP5 `Vb  1 e 0 @53 ]
+"67
+[v _C1WU `b  1 e 0 @56 ]
+"68
+[v _C1PREF `b  1 e 0 @57 ]
+"69
+[v _C1NREF `b  1 e 0 @58 ]
+"70
+[v _C1ON `b  1 e 0 @59 ]
+"71
+[v _C1T0CS `b  1 e 0 @60 ]
+"72
+[v _C1POL `b  1 e 0 @61 ]
+"73
+[v _C1OUTEN `b  1 e 0 @62 ]
+"74
+[v _C1OUT `Vb  1 e 0 @63 ]
+"77
+[v _ADON `b  1 e 0 @64 ]
+"78
+[v _GODONE `Vb  1 e 0 @65 ]
+"79
+[v _CHS0 `b  1 e 0 @66 ]
+"80
+[v _CHS1 `b  1 e 0 @67 ]
+"81
+[v _ADCS0 `b  1 e 0 @68 ]
+"82
+[v _ADCS1 `b  1 e 0 @69 ]
+"83
+[v _ANS0 `b  1 e 0 @70 ]
+"84
+[v _ANS1 `b  1 e 0 @71 ]
+"15 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c
+[v _main `(v  1 e 0 0 ]
+{
+"59
+[v _main_j `i  1 a 2 0 ]
+"84
+} 2

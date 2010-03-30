@@ -1,0 +1,691 @@
+
+
+HI-TECH Software PICC Macro Assembler V9.65PL1 build 4898 
+                                                      Tue Mar 30 16:29:27 2010
+
+HI-TECH Software Omniscient Code Generator build 4898
+     1  0000                     opt subtitle "HI-TECH Software Omniscient Code 
+                                 Generator build 4898"
+     2                           
+     3                           	processor	12F510
+     4                           clrc	macro
+     5                           	bcf	status,0
+     6  0000                     	endm
+     7                           clrz	macro
+     8                           	bcf	status,2
+     9  0000                     	endm
+    10                           setc	macro
+    11                           	bsf	status,0
+    12  0000                     	endm
+    13                           setz	macro
+    14                           	bsf	status,2
+    15  0000                     	endm
+    16                           skipc	macro
+    17                           	btfss	status,0
+    18  0000                     	endm
+    19                           skipz	macro
+    20                           	btfss	status,2
+    21  0000                     	endm
+    22                           skipnc	macro
+    23                           	btfsc	status,0
+    24  0000                     	endm
+    25                           skipnz	macro
+    26                           	btfsc	status,2
+    27  0000                     	endm
+    28  0000                     indf	equ	0
+    29  0000                     indf0	equ	0
+    30  0000                     pc	equ	2
+    31  0000                     pcl	equ	2
+    32  0000                     status	equ	3
+    33  0000                     fsr	equ	4
+    34  0000                     fsr0	equ	4
+    35  0000                     c	equ	1
+    36  0000                     z	equ	0
+    37                           global __tempreg
+    38  0000                     __tempreg	set	16
+    39                           global __Lcommon, __Hcommon
+    40  0000                     __Lcommon set 0xA
+    41  0000                     __Hcommon set 0xC
+    42                           global __Lrbss_0, __Hrbss_0
+    43  0000                     __Lrbss_0 set 0x1E
+    44  0000                     __Hrbss_0 set 0x20
+    45                           global __Lrdata_0, __Hrdata_0
+    46  0000                     __Lrdata_0	equ	0x0
+    47  0000                     __Hrdata_0	equ	0x1
+    48                           global __Lramdata, __Lrdata_0, __Hramdata, __Hr
+                                 data_0
+    49  0000                     __Lramdata	set	__Lrdata_0
+    50  0000                     __Hramdata	set	__Hrdata_0
+    51                           	GLOBAL	__databank
+    52  0000                     __databank	EQU	0
+    53  0000                     _main_j	equ	??_main+0
+    54                           	global	_main_j
+    55                           ;Data sizes: Strings 0, constant 0, data 0, bss
+                                  0, persistent 0 stack 4
+    56                           	global	_main
+    57                           	global	??_main
+    58                           	global	?_main
+    59                           
+    60                           ; *************** function _main **************
+                                 *
+    61                           ; Defined at:
+    62                           ;		line 15 in file "C:\DOCUMENTS\PROJECTS\Syner
+                                 gy\Trunk\Code\Hardware\PLCBus\Main.c"
+    63                           ; Parameters:
+    64                           ;		None
+    65                           ; Auto variables:
+    66                           ;		i           	       	type: int 
+    67                           ;		i           	       	type: int 
+    68                           ;		s           	       	type: int 
+    69                           ;		i2          	       	type: int 
+    70                           ;		j           	       	type: int 
+    71                           ; Return value:
+    72                           ;		type: void 
+    73                           ;		size: 0
+    74                           ; Registers used:
+    75                           ;		wreg, status,2, status,0, btemp+0, btemp+1, 
+                                 btemp+2, btemp+3
+    76                           ; Tracked objects:
+    77                           ;		On entry : BFF/0
+    78                           ;		On exit  : 0/0
+    79                           ;		Unchanged: 0/0
+    80                           ; Data sizes:
+    81                           ;		Autos:    2
+    82                           ;		Params:   0
+    83                           ;		Temp:     2
+    84                           ;		Total:    4
+    85                           ; This function calls:
+    86                           ;		Nothing
+    87                           ; This function is called by:
+    88                           ;		Startup code after reset
+    89                           ; This function uses a non-reentrant model
+    90                           ; 
+    91                           	psect	maintext,class=CODE,delta=2
+    92                           	file	"C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code
+                                 \Hardware\PLCBus\Main.c"
+    93                           	line	15
+    94                           ;pic12f510.h: 14: volatile unsigned char INDF @
+                                  0x000;
+    95                           ;pic12f510.h: 15: volatile unsigned char TMR0 @
+                                  0x001;
+    96                           ;pic12f510.h: 16: volatile unsigned char PCL @ 
+                                 0x002;
+    97                           ;pic12f510.h: 17: volatile unsigned char STATUS
+                                  @ 0x003;
+    98                           ;pic12f510.h: 18: unsigned char FSR @ 0x004;
+    99                           ;pic12f510.h: 19: unsigned char OSCCAL @ 0x005;
+   100                           ;pic12f510.h: 20: volatile unsigned char GPIO @
+                                  0x006;
+   101                           ;pic12f510.h: 21: volatile unsigned char CM1CON
+                                 0 @ 0x007;
+   102                           ;pic12f510.h: 22: volatile unsigned char ADCON0
+                                  @ 0x008;
+   103                           ;pic12f510.h: 23: volatile unsigned char ADRES 
+                                 @ 0x009;
+   104                           	
+   105  163                     _main:	
+   106                           	opt stack 2
+   107                           ; Regs used in _main: [wreg+status,2-btemp+3]
+   108                           	line	16
+   109                           ;Main.c: 16: GPWUF=0;
+   110  163  4E3                	bcf	(31/8),(31)&7
+   111                           	line	19
+   112                           ;Main.c: 19: OPTION=(1<<2)|(1<<0);
+   113  164  C05                	movlw	(05h)
+   114  165  002                	option
+   115                           	line	21
+   116                           ;Main.c: 21: TMR0=0;
+   117  166  403                	clrc
+   118                           	
+   119  167  C00                	movlw	0
+   120  168  603                	btfsc	status,0
+   121  169  C01                	movlw	1
+   122  16A  021                	movwf	(1)	;volatile
+   123                           	line	23
+   124                           ;Main.c: 23: ANS0=0;
+   125  16B  4C8                	bcf	(70/8),(70)&7
+   126                           	line	24
+   127                           ;Main.c: 24: ANS1=0;
+   128  16C  4E8                	bcf	(71/8),(71)&7
+   129                           	line	25
+   130                           ;Main.c: 25: TRIS=0b101011;
+   131  16D  C2B                	movlw	(02Bh)
+   132  16E  006                	tris	0x6
+   133                           	line	27
+   134                           ;Main.c: 27: GP2=1;
+   135  16F  546                	bsf	(50/8),(50)&7
+   136                           	line	29
+   137                           ;Main.c: 29: C1OUTEN=1;
+   138  170  5C7                	bsf	(62/8),(62)&7
+   139                           	line	30
+   140                           ;Main.c: 30: C1POL=1;
+   141  171  5A7                	bsf	(61/8),(61)&7
+   142                           	line	31
+   143                           ;Main.c: 31: C1ON=1;
+   144  172  567                	bsf	(59/8),(59)&7
+   145                           	line	32
+   146                           ;Main.c: 32: C1NREF=0;
+   147  173  447                	bcf	(58/8),(58)&7
+   148                           	line	33
+   149                           ;Main.c: 33: C1PREF=1;
+   150  174  527                	bsf	(57/8),(57)&7
+   151                           	line	34
+   152                           ;Main.c: 34: C1WU=1;
+   153  175  507                	bsf	(56/8),(56)&7
+   154                           	line	36
+   155                           ;Main.c: 36: while(1)
+   156                           	
+   157  176                     l3:	
+   158                           	line	38
+   159                           ;Main.c: 37: {
+   160                           ;Main.c: 38: for(int i=0;i<255;i++)
+   161  176  C00                	movlw	low(0)
+   162  177  02E                	movwf	btemp+2
+   163  178  C00                	movlw	high(0)
+   164  179  02F                	movwf	(btemp+2)+1
+   165  17A  B7B                	goto	l5
+   166                           	line	39
+   167                           	
+   168  17B                     l5:	
+   169                           	line	40
+   170                           ;Main.c: 39: {
+   171                           ;Main.c: 40: for(int i2=0;i2<4;i2++)
+   172  17B  C00                	movlw	low(0)
+   173  17C  02C                	movwf	btemp+0
+   174  17D  C00                	movlw	high(0)
+   175  17E  02D                	movwf	(btemp+0)+1
+   176  17F  B80                	goto	l8
+   177                           	line	41
+   178                           	
+   179  180                     l8:	
+   180                           	line	42
+   181                           ;Main.c: 41: {
+   182                           ;Main.c: 42: GP2=1;
+   183  180  546                	bsf	(50/8),(50)&7
+   184                           	line	43
+   185                           # 43 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\
+                                 Hardware\PLCBus\Main.c"
+   186  181  000                nop ;#
+   187                           	psect	maintext
+   188                           	line	44
+   189                           ;Main.c: 43: asm("nop");
+   190                           ;Main.c: 44: GP2=0;
+   191  182  446                	bcf	(50/8),(50)&7
+   192                           	line	40
+   193  183  C01                	movlw	low(01h)
+   194  184  1EC                	addwf	btemp+0,f
+   195  185  603                	skipnc
+   196  186  2AD                	incf	btemp+1,f
+   197  187  C00                	movlw	high(01h)
+   198  188  1ED                	addwf	btemp+1,f
+   199  189  20D                	movf	btemp+1,w
+   200  18A  F80                	xorlw	80h
+   201  18B  03C                	movwf	(??_main+2+0)
+   202  18C  C80                	movlw	(high(04h))^80h
+   203  18D  09C                	subwf	(??_main+2+0),w
+   204  18E  743                	skipz
+   205  18F  B92                	goto	u9010
+   206  190                     u9015:
+   207  190  C04                	movlw	low(04h)
+   208  191  08C                	subwf	btemp+0,w
+   209  192                     u9010:
+   210                           
+   211  192  703                	skipc
+   212  193  B95                	goto	u901
+   213  194  B96                	goto	u900
+   214  195                     u901:
+   215  195  B80                	goto	l8
+   216  196                     u900:
+   217                           	
+   218  196                     l9:	
+   219                           	line	38
+   220  196  C01                	movlw	low(01h)
+   221  197  1EE                	addwf	btemp+2,f
+   222  198  603                	skipnc
+   223  199  2AF                	incf	btemp+3,f
+   224  19A  C00                	movlw	high(01h)
+   225  19B  1EF                	addwf	btemp+3,f
+   226  19C  20F                	movf	btemp+3,w
+   227  19D  F80                	xorlw	80h
+   228  19E  03C                	movwf	(??_main+2+0)
+   229  19F  C80                	movlw	(high(0FFh))^80h
+   230  1A0  09C                	subwf	(??_main+2+0),w
+   231  1A1  743                	skipz
+   232  1A2  BA5                	goto	u9110
+   233  1A3                     u9115:
+   234  1A3  CFF                	movlw	low(0FFh)
+   235  1A4  08E                	subwf	btemp+2,w
+   236  1A5                     u9110:
+   237                           
+   238  1A5  703                	skipc
+   239  1A6  BA8                	goto	u911
+   240  1A7  BA9                	goto	u910
+   241  1A8                     u911:
+   242  1A8  B7B                	goto	l5
+   243  1A9                     u910:
+   244                           	
+   245  1A9                     l6:	
+   246                           	line	47
+   247                           ;Main.c: 45: }
+   248                           ;Main.c: 46: }
+   249                           ;Main.c: 47: GP4=!GP4;
+   250  1A9  C10                	movlw	1<<((52)&7)
+   251  1AA  1A6                	xorwf	((52)/8),f
+   252                           	line	48
+   253                           	
+   254  1AB                     l2:	
+   255                           	line	36
+   256  1AB  B76                	goto	l3
+   257                           	line	51
+   258                           ;Main.c: 48: }
+   259                           ;Main.c: 51: while(1)
+   260                           	
+   261  1AC                     l12:	
+   262                           	line	53
+   263                           ;Main.c: 52: {
+   264                           ;Main.c: 53: for(int i=0;i<30;i++)
+   265  1AC  C00                	movlw	low(0)
+   266  1AD  02E                	movwf	btemp+2
+   267  1AE  C00                	movlw	high(0)
+   268  1AF  02F                	movwf	(btemp+2)+1
+   269  1B0  BB1                	goto	l19
+   270                           	line	56
+   271                           ;Main.c: 54: {
+   272                           ;Main.c: 55: int s;
+   273                           ;Main.c: 56: do
+   274                           	
+   275  1B1                     l19:	
+   276                           	line	58
+   277                           ;Main.c: 57: {
+   278                           ;Main.c: 58: s=0;
+   279  1B1  C00                	movlw	low(0)
+   280  1B2  02C                	movwf	btemp+0
+   281  1B3  C00                	movlw	high(0)
+   282  1B4  02D                	movwf	(btemp+0)+1
+   283                           	line	59
+   284                           ;Main.c: 59: for(int j=0;j<10;j++)
+   285  1B5  C00                	movlw	low(0)
+   286                           	
+   287  1B6  03A                	movwf	(_main_j)
+   288  1B7  C00                	movlw	high(0)
+   289  1B8  03B                	movwf	((_main_j))+1
+   290  1B9  BBA                	goto	l20
+   291                           	line	60
+   292                           	
+   293  1BA                     l20:	
+   294                           	line	61
+   295                           ;Main.c: 60: {
+   296                           ;Main.c: 61: s+=C1OUT?1:0;
+   297  1BA  403                	clrc
+   298  1BB  6E7                	btfsc	(63/8),(63)&7
+   299  1BC  503                	setc
+   300  1BD  C00                	movlw	0
+   301  1BE  603                	skipnc
+   302  1BF  C01                	movlw	1
+   303                           
+   304  1C0  03C                	movwf	(??_main+2+0)
+   305  1C1  07D                	clrf	(??_main+2+0+1)
+   306  1C2  21C                	movf	0+(??_main+2+0),w
+   307  1C3  1EC                	addwf	btemp+0,f
+   308  1C4  603                	skipnc
+   309  1C5  2AD                	incf	btemp+1,f
+   310  1C6  21D                	movf	1+(??_main+2+0),w
+   311  1C7  1ED                	addwf	btemp+1,f
+   312                           	line	59
+   313                           	
+   314  1C8  C01                	movlw	low(01h)
+   315  1C9  1FA                	addwf	(_main_j),f
+   316  1CA  603                	skipnc
+   317  1CB  2BB                	incf	(_main_j+1),f
+   318  1CC  C00                	movlw	high(01h)
+   319  1CD  1FB                	addwf	(_main_j+1),f
+   320                           	
+   321  1CE  21B                	movf	(_main_j+1),w
+   322  1CF  F80                	xorlw	80h
+   323  1D0  03C                	movwf	(??_main+2+0)
+   324  1D1  C80                	movlw	(high(0Ah))^80h
+   325  1D2  09C                	subwf	(??_main+2+0),w
+   326  1D3  743                	skipz
+   327  1D4  BD7                	goto	u9410
+   328  1D5                     u9415:
+   329  1D5  C0A                	movlw	low(0Ah)
+   330  1D6  09A                	subwf	(_main_j),w
+   331  1D7                     u9410:
+   332                           
+   333  1D7  703                	skipc
+   334  1D8  BDA                	goto	u941
+   335  1D9  BDB                	goto	u940
+   336  1DA                     u941:
+   337  1DA  BBA                	goto	l20
+   338  1DB                     u940:
+   339                           	
+   340  1DB                     l21:	
+   341                           	line	64
+   342                           ;Main.c: 62: }
+   343                           ;Main.c: 63: }
+   344                           ;Main.c: 64: while(s!=0&&s!=10);
+   345  1DB  20D                	movf	btemp+1,w
+   346  1DC  10C                	iorwf	btemp+0,w
+   347  1DD  643                	skipnz
+   348  1DE  BE0                	goto	u951
+   349  1DF  BE1                	goto	u950
+   350  1E0                     u951:
+   351  1E0  BE8                	goto	l18
+   352  1E1                     u950:
+   353  1E1  C0A                	movlw	0Ah
+   354  1E2  18C                	xorwf	btemp+0,w
+   355  1E3  10D                	iorwf	btemp+1,w
+   356  1E4  743                	skipz
+   357  1E5  BE7                	goto	u961
+   358  1E6  BE8                	goto	u960
+   359  1E7                     u961:
+   360  1E7  BB1                	goto	l19
+   361  1E8                     u960:
+   362                           	
+   363  1E8                     l600000184:	
+   364                           	
+   365  1E8                     l18:	
+   366                           	line	53
+   367  1E8  C01                	movlw	low(01h)
+   368  1E9  1EE                	addwf	btemp+2,f
+   369  1EA  603                	skipnc
+   370  1EB  2AF                	incf	btemp+3,f
+   371  1EC  C00                	movlw	high(01h)
+   372  1ED  1EF                	addwf	btemp+3,f
+   373  1EE  20F                	movf	btemp+3,w
+   374  1EF  F80                	xorlw	80h
+   375  1F0  03C                	movwf	(??_main+2+0)
+   376  1F1  C80                	movlw	(high(01Eh))^80h
+   377  1F2  09C                	subwf	(??_main+2+0),w
+   378  1F3  743                	skipz
+   379  1F4  BF7                	goto	u9710
+   380  1F5                     u9715:
+   381  1F5  C1E                	movlw	low(01Eh)
+   382  1F6  08E                	subwf	btemp+2,w
+   383  1F7                     u9710:
+   384                           
+   385  1F7  703                	skipc
+   386  1F8  BFA                	goto	u971
+   387  1F9  BFB                	goto	u970
+   388  1FA                     u971:
+   389  1FA  BB1                	goto	l19
+   390  1FB                     u970:
+   391                           	
+   392  1FB                     l15:	
+   393                           	line	66
+   394                           ;Main.c: 65: }
+   395                           ;Main.c: 66: GP2=!GP2;
+   396  1FB  C04                	movlw	1<<((50)&7)
+   397  1FC  1A6                	xorwf	((50)/8),f
+   398                           	line	72
+   399                           	
+   400  1FD                     l11:	
+   401                           	line	51
+   402  1FD  BAC                	goto	l12
+   403                           	global	start
+   404  1FE  4A3  A02           	ljmp	start
+   405                           ; =============== function _main ends =========
+                                 ======
+   406                           
+   407                           GLOBAL __end_of_main
+   408  200                     	__end_of_main:
+   409                           	FNSIZE	_main,4,0
+   410                           	psect	maintext
+   411                           	line	84
+   412                           	signat	_main,88
+   413                           	FNROOT	_main
+   414                           	psect	strings12,class=ENTRY,delta=2
+   415                           	global	_PLCRXBuffer
+   416                           	global	_PLCRXBuffer
+   417                           	psect	rbss_0,class=BANK0,space=1
+   418                           
+   419                           	DABS	1,30,2	;_PLCRXBuffer
+   420  0000                     	_PLCRXBuffer	set	0x1E
+   421                           
+   422                           	global	_PLCRXIndex
+   423                           	global	_PLCRXIndex
+   424                           	psect	common,class=COMMON,space=1
+   425                           
+   426                           	DABS	1,10,2	;_PLCRXIndex
+   427  0000                     	_PLCRXIndex	set	0xA
+   428                           
+   429                           	global	_ADCON0
+   430                           	global	_ADCON0
+   431  0000                     	_ADCON0	set	0x8
+   432                           
+   433                           	global	_ADRES
+   434                           	global	_ADRES
+   435  0000                     	_ADRES	set	0x9
+   436                           
+   437                           	global	_CM1CON0
+   438                           	global	_CM1CON0
+   439  0000                     	_CM1CON0	set	0x7
+   440                           
+   441                           	global	_FSR
+   442                           	global	_FSR
+   443  0000                     	_FSR	set	0x4
+   444                           
+   445                           	global	_GPIO
+   446                           	global	_GPIO
+   447  0000                     	_GPIO	set	0x6
+   448                           
+   449                           	global	_INDF
+   450                           	global	_INDF
+   451  0000                     	_INDF	set	0x0
+   452                           
+   453                           	global	_OPTION
+   454  0000                     	_OPTION	set	0x0
+   455                           
+   456                           	global	_OSCCAL
+   457                           	global	_OSCCAL
+   458  0000                     	_OSCCAL	set	0x5
+   459                           
+   460                           	global	_PCL
+   461                           	global	_PCL
+   462  0000                     	_PCL	set	0x2
+   463                           
+   464                           	global	_STATUS
+   465                           	global	_STATUS
+   466  0000                     	_STATUS	set	0x3
+   467                           
+   468                           	global	_TMR0
+   469  0000                     	_TMR0	set	0x1
+   470                           
+   471                           	global	_TRIS
+   472  0000                     	_TRIS	set	0x6
+   473                           
+   474                           	global	_ADCS0
+   475                           	global	_ADCS0
+   476  0000                     	_ADCS0	set	0x44	;byte address: 0x8
+   477                           
+   478                           	global	_ADCS1
+   479                           	global	_ADCS1
+   480  0000                     	_ADCS1	set	0x45	;byte address: 0x8
+   481                           
+   482                           	global	_ADON
+   483                           	global	_ADON
+   484  0000                     	_ADON	set	0x40	;byte address: 0x8
+   485                           
+   486                           	global	_ANS0
+   487  0000                     	_ANS0	set	0x46	;byte address: 0x8
+   488                           
+   489                           	global	_ANS1
+   490  0000                     	_ANS1	set	0x47	;byte address: 0x8
+   491                           
+   492                           	global	_C1NREF
+   493  0000                     	_C1NREF	set	0x3A	;byte address: 0x7
+   494                           
+   495                           	global	_C1ON
+   496  0000                     	_C1ON	set	0x3B	;byte address: 0x7
+   497                           
+   498                           	global	_C1OUT
+   499  0000                     	_C1OUT	set	0x3F	;byte address: 0x7
+   500                           
+   501                           	global	_C1OUTEN
+   502  0000                     	_C1OUTEN	set	0x3E	;byte address: 0x7
+   503                           
+   504                           	global	_C1POL
+   505  0000                     	_C1POL	set	0x3D	;byte address: 0x7
+   506                           
+   507                           	global	_C1PREF
+   508  0000                     	_C1PREF	set	0x39	;byte address: 0x7
+   509                           
+   510                           	global	_C1T0CS
+   511                           	global	_C1T0CS
+   512  0000                     	_C1T0CS	set	0x3C	;byte address: 0x7
+   513                           
+   514                           	global	_C1WU
+   515  0000                     	_C1WU	set	0x38	;byte address: 0x7
+   516                           
+   517                           	global	_CAL0
+   518                           	global	_CAL0
+   519  0000                     	_CAL0	set	0x29	;byte address: 0x5
+   520                           
+   521                           	global	_CAL1
+   522                           	global	_CAL1
+   523  0000                     	_CAL1	set	0x2A	;byte address: 0x5
+   524                           
+   525                           	global	_CAL2
+   526                           	global	_CAL2
+   527  0000                     	_CAL2	set	0x2B	;byte address: 0x5
+   528                           
+   529                           	global	_CAL3
+   530                           	global	_CAL3
+   531  0000                     	_CAL3	set	0x2C	;byte address: 0x5
+   532                           
+   533                           	global	_CAL4
+   534                           	global	_CAL4
+   535  0000                     	_CAL4	set	0x2D	;byte address: 0x5
+   536                           
+   537                           	global	_CAL5
+   538                           	global	_CAL5
+   539  0000                     	_CAL5	set	0x2E	;byte address: 0x5
+   540                           
+   541                           	global	_CAL6
+   542                           	global	_CAL6
+   543  0000                     	_CAL6	set	0x2F	;byte address: 0x5
+   544                           
+   545                           	global	_CARRY
+   546                           	global	_CARRY
+   547  0000                     	_CARRY	set	0x18	;byte address: 0x3
+   548                           
+   549                           	global	_CHS0
+   550                           	global	_CHS0
+   551  0000                     	_CHS0	set	0x42	;byte address: 0x8
+   552                           
+   553                           	global	_CHS1
+   554                           	global	_CHS1
+   555  0000                     	_CHS1	set	0x43	;byte address: 0x8
+   556                           
+   557                           	global	_CWUF
+   558                           	global	_CWUF
+   559  0000                     	_CWUF	set	0x1E	;byte address: 0x3
+   560                           
+   561                           	global	_DC
+   562                           	global	_DC
+   563  0000                     	_DC	set	0x19	;byte address: 0x3
+   564                           
+   565                           	global	_GODONE
+   566                           	global	_GODONE
+   567  0000                     	_GODONE	set	0x41	;byte address: 0x8
+   568                           
+   569                           	global	_GP0
+   570                           	global	_GP0
+   571  0000                     	_GP0	set	0x30	;byte address: 0x6
+   572                           
+   573                           	global	_GP1
+   574                           	global	_GP1
+   575  0000                     	_GP1	set	0x31	;byte address: 0x6
+   576                           
+   577                           	global	_GP2
+   578  0000                     	_GP2	set	0x32	;byte address: 0x6
+   579                           
+   580                           	global	_GP3
+   581                           	global	_GP3
+   582  0000                     	_GP3	set	0x33	;byte address: 0x6
+   583                           
+   584                           	global	_GP4
+   585  0000                     	_GP4	set	0x34	;byte address: 0x6
+   586                           
+   587                           	global	_GP5
+   588                           	global	_GP5
+   589  0000                     	_GP5	set	0x35	;byte address: 0x6
+   590                           
+   591                           	global	_GPWUF
+   592  0000                     	_GPWUF	set	0x1F	;byte address: 0x3
+   593                           
+   594                           	global	_PA0
+   595                           	global	_PA0
+   596  0000                     	_PA0	set	0x1D	;byte address: 0x3
+   597                           
+   598                           	global	_PD
+   599                           	global	_PD
+   600  0000                     	_PD	set	0x1B	;byte address: 0x3
+   601                           
+   602                           	global	_TO
+   603                           	global	_TO
+   604  0000                     	_TO	set	0x1C	;byte address: 0x3
+   605                           
+   606                           	global	_ZERO
+   607                           	global	_ZERO
+   608  0000                     	_ZERO	set	0x1A	;byte address: 0x3
+   609                           
+   610                           	PSECT	fnauto0,class=BANK0,space=1
+   611                           	FNCONF	fnauto0,??,?
+   612                           
+   613                           	DABS	1,12,4	;btemp
+   614                           	global	btemp
+   615  0000                     	btemp set 0Ch
+   616                           	global	wtemp0
+   617  0000                     	wtemp0 set btemp
+   618                           	global	wtemp1
+   619  0000                     	wtemp1 set btemp+2
+   620                           	global	ttemp0
+   621  0000                     	ttemp0 set btemp
+   622                           	global	ltemp0
+   623  0000                     	ltemp0 set btemp
+   624                           apbank macro
+   625                           	bcf	fsr,5
+   626                           	bcf	fsr,6
+   627  01A                     	endm
+
+
+HI-TECH Software PICC Macro Assembler V9.65PL1 build 4898 
+Symbol Table                                          Tue Mar 30 16:29:27 2010
+
+    __Lrbss_0 001E             l2 01AB             l3 0176  
+           l5 017B             l6 01A9             l8 0180  
+           l9 0196     __Lrdata_0 0000     __Lramdata 0000  
+          l11 01FD            l20 01BA            l12 01AC  
+          l21 01DB            _DC 0019            l15 01FB  
+          l18 01E8            l19 01B1            _PD 001B  
+          _TO 001C    _PLCRXIndex 000A           _GP0 0030  
+         _GP1 0031           _GP2 0032           _GP3 0033  
+         _GP4 0034           _GP5 0035           _PA0 001D  
+         _FSR 0004           _PCL 0002           u900 0196  
+         u901 0195           u910 01A9           u911 01A8  
+         u940 01DB           u941 01DA           u950 01E1  
+         u951 01E0           u960 01E8           u961 01E7  
+         u970 01FB           u971 01FA     l600000184 01E8  
+ _PLCRXBuffer 001E          _C1ON 003B          _C1WU 0038  
+        _CAL0 0029          _CAL1 002A          _CAL2 002B  
+        _CAL3 002C          _CAL4 002D          _CAL5 002E  
+        _CAL6 002F      __tempreg 0010          _ADON 0040  
+        _CHS0 0042          _CHS1 0043          _ANS0 0046  
+        _ANS1 0047          _INDF 0000          _GPIO 0006  
+        _CWUF 001E          u9010 0192          u9110 01A5  
+        u9015 0190          u9115 01A3          u9410 01D7  
+        u9415 01D5          u9710 01F7          u9715 01F5  
+        _TMR0 0001     __databank 0000          _TRIS 0006  
+        _ZERO 001A          _main 0163          btemp 000C  
+        start 0002       _C1OUTEN 003E       _CM1CON0 0007  
+       _C1POL 003D         _C1OUT 003F         _ADCS0 0044  
+       _ADCS1 0045         ?_main 001A         _ADRES 0009  
+       _CARRY 0018         _GPWUF 001F         ltemp0 000C  
+       ttemp0 000C         status 0003         wtemp0 000C  
+       wtemp1 000E        ??_main 001A        _C1T0CS 003C  
+      _C1NREF 003A        _C1PREF 0039        _ADCON0 0008  
+__end_of_main 0200        _GODONE 0041        _OSCCAL 0005  
+      _OPTION 0000        _STATUS 0003        _main_j 001A  
+    __Hcommon 000C     __Hrdata_0 0001     __Hramdata 0001  
+    __Hrbss_0 0020      __Lcommon 000A  
