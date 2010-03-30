@@ -1,0 +1,349 @@
+Version 3.2 HI-TECH Software Intermediate Code
+"14 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _INDF `Vuc 1 e@0 ]
+"15 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _TMR0 `Vuc 1 e@1 ]
+"16 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _PCL `Vuc 1 e@2 ]
+"17 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _STATUS `Vuc 1 e@3 ]
+"18 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _FSR `uc 1 e@4 ]
+"19 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _OSCCAL `uc 1 e@5 ]
+"20 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _GPIO `Vuc 1 e@6 ]
+"21 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _CM1CON0 `Vuc 1 e@7 ]
+"22 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _ADCON0 `Vuc 1 e@8 ]
+"23 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _ADRES `Vuc 1 e@9 ]
+"25 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _OPTION `Wuc 1 e@0 ]
+"26 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _TRIS `VWuc 1 e@6 ]
+"40 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _CARRY `Vb 1 e@24 ]
+"41 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _DC `Vb 1 e@25 ]
+"42 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _ZERO `Vb 1 e@26 ]
+"43 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _PD `Vb 1 e@27 ]
+"44 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _TO `Vb 1 e@28 ]
+"45 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _PA0 `b 1 e@29 ]
+"46 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _CWUF `Vb 1 e@30 ]
+"47 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _GPWUF `Vb 1 e@31 ]
+"50 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _CAL0 `b 1 e@41 ]
+"51 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _CAL1 `b 1 e@42 ]
+"52 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _CAL2 `b 1 e@43 ]
+"53 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _CAL3 `b 1 e@44 ]
+"54 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _CAL4 `b 1 e@45 ]
+"55 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _CAL5 `b 1 e@46 ]
+"56 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _CAL6 `b 1 e@47 ]
+"59 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _GP0 `Vb 1 e@48 ]
+"60 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _GP1 `Vb 1 e@49 ]
+"61 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _GP2 `Vb 1 e@50 ]
+"62 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _GP3 `Vb 1 e@51 ]
+"63 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _GP4 `Vb 1 e@52 ]
+"64 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _GP5 `Vb 1 e@53 ]
+"67 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _C1WU `b 1 e@56 ]
+"68 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _C1PREF `b 1 e@57 ]
+"69 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _C1NREF `b 1 e@58 ]
+"70 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _C1ON `b 1 e@59 ]
+"71 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _C1T0CS `b 1 e@60 ]
+"72 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _C1POL `b 1 e@61 ]
+"73 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _C1OUTEN `b 1 e@62 ]
+"74 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _C1OUT `Vb 1 e@63 ]
+"77 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _ADON `b 1 e@64 ]
+"78 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _GODONE `Vb 1 e@65 ]
+"79 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _CHS0 `b 1 e@66 ]
+"80 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _CHS1 `b 1 e@67 ]
+"81 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _ADCS0 `b 1 e@68 ]
+"82 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _ADCS1 `b 1 e@69 ]
+"83 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _ANS0 `b 1 e@70 ]
+"84 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
+[v _ANS1 `b 1 e@71 ]
+"9 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c
+[v _PLCRXBuffer `i 1 e ]
+"10 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c
+[v _PLCRXIndex `i 1 e ]
+[p mainexit ]
+[; ;pic12f510.h: 14: volatile unsigned char INDF @ 0x000;
+[; ;pic12f510.h: 15: volatile unsigned char TMR0 @ 0x001;
+[; ;pic12f510.h: 16: volatile unsigned char PCL @ 0x002;
+[; ;pic12f510.h: 17: volatile unsigned char STATUS @ 0x003;
+[; ;pic12f510.h: 18: unsigned char FSR @ 0x004;
+[; ;pic12f510.h: 19: unsigned char OSCCAL @ 0x005;
+[; ;pic12f510.h: 20: volatile unsigned char GPIO @ 0x006;
+[; ;pic12f510.h: 21: volatile unsigned char CM1CON0 @ 0x007;
+[; ;pic12f510.h: 22: volatile unsigned char ADCON0 @ 0x008;
+[; ;pic12f510.h: 23: volatile unsigned char ADRES @ 0x009;
+[; ;pic12f510.h: 25: control unsigned char OPTION @ 0x000;
+[; ;pic12f510.h: 26: volatile control unsigned char TRIS @ 0x006;
+[; ;pic12f510.h: 40: volatile bit CARRY @ ((unsigned)&STATUS*8)+0;
+[; ;pic12f510.h: 41: volatile bit DC @ ((unsigned)&STATUS*8)+1;
+[; ;pic12f510.h: 42: volatile bit ZERO @ ((unsigned)&STATUS*8)+2;
+[; ;pic12f510.h: 43: volatile bit PD @ ((unsigned)&STATUS*8)+3;
+[; ;pic12f510.h: 44: volatile bit TO @ ((unsigned)&STATUS*8)+4;
+[; ;pic12f510.h: 45: bit PA0 @ ((unsigned)&STATUS*8)+5;
+[; ;pic12f510.h: 46: volatile bit CWUF @ ((unsigned)&STATUS*8)+6;
+[; ;pic12f510.h: 47: volatile bit GPWUF @ ((unsigned)&STATUS*8)+7;
+[; ;pic12f510.h: 50: bit CAL0 @ ((unsigned)&OSCCAL*8)+1;
+[; ;pic12f510.h: 51: bit CAL1 @ ((unsigned)&OSCCAL*8)+2;
+[; ;pic12f510.h: 52: bit CAL2 @ ((unsigned)&OSCCAL*8)+3;
+[; ;pic12f510.h: 53: bit CAL3 @ ((unsigned)&OSCCAL*8)+4;
+[; ;pic12f510.h: 54: bit CAL4 @ ((unsigned)&OSCCAL*8)+5;
+[; ;pic12f510.h: 55: bit CAL5 @ ((unsigned)&OSCCAL*8)+6;
+[; ;pic12f510.h: 56: bit CAL6 @ ((unsigned)&OSCCAL*8)+7;
+[; ;pic12f510.h: 59: volatile bit GP0 @ ((unsigned)&GPIO*8)+0;
+[; ;pic12f510.h: 60: volatile bit GP1 @ ((unsigned)&GPIO*8)+1;
+[; ;pic12f510.h: 61: volatile bit GP2 @ ((unsigned)&GPIO*8)+2;
+[; ;pic12f510.h: 62: volatile bit GP3 @ ((unsigned)&GPIO*8)+3;
+[; ;pic12f510.h: 63: volatile bit GP4 @ ((unsigned)&GPIO*8)+4;
+[; ;pic12f510.h: 64: volatile bit GP5 @ ((unsigned)&GPIO*8)+5;
+[; ;pic12f510.h: 67: bit C1WU @ ((unsigned)&CM1CON0*8)+0;
+[; ;pic12f510.h: 68: bit C1PREF @ ((unsigned)&CM1CON0*8)+1;
+[; ;pic12f510.h: 69: bit C1NREF @ ((unsigned)&CM1CON0*8)+2;
+[; ;pic12f510.h: 70: bit C1ON @ ((unsigned)&CM1CON0*8)+3;
+[; ;pic12f510.h: 71: bit C1T0CS @ ((unsigned)&CM1CON0*8)+4;
+[; ;pic12f510.h: 72: bit C1POL @ ((unsigned)&CM1CON0*8)+5;
+[; ;pic12f510.h: 73: bit C1OUTEN @ ((unsigned)&CM1CON0*8)+6;
+[; ;pic12f510.h: 74: volatile bit C1OUT @ ((unsigned)&CM1CON0*8)+7;
+[; ;pic12f510.h: 77: bit ADON @ ((unsigned)&ADCON0*8)+0;
+[; ;pic12f510.h: 78: volatile bit GODONE @ ((unsigned)&ADCON0*8)+1;
+[; ;pic12f510.h: 79: bit CHS0 @ ((unsigned)&ADCON0*8)+2;
+[; ;pic12f510.h: 80: bit CHS1 @ ((unsigned)&ADCON0*8)+3;
+[; ;pic12f510.h: 81: bit ADCS0 @ ((unsigned)&ADCON0*8)+4;
+[; ;pic12f510.h: 82: bit ADCS1 @ ((unsigned)&ADCON0*8)+5;
+[; ;pic12f510.h: 83: bit ANS0 @ ((unsigned)&ADCON0*8)+6;
+[; ;pic12f510.h: 84: bit ANS1 @ ((unsigned)&ADCON0*8)+7;
+[; ;pic.h: 406: extern void _delay(unsigned long);
+[; ;Main.c: 9: int PLCRXBuffer;
+[; ;Main.c: 10: int PLCRXIndex;
+"15 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c
+[v _main `(v 1 ef ]
+{
+[; ;Main.c: 14: void main()
+[; ;Main.c: 15: {
+[e :U _main ]
+[f ]
+[; ;Main.c: 16: GPWUF=0;
+"16
+[e = _GPWUF -> -> 0 `i `b ]
+[; ;Main.c: 19: OPTION=(1<<2)|(1<<0);
+"19
+[e = _OPTION -> | << -> 1 `i -> 2 `i << -> 1 `i -> 0 `i `uc ]
+[; ;Main.c: 21: TMR0=0;
+"21
+[e = _TMR0 -> -> 0 `i `uc ]
+[; ;Main.c: 23: ANS0=0;
+"23
+[e = _ANS0 -> -> 0 `i `b ]
+[; ;Main.c: 24: ANS1=0;
+"24
+[e = _ANS1 -> -> 0 `i `b ]
+[; ;Main.c: 25: TRIS=0b101011;
+"25
+[e = _TRIS -> -> 43 `i `uc ]
+[; ;Main.c: 27: GP2=1;
+"27
+[e = _GP2 -> -> 1 `i `b ]
+[; ;Main.c: 29: C1OUTEN=1;
+"29
+[e = _C1OUTEN -> -> 1 `i `b ]
+[; ;Main.c: 30: C1POL=1;
+"30
+[e = _C1POL -> -> 1 `i `b ]
+[; ;Main.c: 31: C1ON=1;
+"31
+[e = _C1ON -> -> 1 `i `b ]
+[; ;Main.c: 32: C1NREF=0;
+"32
+[e = _C1NREF -> -> 0 `i `b ]
+[; ;Main.c: 33: C1PREF=1;
+"33
+[e = _C1PREF -> -> 1 `i `b ]
+[; ;Main.c: 34: C1WU=1;
+"34
+[e = _C1WU -> -> 1 `i `b ]
+[; ;Main.c: 36: while(1)
+"36
+[e :U 3 ]
+[; ;Main.c: 37: {
+"37
+{
+[; ;Main.c: 38: for(int i=0;i<255;i++)
+"38
+{
+[v _i `i 1 a ]
+[e = _i -> 0 `i ]
+[e $ < _i -> 255 `i 5  ]
+[e $U 6  ]
+"39
+[e :U 5 ]
+[; ;Main.c: 39: {
+{
+[; ;Main.c: 40: for(int i2=0;i2<4;i2++)
+"40
+{
+[v _i2 `i 1 a ]
+[e = _i2 -> 0 `i ]
+[e $ < _i2 -> 4 `i 8  ]
+[e $U 9  ]
+"41
+[e :U 8 ]
+[; ;Main.c: 41: {
+{
+[; ;Main.c: 42: GP2=1;
+"42
+[e = _GP2 -> -> 1 `i `b ]
+[; ;Main.c: 43: asm("nop");
+"43
+[; nop ;#
+[; ;Main.c: 44: GP2=0;
+"44
+[e = _GP2 -> -> 0 `i `b ]
+"45
+}
+"40
+[e ++ _i2 -> 1 `i ]
+[e $ < _i2 -> 4 `i 8  ]
+[e :U 9 ]
+"45
+}
+"46
+}
+"38
+[e ++ _i -> 1 `i ]
+[e $ < _i -> 255 `i 5  ]
+[e :U 6 ]
+"46
+}
+[; ;Main.c: 45: }
+[; ;Main.c: 46: }
+[; ;Main.c: 47: GP4=!GP4;
+"47
+[e = _GP4 ! _GP4 ]
+"48
+}
+[e :U 2 ]
+"36
+[e $U 3  ]
+[e :U 4 ]
+[; ;Main.c: 48: }
+[; ;Main.c: 51: while(1)
+"51
+[e :U 12 ]
+[; ;Main.c: 52: {
+"52
+{
+[; ;Main.c: 53: for(int i=0;i<30;i++)
+"53
+{
+[v _i `i 1 a ]
+[e = _i -> 0 `i ]
+[e $ < _i -> 30 `i 14  ]
+[e $U 15  ]
+"54
+[e :U 14 ]
+[; ;Main.c: 54: {
+{
+"55
+[v _s `i 1 a ]
+[; ;Main.c: 55: int s;
+[; ;Main.c: 56: do
+"56
+[e :U 19 ]
+[; ;Main.c: 57: {
+"57
+{
+[; ;Main.c: 58: s=0;
+"58
+[e = _s -> 0 `i ]
+[; ;Main.c: 59: for(int j=0;j<10;j++)
+"59
+{
+[v _j `i 1 a ]
+[e = _j -> 0 `i ]
+[e $ < _j -> 10 `i 20  ]
+[e $U 21  ]
+"60
+[e :U 20 ]
+[; ;Main.c: 60: {
+{
+[; ;Main.c: 61: s+=C1OUT?1:0;
+"61
+[e =+ _s ? _C1OUT : -> 1 `i -> 0 `i ]
+"62
+}
+"59
+[e ++ _j -> 1 `i ]
+[e $ < _j -> 10 `i 20  ]
+[e :U 21 ]
+"62
+}
+"63
+}
+[; ;Main.c: 62: }
+[; ;Main.c: 63: }
+[; ;Main.c: 64: while(s!=0&&s!=10);
+"64
+[e $ && != _s -> 0 `i != _s -> 10 `i 19  ]
+[e :U 18 ]
+"65
+}
+"53
+[e ++ _i -> 1 `i ]
+[e $ < _i -> 30 `i 14  ]
+[e :U 15 ]
+"65
+}
+[; ;Main.c: 65: }
+[; ;Main.c: 66: GP2=!GP2;
+"66
+[e = _GP2 ! _GP2 ]
+"72
+}
+[e :U 11 ]
+"51
+[e $U 12  ]
+[e :U 13 ]
+[; ;Main.c: 72: }
+[; ;Main.c: 84: }
+"84
+[e :UE 1 ]
+}
