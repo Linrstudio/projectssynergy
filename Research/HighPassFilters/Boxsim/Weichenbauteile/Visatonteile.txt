@@ -1,0 +1,127 @@
+Visaton-Weichenbauteile		
+R	MOX 10W	1,0
+R	MOX 10W	1,5
+R	MOX 10W	2,2
+R	MOX 10W	3,3
+R	MOX 10W	4,7
+R	MOX 10W	6,8
+R	MOX 10W	8,2
+R	MOX 10W	10
+R	MOX 10W	15
+R	------- -------- 	----	
+R	Keramik 10W	1,0
+R	Keramik 10W	1,5
+R	Keramik 10W	2,2
+R	Keramik 10W	3,3
+R	Keramik 10W	4,7
+R	Keramik 10W	6,8
+R	Keramik 10W	8,2
+R	Keramik 10W	10
+R	Keramik 10W	15
+R	Keramik 10W	22
+R	------- -------- 	-------	
+
+R	Keramik 5W	2,2
+R	Keramik 5W	3,3
+R	Keramik 5W	4,7
+R	Keramik 5W	10
+
+
+
+C	Elko rauh	15
+C	Elko rauh	22
+C	Elko rauh	33
+C	Elko rauh	47
+C	Elko rauh	68
+C	Elko rauh	82
+C	Elko rauh	100
+C	Elko rauh	150
+C	Elko rauh	220
+C	Elko rauh	330
+C	Elko rauh	470
+C	Elko rauh	680
+C	------- -------- 	-------	
+C	Elko spezial	1,0
+C	Elko spezial	1,5
+C	Elko spezial	2,2
+C	Elko spezial	3,3
+C	Elko spezial	4,7
+C	Elko spezial	6,8
+C	Elko spezial	8,2
+C	Elko spezial	10
+C	Elko spezial	15
+C	Elko spezial	22
+C	Elko spezial	33
+C	Elko spezial	47
+C	Elko spezial	68
+C	Elko spezial	82
+C	Elko spezial	100
+C	------- -------- 	-------	
+C	MKT	1,0
+C	MKT	1,5
+C	MKT	2,2
+C	MKT	3,3
+C	MKT	4,7
+C	MKT	6,8
+C	MKT	8,2
+C	MKT	10
+C	MKT	15
+C	MKT	22
+C	MKT	33
+C	MKT	47
+C	MKT	68
+C	------- ----	
+C	MKP	1,0
+C	MKP	1,5
+C	MKP	2,2
+C	MKP	3,3
+C	MKP	4,7
+C	MKP	6,8
+C	MKP	8,2
+C	MKP	10	
+C	MKP	15	
+C	MKP	22	
+L	FC-Spule	3,3	0,45
+L	FC-Spule	3,9	0,5
+L	FC-Spule	4,7	0,55
+L	FC-Spule	6,8	0,75
+L	FC-Spule	8,2	0,79
+L	FC-Spule	10	0,82
+L	------- ----- 	----	-------	
+L	LR-Spule	1,5	0,17
+L	LR-Spule	3,3	0,25
+L	LR-Spule	3,9	0,27
+L	LR-Spule	4,7	0,28
+L	LR-Spule	6,8	0,35
+L	LR-Spule	10	0,55
+L	------- ----- 	----	-------
+L	KN-Spule	3,3	1,5
+L	KN-Spule	4,7	2,2
+L	KN-Spule	6,8	2,8
+L	KN-Spule	10	4,25
+L	KN-Spule	15	5,0
+L	KN-Spule	22	5,75
+L	KN-Spule	27	6,5
+L	------- -------	 ---	-----
+L	SP 0,6mm	0,10	0,3
+L	SP 0,6mm	0,15	0,4
+L	SP 0,6mm	0,22	0,5
+L	SP 0,6mm	0,33	0,6
+L	SP 0,6mm	0,47	0,6
+L	SP 0,6mm	0,68	0,8
+L	SP 0,6mm	0,82	1,1
+L	SP 0,6mm	1,0	1,2
+L	SP 0,6mm	1,5	1,6
+L	SP 0,6mm	2,2	1,9
+L	SP 0,6mm	3,3	2,5
+L	------- -------	 -----	-----
+L	SP 1,0mm	0,47	0,3
+L	SP 1,0mm	0,68	0,4
+L	SP 1,0mm	0,82	0,4
+L	SP 1,0mm	1,0	0,5
+L	SP 1,0mm	1,5	0,6
+L	SP 1,0mm	2,2	0,8
+L	SP 1,0mm	3,3	1,0
+L	------- -------	 -----	-----
+L	SP 1,3mm	2,2	0,5
+

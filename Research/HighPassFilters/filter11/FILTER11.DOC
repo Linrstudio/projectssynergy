@@ -1,0 +1,293 @@
+
+                        Power Mountain Software Systems
+                                  P.O.Box 243
+                               Provo, Utah 84603
+
+                                 Copyright 1987
+                              all rights reserved
+
+
+                            Filter 1.1 Documentation
+                               By Larry Ashworth
+                                    2/09/87
+
+
+     ** What's New! **
+
+     There have been some big changes in the program since version 1.0.  It  is 
+now  possible  to design 75 different filters instead of 7,  and the program is 
+now Shareware.  We hope you like it, and will support its' further development.
+     All rights to this program are  reserved,  and  no  modification  to  this 
+program  will  be  allowed,  whatsoever.  Feel  free  to write us if you feel a 
+modification to this program might be warranted. We will make any modifications 
+we  think  desirable.  We  intend  to  continue to develop it into a VERY major 
+program, and we would like your input.
+     You may distribute this program freely,  and in fact are encouraged to  do 
+so.  If  you are seeing this program for the very first time,  remember this is 
+not the latest version more than likely.  Registering will provide you with the 
+current  one,  and also get you the next update.  It is virtually impossible to 
+keep you informed as to all the most recent additions.  So if you  really  like 
+what you see, by registering you will get to see what's happening.
+     I'm not sure at this time how many versions will be released to the public 
+as shareware,  it will depend on the support of the public.  We'll release some 
+more things I'm sure,  but we don't know how well the  Shareware  concept  will 
+work  with  this  type  of  software,  so I don't want to promise more than I'm 
+prepared to deliver.
+
+ ==============================================================================
+!!  YOU MAY DISTRIBUTE ONLY THE SHAREWARE VERSION, NOT THE REGISTERED VERSION !!
+ ==============================================================================
+
+     The purpose of this program is to: 
+
+        A.)  Provide some basic background for those who ÿare investigating the 
+        principles  of electronics,  and filters in particular,  ÿfor the first 
+        time,  or to provide a review for those who studied  it  sometime  ago. 
+        Potential problems are covered, to make it easier to get what you want.
+
+        B.)  To aid those who need a good bandpass filter design for some audio 
+        application, ÿand would like the computer to generate a schematic,  and 
+        compute values. 
+
+        C.)  To  help  those who need a filter,  to choose components that will 
+        perform as desired,  or atÿleast to help make  a  sensible  compromise. 
+        This   includes   guidelines  and  suggestions  as  toÿtheÿoperationalÿ 
+        amplifierÿchoices available. 
+
+
+
+                                     Page 1
+                          ** BACKGROUND AND BASICS **
+
+     Since  we  have  to start somewhere,  and since we don't have room on this 
+disk for a complete course in electronics,  we are going  to  assume  that  you 
+already have some background in the basics.  
+     To  begin  remember that all of electronics begins with the study of a few 
+basic components, known as resistors, capacitors,  and inductors.  ÿThese basic 
+components  ÿcan  be used in an infinite variety of circuits and are the ÿbasic 
+building blocks of all electronics.  Combined with semiconductor technology and 
+the invention of the vacuum tube, ÿvirtually all of the developments ÿof modern 
+technology have been ÿcreated.  ÿÿThese fundamental elements form the  function 
+blocks upon which we have built everything. 
+     There are many different function blocks that are often used inÿthe design 
+of communications and audio circuits.  One of these is the filter.  As a matter 
+of fact virtually ÿall ÿelectronic ÿequipment ÿuses some ÿsort ÿof filtering. A 
+filter ÿis ÿa ÿcircuit that electronically determines which frequency, or range 
+of frequencies, will be allowed through. 
+     There ÿare essentially two classes of filters known as R.F.,  ÿand  Audio. 
+R.F.  ÿfilters  ÿare  so called because these are used ÿfor ÿRadio Frequencies, 
+consisting of high ÿfrequency ranges used in communications and in  navigation. 
+These  are  much higher than the range of the human ear.  Audio frequencies are 
+those which are within the range of human hearing.  In this case from 10 hz  to 
+25 khz or so. 
+     For  ÿour purposes we will discuss audio filters,  ÿbut the principles are 
+the same for R.F. types.
+     All filters basically consist of four types,  they are LOWPASS,  BANDPASS, 
+NOTCH,  ÿBAND REJECT,  and HIGHPASS.  ÿI ÿsay four types because notch and band 
+reject ÿare both the same thing, ÿdiffering only in the width,  ÿor range,  ÿof 
+frequencies that are rejected. 
+     A  wide bandpass filter design can be formed from the use of a highpass in 
+front of a lowpass filter,  in fact  this  is  the  way  a  speech  filter  for 
+communications  is  designed.   In  the  case  of  speech,  only  the  range of 
+frequencies extending from 300 hz to 3000 hz are required to understanding what 
+is said.  By concentrating all the power of a transmitter over a narrower range 
+of frequencies better communicating under adverse conditions  is  possible.  In 
+this  situation  we  would  use  a  high pass filter of 300 hz which would pass 
+frequencies above 300 hz to the input of a low pass filter  at  3000  hz,  thus 
+forming a 300 - 3000 hz bandpass filter system.
+     A  bandpass  filter  can  be very narrow,  and there are many applications 
+where only a very small band of frequencies are desired.  As  in  the  case  of 
+morse code communications in amateur radio. The Butterworth bandpass filter has 
+the property of being able to pass a small band of frequencies with nearly  the 
+same  amplitude throughout the pass band,  while allowing very steep skirts for 
+maximum attenuation  of  unwanted  signals  or  noise.  (The  number  of  poles 
+determines just how steep these skirts are.)
+     Notch,  or  band  reject  filters  are  used  to  eliminate or attenuate a 
+frequency or band of frequencies.  This particular version ("Filter 1.1")  does 
+not  create  notch filters,  though we intend to add them to the program in the 
+future. Band reject filters can be created through the use of high and low pass 
+filters,  simply by selecting the appropriate filters to reject the frequencies 
+you consider undesireable. 
+
+
+
+
+
+     
+                                     Page 2
+                            ** COMPONENT CHOICES **
+
+     This program is designed to allow you to very quickly design and  document 
+a  filter design.  A great deal of effort and research has gone into creating a 
+program that will make your life easier.  However,  there are hidden  'gotchas' 
+just waiting in the wings to ruin an otherwise excellent design.
+
+     Before we get into a few of these here are  a  few  pointers:  
+
+        A.  The  resistor  and component values given are calculated values and 
+need to be rounded  out  to  the  nearest  standard  value.  The  tolerance  of 
+resistors  and  capacitors  is suggested in the program,  and as you use it you 
+will see that exotic filter  shapes  require  very  tight  tolerances.  Simpler 
+filter requirements yeild less stringent component accuracies. In general, when 
+choosing components remember,  the closer you can come to the calculated values 
+the more likely you are to get the predicted results.
+            One  of  the really nice features of this program,  is the inherent 
+ability to experiment with values,  until the right combination is  found  that 
+meets  your  requirements.  Capacitor values should be kept below 1 uf.,  while 
+resistor values should be kept at around 2k and above.  Juggle capacitor values 
+around until you come up with the results that meet your requirements. Remember 
+also that resistance values above a Megohm may not be a good idea, try a larger 
+capacitor.  Some  very  low  frequency  filters require a large capacitor,  but 
+they're expensive.
+        B.  There are a great many good op-amps to choose from, and if you feel 
+a  little insecure about picking one for the job you're doing,  I would like to 
+suggest the TL071 (single),  TL072 (dual),  or TL074 (quad) packages.  They are 
+high performance, low noise, high slew rate devices that work very very well in 
+this type of circuit.  Their pin outs are industry standard,  and the price  is 
+reasonable.  If  you  need extremely low power consumption the TL061 series has 
+the same pin out and can be substituted.  These devices can be found in a Texas 
+Instruments Linear Data Manual.  The TL061,  '62, and '64 devices are not quite 
+as good in critical applications,  however,  due to the sacrifice in slew  rate 
+for lower power consumption. 
+        C.  If you have noticed there are  potentiometers  in  the  Butterworth 
+filter  schematics,  these can be 1/4 watt pc-mount types,  and the reason they 
+are there is to make it possible to make the fine tuning adjustments  necessary 
+to  get  the  system  to  work.  The  tuning procedure requires that you have a 
+frequency generator, and a frequency counter.  Using the values given, all that 
+you  need  to  do  is  to  make  sure that each section is tuned to the correct 
+frequency,  and then to make sure with your ac voltmeter that the gain for that 
+section is correct.  Start with the first section,  and continue through to the 
+last.
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     Page 3
+                       ** LOW & HIGH PASS FILTER TYPES **
+
+     When  you  run  the low pass and high pass filter design options,  you are 
+asked to choose a slope option.  In case you aren't  sure  what  we're  talking 
+about,  I'll define them for you.  This new feature we have put in the program, 
+greatly enhances it's power and flexibility. You can now tailor each section to 
+give you the exact slope you need for your application.
+     These slope options are created by varying the DAMPING, of the section. As 
+the  damping  is  reduced  from  2 toward 0,  the initial rolloff of the filter 
+becomes steeper.  This allows higher rejection of unwanted signals  than  would 
+otherwise  be  the  case,  but the thing that I want to bring out is trade offs 
+involved.
+     Changing the damping has an affect on the passband of the filter, reducing 
+the  damping  causes ripples to occur.  You will notice in fact,  slope options 
+called 1db,  2db,  and 3db dip.  This refers to the passband ripple inherent to 
+these  filters.  Flattest  amp  refers  to  the  fact that the amplitude in the 
+passband   is   flat.    Very   desirable   in   audio   applications  such  as 
+bi-amplification.
+     'Highly damped' and 'best delay' are the  slowest  to  rolloff  initially, 
+'compromise' a little faster, and so on....
+
+                            ** POTENTIAL PROBLEMS **
+
+     This program works very well, but the results can be unrealistic.  This is 
+due  to  the  fact  that  no  matter how rediculous your specifications are the 
+program will try to come up with values.  Values that can be  impossible.  In a 
+case such as this a little common sense is in order.
+     When you design a Butterworth bandpass filter,  keep the bandwidth as wide 
+as you can to get what you need accomplished.  Excessively narrow  filters  are 
+extremely difficult to tune,  the requirements for the op-amp get unreasonable, 
+and very often even if you get it running the ringing  of  the  filter  is  bad 
+enough to cause more troubles than you gain.  There are some important physical 
+limits that there just is no way around.
+     A one hertz wide filter will take  1  second  to  reach  approximately  90 
+percent of the maximum amplitude.  The higher the Q,  the closer to oscillation 
+you are,  and the greater the problems.  Trust me.  Keep it as wide as you can. 
+You'll be happier.  Use more poles if you need it really narrow,  but don't cut 
+those sidebands,  'cause you need 'em.  There  have  been  a  great  many  good 
+articles on filters in the various hobby electronic magazines, and of course in 
+many good textbooks on communications,  which can give you more information  on 
+why narrower isn't always better.
+     We've  tried  to  trap  out unreasonable inputs,  but I suppose there is a 
+chance we missed something.....
+
+
+                               R E M E M B E R !
+
+     The ultimate rolloff of a filter is governed by the number of poles,  only 
+the initial rolloff is changed.
+     More poles, as a general rule, is more desirable than trying to make a two 
+pole filter act like a six pole.
+     Components become more critical as you lower the damping,  and it  gets  a 
+litle tricky to build a practical filter.  Use discretion.
+
+     On a final note,  remember that if you want to print  out  the  schematics 
+generated  by  the  program,  you must run the GRAPHICS program from DOS or the 
+equivalent or you will not get a proper print-out of the screen.
+
+                                     Page 4
+
+
+
+
+
+
+
+
+                                ** THANK-YOU **
+
+
+     I  would  like to take this opportunity to thank Dale Spanheimer,  for his 
+help in putting this program together.  A lot of  effort  has  gone  into  this 
+thing,  and  I really appreciate his help.  The updates are coming a lot faster 
+due to his assistance.
+     Thanks are also in order to Thayne Harmon, who adapted the source code for 
+use  on  the  Atari ST.  He has made,  and helped to implement,  some very nice 
+changes in the program.
+     Now  let  me  say  thank-you  to  YOU.  It's people like you that make the 
+Share-ware software concept work.  We have faith in you, and we want to provide 
+a program that is professional, and as high a quality as possible.  I feel that 
+this way our future will be assured,  and that people  such  as  yourself  will 
+support this kind of effort.  Please don't let us down,  and we will work to be 
+of service to you.
+
+                                             Larry Ashworth
+
+                                             Power Mountain Software Systems
+                                             P.O.Box 243
+                                             Provo, Utah 84601
+
+
+
+
+
+                               ** FINAL NOTES **
+                                    03/11/87
+
+     At present,  the program has been tested  and  found  to  run  on  an  IBM 
+compatible  with  an  EGA/CGA card and a Tandy 1000.  A patch has been added to 
+make the program look better on the EGA card without blanking the screen on the 
+CGA  machines.  After the commercials in the beginning of the program,  you are 
+asked if you have an EGA card.  If you  respond  with  "N",  the  program  will 
+function  normally for CGA.  If you input "N" and you do have an EGA card,  you 
+will get green graphics on a white background.  If you respond "Y" and you have 
+a  CGA  card,  you  will get a blank screen after you have input all the values 
+requested.  If this happens,  just hit the retun key a couple of times and  you 
+will be asked if you want to design another filter. Respond "N" and you can run 
+the program again and respond "N" when it asks if you have an EGA card. We have 
+had a couple of copies of the program escape without this patch, so if you find 
+your screen going blank on a CGA card after you have  entered  all  the  values 
+requested,  then  you will find that problem is now cured.  The revision number 
+has not been changed to reflect that patch  being  added  to  the  program.  We 
+appologize for any inconvenience that may have been caused by this bug.
+
+
+
+                                    Page 5
+

@@ -1,0 +1,702 @@
+0 REM       PC VERSIE  38   VAN  FILTER
+1000 REM Ruimte reserve alhier.
+1100 KEY OFF : GOSUB 1110 : GOTO 1130
+1110 CLS : RETURN : REM Scherm-schoon routine
+1120 FOR I=0 TO PR:PRINT:NEXT:RETURN:REM Regels opschuiven, PR=No
+1130 PR=12:GOSUB 1120:PRINT "EVEN HET GEHEUGEN OP-POKEN!"
+1140 DIM A$(20,16) : GOSUB 4730
+1150 PRINT:PRINT"Start of eerst een stukje tekst : type S/Return of T ?"
+1160 X$=INKEY$ : IF X$="" THEN 1160
+1170 X=ASC(X$): IF NOT (X=13 OR X=83 OR X=84 OR X=115 OR X=116) THEN 1160
+1180 IF X=13 OR X=83 OR X=115 THEN 1640 ELSE 1240
+1190 REM HIER LATEN WE EVEN ALLE PLAATJES ZIEN
+1200 DIM A$(17,16) : GOSUB 4730
+1210 FOR PL=1 TO 18:CLS:GOSUB 4630:REM GRAPJE
+1220 FOR I=0 TO 1000:NEXT I:NEXT PL
+1230 END:REM GEEF VOOR GRAPJE RUN1200 (1e keer) of GOTO1210
+1240 GOSUB 1110:PRINT"  Dit programma berekent allerlei passieve filters,"
+1250 PRINT"  bestaande uit kombinaties van spoelen en condensatoren."
+1260 PRINT"  Dus is het een must voor de HF en VHF knutsel-"
+1270 PRINT"  en zendamateur die wel eens een filtertje in elkaar"
+1280 PRINT"  wil solderen met voorspelbaar resultaat!!"
+1290 PRINT:PRINT
+1300 PRINT"  Geschreven door W. Geeraert (PE1ABR) te Vlissingen"
+1310 PRINT"  op een Exidy Sorcerer, aangepast voor GWBASIC op "
+1315 PRINT"  een PC. Was oorspronkelijk geschikt voor BASICODE."
+1318 PRINT"  Vandaar de kromme kursor besturing en start op 1000! "
+1320 PRINT"  Aanbevolen literatuur: Hoofdstuk 11 uit 'Basic"
+1330 PRINT"  computer programs in science and engineering' van"
+1340 PRINT"  Jules H. Gilder  ( Hayden Book Company )  en"
+1350 PRINT"  de formules uit het PBNA polytechnisch zakboekje."
+1360 PRINT"  Wel even wat kleine foutjes eruithalen!!!"
+1370 GOSUB 3330 :GOSUB 1110
+1380 PRINT"  Dit programma is geschreven naar aanleiding van het"
+1390 PRINT"  gebruik van de programma's uit dit hoofdstuk 11."
+1400 PRINT"  Deze komponenten berekenings programma's waren"
+1410 PRINT"  voor mij te versnipperd, het was daarin de bedoeling"
+1420 PRINT"  voor ieder mogelijk filter een apart programma"
+1430 PRINT"  in te laden ( van cassette bij mij), waar steeds de"
+1440 PRINT"  zelfde vragen gesteld worden, en veel gebruik wordt"
+1450 PRINT"  gemaakt van ongeveer gelijkvormige formules."
+1460 PRINT:PRINT
+1470 PRINT"  Hier is dit alles (en nog veel meer dan dat)"
+1480 PRINT"  gekombineerd en dmv veel subroutines en herleidingen"
+1490 PRINT"  van formules tot standaard versies is geprobeerd zo"
+1500 PRINT"  min mogelijk iets dubbel in te tikken."
+1510 PRINT"  Hier kan men dus met 1 programma alle kanten uit."
+1520 PRINT:PRINT"  Verder is er in een grafische voorstelling voorzien"
+1530 PRINT"  van het betreffende filtertype."
+1540 GOSUB 3330 : GOSUB 1110
+1550 REM
+1560 PRINT"  Wanneer bij herhaald rekenen de invoergegevens op-"
+1570 PRINT"  nieuw nodig zijn hoeven ze niet opnieuw ingetikt"
+1580 PRINT"  te worden, ze worden automatisch herhaald op"
+1590 PRINT"  het scherm na indrukken van return (of spacebar)."
+1600 PRINT:PRINT
+1610 PRINT"  Ook is er voorzien in een berekening van de wikkel-"
+1620 PRINT"  gegevens van een enkellaags luchtspoel!!!"
+1630 GOSUB 3330
+1640 PI=3.141593 :GOSUB 1110:PRINT:PRINT
+1650 PRINT "Dit programma berekent allerlei soorten passieve filters van het ";
+1655 PRINT "type : ":PRINT:PRINT
+1660 PRINT "         ╠╠╠╠ BUTTERWORTH DRIE ELEMENTS ╠╠╠╠":PRINT
+1670 PRINT:PRINT TAB(10)"1)   Hoogdoorlaatfilters"
+1680 PRINT:PRINT TAB(10)"2)   Laagdoorlaatfilters"
+1690 PRINT:PRINT TAB(10)"3)   Banddoorlaatfilters"
+1700 PRINT:PRINT TAB(10)"4)   Bandsperfilters"
+1710 PRINT:PRINT TAB(10)"0)   Niets meer, u wilt stoppen"
+1720 PR=3:GOSUB 1120:GOSUB 3320
+1730 GOSUB 3250:IF NU=0 THEN GOTO 1210
+1740 IF NU>4 THEN 1730
+1750 KE=NU:REM KEuze onthouden
+1760 ON KE GOTO 1780, 1970, 2170, 2460
+1770 END:REM MOCHTEN WE HIER OOIT KOMEN?!?
+1780 REM DEELMENU HOOGDOORLAATFILTERS
+1790 GOSUB 1110:PR=2:GOSUB 1120
+1800 PRINT TAB(10)"╠╠╠╠ HOOGDOORLAATFILTERS ╠╠╠╠"
+1810 PRINT
+1820 PRINT:PRINT TAB(10)"0)   Terug naar hoofdmenu"
+1830 PRINT:PRINT TAB(10)"1)   Normaal konstant K   T-filter"
+1840 PRINT:PRINT TAB(10)"2)   Normaal konstant K   PI-filter"
+1850 PRINT:PRINT TAB(10)"3)   Serie getransformeerd   T-filter"
+1860 PRINT:PRINT TAB(10)"4)   Serie getransformeerd   PI-filter"
+1870 PRINT:PRINT TAB(10)"5)   Shunt getransformeerd   PI-filter"
+1880 PR=2:GOSUB 1120:GOSUB 3320
+1890 GOSUB 3250
+1900 IF NU=0 THEN 1640
+1910 IF NU>5 THEN 1890
+1920 GOSUB 1110:PL=NU:GOSUB 4630:GOSUB 2650
+1930 GOSUB 2770:GOSUB 3190
+1940 ON NU GOSUB 3790, 3840, 3880, 3940, 3940
+1950 IF ER=1 THEN GOSUB 3370:GOTO 1930
+1960 GOSUB 4920:GOSUB 3330:GOTO 1780
+1970 REM DEELMENU LAAGDOORLAATFILTERS
+1980 GOSUB 1110:PR=1:GOSUB 1120
+1990 PRINT TAB(10)"╠╠╠╠ LAAGDOORLAATFILTERS ╠╠╠╠"
+2000 PRINT
+2010 PRINT:PRINT TAB(10)"0)   Terug naar hoofdmenu"
+2020 PRINT:PRINT TAB(10)"1)   Normaal konstant K   T-filter"
+2030 PRINT:PRINT TAB(10)"2)   Normaal konstant K   PI-filter"
+2040 PRINT:PRINT TAB(10)"3)   Serie getransformeerd   T-filter"
+2050 PRINT:PRINT TAB(10)"4)   Serie getransformeerd   PI-filter"
+2060 PRINT:PRINT TAB(10)"5)   Shunt getransformeerd   PI-filter"
+2070 PRINT:PRINT TAB(10)"6)   Serie getransformeerd   L-filter"
+2080 PRINT:PRINT TAB(10)"7)   Shunt getransformeerd   L-filter"
+2090 PR=1:GOSUB 1120:GOSUB 3320
+2100 GOSUB 3250
+2110 IF NU=0 THEN 1640:REM KEuze=2 en NU loopt van 1 t/m 7
+2120 GOSUB 1110:PL=5+NU:GOSUB 4630:GOSUB 2650
+2130 GOSUB 2770:GOSUB 3190
+2140 ON NU GOSUB 4060, 4110, 4150, 4210, 4210, 4350, 4350
+2150 IF ER=1 THEN GOSUB 3370:GOTO 2130
+2160 GOSUB 4920:GOSUB 3330:GOTO 1970
+2170 REM DEELMENU BANDDOORLAATFILTERS
+2180 GOSUB 1110:PR=2:GOSUB 1120
+2190 PRINT TAB(10)"╠╠╠╠ BANDDOORLAATFILTERS ╠╠╠╠"
+2200 PRINT
+2210 PRINT:PRINT TAB(10)"0)   Terug naar hoofdmenu"
+2220 PRINT:PRINT TAB(10)"1)   Konstant K   T-doorlaatfilter"
+2230 PRINT:PRINT TAB(10)"2)   Konstant K   PI-doorlaatfilter"
+2240 PRINT:PRINT TAB(10)"3)   Kritisch gekoppeld (smal)doorlaatfilter"
+2250 PR=3:GOSUB 1120:GOSUB 3320
+2260 GOSUB 3250:IF NU=0 THEN 1640
+2270 IF NU>3 THEN 2260
+2280 GOSUB 1110:PL=12+NU:GOSUB 4630:GOSUB 2650
+2290 IF NU=3 THEN GOSUB 2710
+2300 GOSUB 2940:GOSUB 3070:GOSUB 3150:IF NU=1 THEN 2350
+2310 IF NU=3 THEN 2380
+2320 REM PI-banddoorlaat deel 2
+2330 REM L1=L1  EN  C1=C1
+2340 L2=2*L2:C2=C2/2:GOTO 2430
+2350 REM T-banddoorlaat deel 2
+2360 L1=L1/2:C1=C1*2
+2370 GOTO 2430:REM L2=L2 EN C2=C2
+2380 REM Kritisch smalband doorlaatfilter
+2390 L2=2*L2:C2=C2/2
+2400 C1=C2/Q:REM  k*Q=1
+2410 GOSUB 3770:REM ANDERE START AFDRUKKEN SMALBAND
+2420 C$="C1":GOSUB 3560:GOTO 2440
+2430 C$="C1":L$="L1":GOSUB 3470
+2440 GOSUB 3610:GOSUB 3680
+2450 GOSUB 3740:GOSUB 4920:GOSUB 3330:GOTO 2170
+2460 REM deelmenu bandsperfilters
+2470 GOSUB 1110:PR=2:GOSUB 1120
+2480 PRINT:PRINT TAB(10)"╠╠╠╠ BANDSPERFILTERS ╠╠╠╠":PRINT
+2490 PRINT:PRINT TAB(10)"0)   Terug naar hoofdmenu"
+2500 PRINT:PRINT TAB(10)"1)   Konstant K   T-sperfilter"
+2510 PRINT:PRINT TAB(10)"2)   Konstant K   PI-sperfilter"
+2520 PR=3:GOSUB 1120:GOSUB 3320
+2530 GOSUB 3250:IF NU=0 THEN 1640
+2540 IF NU>2 THEN 2530
+2550 GOSUB 1110:PL=15+NU:GOSUB 4630:GOSUB 2650:GOSUB 2940
+2560 GOSUB 3070:GOSUB 3110:IF NU=1 THEN 2600
+2570 REM PI-SPERFILTER 2E DEEL
+2580 L2=2*L2: REM L1=L1
+2590 C2=C2/2:GOTO 2630:REM  C1=C1
+2600 REM T-sperfilter 2e deel
+2610 L1=L1/2: REM  L2=L2
+2620 C1=2*C1: REM  C2=C2
+2630 C$="C1":L$="L1":GOSUB 3470:GOSUB 3610:GOSUB 3680
+2640 GOSUB 3740:GOSUB 4920:GOSUB 3330:GOTO 2460
+2650 REM R OPHALEN
+2660 PRINT CHR$(11);
+2670 PRINT "Geef de afsluitweerstand van het filter in Ohm : ";
+2680 XX=R1:GOSUB 4820:R1=XX:R=R1
+2690 IF R=0 THEN TR=1:GOSUB 3370:GOTO 2670
+2700 RETURN
+2710 PRINT:REM Subroutine transformatieverhouding
+2720 PRINT "Geef de wikkelverhouding tussen tab en totaal (1:N) мм> N = ";
+2740 XX=NV:GOSUB 4820:NV=XX
+2750 IF NV=0 THEN TR=2:GOSUB 3370:GOTO 2710
+2760 R=R*NV^2:RETURN
+2770 REM kantelfrekwentie ophalen
+2780 PRINT
+2790 PRINT "Geef de kantelfrekwentie van het filter in MHz : ";
+2800 XX=F:GOSUB 4820:F=XX
+2810 IF F=0 THEN TR=2:GOSUB 3370:GOTO 2770
+2820 FK=F*1000000!:RETURN
+2830 REM MAX. ONDERDRUKKING FO OPHALEN
+2840 PRINT
+2850 PRINT "Geef frekwentie waarbij max. verzwakking moet optreden in MHz :" ;
+2860 XX=F1 : GOSUB 4820 : F1=XX
+2870 IF F1=0 THEN TR=2:GOSUB 3370:GOTO 2830
+2880 FO=F1*1000000!:TR=4:ER=0:REM vorige ERrors overboord
+2890 IF KE=2 THEN 2920
+2900 IF FK<=FO THEN ER=1:RETURN:REM  foutje gevonden!
+2910 M=SQR(1-(FO/FK)^2):RETURN
+2920 IF FO<=FK THEN ER=1:RETURN:REM  foutje gevonden!
+2930 M=SQR(1-(FK/FO)^2):RETURN
+2940 REM BANDFILTER PUNTEN OPHALEN
+2950 PRINT:Z$="doorlaat":IF KE=4 THEN Z$="sper"
+2960 PRINT "Geef de laagste frekwentie van de ";Z$;"band in Mega Hertz :";
+2970 XX=F2 : GOSUB 4820 : F2=XX
+2980 PRINT:PRINT "Geef de hoogste frekwentie van de ";Z$;"band in Mega Hertz :";
+2990 XX=F3 : GOSUB 4820 : F3=XX
+3000 IF F3<=F2 OR F2=0 OR F3=0 THEN TR=3:GOSUB 3370:GOTO 2960:REM FOUT!
+3010 IF (F3-F2)<=.01*F3 AND NU<>3 THEN GOTO 3030:REM ONHANDIGE WAARDEN
+3020 FL=F2*1000000!:FH=F3*1000000!:RETURN:REM dan 5 videoregels terug!
+3030 PRINT:PRINT "FILTERPUNTEN TE DICHT OP ELKAAR!!!!"
+3040 PRINT "BETER IS :  Fhoog - Flaag > 0.01 maal Fhoog "
+3050 TR=6:GOSUB 3370:GOSUB 4630:PRINT CHR$(11);
+3060 I=CSRLIN : LOCATE (I+2) :GOTO 2960
+3070 REM rekenen band filters algemeen
+3080 FM=(FH-FL):T1=FM/(PI*FH*FL):T2=1/(PI*FM)
+3090 Q=( SQR(FH*FL))/FM
+3100 LA=R*T2:LB=R*T1:CA=T1/R:CB=T2/R:RETURN
+3110 REM bandsper voorlopige waarden
+3120 REM L in uH, C in pF
+3130 L1=LB*1000000!:L2=(LA*1000000!)/4
+3140 C1=(CB*1E+12)/4:C2=CA*1E+12:RETURN
+3150 REM banddoorlaat voorlopige waarden
+3160 REM L in uH, C in pF
+3170 L1=LA*1000000!:L2=(LB*1000000!)/4
+3180 C1=(CA*1E+12)/4:C2=CB*1E+12: RETURN
+3190 REM berekenen voor hoog- en laagdoorlaat van de
+3200 REM standaard waarden voor L en C
+3210 REM meteen in uH en pF
+3220 L=1000000!*R/(PI*FK)
+3230 C=1E+12/(PI*R*FK)
+3240 RETURN
+3250 REM SUBROUTINE  inkey$
+3260 REM OP VERKEERDE KEUZES WORDT NIET GEREAGEERD
+3270 X$=INKEY$ : IF X$="" THEN 3270
+3280 IF ASC(X$) < 48 OR ASC(X$) > 55 THEN 3270
+3290 NU=VAL(X$) : RETURN
+3300 REM momentele waarde NU loopt van 0 t/m 7
+3310 REM ==eerst nog even een vraag stellen!==subroutine
+3320 PRINT "Maak een keus en druk een getal in!";:RETURN
+3330 REM gaan we de weg vervolgen?===routine
+3340 PRINT CHR$(11);:PR=22:GOSUB 1120:REM naar laatste regel
+3350 INPUT "Geef SHIFT+PrtSc voor 'print-out' of andere toets voor vervolg",NN$
+3360 RETURN
+3370 REM TeRug routine, TR=aantal regels terug
+3380 REM RN=berek. huidige reg. no., RN-TR=nieuwe regel video
+3390 PRINT:PRINT "DIT KAN NIET, OPNIEUW !!!":REM extra 2r terug
+3400 TR=TR+2:FOR I=0 TO 2000:NEXT:EP=79:REM PAS OP DE PLAATS!
+3410 RN=CSRLIN : PRINT CHR$(11);
+3420 IF (RN-TR)<=0 THEN 3440:REM we zijn er al!!
+3430 LOCATE (RN-TR) :REM terug en vegen!
+3440 FOR I=(RN-TR) TO RN:PRINT TAB(EP)" ":NEXT:PRINT CHR$(11);
+3450 IF (RN-TR)<=0 THEN RETURN:REM we zijn er wederom!!
+3460 LOCATE (RN-TR) :RETURN:REM nog eens
+3470 REM afdrukken van de resultaten
+3480 REM is er maar 1 L dan geen L1 maar L
+3490 REM is er maar 1 C dan geen C1 maar C
+3500 IF L1<1 THEN HE$="nano":LP=INT(100000!*L1+.5)/100
+3510 IF L1=>1 AND L1<1000! THEN HE$="micro":LP=INT(100*L1+.5)/100
+3520 IF L1=>1000! THEN HE$="milli":LP=INT(L1/10+.5)/100
+3530 PRINT:PRINT "De waarden van de filterkomponenten zijn : "
+3540 PRINT
+3550 PRINT L$;" = ";USING"####.##";LP;:PRINT" "; HE$;" Henry"
+3560 IF C1<1000! THEN FA$="pico":CP=INT(100*C1+.5)/100
+3570 IF C1=>1000! AND C1<1000000! THEN FA$="nano":CP=INT(C1/10+.5)/100
+3580 IF C1=>1000000! THEN FA$="micro":CP=INT(C1/10000!+.5)/100
+3590 PRINT C$;" = ";USING"####.##";CP;:PRINT" "; FA$;" Farad"
+3600 RETURN
+3610 REM afdrukken vervolg
+3620 IF L2<1 THEN HE$="nano":LP=INT(100000!*L2+.5)/100
+3630 IF L2=>1 AND L2<1000! THEN HE$="micro":LP=INT(100*L2+.5)/100
+3640 IF L2=>1000! THEN HE$="milli":LP=INT(L2/10+.5)/100
+3650 L$="L2":IF KE=3 AND NU=3 THEN L$="L "
+3660 PRINT L$;" = ";USING"####.##";LP;:PRINT" ";HE$;" Henry"
+3670 RETURN
+3680 REM nog iets afdrukken    vervolg
+3690 IF C2<1000! THEN FA$="pico":CP=INT(100*C2+.5)/100
+3700 IF C2=>1000! AND C2<1000000! THEN FA$="nano":CP=INT(C2/10+.5)/100
+3710 IF C2=>1000000! THEN FA$="micro":CP=INT(C2/10000!+.5)/100
+3720 PRINT "C2 = ";USING"####.##";CP;:PRINT" ";FA$;" Farad"
+3730 RETURN
+3740 REM KRINGKWALITEIT AFDRUKKEN
+3750 PRINT "Q  = ";USING"####.#";INT(10*Q+.5)/10:RETURN
+3760 REM IETS ANDERE START AFDRUKKEN VOOR SMALBAND
+3770 PRINT:PRINT "De waarden van de filterkomponenten zijn : "
+3780 PRINT:PRINT "Z  = ";USING"#######";INT(R+.5);:PRINT" Ohm":RETURN
+3790 REM hoogdoorlaatfilters klaarstomen en afdrukken
+3800 REM nu eerst K-T  filter
+3810 C$="C ":L$="L "
+3820 C1=C/2:L1=L/4
+3830 GOSUB 3470:RETURN
+3840 REM hoogd. K-PI filter
+3850 C1=C/4:L1=L/2
+3860 C$="C ":L$="L "
+3870 GOSUB 3470:RETURN
+3880 REM hoogd. getransf. serie T filter
+3890 L$="L ":C$="C1"
+3900 GOSUB 2830:REM FO en M ophalen
+3910 IF ER=1 THEN RETURN:REM error, uit de routine!
+3920 L1=L/(4*M):C1=C/(2*M):C2=C*M/(1-M^2)
+3930 GOSUB 3470:GOSUB 3680:RETURN
+3940 REM hoogd. serie en shunt getransf. PI filter
+3950 GOSUB 2830:REM FO en M ophalen
+3960 IF ER=1 THEN RETURN:REM error,uit de routine!
+3970 L1=L/(2*M):C1=C/(4*M)
+3980 IF NU=5 THEN 4020
+3990 C2=C*M/((1-M^2)*2)
+4000 L$="L ":C$="C1"
+4010 GOSUB 3470:GOSUB 3680:RETURN
+4020 REM hier gaan we verder met SHUNT getr. PI filter
+4030 L$="L1":C$="C "
+4040 L2=L*M/(1-M^2)
+4050 GOSUB 3470:GOSUB 3610:RETURN
+4060 REM laagdoorlaatfilters klaarstomen en afdrukken
+4070 REM eerst normaal laagd. K  T filter
+4080 C$="C ":L$="L "
+4090 L1=L/2 : C1=C
+4100 GOSUB 3470:RETURN
+4110 REM normaal laagd.K  PI filter
+4120 C$="C ":L$="L "
+4130 L1=L : C1=C/2
+4140 GOSUB 3470:RETURN
+4150 REM serie getr. T  filter
+4160 C$="C ":L$="L1"
+4170 GOSUB 2830: REM FO en M ophalen
+4180 IF ER=1 THEN RETURN:REM error, uit de routine
+4190 L1=L*M/2 : C1=C*M : L2=L*(1-M^2)/(4*M)
+4200 GOSUB 3470:GOSUB 3610:RETURN
+4210 REM serie getransformeerd PI filter samen met
+4220 REM shunt getransformeerd PI
+4230 GOSUB 2830:REM FO en M ophalen
+4240 IF ER=1 THEN RETURN:REM error, uit de routine!!!
+4250 L1=L*M : C1=C*M/2
+4260 IF NU=5 THEN 4310
+4270 REM hier verder met serie
+4280 L2=L*(1-M^2)/(2*M)
+4290 C$="C ":L$="L1"
+4300 GOSUB 3470:GOSUB 3610:RETURN
+4310 REM hier vervolg shunt
+4320 C2=C*(1-M^2)/(4*M)
+4330 C$="C1":L$="L "
+4340 GOSUB 3470:GOSUB 3680:RETURN
+4350 REM serie  L  samen met
+4360 REM shunt  L filter  ,  keuze(=NU)  6 en 7
+4370 GOSUB 2830:REM FO en M ophalen
+4380 IF ER=1 THEN RETURN:REM error, uit de routine!!
+4390 L1=L*M/2 : C1=C*M/2
+4400 IF NU=7 THEN 4450
+4410 REM hier verder met serie  L
+4420 L$="L1":C$="C "
+4430 L2=L*(1-M^2)/(2*M)
+4440 GOSUB 3470:GOSUB 3610:RETURN
+4450 REM verder met shunt L lowpass filter
+4460 L$="L ":C$="C1"
+4470 C2=C*(1-M^2)/(2*M)
+4480 GOSUB 3470:GOSUB 3680:RETURN
+4490 RETURN
+4500 END
+4630 REM routine     plaatje ophalen en afdrukken
+4640 REM         rechts onder, nummer in PL
+4650 LOCATE 9,45
+4660 REM ROUTINE:   REGELS VAN PLAATJE WEGZETTEN
+4670 FOR IN=1 TO 15
+4680 LOCATE ,45
+4690 PRINT A$(PL,IN):NEXT IN:RETURN
+4700 REM 
+4720 RETURN
+4730 REM ROUTINE:   plaatjes in array zetten om ze
+4740 REM            snel te kunnen laten zien.
+4750 REM            PL= plaatje nummer
+4760 REM            IN= inhoud nummer
+4770 RESTORE:READ DA$
+4780 FOR PL=1 TO 20: IN=0
+4790 IF VAL(DA$)<>(PL+1) THEN GOSUB 4810:READ DA$:GOTO 4790
+4800 NEXT PL:RETURN
+4810 A$(PL,IN)=DA$:IN=IN+1:RETURN
+4820 EP=79:REM ROUTINE:INPUTWAARDE OF OUDE WAARDE AFDRUKKEN
+4830 V1=CSRLIN :H1=POS (0)
+4840 REM ^^^^ DIT IS: WAAR ZATEN WE ERGENS?
+4850 XX$="":INPUT XX$
+4860 IF (XX$="" OR XX$=" ") AND XX>0 THEN 4880
+4870 XX=ABS( VAL( LEFT$(XX$,8)))
+4880 LOCATE V1,H1
+4890 X1!=XX:X1$=""
+4900 IF XX<1 AND EP=79 THEN X1!=INT(XX*1000000!+.5):X1$="*10^-6"
+4905 X1!=CSNG(X1!)
+4910 PRINT X1!; X1$; TAB(EP)" ":RETURN
+4920 REM Spoeltjes berekenen J/j(a) of N/n(ee) ??
+4930 PRINT:PRINT "Enkellaags luchtspoel berekenen,"
+4940 PRINT "J/j(a) of N/n(ee)/Ret.?";
+4950 X$=INKEY$ : IF X$="" THEN 4950
+4960 X=ASC(X$)
+4970 IF  NOT (X=74 OR X=78 OR X=106 OR X=110 OR X=13) THEN 4950
+4980 EP=35:TR=2:GOSUB 3410:REM VRAAGJE UITVEGEN!!
+4990 IF X=78 OR X=110 OR X=13 THEN RETURN:REM NEE dus
+5000 REM NOG EEN VRAAGJE
+5010 PRINT:PRINT "Geef de spoed of draaddikte"
+5020 PRINT "per winding in mm "
+5030 XX=DD:EP=35:GOSUB 4830:DD=XX:TR=4
+5040 GOSUB 3410:IF DD=0 OR DD>15 THEN 5000
+5050 IF PL=15 THEN 5130
+5060 IF PL=5 OR PL=8 OR PL=9 OR PL=11 OR PL=13 OR PL=14 THEN 5100
+5070 IF PL=16 OR PL=17 THEN 5100
+5080 IF L1=0 THEN RETURN
+5090 LU$="L ":LU=L1:GOSUB 5150:RETURN
+5100 IF L1=0 OR L2=0 THEN RETURN
+5110 LU$="L1":LU=L1:GOSUB 5150
+5120 LU$="L2":LU=L2:GOSUB 5150:RETURN
+5130 IF L2=0 THEN RETURN
+5140 LU$="L ":LU=L2:GOSUB 5150:RETURN
+5150 REM  subroutine wikkelgegevens , berekenen en printen
+5160 REM  DD=draaddikte of spoed,  LU=spoeltje in uH
+5170 REM  SL=spoellengte,  SD=spoeldiameter
+5180 REM  SM=afgeronde waarde voor in de formule
+5190 REM     intern gebruiken we de echte SD
+5200 REM  we starten met proberen met een gemidd. waarde
+5210 IF LU>1000 THEN SL=200:SD=60:GOTO 5270
+5220 IF LU>100 THEN SL=100:SD=25:GOTO 5270
+5230 IF LU>10  THEN SL= 50:SD=12:GOTO 5270
+5240 IF LU>1   THEN SL= 25:SD= 8:GOTO 5270
+5250 IF LU=>.1 THEN SL= 12:SD= 6:GOTO 5270
+5260 IF LU< .1 THEN SL= 10:SD= 5
+5270 SM=INT(2*SD+.5)/2:REM diameter afronden op 0.5mm
+5280 AW=( SQR(LU*101.6*(4.5*SM+10*SL)))/SM:REM aant.windingen
+5290 WR=AW*DD : REM wikkelruimte
+5300 REM om de ontwikkeling te testen hier : PRINTSL;SD;WR;AW
+5310 IF WR<=.98*SL THEN 5430:REM SL TE GROOT
+5320 IF WR=>1.02*SL THEN 5460: REM SL TE KLEIN
+5330 REM he,he hier nu ok ???
+5340 PRINT
+5350 PRINT "Aantal windingen ";LU$;" = ";USING"####.#";INT(10*AW+.5)/10
+5380 PRINT "Draaddikte of spoed =";USING"##.##";DD;:PRINT" mm"
+5390 PRINT "Lengte = ";USING"###.#";INT(10*SL+.5)/10 ;:PRINT" mm";
+5400 PRINT TAB(20) "Diameter =";USING"###.#";SM;:PRINT " mm"
+5410 REM
+5420 RETURN
+5430 SL=SL*.95:REM SPOELLENGTE WAS TE GROOT
+5440 IF WR<=.75*SD THEN SD=SD*.9:REM TE KORTE SPOEL,DIAM. <<<
+5450 GOTO 5270
+5460 SL=SL*1.05:REM SPOELLENGTE WAS TE KLEIN
+5470 IF WR=>4*SD THEN SD=SD*1.1:REM TE LANGE SPOEL, DIAM. >>>
+5480 GOTO 5270
+5490 END:REM EINDE ROUTINES , BEGIN DATA
+6000 REM  EN HIER STAAN DE PLAATJES ALS DATA STRINGS/ PL=No.
+6010 DATA "1"
+6020 DATA "    C          C  "
+6030 DATA "                  "
+6040 DATA "Мддд╢цддддбддд╢цдддМ"
+6050 DATA "          Ё "
+6060 DATA "          Ё " 
+6070 DATA "          ш "
+6080 DATA "          ш "
+6090 DATA "          ш  L"
+6100 DATA "          ш "
+6110 DATA "          Ё "
+6120 DATA "МдддддддддаддддддддМ"
+6130 DATA " "
+6140 DATA "Normaal T-hoogdoorlaat"
+6150 REM
+6160 DATA "2"
+6170 DATA "          C"
+6180 DATA "                 "
+6190 DATA "Мдддбддддд╢цдддддбдддМ"
+6200 DATA "    Ё            Ё   "
+6210 DATA "    Ё            Ё"
+6220 DATA "    ш            ш "
+6230 DATA "    ш            ш "
+6240 DATA "    ш  L         ш  L"
+6250 DATA "    ш            ш "
+6260 DATA "    Ё            Ё "
+6270 DATA "МдддаддддддддддддадддМ"
+6280 DATA "                    "
+6290 DATA "Normaal PI-hoogdoorlaat"
+6300 REM
+6310 DATA "3"
+6320 DATA "   C1           C1"
+6330 DATA "                  "
+6340 DATA "Мддд╢цддддбдддд╢цдддМ"
+6350 DATA "          Ё          "
+6360 DATA "          Ё    "
+6370 DATA "         мьм C2"
+6380 DATA "          Ё"
+6390 DATA "          ш"
+6400 DATA "          ш"
+6410 DATA "          ш  L"
+6420 DATA "          ш"
+6430 DATA "          Ё"
+6440 DATA "МдддддддддадддддддддМ"
+6450 DATA "                     "
+6460 DATA "Serie T-hoogdoorlaat"
+6470 REM
+6480 DATA "4"
+6490 DATA "          C1"
+6500 DATA " "
+6510 DATA "Мдддбддддд╢цдддддбдддМ"
+6520 DATA "    Ё            Ё   "
+6530 DATA "    Ё            Ё"
+6540 DATA "   мьм C2       мьм  C2"
+6550 DATA "    Ё            Ё"
+6560 DATA "    ш            ш"
+6570 DATA "    ш            ш"
+6580 DATA "    ш  L         ш  L"
+6590 DATA "    ш            ш"
+6600 DATA "    Ё            Ё "
+6610 DATA "МдддаддддддддддддадддМ"
+6620 DATA "                     "
+6630 DATA "Serie PI-hoogdoorlaat"
+6640 REM
+6650 DATA "5"
+6660 DATA "          L2"
+6670 DATA " "
+6680 DATA "       зъъъъъъ©"
+6690 DATA "Мдддбдд╢      цддбддМ"
+6700 DATA "    Ё  юдд╢цдды  Ё   "
+6710 DATA "    Ё            Ё "
+6720 DATA "    Ё      C     Ё"
+6730 DATA "    ш            ш"
+6740 DATA "    ш            ш"
+6750 DATA "    ш  L1        ш  L1"
+6760 DATA "    ш            ш"
+6770 DATA "    Ё            Ё"
+6780 DATA "МдддаддддддддддддаддМ"
+6790 DATA "                    "
+6800 DATA "Shunt PI-hoogdoorlaat"
+6810 REM
+6820 DATA "6"
+6830 DATA "       L           L      "
+6840 DATA " "
+6850 DATA "МддъъъъъъъъддбддъъъъъъъъддМ"
+6860 DATA "             Ё            "
+6870 DATA "             Ё"
+6880 DATA "            мьм C "
+6890 DATA "             Ё"
+6900 DATA "             Ё"
+6910 DATA "МддддддддддддаддддддддддддМ"
+6920 DATA "                          "
+6930 DATA "  Normaal T-laagdoorlaat"
+6940 REM
+6950 DATA "7"
+6960 DATA "             L"
+6970 DATA " "
+6980 DATA "МддддбдддъъъъъъъъддддбддддМ"
+6990 DATA "     Ё               Ё     "
+7000 DATA "     Ё               Ё "
+7010 DATA "    мьм C           мьм C  "
+7020 DATA "     Ё               Ё"
+7030 DATA "     Ё               Ё"
+7040 DATA "МддддадддддддддддддддаддддМ"
+7050 DATA "                          "
+7060 DATA " Normaal PI-laagdoorlaat"
+7070 REM
+7080 DATA "8"
+7090 DATA "       L1          L1       "
+7100 DATA " "
+7110 DATA "МдддъъъъъъъъддбддъъъъъъъдддМ"
+7120 DATA "              Ё             "
+7130 DATA "              Ё"
+7140 DATA "             мьм C "
+7150 DATA "              Ё"
+7160 DATA "              ш "
+7170 DATA "              ш "
+7180 DATA "              ш  L2"
+7190 DATA "              Ё "
+7200 DATA "МдддддддддддддаддддддддддддМ"
+7210 DATA "                            "
+7220 DATA "    Serie T-laagdoorlaat"
+7230 REM
+7240 DATA "9"
+7250 DATA "            L1"
+7260 DATA " "
+7270 DATA "МддддбдддъъъъъъъъддддбддддМ"
+7280 DATA "     Ё               Ё    "
+7290 DATA "     Ё               Ё    "
+7300 DATA "    мьм C           мьм C "
+7310 DATA "     Ё               Ё    "
+7320 DATA "     ш               ш    "
+7330 DATA "     ш               ш    "
+7340 DATA "     ш  L2           ш  L2"
+7350 DATA "     Ё               Ё    "
+7360 DATA "МддддадддддддддддддддаддддМ"
+7370 DATA "                          "
+7380 DATA "  Serie PI-laagdoorlaat"
+7390 REM
+7400 DATA "10"
+7410 DATA "             L            "
+7420 DATA " "
+7430 DATA "         зъъъъъъ©         "
+7440 DATA "Мддддбддд╢      цдддбддддМ "
+7450 DATA "     Ё   юдд╢цдды   Ё     "
+7460 DATA "     Ё              Ё     "
+7470 DATA "     Ё       C2     Ё     "
+7480 DATA "    мьм C1         мьм C1 "
+7490 DATA "     Ё              Ё     "
+7500 DATA "     Ё              Ё     "
+7510 DATA "МддддаддддддддддддддаддддМ "
+7520 DATA "                          "
+7530 DATA "  Shunt PI-laagdoorlaat"
+7540 REM
+7550 DATA "11"
+7560 DATA "         L1 "
+7570 DATA " "
+7580 DATA "МдддддъъъъъъъъдддддбдддМ "
+7590 DATA "                   Ё     "
+7600 DATA "                  мьм C  "
+7610 DATA "                   Ё      "
+7620 DATA "                   ш     "
+7630 DATA "                   ш     "
+7640 DATA "                   ш  L2 "
+7650 DATA "                   Ё     "
+7660 DATA "МддддддддддддддддддадддМ "
+7670 DATA "                         "
+7680 DATA "  Serie L-laagdoorlaat"
+7690 REM
+7700 DATA "12"
+7710 DATA "           L "
+7720 DATA " "
+7730 DATA "       зъъъъъъ©"
+7740 DATA "Мдддддд╢      цддддбдддМ "
+7750 DATA "       Ё      Ё    Ё     "
+7760 DATA "       юдд╢цдды    Ё     "
+7770 DATA "                   Ё     "
+7780 DATA "          C2      мьм C1 "
+7790 DATA "                   Ё     "
+7800 DATA "                   Ё     "
+7810 DATA "МддддддддддддддддддадддМ "
+7820 DATA "                         "
+7830 DATA "  Shunt L-laagdoorlaat"
+7840 REM
+7850 DATA "13"
+7860 DATA "   C1    L1          L1     C1   "
+7870 DATA " "
+7880 DATA "Мд╢цддъъъъъъъъддбддъъъъъъъъдд╢цдМ"
+7890 DATA "                Ё               "
+7900 DATA "             зддадд© "
+7910 DATA "             Ё     ш "
+7920 DATA "         C2 мьм    ш L2"
+7930 DATA "             Ё     ш  "
+7940 DATA "             юддбдды "
+7950 DATA "                Ё"
+7960 DATA "МдддддддддддддддадддддддддддддддМ "
+7970 DATA "                                 "
+7980 DATA "     T - Banddoorlaatfilter"
+7990 REM
+8000 DATA "14"," "," "
+8010 DATA "          C1      L1 "
+8020 DATA " "
+8030 DATA "Мддддддбд╢цддъъъъъъъъдддбддддддМ"
+8040 DATA "       Ё                Ё       "
+8050 DATA "     здадд©           здадд©   "
+8060 DATA "     Ё    ш           Ё    ш   "
+8070 DATA " C2 мьм   ш L2    C2 мьм   ш L2"
+8080 DATA "     Ё    ш           Ё    ш   "
+8090 DATA "     юддбды           юддбды"
+8100 DATA "        Ё                Ё"
+8110 DATA "МдддддддаддддддддддддддддадддддМ"
+8120 DATA "                                "
+8130 DATA "     PI - Banddoorlaatfilter"
+8140 REM
+8150 DATA "15"," "," "," "
+8160 DATA "                C1"
+8170 DATA "      Z зддддддд╢цддддддд© Z"
+8180 DATA "        Ё                Ё"
+8190 DATA "     зддадд©          зддадд© "
+8200 DATA "   L ш     Ё C2   C2  Ё     ш L"
+8210 DATA "     ш    мьм        мьм    ш"
+8220 DATA " Мдддш     Ё          Ё     шдддМ"
+8230 DATA "     юддбдды          юддбдды    "
+8240 DATA " R      Ё                Ё      R"
+8250 DATA " МддддддаддддддддддддддддаддддддМ"
+8260 DATA "                                "
+8270 DATA " Kritisch gekoppeld bandfilter"
+8280 REM
+8290 DATA "16"
+8300 DATA "        L1             L1       "
+8310 DATA " "
+8320 DATA "     зъъъъъъ©       зъъъъъъ©   "
+8330 DATA "Мдддд╢      цдддбддд╢      цддддМ"
+8340 DATA "     юдд╢цдды   Ё   юдд╢цдды     "
+8350 DATA "                Ё               "
+8360 DATA "      C1       мьм      C1      "
+8370 DATA "                Ё C2            "
+8380 DATA "                ш               "
+8390 DATA "                ш               "
+8400 DATA "                ш L2            "
+8410 DATA "                ш               "
+8420 DATA "МдддддддддддддддадддддддддддддддМ"
+8430 DATA "                                "
+8440 DATA "      T - Bandsperfilter"
+8450 REM
+8460 DATA "17"
+8470 DATA "            L1"
+8480 DATA " "
+8490 DATA "         зъъъъъъ©  "
+8500 DATA "Мддддбддд╢      цдддбддддМ"
+8510 DATA "     Ё   юдд╢цдды   Ё    "
+8520 DATA "     Ё              Ё "
+8530 DATA " C2 мьм     C1     мьм C2"
+8540 DATA "     Ё              Ё "
+8550 DATA "     ш              ш "
+8560 DATA "     ш              ш "
+8570 DATA " L2  ш              ш  L2"
+8580 DATA "     ш              ш "
+8590 DATA "МддддаддддддддддддддаддддМ"
+8600 DATA "                        "
+8610 DATA "   PI - bandsperfilter"
+8620 REM
+8630 DATA "18"
+8640 DATA " "," ","       Bedank"," "
+8650 DATA "  W.A.J. Geeraert"," "
+8660 DATA "      (PE1ABR)"," "
+8670 DATA "         in"," "
+8680 DATA "     Vlissingen"," "
+8690 DATA "voor dit programma."," "
+8700 DATA "19","20","21"
+
