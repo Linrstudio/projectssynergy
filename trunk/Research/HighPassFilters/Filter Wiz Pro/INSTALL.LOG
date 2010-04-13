@@ -1,0 +1,26 @@
+***  Installation Started 10/03/02 0:12  ***
+Title: Filter Wiz PRO v3.0 (32 bit) Installation
+Source: C:\DOCUME~1\PFR\BUREAU~1\RFTOOLS\FP3230E.EXE
+Made Dir: C:\FWP3230
+File Copy: C:\FWP3230\UNWISE.EXE
+RegDB Key: Software\Microsoft\Windows\CurrentVersion\Uninstall\Filter Wiz PRO v3.0 (32 bit)
+RegDB Val: Filter Wiz PRO v3.0 (32 bit)
+RegDB Name: DisplayName
+RegDB Root: 2
+RegDB Key: Software\Microsoft\Windows\CurrentVersion\Uninstall\Filter Wiz PRO v3.0 (32 bit)
+RegDB Val: C:\FWP3230\UNWISE.EXE C:\FWP3230\INSTALL.LOG
+RegDB Name: UninstallString
+RegDB Root: 2
+File Copy: C:\FWP3230\fwp3230e.exe
+File Copy: C:\FWP3230\Fwp30.ini
+File Copy: C:\FWP3230\Fw30.hlp
+File Copy: C:\FWP3230\Bessroot.dat
+Non-System File:
+Made Dir: C:\FWP3230\Designs
+Made Dir: C:\FWP3230\ASCII
+Made Dir: C:\FWP3230\Spice
+Made Dir: C:\Documents and Settings\pfr\Menu Start\Programma's\Filter Wiz PRO v3.0 (32 bit)
+Shell Link: C:\Documents and Settings\pfr\Menu Start\Programma's\Filter Wiz PRO v3.0 (32 bit)\Filter Wiz PRO v3.0.lnk
+Shell Link: C:\Documents and Settings\pfr\Menu Start\Programma's\Filter Wiz PRO v3.0 (32 bit)\Filter Wiz v3.0 Help.lnk
+Shell Link: C:\Documents and Settings\pfr\Menu Start\Programma's\Filter Wiz PRO v3.0 (32 bit)\UnInstall.lnk
+User Rights: Admin
