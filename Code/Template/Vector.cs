@@ -57,7 +57,7 @@ namespace SynergyTemplate
         public static implicit operator Float2(Int2 _V) { return new Float2((float)_V.X, (float)_V.Y); }
 
         //Methods
-        public static float Dot(Float2 _A, Float2 _B) { return _A.X * _B.X + _A.Y + _B.Y; }
+        public static float Dot(Float2 _A, Float2 _B) { return _A.X * _B.X + _A.Y * _B.Y; }
         public static Float2 Normalize(Float2 _A) { return _A / _A.Length(); }
     }
 
@@ -82,6 +82,12 @@ namespace SynergyTemplate
         public static Float3 operator /(Float3 _A, Float3 _B) { return new Float3(_A.X / _B.X, _A.Y / _B.Y, _A.Z / _B.Z); }
         public static Float3 operator /(Float3 _A, float _B) { return new Float3(_A.X / _B, _A.Y / _B, _A.Z / _B); }
         public static Float3 operator -(Float3 _A) { return new Float3(-_A.X, -_A.Y, -_A.Z); }
+
+        public float Length() { return (float)Math.Sqrt(Float3.Dot(this, this)); }
+
+        //Methods
+        public static float Dot(Float3 _A, Float3 _B) { return _A.X * _B.X + _A.Y * _B.Y + _A.Z * _B.Z; }
+        public static Float3 Normalize(Float3 _A) { return _A / _A.Length(); }
     }
 
 
@@ -92,12 +98,20 @@ namespace SynergyTemplate
         public float Y;
         public float Z;
         public float W;
+
+        public Float3 XYZ
+        {
+            get { return new Float3(X, Y, Z); }
+            set { X = value.X; Y = value.Y; Z = value.Z; }
+        }
+
         //Comparations
         public Float4(float _X, float _Y, float _Z, float _W) { X = _X; Y = _Y; Z = _Z; W = _W; }
         public static bool operator <(Float4 _A, Float4 _B) { return _A.X < _B.X && _A.Y < _B.Y && _A.Z < _B.Z && _A.W < _B.W; }
         public static bool operator >(Float4 _A, Float4 _B) { return _A.X > _B.X && _A.Y > _B.Y && _A.Z > _B.Z && _A.W > _B.W; }
         public static bool operator ==(Float4 _A, Float4 _B) { return _A.X == _B.X && _A.Y == _B.Y && _A.Z == _B.Z && _A.W == _B.W; }
         public static bool operator !=(Float4 _A, Float4 _B) { return !(_A == _B); }
+
         //Operators
         public static Float4 operator +(Float4 _A, Float4 _B) { return new Float4(_A.X + _B.X, _A.Y + _B.Y, _A.Z + _B.Z, _A.W + _B.W); }
         public static Float4 operator -(Float4 _A, Float4 _B) { return new Float4(_A.X - _B.X, _A.Y - _B.Y, _A.Z - _B.Z, _A.W - _B.W); }
@@ -106,5 +120,11 @@ namespace SynergyTemplate
         public static Float4 operator /(Float4 _A, Float4 _B) { return new Float4(_A.X / _B.X, _A.Y / _B.Y, _A.Z / _B.Z, _A.W / _B.W); }
         public static Float4 operator /(Float4 _A, float _B) { return new Float4(_A.X / _B, _A.Y / _B, _A.Z / _B, _A.W / _B); }
         public static Float4 operator -(Float4 _A) { return new Float4(-_A.X, -_A.Y, -_A.Z, -_A.W); }
+
+        public float Length() { return (float)Math.Sqrt(Float4.Dot(this, this)); }
+
+        //Methods
+        public static float Dot(Float4 _A, Float4 _B) { return _A.X * _B.X + _A.Y * _B.Y + _A.Z * _B.Z + _A.W * _B.W; }
+        public static Float4 Normalize(Float4 _A) { return _A / _A.Length(); }
     }
 }
