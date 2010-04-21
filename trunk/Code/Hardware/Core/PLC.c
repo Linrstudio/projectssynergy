@@ -2,11 +2,6 @@
 #include"PLC.h"
 #include"UART.h"
 
-void PLCDelay()
-{
-	//for(int i1=0;i1<255;i1++)for(int i2=0;i2<128;i2++)for(int i3=0;i3<1;i3++);
-}
-
 void PLCInit()
 {
 	PLCTXDIR=0;
@@ -14,41 +9,54 @@ void PLCInit()
 	PLCCLKDIR=0;
 }
 
-unsigned char PLCReadInt8(void)
-{
-	
-}
-
-unsigned char PLCAvailable(void)
+unsigned char PLCReadInt8()
 {
 	return 0;
 }
 
-void PLCWriteInt8(int8 c)
+unsigned char PLCAvailable()
 {
-	PLCWriteBuffer=c;
-	PLCWriteIndex=0;
+	PLCWriteInt8(2);
+	return PLCReadInt8();
+}
+
+void PLCDelay()
+{
+	for(int i=0;i<255;i++)
+		//for(int j=0;j<2;j++);
+}
+
+void PLCWriteInt16(int16 _Data)
+{
+	int8*dat = &_Data;
+	PLCWriteInt8(dat[1]);
+	PLCWriteInt8(dat[0]);
+}
+
+void PLCWriteInt8(int8 _Data)
+{
+	for(int i=0;i<8;i++)
+	{
+		PLCTX=(_Data>>7)?1:0;
+		PLCDelay();
+		PLCCLK=1;
+		PLCDelay();
+		PLCDelay();
+		PLCCLK=0;
+		PLCDelay();
+		_Data<<=1;
+	}
+	PLCTX=0;
 }
 
 void PLCUpdate()
 {
-	PLCTX=PLCWriteBuffer>>(PLCWriteIndex-1);//write bit ( even it it makes no sense )
-	PLCDelay();
-	PLCCLK=1;
-	PLCDelay();
-	if(PLCWriteIndex==0)PLCTX=1;else PLCTX=0;//if its the first character, send HI when CLK==LO
-	PLCDelay();
-	PLCCLK=0;
-	PLCDelay();
-	if(PLCRX==8)PLCReadIndex=1;
 
-	if(PLCReadIndex>0 && PLCReadIndex<=8)
-	{
-		PLCReadIndex++;
-	}
-	if(PLCWriteIndex<=8)
-	{
-		UARTWriteInt8(PLCWriteIndex);
-		PLCWriteIndex++;
-	}
+}
+
+void PLCWrite(int16 _Recipient,int16 _Data)
+{
+	PLCWriteInt8(1);//instruction 1
+	PLCWriteInt16(_Recipient);
+	PLCWriteInt16(_Data);
 }

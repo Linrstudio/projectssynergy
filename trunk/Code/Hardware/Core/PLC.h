@@ -4,23 +4,21 @@
 #include <pic18.h>
 #include "Default.h"
 
-#define PLCRXDIR TRISC0
-#define PLCTXDIR TRISC1
-#define PLCCLKDIR TRISC2
+#define PLCRXDIR  TRISC3
+#define PLCTXDIR  TRISC4
+#define PLCCLKDIR TRISC5
 
-#define PLCRX  RC0
-#define PLCTX  RC1
-#define PLCCLK RC2
-
-int8 PLCReadBuffer;
-int8 PLCReadIndex=8;
-int8 PLCWriteBuffer;
-int8 PLCWriteIndex=8;
+#define PLCRX  RC3
+#define PLCTX  RC4
+#define PLCCLK RC5
 
 extern void PLCInit();
-extern int8 PLCReadInt8(void);
-extern int8 PLCAvailable(void);
+extern int8 PLCReadInt8();
+extern int8 PLCAvailable();
 extern void PLCWriteInt8(int8 c);
 extern void PLCDelay();
 extern void PLCUpdate();
+
+extern void PLCWrite(int16 _Recipient,int16 _Data);
+
 #endif

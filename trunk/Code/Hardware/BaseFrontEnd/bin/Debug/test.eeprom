@@ -3,22 +3,27 @@
   <Device TypeID="1" DeviceID="1">
     <Event ID="1">
       <Root GUID="0" Type="BaseFrontEnd.DefaultEvent" Values="" />
-      <Block GUID="1" Type="BaseFrontEnd.BlockGetVariable" Values="Blink" />
-      <Block GUID="7" Type="BaseFrontEnd.BlockSetVariable" Values="Blink" />
-      <Block GUID="6" Type="BaseFrontEnd.BlockSetDebugLed1" Values="" />
-      <Block GUID="5" Type="BaseFrontEnd.BlockSetDebugLed2" Values="" />
-      <Block GUID="4" Type="BaseFrontEnd.BlockEquals" Values="" />
-      <Block GUID="3" Type="BaseFrontEnd.BlockDiffers" Values="" />
-      <Block GUID="2" Type="BaseFrontEnd.BlockConstantByte" Values="0" />
+      <Block GUID="1" Type="BaseFrontEnd.BlockTest" Values="" />
+      <Block GUID="2" Type="BaseFrontEnd.BlockGetVariable" Values="Blink" />
+      <Block GUID="3" Type="BaseFrontEnd.BlockConstantInteger" Values="0" />
+      <Block GUID="5" Type="BaseFrontEnd.BlockSetVariable" Values="Blink" />
+      <Block GUID="4" Type="BaseFrontEnd.BlockBitMask" Values="" />
+      <Block GUID="7" Type="BaseFrontEnd.BlockSetDebugLed1" Values="" />
+      <Block GUID="6" Type="BaseFrontEnd.BlockEquals" Values="" />
+      <Block GUID="8" Type="BaseFrontEnd.BlockDiffers" Values="" />
+      <Block GUID="9" Type="BaseFrontEnd.BlockSetDebugLed2" Values="" />
       <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
-      <Connect Input="0" InputOwner="2" Output="0" OutputOwner="5" />
-      <Connect Input="0" InputOwner="3" Output="0" OutputOwner="6" />
+      <Connect Input="0" InputOwner="2" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="3" Output="0" OutputOwner="0" />
       <Connect Input="0" InputOwner="4" Output="0" OutputOwner="5" />
-      <Connect Input="0" InputOwner="5" Output="0" OutputOwner="1" />
-      <Connect Input="1" InputOwner="5" Output="0" OutputOwner="7" />
-      <Connect Input="0" InputOwner="6" Output="0" OutputOwner="1" />
-      <Connect Input="1" InputOwner="6" Output="0" OutputOwner="7" />
-      <Connect Input="0" InputOwner="7" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="5" Output="0" OutputOwner="2" />
+      <Connect Input="1" InputOwner="5" Output="0" OutputOwner="3" />
+      <Connect Input="0" InputOwner="6" Output="0" OutputOwner="7" />
+      <Connect Input="0" InputOwner="7" Output="0" OutputOwner="2" />
+      <Connect Input="1" InputOwner="7" Output="0" OutputOwner="3" />
+      <Connect Input="0" InputOwner="8" Output="0" OutputOwner="2" />
+      <Connect Input="1" InputOwner="8" Output="0" OutputOwner="3" />
+      <Connect Input="0" InputOwner="9" Output="0" OutputOwner="8" />
     </Event>
     <Event ID="2">
       <Root GUID="0" Type="BaseFrontEnd.DefaultEvent" Values="" />
@@ -34,7 +39,7 @@
     <Event ID="1">
       <Root GUID="0" Type="BaseFrontEnd.DefaultEvent" Values="" />
       <Block GUID="2" Type="BaseFrontEnd.BlockSetVariable" Values="Blink" />
-      <Block GUID="1" Type="BaseFrontEnd.BlockConstantByte" Values="0" />
+      <Block GUID="1" Type="BaseFrontEnd.BlockConstantInteger" Values="0" />
       <Connect Input="0" InputOwner="1" Output="0" OutputOwner="2" />
       <Connect Input="0" InputOwner="2" Output="0" OutputOwner="0" />
     </Event>
@@ -42,7 +47,7 @@
   <Device TypeID="2" DeviceID="3">
     <Event ID="1">
       <Root GUID="0" Type="BaseFrontEnd.DefaultEvent" Values="" />
-      <Block GUID="1" Type="BaseFrontEnd.BlockConstantByte" Values="1" />
+      <Block GUID="1" Type="BaseFrontEnd.BlockConstantInteger" Values="1" />
       <Block GUID="2" Type="BaseFrontEnd.BlockSetVariable" Values="Blink" />
       <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
       <Connect Input="0" InputOwner="2" Output="0" OutputOwner="1" />

@@ -10,7 +10,11 @@ namespace Framework
     {
         public static Dictionary<Type, Converter> Converters = new Dictionary<Type, Converter>();
         static bool initialized = false;
-        static void Initialize()
+
+        /// <summary>
+        /// Initializes the converter class, you dont have to invoke this method
+        /// </summary>
+        public static void Initialize()
         {
             if (!initialized)
             {

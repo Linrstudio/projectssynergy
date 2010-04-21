@@ -41,6 +41,7 @@ void main()
 	MemoryInit();
 	KismetInit();
 	SettingsInit();
+	PLCInit();
 	
 	while(1)//main uber duber loop
 	{

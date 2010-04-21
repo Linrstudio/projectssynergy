@@ -34,7 +34,7 @@ namespace SynergyTemplate
             }
         }
 
-        public Float3x3() { X = new Float3(1, 0, 0); Y = new Float3(0, 1, 0); T = new Float3(0, 0, 0); }
+        public Float3x3() { X = new Float3(1, 0, 0); Y = new Float3(0, 1, 0); T = new Float3(0, 0, 1); }
 
         public Float3x3(float _XX, float _XY, float _XZ, float _YX, float _YY, float _YZ, float _TX, float _TY, float _TZ)
         {
@@ -52,38 +52,29 @@ namespace SynergyTemplate
 
         public static Float3x3 operator *(Float3x3 _A, Float3x3 _B)
         {
+            // THIS ONE WORKS
             Float3x3 ret = new Float3x3(
-                Float3.Dot(_B.Row[0], _A.Column[0]), Float3.Dot(_B.Row[1], _A.Column[0]), Float3.Dot(_B.Row[2], _A.Column[0]),
-                Float3.Dot(_B.Row[0], _A.Column[1]), Float3.Dot(_B.Row[1], _A.Column[1]), Float3.Dot(_B.Row[2], _A.Column[1]),
-                Float3.Dot(_B.Row[0], _A.Column[2]), Float3.Dot(_B.Row[1], _A.Column[2]), Float3.Dot(_B.Row[2], _A.Column[2]));
-            return ret;
-        }
-
-        public static Float3 operator *(Float3x3 _M, Float3 _V)
-        {
-            float invT = 1 / (_M.T.X * _V.X + _M.T.Y * _V.Y + _M.T.Z * _V.Z);
-            Float3 ret = new Float3(
-                Float3.Dot(_V, _M.Row[0]) * invT,
-                Float3.Dot(_V, _M.Row[1]) * invT,
-                Float3.Dot(_V, _M.Row[2]) * invT);
+                Float3.Dot(_B.Row[0], _A.Column[0]), Float3.Dot(_B.Row[0], _A.Column[1]), Float3.Dot(_B.Row[0], _A.Column[2]),
+                Float3.Dot(_B.Row[1], _A.Column[0]), Float3.Dot(_B.Row[1], _A.Column[1]), Float3.Dot(_B.Row[1], _A.Column[2]),
+                Float3.Dot(_B.Row[2], _A.Column[0]), Float3.Dot(_B.Row[2], _A.Column[1]), Float3.Dot(_B.Row[2], _A.Column[2]));
             return ret;
         }
 
         public static Float3 operator *(Float3 _V, Float3x3 _M)
         {
             Float3 ret = new Float3(
-                Float3.Dot(_V, _M.Row[0]),
-                Float3.Dot(_V, _M.Row[1]),
-                Float3.Dot(_V, _M.Row[2]));
+                Float3.Dot(_V, _M.Column[0]),
+                Float3.Dot(_V, _M.Column[1]),
+                Float3.Dot(_V, _M.Column[2]));
             return ret;
         }
 
         public static Float3x3 Rotate(float _Radians) { return new Float3x3((float)Math.Cos(_Radians), (float)Math.Sin(_Radians), 0, (float)-Math.Sin(_Radians), (float)Math.Cos(_Radians), 0, 0, 0, 0); }
-        public static Float3x3 Translate(Float2 _Translation) { return new Float3x3(1, 0, 0, 0, 1, 0, _Translation.X, _Translation.Y, 0); }
-        public static Float3x3 Scale(float _Scale) { return new Float3x3(_Scale, 0, 0, 0, _Scale, 0, 0, 0, 0); }
-        public static Float3x3 Scale(Float2 _Scale) { return new Float3x3(_Scale.X, 0, 0, 0, _Scale.Y, 0, 0, 0, 0); }
+        public static Float3x3 Translate(Float2 _Translation) { return new Float3x3(1, 0, 0, 0, 1, 0, _Translation.X, _Translation.Y, 1); }
+        public static Float3x3 Scale(float _Scale) { return new Float3x3(_Scale, 0, 0, 0, _Scale, 0, 0, 0, 1); }
+        public static Float3x3 Scale(Float2 _Scale) { return new Float3x3(_Scale.X, 0, 0, 0, _Scale.Y, 0, 0, 0, 1); }
     }
-
+#if false
     public class Float4x4
     {
         public Float4 X, Y, Z, T;
@@ -132,22 +123,12 @@ namespace SynergyTemplate
 
         public static Float4x4 operator *(Float4x4 _A, Float4x4 _B)
         {
+            // THIS ONE WORKS
             Float4x4 ret = new Float4x4(
-                Float4.Dot(_B.Row[0], _A.Column[0]), Float4.Dot(_B.Row[1], _A.Column[0]), Float4.Dot(_B.Row[2], _A.Column[0]), Float4.Dot(_B.Row[3], _A.Column[0]),
-                Float4.Dot(_B.Row[0], _A.Column[1]), Float4.Dot(_B.Row[1], _A.Column[1]), Float4.Dot(_B.Row[2], _A.Column[1]), Float4.Dot(_B.Row[3], _A.Column[1]),
-                Float4.Dot(_B.Row[0], _A.Column[2]), Float4.Dot(_B.Row[1], _A.Column[2]), Float4.Dot(_B.Row[2], _A.Column[2]), Float4.Dot(_B.Row[3], _A.Column[2]),
-                Float4.Dot(_B.Row[0], _A.Column[3]), Float4.Dot(_B.Row[1], _A.Column[3]), Float4.Dot(_B.Row[2], _A.Column[3]), Float4.Dot(_B.Row[3], _A.Column[3]));
-            return ret;
-        }
-
-        public static Float4 operator *(Float4x4 _M, Float4 _V)
-        {
-            float invT = 1 / (_M.T.X * _V.X + _M.T.Y * _V.Y + _M.T.Z * _V.Z + _M.T.W * _V.W);
-            Float4 ret = new Float4(
-                Float4.Dot(_V, _M.Row[0]) * invT,
-                Float4.Dot(_V, _M.Row[1]) * invT,
-                Float4.Dot(_V, _M.Row[2]) * invT,
-                Float4.Dot(_V, _M.Row[3]) * invT);
+                Float4.Dot(_B.Row[0], _A.Column[0]), Float4.Dot(_B.Row[0], _A.Column[1]), Float4.Dot(_B.Row[0], _A.Column[2]), Float4.Dot(_B.Row[0], _A.Column[3]),
+                Float4.Dot(_B.Row[1], _A.Column[0]), Float4.Dot(_B.Row[1], _A.Column[1]), Float4.Dot(_B.Row[1], _A.Column[2]), Float4.Dot(_B.Row[1], _A.Column[3]),
+                Float4.Dot(_B.Row[2], _A.Column[0]), Float4.Dot(_B.Row[2], _A.Column[1]), Float4.Dot(_B.Row[2], _A.Column[2]), Float4.Dot(_B.Row[2], _A.Column[3]),
+                Float4.Dot(_B.Row[3], _A.Column[0]), Float4.Dot(_B.Row[3], _A.Column[1]), Float4.Dot(_B.Row[3], _A.Column[2]), Float4.Dot(_B.Row[3], _A.Column[3]));
             return ret;
         }
 
@@ -160,5 +141,28 @@ namespace SynergyTemplate
                 Float4.Dot(_V, _M.Row[3]));
             return ret;
         }
+
+        public static Float4x4 RotateX(float _Radians)
+        {
+            float cos = (float)Math.Cos(_Radians);
+            float sin = (float)Math.Sin(_Radians);
+            return new Float4x4(1, 0, 0, 0, 0, cos, -sin, 0, 0, sin, cos, 0, 0, 0, 0, 1);
+        }
+        public static Float4x4 RotateY(float _Radians)
+        {
+            float cos = (float)Math.Cos(_Radians);
+            float sin = (float)Math.Sin(_Radians);
+            return new Float4x4(cos, 0, sin, 0, 0, 1, 0, 0, -sin, 0, cos, 0, 0, 0, 0, 1);
+        }
+        public static Float4x4 RotateZ(float _Radians)
+        {
+            float cos = (float)Math.Cos(_Radians);
+            float sin = (float)Math.Sin(_Radians);
+            return new Float4x4(cos, -sin, 0, 0, sin, cos, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+        }
+        public static Float4x4 Translate(Float3 _Translation) { return new Float4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, _Translation.X, _Translation.Y, _Translation.Z, 1); }
+        public static Float4x4 Scale(float _Scale) { return new Float4x4(_Scale, 0, 0, 0, 0, _Scale, 0, 0, 0, 0, _Scale, 0, 0, 0, 0, 1); }
+        public static Float4x4 Scale(Float3 _Scale) { return new Float4x4(_Scale.X, 0, 0, 0, 0, _Scale.Y, 0, 0, 0, 0, _Scale.Z, 0, 0, 0, 0, 1); }
     }
+#endif
 }

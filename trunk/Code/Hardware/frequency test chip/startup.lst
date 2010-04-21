@@ -1,7 +1,7 @@
 
 
 HI-TECH Software PICC Macro Assembler V9.65PL1 build 4898 
-                                                      Tue Mar 30 16:29:27 2010
+                                                      Tue Apr 13 20:43:04 2010
 
 
      1                           
@@ -188,12 +188,12 @@ HI-TECH Software PICC Macro Assembler V9.65PL1 build 4898
                                  ---------------------------------
    164                           	psect	end_init
    165  00F  064                	clrf	FSR
-   166  010  4A3  B63           	ljmp _main
+   166  010  4A3  B50           	ljmp _main
 
 
 HI-TECH Software PICC Macro Assembler V9.65PL1 build 4898 
-Symbol Table                                          Tue Mar 30 16:29:27 2010
+Symbol Table                                          Tue Apr 13 20:43:04 2010
 
   __Lrbss_0 001E   reset_wrap 0000          FSR 0004         INDF 0000  
-      _main 0163        _exit 0002        start 0002    clear_ram 0012  
+      _main 0150        _exit 0002        start 0002    clear_ram 0012  
      STATUS 0003    reset_vec 03FF      clrloop 0013    __Lcommon 000A  

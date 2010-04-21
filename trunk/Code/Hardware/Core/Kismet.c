@@ -2,6 +2,7 @@
 #include "RTC.h"
 #include "Memory.h"
 #include "UART.h"
+#include "PLC.h"
 
 void KismetInit()
 {
@@ -178,7 +179,7 @@ void KismetExecuteMethod(int16 _Deviceid,int16 _MethodAddr)
 				int8 addr1=MemoryReadInt8(BlockAddr+1);
 				int8 addr2=MemoryReadInt8(BlockAddr+2);
 				BlockAddr+=3;
-				if(KismetGetRegister(addr1)==0)
+				if(KismetGetRegister(addr1)!=0)
 					BlockAddr=_MethodAddr+addr2;					
 			}break;
 			case 21:// $a $b $smaller than?
@@ -196,6 +197,11 @@ void KismetExecuteMethod(int16 _Deviceid,int16 _MethodAddr)
 				int8 addr3=MemoryReadInt8(BlockAddr+3);
 				KismetSetRegister(addr3,KismetGetRegister(addr1)>KismetGetRegister(addr2)?1:0);
 				BlockAddr+=4;
+			}break;
+			case 23://test
+			{
+				PLCWrite(3,170);
+				BlockAddr+=1;
 			}break;
 		}
 	}

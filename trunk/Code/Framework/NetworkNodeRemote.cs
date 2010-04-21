@@ -18,6 +18,11 @@ namespace Framework
             if (inst != null) LocalDevices.Add(inst.Name, inst);
         }
 
+        internal void Send(string _FunctionName, params string[] _Parameters)
+        {
+            Connection.SendToAll(_FunctionName, _Parameters);
+        }
+
         public override void Update()
         {
             foreach (NetworkClass c in LocalDevices.Values) c.Update();

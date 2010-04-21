@@ -119,6 +119,11 @@ namespace SynergyGraphics
             }
         }
 
+        public static void SetDepthCheck(bool _Enabled)
+        {
+            device.RenderState.DepthBufferEnable = _Enabled;
+        }
+
         public static void Clear(Float4 _Color)
         {
             device.Clear(ClearOptions.Target, new Color(_Color.X, _Color.Y, _Color.Z, _Color.W), 0, 0);

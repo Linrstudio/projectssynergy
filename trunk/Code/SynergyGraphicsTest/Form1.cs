@@ -27,19 +27,7 @@ namespace SynergyGraphicsTest
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            foreach (Screen screen in Screen.AllScreens)
-            {
-                RenderWindow windoh = new RenderWindow();
-                windoh.screen = screen;
-                targets.Add(windoh);
-            }
-            foreach (RenderWindow w in targets)
-            {
-                w.Show();
-                w.Bounds = w.screen.Bounds;
-            }
-
-            SynergyGraphics.Graphics.Initialize(Handle, DesktopBounds.Size);
+            SynergyGraphics.Graphics.Initialize(Handle, new Int2(Width, Height));
 
             shader = ShaderCompiler.Compile(System.IO.File.ReadAllText("Default.fx"));
             test = new SynergyGraphics.TextureGPU(@"c:\test.png");
@@ -50,37 +38,32 @@ namespace SynergyGraphicsTest
         {
             if (m.Msg != 0x14) base.OnNotifyMessage(m);
         }
-
+        float dir = 0;
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
+            dir += 0.02f;
             Pos.X = ((float)MousePosition.X - (float)DesktopBounds.From.X) / (float)DesktopBounds.Size.X;
             Pos.Y = ((float)MousePosition.Y - (float)DesktopBounds.From.Y) / (float)DesktopBounds.Size.Y;
-            SynergyGraphics.Graphics.Clear(new Float4(0, 0, 0, 1));
+            Graphics.Clear(new Float4(1, 0, 1, 1));
+            //SynergyGraphics.Graphics.ClearZBuffer(1);
+
+            Float3x3 mat = Float3x3.Rotate(dir) * Float3x3.Translate(new Float2(-0.5f, -0.5f));
+
+
             shader.SetParameter("DiffuseMap", test);
-            shader.SetParameter("View", new Float2x3(2, 0, 0, 2, 0, 0));
+            shader.SetParameter("View", mat);
             Graphics.SetAlphaBlending(true);
+            //Graphics.SetDepthCheck(false);
 
             shader.Begin();
-            SynergyGraphics.Graphics.DrawRectangle(
-                new Float3(0, 0, 0),
-                new Float3(1, 0, 0),
-                new Float3(0, 1, 0),
-                new Float3(1, 1, 0));
+            Graphics.DrawRectangle(
+                new Float2(0, 0),
+                new Float2(1, 0),
+                new Float2(0, 1),
+                new Float2(1, 1), 0.5f);
             shader.End();
 
-            float totalw = DesktopBounds.Size.X;
-            float totalh = DesktopBounds.Size.Y;
-            foreach (RenderWindow w in targets)
-            {
-                Float2 from = new Float2((float)(w.Bounds.Left - DesktopBounds.From.X) / totalw, (float)(w.Bounds.Top - DesktopBounds.From.Y) / totalh);
-                Float2 to = new Float2((float)(w.Bounds.Right - DesktopBounds.From.X) / totalw, (float)(w.Bounds.Bottom - DesktopBounds.From.Y) / totalh);
-                SynergyGraphics.Graphics.Present(w.Handle,
-                    from,
-                    to,
-                    new Int2(0, 0),
-                    new Int2(w.Bounds.Width, w.Bounds.Height)
-                    );
-            }
+            Graphics.Present(Handle);
         }
 
         private void timer1_Tick(object sender, EventArgs e)

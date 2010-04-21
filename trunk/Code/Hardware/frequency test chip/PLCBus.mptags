@@ -6,11 +6,11 @@
 !_TAG_PROGRAM_VERSION	5.5.4	//
 !_TAG_REVISION_NAME	MCHPTags	//
 !_TAG_REVISION_VERSION	6.0.1	//
-PLCRX::;	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c	4;"	d	line:4	file:
-PLCRXBuffer	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c	9;"	v	line:9
-PLCRXIndex	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c	10;"	v	line:10
-PLCTX::;	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c	3;"	d	line:3	file:
-RX::;	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c	7;"	d	line:7	file:
-TX::;	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c	6;"	d	line:6	file:
-main	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c	14;"	f	line:14
-s	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c	40;"	l	line:40
+PLCRX::;	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c	4;"	d	line:4	file:
+PLCRXBuffer	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c	9;"	v	line:9
+PLCRXIndex	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c	10;"	v	line:10
+PLCTX::;	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c	3;"	d	line:3	file:
+RX::;	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c	7;"	d	line:7	file:
+TX::;	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c	6;"	d	line:6	file:
+main	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c	14;"	f	line:14
+s	C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c	55;"	l	line:55

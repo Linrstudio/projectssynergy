@@ -27,7 +27,7 @@ namespace SynergyTemplate
         public static Int2 operator -(Int2 _A) { return new Int2(-_A.X, -_A.Y); }
 
         //casts
-        //public static implicit operator Int2(Float2 _V) { return new Int2((int)_V.X, (int)_V.Y); }
+        public static implicit operator Int2(Float2 _V) { return new Int2((int)_V.X, (int)_V.Y); }
     }
 
     public struct Float2
@@ -68,6 +68,14 @@ namespace SynergyTemplate
         public float Y;
         public float Z;
 
+        public Float2 XY { get { return new Float2(X, Y); } set { X = value.X; Y = value.Y; } }
+        public Float2 YZ { get { return new Float2(Y, Z); } set { Y = value.X; Z = value.Y; } }
+        public Float2 ZX { get { return new Float2(Z, X); } set { Z = value.X; X = value.Y; } }
+
+        public Float2 YX { get { return new Float2(Y, X); } set { Y = value.X; X = value.Y; } }
+        public Float2 ZY { get { return new Float2(Z, Y); } set { Z = value.X; Y = value.Y; } }
+        public Float2 XZ { get { return new Float2(X, Z); } set { X = value.X; Z = value.Y; } }
+
         public Float3(float _X, float _Y, float _Z) { X = _X; Y = _Y; Z = _Z; }
         //Comparations
         public static bool operator <(Float3 _A, Float3 _B) { return _A.X < _B.X && _A.Y < _B.Y && _A.Z < _B.Z; }
@@ -77,7 +85,7 @@ namespace SynergyTemplate
         //Operators
         public static Float3 operator +(Float3 _A, Float3 _B) { return new Float3(_A.X + _B.X, _A.Y + _B.Y, _A.Z + _B.Z); }
         public static Float3 operator -(Float3 _A, Float3 _B) { return new Float3(_A.X - _B.X, _A.Y - _B.Y, _A.Z - _B.Z); }
-        public static Float3 operator *(Float3 _A, Float3 _B) { return new Float3(_A.X * _B.X, _A.Y * _B.Y, _A.Z - _B.Z); }
+        public static Float3 operator *(Float3 _A, Float3 _B) { return new Float3(_A.X * _B.X, _A.Y * _B.Y, _A.Z * _B.Z); }
         public static Float3 operator *(Float3 _A, float _B) { return new Float3(_A.X * _B, _A.Y * _B, _A.Z * _B); }
         public static Float3 operator /(Float3 _A, Float3 _B) { return new Float3(_A.X / _B.X, _A.Y / _B.Y, _A.Z / _B.Z); }
         public static Float3 operator /(Float3 _A, float _B) { return new Float3(_A.X / _B, _A.Y / _B, _A.Z / _B); }
@@ -115,7 +123,7 @@ namespace SynergyTemplate
         //Operators
         public static Float4 operator +(Float4 _A, Float4 _B) { return new Float4(_A.X + _B.X, _A.Y + _B.Y, _A.Z + _B.Z, _A.W + _B.W); }
         public static Float4 operator -(Float4 _A, Float4 _B) { return new Float4(_A.X - _B.X, _A.Y - _B.Y, _A.Z - _B.Z, _A.W - _B.W); }
-        public static Float4 operator *(Float4 _A, Float4 _B) { return new Float4(_A.X * _B.X, _A.Y * _B.Y, _A.Z - _B.Z, _A.W - _B.W); }
+        public static Float4 operator *(Float4 _A, Float4 _B) { return new Float4(_A.X * _B.X, _A.Y * _B.Y, _A.Z * _B.Z, _A.W * _B.W); }
         public static Float4 operator *(Float4 _A, float _B) { return new Float4(_A.X * _B, _A.Y * _B, _A.Z * _B, _A.W * _B); }
         public static Float4 operator /(Float4 _A, Float4 _B) { return new Float4(_A.X / _B.X, _A.Y / _B.Y, _A.Z / _B.Z, _A.W / _B.W); }
         public static Float4 operator /(Float4 _A, float _B) { return new Float4(_A.X / _B, _A.Y / _B, _A.Z / _B, _A.W / _B); }

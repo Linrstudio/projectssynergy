@@ -39,7 +39,7 @@ namespace Framework
             return null;
         }
 
-        public class Method
+        public new class Method
         {
             string methodname;
             public string MethodName { get { return methodname; } }
@@ -68,7 +68,7 @@ namespace Framework
             }
         }
 
-        public class Field
+        public new class Field
         {
             string fieldname;
             Type fieldtype;
@@ -96,6 +96,11 @@ namespace Framework
                 networkclass.SetMasterField(fieldname, _Value);
             }
 
+            public object GetValue()
+            {
+                return value;
+            }
+
             public new string ToString()
             {
                 string t = fieldtype == null ? "null" : fieldtype.Name;
@@ -104,8 +109,8 @@ namespace Framework
             }
         }
 
-        internal Dictionary<string, Method> Methods = new Dictionary<string, Method>();
-        internal Dictionary<string, Field> Fields = new Dictionary<string, Field>();
+        public Dictionary<string, Method> Methods = new Dictionary<string, Method>();
+        public Dictionary<string, Field> Fields = new Dictionary<string, Field>();
 
         public NetworkClassSlave(string _Name, string _TypeName)
             : base(_Name, _TypeName) { }

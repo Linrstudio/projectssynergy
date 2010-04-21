@@ -14,6 +14,7 @@ namespace Framework
 {
     public class TCPConnection : Connection
     {
+        public Mutex mutex = new Mutex();
         public int PACKETSIZE = 1024;
         public int lastsendtime = Environment.TickCount;
         Random random = new Random(Environment.TickCount);
@@ -45,11 +46,10 @@ namespace Framework
         public override void Send(ByteStream _RawData)
         {
             byte[] data = _RawData.ReadAll();
-
-            Thread.BeginCriticalRegion();
+            mutex.WaitOne();
             SendBuffer.Write(BitConverter.GetBytes((ushort)data.Length));
             SendBuffer.Write(data);
-            Thread.EndCriticalRegion();
+            mutex.ReleaseMutex();
         }
 
         [Obsolete]
@@ -106,7 +106,9 @@ namespace Framework
                             Send(false, NetworkManager.ActionBlackList.GetRandomID(), "Sleep");
                             lastsendtime = Environment.TickCount;//not that this is usefull in any way
                         }
+                        mutex.WaitOne();
                         byte[] sendb = SendBuffer.Read(PACKETSIZE);
+                        mutex.ReleaseMutex();
                         if (sendb.Length > 0)
                         {
                             client.Client.Send(sendb);
@@ -116,7 +118,9 @@ namespace Framework
                         {
                             byte[] buffer = new byte[Math.Min(client.Available, PACKETSIZE)];
                             client.GetStream().Read(buffer, 0, buffer.Length);
+                            mutex.WaitOne();
                             ReceiveBuffer.Write(buffer);
+                            mutex.ReleaseMutex();
                             //Console.WriteLine("{0} bytes received", buffer.Length);
                         }
                         Thread.Sleep(50);
@@ -139,21 +143,21 @@ namespace Framework
             NetworkManager.RequestNetworkMap();//request a map of the network to check what got left out
             if (AutoReconnect)//attempt resurrection
             {
-                Console.WriteLine("Error in transmission, connection will be resurrected");
+                Log.Write("Networking", Log.Line.Type.Error, "Error in transmission with node {0}, connection will be resurrected", remotenodeid);
                 client = null;
                 while (client == null)
                 {
                     try
                     {
                         client = new TcpClient(IP, Port);
-                        Console.WriteLine("TCPConnection with {0}:{1} was resurrected successfully", IP, Port);
+                        Log.Write("Networking", Log.Line.Type.Message, "Transmission with {0}:{1} was resurrected successfully,  connection will be resurrected", IP, Port);
                     }
                     catch { Thread.Sleep(10000); }
                 }
             }
             else
             {
-                Console.WriteLine("Error in transmission, connection will be killed");
+                Log.Write("Networking", Log.Line.Type.Error, "Error in transmission with  node, connection will killed", remotenodeid);
                 Kill();
                 return;
             }
@@ -164,6 +168,10 @@ namespace Framework
             NetworkManager.LocalNode.Connections.Remove(this);
             if (client != null) client.Close();
             thread.Abort();//final suicide action
+            if (NetworkManager.LocalNode.Connections.Contains(this))
+                NetworkManager.LocalNode.Connections.Remove(this);
+            else
+                Log.Write("Networking", Log.Line.Type.Warning, "Connection with node {0} lost", remotenodeid);
         }
 
         public override void Update()
