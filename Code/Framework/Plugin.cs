@@ -85,14 +85,30 @@ namespace Framework
 
         public Plugin(string _PluginName, string _SourceCode)
         {
-            assambly = PluginManager.Compile(_SourceCode, PluginManager.CompilerType.CSharp);
+            type = PluginManager.CompilerType.CSharp;
+            assambly = PluginManager.Compile(_SourceCode, type);
+            pluginname = _PluginName;
+            source = _SourceCode;
             foreach (Type t in assambly.GetTypes())
             {
                 Log.Write("Plugin Compiler", "Type compiled {0}", t.FullName);
             }
             PluginManager.plugins.Add(this);
             CheckPluginAttributes();
+        }
 
+        public Plugin(string _PluginName, string _SourceCode, PluginManager.CompilerType _CompilerType)
+        {
+            type = _CompilerType;
+            assambly = PluginManager.Compile(_SourceCode, type);
+            pluginname = _PluginName;
+            source = _SourceCode;
+            foreach (Type t in assambly.GetTypes())
+            {
+                Log.Write("Plugin Compiler", "Type compiled {0}", t.FullName);
+            }
+            PluginManager.plugins.Add(this);
+            CheckPluginAttributes();
         }
 
         public void CheckPluginAttributes()

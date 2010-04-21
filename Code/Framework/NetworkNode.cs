@@ -18,6 +18,31 @@ namespace Framework
             nodeid = _NodeID;
         }
 
+        public NetworkNode[] FindPathTo(NetworkNode _Target)
+        {
+            return FindPathTo(_Target, 10);
+        }
+
+        public NetworkNode[] FindPathTo(NetworkNode _Target, int _MaxDepth)
+        {
+            if (this == _Target) return new NetworkNode[] { this };//we found him
+            //otherwise we ask any connected nodes
+            int bestlength = 1000000;
+            NetworkNode[] best = null;
+            foreach (NetworkNode node in RemoteNodes.Values)
+            {
+                NetworkNode[] results = node.FindPathTo(_Target, _MaxDepth - 1);
+                if (results != null && results.Length < bestlength)
+                {
+                    bestlength = results.Length; best = results;
+                }
+            }
+            if (best == null) return null;//we found nothing, return null
+
+            List<NetworkNode> list = new List<NetworkNode>(best); list.Add(this);//add our self and return the list
+            return list.ToArray();
+        }
+
         public virtual void Update()
         {
 

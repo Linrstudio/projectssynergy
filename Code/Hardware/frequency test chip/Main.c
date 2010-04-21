@@ -35,6 +35,29 @@ void main()
 
 	while(1)
 	{
+		GP2=1;
+		asm("nop");
+		asm("nop");
+
+		asm("nop");
+		asm("nop");
+		asm("nop");
+		asm("nop");
+		asm("nop");
+		asm("nop");
+		asm("nop");
+		GP2=0;
+		asm("nop");
+		asm("nop");
+		asm("nop");
+		asm("nop");
+		asm("nop");
+		asm("nop");
+		asm("nop");
+	}
+
+	while(1)
+	{
 		for(int i=0;i<255;i++)
 		{
 			for(int i2=0;i2<4;i2++)

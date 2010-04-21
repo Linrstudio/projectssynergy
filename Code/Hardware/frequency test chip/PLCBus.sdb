@@ -2,7 +2,7 @@
 [d version 1.1 ]
 [d edition pro ]
 [d chip 12F510 ]
-"15 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c
+"15 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c
 [v _main `(v  1 e 0 0 ]
 "9
 [v _PLCRXBuffer `i  1 e 2 @30 ]
@@ -106,10 +106,10 @@
 [v _ANS0 `b  1 e 0 @70 ]
 "84
 [v _ANS1 `b  1 e 0 @71 ]
-"15 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c
+"15 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c
 [v _main `(v  1 e 0 0 ]
 {
-"59
+"82
 [v _main_j `i  1 a 2 0 ]
-"84
+"107
 } 2

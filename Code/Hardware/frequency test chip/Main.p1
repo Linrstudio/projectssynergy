@@ -97,9 +97,9 @@ Version 3.2 HI-TECH Software Intermediate Code
 [v _ANS0 `b 1 e@70 ]
 "84 C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h
 [v _ANS1 `b 1 e@71 ]
-"9 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c
+"9 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c
 [v _PLCRXBuffer `i 1 e ]
-"10 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c
+"10 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c
 [v _PLCRXIndex `i 1 e ]
 [p mainexit ]
 [; ;pic12f510.h: 14: volatile unsigned char INDF @ 0x000;
@@ -154,7 +154,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;pic.h: 406: extern void _delay(unsigned long);
 [; ;Main.c: 9: int PLCRXBuffer;
 [; ;Main.c: 10: int PLCRXIndex;
-"15 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c
+"15 C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c
 [v _main `(v 1 ef ]
 {
 [; ;Main.c: 14: void main()
@@ -206,144 +206,211 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;Main.c: 37: {
 "37
 {
-[; ;Main.c: 38: for(int i=0;i<255;i++)
+[; ;Main.c: 38: GP2=1;
 "38
-{
-[v _i `i 1 a ]
-[e = _i -> 0 `i ]
-[e $ < _i -> 255 `i 5  ]
-[e $U 6  ]
-"39
-[e :U 5 ]
-[; ;Main.c: 39: {
-{
-[; ;Main.c: 40: for(int i2=0;i2<4;i2++)
-"40
-{
-[v _i2 `i 1 a ]
-[e = _i2 -> 0 `i ]
-[e $ < _i2 -> 4 `i 8  ]
-[e $U 9  ]
-"41
-[e :U 8 ]
-[; ;Main.c: 41: {
-{
-[; ;Main.c: 42: GP2=1;
-"42
 [e = _GP2 -> -> 1 `i `b ]
+[; ;Main.c: 39: asm("nop");
+"39
+[; nop ;#
+[; ;Main.c: 40: asm("nop");
+"40
+[; nop ;#
+[; ;Main.c: 42: asm("nop");
+"42
+[; nop ;#
 [; ;Main.c: 43: asm("nop");
 "43
 [; nop ;#
-[; ;Main.c: 44: GP2=0;
+[; ;Main.c: 44: asm("nop");
 "44
-[e = _GP2 -> -> 0 `i `b ]
+[; nop ;#
+[; ;Main.c: 45: asm("nop");
 "45
-}
-"40
-[e ++ _i2 -> 1 `i ]
-[e $ < _i2 -> 4 `i 8  ]
-[e :U 9 ]
-"45
-}
+[; nop ;#
+[; ;Main.c: 46: asm("nop");
 "46
-}
-"38
-[e ++ _i -> 1 `i ]
-[e $ < _i -> 255 `i 5  ]
-[e :U 6 ]
-"46
-}
-[; ;Main.c: 45: }
-[; ;Main.c: 46: }
-[; ;Main.c: 47: GP4=!GP4;
+[; nop ;#
+[; ;Main.c: 47: asm("nop");
 "47
-[e = _GP4 ! _GP4 ]
+[; nop ;#
+[; ;Main.c: 48: asm("nop");
 "48
+[; nop ;#
+[; ;Main.c: 49: GP2=0;
+"49
+[e = _GP2 -> -> 0 `i `b ]
+[; ;Main.c: 50: asm("nop");
+"50
+[; nop ;#
+[; ;Main.c: 51: asm("nop");
+"51
+[; nop ;#
+[; ;Main.c: 52: asm("nop");
+"52
+[; nop ;#
+[; ;Main.c: 53: asm("nop");
+"53
+[; nop ;#
+[; ;Main.c: 54: asm("nop");
+"54
+[; nop ;#
+[; ;Main.c: 55: asm("nop");
+"55
+[; nop ;#
+[; ;Main.c: 56: asm("nop");
+"56
+[; nop ;#
+"57
 }
 [e :U 2 ]
 "36
 [e $U 3  ]
 [e :U 4 ]
-[; ;Main.c: 48: }
-[; ;Main.c: 51: while(1)
-"51
-[e :U 12 ]
-[; ;Main.c: 52: {
-"52
+[; ;Main.c: 57: }
+[; ;Main.c: 59: while(1)
+"59
+[e :U 6 ]
+[; ;Main.c: 60: {
+"60
 {
-[; ;Main.c: 53: for(int i=0;i<30;i++)
-"53
+[; ;Main.c: 61: for(int i=0;i<255;i++)
+"61
 {
 [v _i `i 1 a ]
 [e = _i -> 0 `i ]
-[e $ < _i -> 30 `i 14  ]
-[e $U 15  ]
-"54
-[e :U 14 ]
-[; ;Main.c: 54: {
+[e $ < _i -> 255 `i 8  ]
+[e $U 9  ]
+"62
+[e :U 8 ]
+[; ;Main.c: 62: {
 {
-"55
-[v _s `i 1 a ]
-[; ;Main.c: 55: int s;
-[; ;Main.c: 56: do
-"56
-[e :U 19 ]
-[; ;Main.c: 57: {
-"57
+[; ;Main.c: 63: for(int i2=0;i2<4;i2++)
+"63
 {
-[; ;Main.c: 58: s=0;
-"58
-[e = _s -> 0 `i ]
-[; ;Main.c: 59: for(int j=0;j<10;j++)
+[v _i2 `i 1 a ]
+[e = _i2 -> 0 `i ]
+[e $ < _i2 -> 4 `i 11  ]
+[e $U 12  ]
+"64
+[e :U 11 ]
+[; ;Main.c: 64: {
+{
+[; ;Main.c: 65: GP2=1;
+"65
+[e = _GP2 -> -> 1 `i `b ]
+[; ;Main.c: 66: asm("nop");
+"66
+[; nop ;#
+[; ;Main.c: 67: GP2=0;
+"67
+[e = _GP2 -> -> 0 `i `b ]
+"68
+}
+"63
+[e ++ _i2 -> 1 `i ]
+[e $ < _i2 -> 4 `i 11  ]
+[e :U 12 ]
+"68
+}
+"69
+}
+"61
+[e ++ _i -> 1 `i ]
+[e $ < _i -> 255 `i 8  ]
+[e :U 9 ]
+"69
+}
+[; ;Main.c: 68: }
+[; ;Main.c: 69: }
+[; ;Main.c: 70: GP4=!GP4;
+"70
+[e = _GP4 ! _GP4 ]
+"71
+}
+[e :U 5 ]
 "59
+[e $U 6  ]
+[e :U 7 ]
+[; ;Main.c: 71: }
+[; ;Main.c: 74: while(1)
+"74
+[e :U 15 ]
+[; ;Main.c: 75: {
+"75
+{
+[; ;Main.c: 76: for(int i=0;i<30;i++)
+"76
+{
+[v _i `i 1 a ]
+[e = _i -> 0 `i ]
+[e $ < _i -> 30 `i 17  ]
+[e $U 18  ]
+"77
+[e :U 17 ]
+[; ;Main.c: 77: {
+{
+"78
+[v _s `i 1 a ]
+[; ;Main.c: 78: int s;
+[; ;Main.c: 79: do
+"79
+[e :U 22 ]
+[; ;Main.c: 80: {
+"80
+{
+[; ;Main.c: 81: s=0;
+"81
+[e = _s -> 0 `i ]
+[; ;Main.c: 82: for(int j=0;j<10;j++)
+"82
 {
 [v _j `i 1 a ]
 [e = _j -> 0 `i ]
-[e $ < _j -> 10 `i 20  ]
-[e $U 21  ]
-"60
-[e :U 20 ]
-[; ;Main.c: 60: {
+[e $ < _j -> 10 `i 23  ]
+[e $U 24  ]
+"83
+[e :U 23 ]
+[; ;Main.c: 83: {
 {
-[; ;Main.c: 61: s+=C1OUT?1:0;
-"61
-[e =+ _s ? _C1OUT : -> 1 `i -> 0 `i ]
-"62
-}
-"59
-[e ++ _j -> 1 `i ]
-[e $ < _j -> 10 `i 20  ]
-[e :U 21 ]
-"62
-}
-"63
-}
-[; ;Main.c: 62: }
-[; ;Main.c: 63: }
-[; ;Main.c: 64: while(s!=0&&s!=10);
-"64
-[e $ && != _s -> 0 `i != _s -> 10 `i 19  ]
-[e :U 18 ]
-"65
-}
-"53
-[e ++ _i -> 1 `i ]
-[e $ < _i -> 30 `i 14  ]
-[e :U 15 ]
-"65
-}
-[; ;Main.c: 65: }
-[; ;Main.c: 66: GP2=!GP2;
-"66
-[e = _GP2 ! _GP2 ]
-"72
-}
-[e :U 11 ]
-"51
-[e $U 12  ]
-[e :U 13 ]
-[; ;Main.c: 72: }
-[; ;Main.c: 84: }
+[; ;Main.c: 84: s+=C1OUT?1:0;
 "84
+[e =+ _s ? _C1OUT : -> 1 `i -> 0 `i ]
+"85
+}
+"82
+[e ++ _j -> 1 `i ]
+[e $ < _j -> 10 `i 23  ]
+[e :U 24 ]
+"85
+}
+"86
+}
+[; ;Main.c: 85: }
+[; ;Main.c: 86: }
+[; ;Main.c: 87: while(s!=0&&s!=10);
+"87
+[e $ && != _s -> 0 `i != _s -> 10 `i 22  ]
+[e :U 21 ]
+"88
+}
+"76
+[e ++ _i -> 1 `i ]
+[e $ < _i -> 30 `i 17  ]
+[e :U 18 ]
+"88
+}
+[; ;Main.c: 88: }
+[; ;Main.c: 89: GP2=!GP2;
+"89
+[e = _GP2 ! _GP2 ]
+"95
+}
+[e :U 14 ]
+"74
+[e $U 15  ]
+[e :U 16 ]
+[; ;Main.c: 95: }
+[; ;Main.c: 107: }
+"107
 [e :UE 1 ]
 }

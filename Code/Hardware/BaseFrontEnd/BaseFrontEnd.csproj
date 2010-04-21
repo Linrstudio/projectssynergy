@@ -51,8 +51,8 @@
     <Compile Include="ChildForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Code.cs" />
-    <Compile Include="CodeBlocks.cs" />
+    <Compile Include="VLP\Code.cs" />
+    <Compile Include="VLP\CodeBlocks.cs" />
     <Compile Include="Form2.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,7 +77,8 @@
     <Compile Include="EventEditForm.designer.cs">
       <DependentUpon>EventEditForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="KismetSequence.cs" />
+    <Compile Include="VLP\CodeDataType.cs" />
+    <Compile Include="VLP\KismetSequence.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>

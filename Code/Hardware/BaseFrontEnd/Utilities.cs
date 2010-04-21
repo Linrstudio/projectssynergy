@@ -1,11 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing;
 
 namespace BaseFrontEnd
 {
     public static class Utilities
     {
+        public static PointF Add(PointF _A, PointF _B)
+        {
+            return new PointF(_A.X + _B.X, _A.Y + _B.Y);
+        }
+
+        public static PointF Avarage(PointF _A, PointF _B)
+        {
+            return new PointF(_A.X + _B.X / 2, _A.Y + _B.Y / 2);
+        }
+
         public static byte[] FromShort(ushort _V)
         {
             byte[] buf = BitConverter.GetBytes(_V);

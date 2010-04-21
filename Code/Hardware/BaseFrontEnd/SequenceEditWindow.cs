@@ -130,14 +130,14 @@ namespace BaseFrontEnd
                     CodeBlock.Input input = GetNearestInput(new Point(MouseX, MouseY));
                     CodeBlock.Output output = GetNearestOutput(new Point(MouseX, MouseY));
 
-                    //e.Graphics.DrawRectangle(Pens.Red, b.x, b.y, 100, 50);
-                    float p = 0;
+                    if (SelectedInput == null) b.DrawInputs(e.Graphics, SelectedOutput == null ? null : SelectedOutput.Type);
+                    if (SelectedOutput == null) b.DrawOutputs(e.Graphics, SelectedInput == null ? null : SelectedInput.Type);
+
                     foreach (CodeBlock.Input i in b.Inputs)
                     {
-                        p += 1 / (float)(b.Inputs.Count + 1);
                         PointF pos = i.GetPosition();
-                        if (!dependencies.Contains(i.Owner))
-                            e.Graphics.FillRectangle(Brushes.Black, new RectangleF(pos.X - 5, pos.Y - 5, 5, 10));
+                        //if (!dependencies.Contains(i.Owner))
+                        //e.Graphics.FillRectangle(new SolidBrush(i.GetColor()), new RectangleF(pos.X - 5, pos.Y - 5, 5, 10));
 
                         if (i.Connected != null)
                         {
@@ -146,18 +146,14 @@ namespace BaseFrontEnd
                             DrawPwettyLine(e.Graphics, y, x);
                         }
 
-                        if (i == input)
-                        {
-                            i.tooptip.Show(i.Text, this, new Point((int)pos.X, (int)pos.Y), 1000);
-                        }
+                        if (i == input) i.tooptip.Show(i.Text, this, new Point((int)pos.X, (int)pos.Y), 1000);
                     }
-                    p = 0;
+
                     foreach (CodeBlock.Output i in b.Outputs)
                     {
-                        p += 1 / (float)(b.Inputs.Count + 1);
                         PointF pos = i.GetPosition();
-                        if (!dependencies.Contains(i.Owner))
-                            e.Graphics.FillRectangle(Brushes.Black, new RectangleF(pos.X, pos.Y - 5, 5, 10));
+                        //if (!dependencies.Contains(i.Owner))
+                        //e.Graphics.FillRectangle(new SolidBrush(i.GetColor()), new RectangleF(pos.X, pos.Y - 5, 5, 10));
 
                         if (i == output)
                         {
@@ -185,29 +181,21 @@ namespace BaseFrontEnd
             if (Sequence == null) return;
             //if (NeedsRecompile) eeprom.Assamble();
             NeedsRecompile = false;
-#if true
+            int found = 0;
             foreach (CodeBlock c in Sequence.codeblocks)
             {
                 if (c == Sequence.root) continue;
-                c.targetX = 100;
-                c.targetY = 100;
+                if (c.GetInputs().Length == 0)
+                {
+                    c.targetX = 150 + found * 150;
+                    c.targetY = 150;
+                    found++;
+                }
             }
-            Sequence.root.targetX = 100;
+            Sequence.root.targetX = 150;
             Sequence.root.UpdateScope();
             Sequence.root.UpdateLayout();
-#else
-            int siblingdist = 150;
-            foreach (CodeBlock b in Sequence.codeblocks)
-            {
-                if (b == Sequence.root) continue;
-                b.targetX = 100 + b.GetDepth() * 150;
-                List<CodeBlock> siblings = new List<CodeBlock>(b.GetSibblings(Sequence.codeblocks.ToArray()));
-                int idx = siblings.IndexOf(b);
-                b.targetY = idx * siblingdist;
-                b.targetY -= (float)(siblings.Count-1) * (float)(siblingdist / 2);
-                b.targetY += b.GetAvarageParentHeight();
-            }
-#endif
+
             Sequence.root.UpdateLayout();
             Width = (int)Math.Max(Parent.Bounds.Width, Sequence.root.targetX + Sequence.root.width / 2 + 20);
             Height = (int)Math.Max(Parent.Bounds.Height, Sequence.root.height + 100);
@@ -268,7 +256,7 @@ namespace BaseFrontEnd
                 {
                     List<CodeBlock> dependencies = new List<CodeBlock>();
                     if (SelectedOutput != null) dependencies.AddRange(SelectedOutput.Owner.GetDependencies());
-                    if (!dependencies.Contains(SelectedInput.Owner))
+                    if (!dependencies.Contains(SelectedInput.Owner) && SelectedOutput.CanConnectTo(SelectedInput))
                     {
                         Sequence.Connect(SelectedOutput, SelectedInput);
                         NeedsRecompile = true;

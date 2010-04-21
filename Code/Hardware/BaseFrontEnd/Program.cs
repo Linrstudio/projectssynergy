@@ -15,7 +15,11 @@ namespace BaseFrontEnd
         {
             Resources.Load();
             ProductDataBase.Load(@"Products.xml");
-            Base b = new Base("COM1");
+
+            string portname = "";
+            string[] portnames = System.IO.Ports.SerialPort.GetPortNames();
+            if (portnames.Length > 0) portname = portnames[0];
+            Base b = new Base(portname);
 
             /*
                         PushEvent root = new PushEvent();

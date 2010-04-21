@@ -31,7 +31,7 @@ startup.obj     end_init         F        F        3       4     0
                 clrtext         12       12        9       4     0
                 init             2        2        D       4     0
                 reset_wra        0        0        2       0     0
-PLCBus.obj      maintext       163      163       9D     2C6     0
+PLCBus.obj      maintext       150      150       B0     2A0     0
 
 COMMON          fnauto0         1A       1A        4      1A     1
 
@@ -39,7 +39,7 @@ TOTAL           Name          Link     Load   Length     Space
         CLASS   CODE           
                 init             2        2        D     0
                 reset_wra        0        0        2     0
-                maintext       163      163       9D     0
+                maintext       150      150       B0     0
 
         CLASS   ENTRY          
                 end_init         F        F        3     0
@@ -81,17 +81,17 @@ SEGMENTS        Name            Load    Length   Top    Selector    Space      C
                 reset_wrap      000000  000002  000002         0       0  CODE        2
                 init            000002  000019  00001B         4       0  CODE        2
                 fnauto0         00001A  000004  00001E        1A       1  BANK0       1
-                maintext        000163  00009D  000200       2C6       0  CODE        2
+                maintext        000150  0000B0  000200       2A0       0  CODE        2
 
 
 UNUSED ADDRESS RANGES
 
         BANK0            0010-0019     1
         BANK1            0030-003F     1
-        CODE             001B-0162     2
+        CODE             001B-014F     2
                          0200-03FE
         CONFIG           0FFF-0FFF     2
-        ENTRY            001B-00FF+0063 2
+        ENTRY            001B-00FF+0050 2
                          0200-02FF+00FF
         IDLOC            0400-0403     2
         RAM              0036-003F     1
@@ -213,7 +213,7 @@ __Ltemp        temp        0010  __Ltext        text        0036
 __S0           (abs)       0FFF  __S1           (abs)       0030
 __databank     (abs)       0000  __end_of_main  maintext    0200
 __tempreg      (abs)       0010  _exit          init        0002
-_main          maintext    0163  _main_j        fnauto0     001A
+_main          maintext    0150  _main_j        fnauto0     001A
 btemp          (abs)       000C  clear_ram      clrtext     0012
 ltemp0         (abs)       000C  reset_vec      reset_vec   03FF
 start          init        0002  ttemp0         (abs)       000C

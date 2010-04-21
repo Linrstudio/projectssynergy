@@ -20,43 +20,24 @@ namespace SynergyClient
             SynergyGraphics.Graphics.Initialize(this.Handle, TargetResolution);
             ClientResources.Load();
             Root = new GenericBrowser(null);
-            Root.Size = new Float2(2, 2);
-            Root.Position = new Float2(-1, -1);
+            Root.Transformation = Float3x3.Scale(new Float2(2, -2)) * Float3x3.Translate(new Float2(-0.5f, -0.5f));
 
-            Root.OnRefresh += new Control.OnRefreshHandler(Root_OnRefresh);
             System.Windows.Forms.Application.Idle += new EventHandler(Application_Idle);
-        }
-
-        void Root_OnRefresh()
-        {
-            //draw a background of some sorts
-            Graphics.defaultshader.Begin();
-
-            Graphics.defaultshader.SetParameter("View", new Float2x3(2, 0, 0, 2, -1, -1));
-            Graphics.defaultshader.SetParameter("DiffuseMap", ClientResources.Background);
-
-            Graphics.DrawRectangle(new Float2(0, 0), new Float2(1, 0), new Float2(0, 1), new Float2(1, 1), 0.5f);
-
-            Graphics.defaultshader.End();
-
-
-            //Root.SetViewFit(Graphics.defaultshader);
-            Root.Draw();
-            SynergyGraphics.Graphics.Present(p_WorkingArea.Handle);
         }
 
         void Application_Idle(object sender, EventArgs e)
         {
-            //Update();
+            Tick();
         }
 
         public void Tick()
         {
-            Root.Resolution.X = Bounds.Width;
-            Root.Resolution.Y = Bounds.Height;
+            //Root.Transformation.X.X = Bounds.Width;
+            //Root.Transformation.Y.Y = Bounds.Height;
             Root.Update();
+            Root.Draw();
 
-            Root_OnRefresh();
+            SynergyGraphics.Graphics.Present(p_WorkingArea.Handle);
         }
 
 

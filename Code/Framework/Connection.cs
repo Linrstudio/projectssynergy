@@ -15,6 +15,11 @@ namespace Framework
 
         public virtual void Update() { }
 
+        public static void Send(NetworkNodeRemote _Node, string _FunctioName, params object[] _Parameters)
+        {
+
+        }
+
         public static void SendToAll(string _FunctionName, params object[] _Parameters)
         {
             uint ID = NetworkManager.ActionBlackList.GetRandomID();
@@ -24,6 +29,8 @@ namespace Framework
             }
         }
 
+        public void Send(string _FunctionName, params object[] _Parameters) { Send("", _FunctionName, _Parameters); }
+        public virtual void Send(string _TargetNode, string _FunctionName, params object[] _Parameters) { }
         public virtual void Send(bool _BroadCast, uint _ActionID, string _FunctionName, params object[] _Parameters) { }
         public virtual void Send(bool _BroadCast, string _FunctionName, params object[] _Parameters) { }
         public virtual void Send(ByteStream _RawData) { }
@@ -91,6 +98,16 @@ namespace Framework
                     else Log.Write("Networking", "{0} already has a method : {1}", _ClassName, _MethodName);
                 }
                 else Log.Write("Networking", "Cant find NetworkClass {0}", _ClassName);
+            }
+
+            [Method("Subscribe")]
+            public void Subscribe(string _ClassName, string _NodeID)
+            {
+                //find local object with name classname
+                if (!NetworkManager.RemoteNodes.ContainsKey(_NodeID)) Log.Write("Networking", "Cant add registration to class {0}, class doesnt exists", _ClassName);
+                if (!NetworkManager.LocalNode.NetworkClasses.ContainsKey(_ClassName)) Log.Write("Networking", "Cant add registration to class {0}, class doesnt exists", _ClassName);
+                NetworkClassMaster obj = NetworkManager.LocalNode.NetworkClasses[_ClassName];
+                obj.AddSubscription(NetworkManager.RemoteNodes[_NodeID]);
             }
 
             [Method("MapClassField")]

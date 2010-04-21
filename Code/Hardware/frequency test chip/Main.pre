@@ -1,5 +1,5 @@
 
-# 1 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c"
+# 1 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c"
 
 # 14 "C:\Program Files\HI-TECH Software\PICC\PRO\9.65\include\pic12f510.h"
 volatile unsigned char INDF @ 0x000;
@@ -68,7 +68,7 @@ bit ANS1 @ ((unsigned)&ADCON0*8)+7;
 #pragma inline(_delay)
 extern void _delay(unsigned long);
 
-# 9 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\PLCBus\Main.c"
+# 9 "C:\DOCUMENTS\PROJECTS\Synergy\Trunk\Code\Hardware\frequency test chip\Main.c"
 int PLCRXBuffer;
 int PLCRXIndex;
 
@@ -95,6 +95,29 @@ C1ON=1;
 C1NREF=0;
 C1PREF=1;
 C1WU=1;
+
+while(1)
+{
+GP2=1;
+asm("nop");
+asm("nop");
+
+asm("nop");
+asm("nop");
+asm("nop");
+asm("nop");
+asm("nop");
+asm("nop");
+asm("nop");
+GP2=0;
+asm("nop");
+asm("nop");
+asm("nop");
+asm("nop");
+asm("nop");
+asm("nop");
+asm("nop");
+}
 
 while(1)
 {
@@ -128,9 +151,9 @@ while(s!=0&&s!=10);
 }
 GP2=!GP2;
 
-# 72
+# 95
 }
 
-# 84
+# 107
 }
 

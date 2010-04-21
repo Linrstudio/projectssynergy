@@ -20,20 +20,20 @@ namespace SynergyClient
         public GenericBrowser(Control _Parent)
             : base("GenericBrowser", _Parent)
         {
-            OnRefresh += new OnRefreshHandler(GenericBrowser_OnRefresh);
+            OnRender += GenericBrowser_OnRefresh;
         }
 
         void GenericBrowser_OnRefresh()
         {
             //SetViewRelativeToParent(Graphics.defaultshader);
+            Graphics.defaultshader.SetParameter("View", GetTransformation());
             Graphics.defaultshader.SetParameter("DiffuseMap", ClientResources.Background);
             Graphics.defaultshader.Begin();
             Graphics.DrawRectangle(
                 new Float2(0, 0),
-                new Float2(Size.X, 0),
-                new Float2(0, Size.Y),
-                Size,
-                0.5f);
+                new Float2(1, 0),
+                new Float2(0, 1),
+                new Float2(1, 1), 0.5f);
             Graphics.defaultshader.End();
         }
 
@@ -80,17 +80,18 @@ namespace SynergyClient
                 foreach (GenericBrowserElement e in c.elements.Values)
                 {
                     if (y > 1) { y = 1 / VerticalElementCount; x += 1 / HorizontalElementCount; }
-                    e.Position.X = Size.X * x;
-                    e.Position.Y = Size.Y * y;
-                    e.Size.X = Size.X * (1 / HorizontalElementCount);
-                    e.Size.Y = Size.Y * (1 / VerticalElementCount);
+                    //e.Transformation = Float3x3.Translate(x, y);
+                    //e.Position.X = Size.X * x;
+                    //e.Position.Y = Size.Y * y;
+                    //e.Size.X = Size.X * (1 / HorizontalElementCount);
+                    //e.Size.Y = Size.Y * (1 / VerticalElementCount);
                     y += 1 / VerticalElementCount;
                 }
 
-                c.header.Position.X = Size.X * ((x + startx) * 0.5f);
-                c.header.Position.Y = 0;
-                c.header.Size.X = Size.X / HorizontalElementCount;
-                c.header.Size.Y = Size.Y / VerticalElementCount;
+                //c.header.Position.X = Size.X * ((x + startx) * 0.5f);
+                //c.header.Position.Y = 0;
+                //c.header.Size.X = Size.X / HorizontalElementCount;
+                //c.header.Size.Y = Size.Y / VerticalElementCount;
 
                 y = 1 / VerticalElementCount;
                 x += 1 / HorizontalElementCount;

@@ -16,7 +16,7 @@ namespace FrontEnd
             Framework.NetworkManager.Initialize();
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrontEnd());
+            Application.Run(new Framework.FrontEnd());
         }
     }
 }
