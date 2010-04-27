@@ -1,2 +1,3 @@
 Electra:
-10 * 1K
+10 * 1K resistor
+
