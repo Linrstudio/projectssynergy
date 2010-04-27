@@ -1,3 +1,4 @@
 Electra:
 10 * 1K resistor
 
+5  * bc548 transistoren
