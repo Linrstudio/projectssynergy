@@ -1,7 +1,2 @@
 Electra:
-2 * 20Mhz RC oscillator
-8 * 22pf capacitors
-1 * etch zuur elende
-5 * PIC12F510
-8 * 1uf capacitor ( polarized (als je dat zo mag noemen))
-4 * 10 nf - X2 Rated
+10 * 1K
