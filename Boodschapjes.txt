@@ -1,4 +1,6 @@
 Electra:
 10 * 1K resistor
 
-5  * bc548 transistoren
+5  * bc548 transistoren 
+1  * transistoren 2n2222_to92
+1  * baterij houder 2032
