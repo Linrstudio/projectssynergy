@@ -217,7 +217,8 @@ namespace Framework
                         {
                             int paramcount = (ushort)Converter.Read(_Stream);
                             object[] parameters = new object[paramcount];
-                            for (int i = 0; i < paramcount; i++) parameters[i] = Converter.Read(_Stream);
+                            for (int i = 0; i < paramcount; i++) 
+                                parameters[i] = Converter.Read(_Stream);
                             InvokeMethod(methodname, parameters);
                         }
                         else Log.Write("NetworkClass", Log.Line.Type.Error, "Cant find method with name {0}", methodname);

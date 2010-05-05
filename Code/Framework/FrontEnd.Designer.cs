@@ -35,6 +35,7 @@
             this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
             this.t_Tick = new System.Windows.Forms.Timer(this.components);
             this.panel3 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.l_VariableLog = new System.Windows.Forms.ListView();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
@@ -43,7 +44,6 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.c_Input = new System.Windows.Forms.ComboBox();
             this.p_EnabledLogs = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
             this.panel3.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -57,6 +57,7 @@
             this.columnHeader4,
             this.columnHeader5});
             this.l_TextLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.l_TextLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l_TextLog.ForeColor = System.Drawing.Color.White;
             this.l_TextLog.FullRowSelect = true;
             this.l_TextLog.GridLines = true;
@@ -98,6 +99,15 @@
             this.panel3.Size = new System.Drawing.Size(1157, 507);
             this.panel3.TabIndex = 6;
             // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.Color.White;
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel2.Location = new System.Drawing.Point(562, 24);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(4, 455);
+            this.panel2.TabIndex = 11;
+            // 
             // l_VariableLog
             // 
             this.l_VariableLog.BackColor = System.Drawing.Color.Black;
@@ -108,6 +118,7 @@
             this.columnHeader6,
             this.columnHeader7});
             this.l_VariableLog.Dock = System.Windows.Forms.DockStyle.Left;
+            this.l_VariableLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l_VariableLog.ForeColor = System.Drawing.Color.White;
             this.l_VariableLog.FullRowSelect = true;
             this.l_VariableLog.GridLines = true;
@@ -166,15 +177,6 @@
             this.p_EnabledLogs.Name = "p_EnabledLogs";
             this.p_EnabledLogs.Size = new System.Drawing.Size(1157, 24);
             this.p_EnabledLogs.TabIndex = 4;
-            // 
-            // panel2
-            // 
-            this.panel2.BackColor = System.Drawing.Color.White;
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel2.Location = new System.Drawing.Point(562, 24);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(4, 455);
-            this.panel2.TabIndex = 11;
             // 
             // FrontEnd
             // 

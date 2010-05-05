@@ -12,7 +12,7 @@ namespace Framework
 
         internal void AddNetworkClass(string _Name, string _TypeName)
         {
-            if (LocalDevices.ContainsKey(_Name)) return;
+            if (LocalDevices.ContainsKey(_Name)) Log.Write("default", Log.Line.Type.Warning, "Could not add class, node already contains A class with this name");
 
             NetworkClassSlave inst = NetworkClassSlave.CreateFromType(_Name, _TypeName);
             if (inst != null) LocalDevices.Add(inst.Name, inst);

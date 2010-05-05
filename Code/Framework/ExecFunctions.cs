@@ -39,7 +39,7 @@ namespace Framework
 
             public static string String(ref string _Source, bool _Cut)
             {
-                Match m = Regex.Match(_Source, "^\"(?<1>[-\\._a-zA-Z0-9]*)\"");
+                Match m = Regex.Match(_Source, "^\"(?<1>[-\\\\/._a-zA-Z0-9]*)\"");
                 if (_Cut) Cut(ref _Source, m);
                 return m.Groups[1].Value;
             }
@@ -188,7 +188,7 @@ namespace Framework
         }
 
         [Exec]
-        public NetworkClassMaster NetworkClass(string _ClassName)
+        public NetworkClassMaster networkclass(string _ClassName)
         {
             if (NetworkManager.LocalNode.NetworkClasses.ContainsKey(_ClassName))
                 return NetworkManager.LocalNode.NetworkClasses[_ClassName];
@@ -248,6 +248,16 @@ namespace Framework
         public void listen(int _Port)
         {
             new TCPListener(_Port);
+        }
+
+        [Exec]
+        public MasterPlugin load(string _PluginName, string _FileName)
+        {
+            if (System.IO.File.Exists(_FileName))
+                return new MasterPlugin(_PluginName, System.IO.File.ReadAllText(_FileName));
+            else
+                Log.Write("Exec", Log.Line.Type.Warning, "Failed to find plugin");
+            return null;
         }
     }
 }

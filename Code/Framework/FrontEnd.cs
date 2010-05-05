@@ -161,6 +161,7 @@ namespace Framework
                 log.Items.Remove(remove);
             }
             foreach (ColumnHeader c in log.Columns) c.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            if(log.Columns.Count>0)
             log.Width = log.Columns[0].Width + log.Columns[1].Width + log.Columns[2].Width + log.Columns[3].Width;
         }
 

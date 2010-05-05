@@ -1,4 +1,4 @@
-﻿//#define DEBUGNETWORK
+﻿// #define DEBUGNETWORK
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
@@ -181,12 +181,12 @@ namespace Framework
                 if (currentpacketsize == 0)
                 {
                     //read new packetype
-                    if (ReceiveBuffer.GetSize() < 2) return; //there is no data available so we cant read any
+                    if (ReceiveBuffer.Length < 2) return; //there is no data available so we cant read any
                     currentpacketsize = BitConverter.ToUInt16(ReceiveBuffer.Read(2), 0);
                 }
                 if (currentpacketsize != 0)
                 {
-                    if (ReceiveBuffer.GetSize() >= currentpacketsize)
+                    if (ReceiveBuffer.Length >= currentpacketsize)
                     {
                         byte[] buffer = ReceiveBuffer.Read(currentpacketsize);
                         ByteStream packet = new ByteStream(buffer);
