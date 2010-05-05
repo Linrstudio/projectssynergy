@@ -45,6 +45,7 @@ namespace SynergyClient
         private void Form1_Load(object sender, EventArgs e)
         {
             Bounds = new System.Drawing.Rectangle(0, 0, 800, 600);
+            new FrontEnd().Show();
         }
 
         private void Form1_FormClosed(object sender, System.Windows.Forms.FormClosedEventArgs e)
@@ -55,6 +56,12 @@ namespace SynergyClient
         private void t_tick_Tick(object sender, EventArgs e)
         {
             Tick();
+        }
+
+        private void Form1_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            UIController.CursorPos.X = e.X / TargetResolution.X;
+            UIController.CursorPos.X = e.Y / TargetResolution.Y;
         }
     }
 }

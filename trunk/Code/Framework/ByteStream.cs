@@ -9,14 +9,12 @@ namespace Framework
     {
         private Queue<byte> stream = new Queue<byte>();
 
+        public int Length { get { return stream.Count; } }
+
         public ByteStream() { }
         public ByteStream(byte[] _Data)
         {
             Write(_Data);
-        }
-        public uint GetSize()
-        {
-            return (uint)stream.Count;
         }
         public void Write(byte _Byte)
         {
@@ -48,6 +46,12 @@ namespace Framework
             byte[] ret = new byte[stream.Count];
             for (int i = 0; i < ret.Length; i++) ret[i] = Read();
             return ret;
+        }
+        public byte[] CopyAll()
+        {
+            byte[] b = new byte[stream.Count];
+            lock (stream) { stream.CopyTo(b,0); }
+            return b;
         }
         public void Clear()
         {

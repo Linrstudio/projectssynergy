@@ -16,7 +16,16 @@ namespace FrontEnd
             Framework.NetworkManager.Initialize();
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Framework.FrontEnd());
+            Form mainform = new Framework.FrontEnd();
+            mainform.FormClosing += new FormClosingEventHandler(mainform_FormClosing);
+            Application.Run(mainform);
         }
+
+        static void mainform_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
+
     }
 }

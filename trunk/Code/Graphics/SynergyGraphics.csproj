@@ -77,15 +77,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderTarget.cs" />
     <Compile Include="Shader.cs" />
+    <Compile Include="UIButton.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Template\SynergyTemplate.csproj">
       <Project>{234303EE-2883-407A-BEA6-47EC1501C788}</Project>
       <Name>SynergyTemplate</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

@@ -31,15 +31,12 @@ namespace SynergyGraphics
         {
             name = _Name;
             Parent = _Parent;
-            if (Parent != null) AddChild(this);
+            if (Parent != null) Parent.AddChild(this);
         }
-        
+
         public void DrawChildren()
         {
-            foreach (Control child in Children.Values)
-            {
-                child.Draw();
-            }
+            foreach (Control child in Children.Values) child.Draw();
         }
 
         public virtual void Update()

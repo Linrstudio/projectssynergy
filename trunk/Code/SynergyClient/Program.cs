@@ -14,9 +14,6 @@ namespace SynergyClient
         static void Main()
         {
             Framework.NetworkManager.Initialize();
-            new TCPConnection("127.0.0.1", 1000, false);
-            //new Framework.TCPListener(1000);
-
             Application.Idle += new EventHandler(Application_Idle);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

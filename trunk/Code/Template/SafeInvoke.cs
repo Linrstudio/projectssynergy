@@ -29,8 +29,9 @@ namespace SynergyTemplate
             catch (TargetInvocationException e)
             {
                 //System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace(e.InnerException, true);
-                Log.Write("SafeInvoke", Log.Line.Type.Error, @"Invocation error : {0}", e.InnerException.Message);
-                Log.Write("SafeInvoke", Log.Line.Type.Error, @"Stacktrace : {0}", e.InnerException.StackTrace);
+                Log.Write("SafeInvoke", Log.Line.Type.Error, @"Invocation error : Method {0}", method.Name);
+                Log.Write("SafeInvoke", Log.Line.Type.Error, @"Invocation error : {0}", e.InnerException.ToString());
+                //Log.Write("SafeInvoke", Log.Line.Type.Error, @"Stacktrace : {0}", e.InnerException.StackTrace);
             }
             catch (TargetParameterCountException)
             {

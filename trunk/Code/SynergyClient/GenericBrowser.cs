@@ -76,15 +76,12 @@ namespace SynergyClient
             foreach (Column c in columns.Values)
             {
                 float startx = x;
-
+                c.header.Transformation = Float3x3.Translate(new Float2(x, 0)) * Float3x3.Scale(new Float2(1.0f / HorizontalElementCount, 1.0f / VerticalElementCount));
                 foreach (GenericBrowserElement e in c.elements.Values)
                 {
+                    e.Transformation = new Float3x3();
                     if (y > 1) { y = 1 / VerticalElementCount; x += 1 / HorizontalElementCount; }
-                    //e.Transformation = Float3x3.Translate(x, y);
-                    //e.Position.X = Size.X * x;
-                    //e.Position.Y = Size.Y * y;
-                    //e.Size.X = Size.X * (1 / HorizontalElementCount);
-                    //e.Size.Y = Size.Y * (1 / VerticalElementCount);
+                    e.Transformation = Float3x3.Translate(new Float2(x, y)) * Float3x3.Scale(new Float2(1.0f / HorizontalElementCount, 1.0f / VerticalElementCount));
                     y += 1 / VerticalElementCount;
                 }
 
@@ -107,11 +104,12 @@ namespace SynergyClient
         public GenericBrowserHeader(string _Name, Control _Parent)
             : base(_Name, _Parent)
         {
-            OnRender = OnDraw;
+            OnRender += OnDraw;
         }
         public void OnDraw()
         {
-            //SetViewRelativeToParent(Graphics.defaultshader);
+            Graphics.SetAlphaBlending(true);
+            Graphics.defaultshader.SetParameter("View", GetTransformation());
             Graphics.defaultshader.SetParameter("DiffuseMap", ClientResources.GenericBrowserHeaderBackground);
             Graphics.defaultshader.Begin();
             Graphics.DrawRectangle(
@@ -119,11 +117,11 @@ namespace SynergyClient
                 new Float2(1, 0),
                 new Float2(0, 1),
                 new Float2(1, 1),
-                0.5f);
+                0.3f);
             Graphics.defaultshader.End();
 
-            Float2 Fontoffset = new Float2(0.1f, 0.2f);
-            ClientResources.font.Draw(new Float2(0, 0) + Fontoffset, new Float2(1, 1) - Fontoffset * 2, node.NodeID.ToString());
+            Float2 Fontoffset = new Float2(0.05f, 0.05f);
+            ClientResources.handwrittenfont.Draw(new Float2(0, 0) + Fontoffset, new Float2(1, 1) - Fontoffset * 2, node.NodeID.ToString());
         }
     }
 
@@ -133,11 +131,12 @@ namespace SynergyClient
         public GenericBrowserElement(string _Name, Control _Parent)
             : base(_Name, _Parent)
         {
-            OnRender = OnDraw;
+            OnRender += OnDraw;
         }
         public void OnDraw()
         {
-            //SetViewRelativeToParent(Graphics.defaultshader);
+            Graphics.SetAlphaBlending(true);
+            Graphics.defaultshader.SetParameter("View", GetTransformation());
             Graphics.defaultshader.SetParameter("DiffuseMap", ClientResources.GenericBrowserElementBackground);
             Graphics.defaultshader.Begin();
             Graphics.DrawRectangle(
@@ -148,7 +147,7 @@ namespace SynergyClient
                 0.5f);
             Graphics.defaultshader.End();
 
-            Float2 Fontoffset = new Float2(0.1f, 0.1f);
+            Float2 Fontoffset = new Float2(0.05f, 0.05f);
             /*
             Graphics.defaultshader.Begin();
             Graphics.DrawRectangle(
@@ -159,8 +158,9 @@ namespace SynergyClient
                 0.5f);
             Graphics.defaultshader.End();
             */
-            //ClientResources.font.DrawMakeFit(new Float2(-1, -1) + Fontoffset, new Float2(2, 1) - Fontoffset * 2, Name, true);
-            ClientResources.font.Draw(new Float2(0, 0) + Fontoffset, new Float2(1, 1) - Fontoffset * 2, Name);
+            //ClientResources.handwrittenfont.DrawMakeFit(new Float2(0, 0) + Fontoffset, new Float2(1, 1) - Fontoffset * 2, Name, true);
+            ClientResources.handwrittenfont.Draw(new Float2(0, 0) + Fontoffset, new Float2(1, 1) - Fontoffset * 2, Name);
+            ClientResources.handwrittenfont.Draw(new Float2(90, 0) + Fontoffset, new Float2(1, 1) - Fontoffset * 2, "Fields:"+networkclass.Fields.Count);
         }
     }
 }

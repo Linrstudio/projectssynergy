@@ -5,13 +5,9 @@ using SynergyTemplate;
 
 namespace SynergyClient
 {
-    public class UIController
+    public static class UIController
     {
-        Float2 DPad;
-        bool Yes, No;
-
-        Float2 CursorPos;
-
-
+        public static bool Yes, No;
+        public static Float2 CursorPos;
     }
 }
