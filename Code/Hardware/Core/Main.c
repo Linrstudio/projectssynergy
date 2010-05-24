@@ -35,7 +35,7 @@ void main()
 	LED1=1;
 	LED2=1;
 
-	//PLCInit();
+	PLCInit();
 	RTCInit();
 	UARTInit();
 	MemoryInit();

@@ -22,7 +22,7 @@ unsigned char PLCAvailable()
 
 void PLCDelay()
 {
-	for(int i=0;i<255;i++)
+	for(int i=0;i<255;i++);
 		//for(int j=0;j<2;j++);
 }
 
