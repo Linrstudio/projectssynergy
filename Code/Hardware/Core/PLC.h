@@ -20,5 +20,6 @@ extern void PLCDelay();
 extern void PLCUpdate();
 
 extern void PLCWrite(int16 _Recipient,int16 _Data);
+extern void PLCPoll(int16 _Recipient);
 
 #endif

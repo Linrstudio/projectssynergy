@@ -47,7 +47,7 @@ void main()
 	{
 		UARTUpdate();//Handle UART crap
 		RTCUpdate ();//Handle realtime clock
-		//PLCUpdate ();//Handle PowerLineCommunications
+		PLCUpdate ();//Handle PowerLineCommunications
 #ifdef USETICKCOUNTER
 		tickcount++;
 		if(tickcount>=5000)//each blink indicates 10000Frames
