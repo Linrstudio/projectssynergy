@@ -38,3 +38,14 @@ idealen frequentie voor zenden plc burst zoeken
 
 research doen naar X-10
 	http://www.edcheung.com/automa/circuit.htm
+
+
+
+
+
+
+
+
+
+sjift register ingangen ic sn54hc165
+kan makkelek sijn voor ingangen kaart
