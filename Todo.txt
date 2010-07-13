@@ -27,10 +27,7 @@ if(pickit) { oscillator bouwen 60Hz; PICje }
 
 
 //research stuff:
-find a way to propperly create a bus
 
-
-na de hijpas vilter kijken voor een voltasje vergelijker
 
 
 idealen frequentie voor zenden plc burst zoeken
