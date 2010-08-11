@@ -14,24 +14,6 @@ je kan dingen uit parallel scopes connected, dit is niet legal
 
 Bas
 ********************
-//het grote plan!
-een PLC bus maken ( de electronica )
-
-//WIP
-circuit/board van test eindapparaat in EAGLE zetten -> isolate IC's -> doorgeluste 2 data stekkers!
-highpass filters
-
-if(pickit) { oscillator bouwen 60Hz; PICje }
-
-
-
-
-//research stuff:
-
-
-
-idealen frequentie voor zenden plc burst zoeken
-
-
-research doen naar X-10
-	http://www.edcheung.com/automa/circuit.htm
+research naar cad5 kabel doen
+research naar transformator doen ( basis station )
+eind aparaat met 8 in en 8 uitgangen maken
