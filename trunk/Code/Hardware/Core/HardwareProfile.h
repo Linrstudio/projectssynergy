@@ -1,5 +1,5 @@
-#ifndef HARDWARE_PROFILE_LOW_PIN_COUNT_USB_DEVELOPMENT_KIT_H
-#define HARDWARE_PROFILE_LOW_PIN_COUNT_USB_DEVELOPMENT_KIT_H
+#ifndef HARDWARE_PROFILE_H
+#define HARDWARE_PROFILE_H
 
     /*******************************************************************/
     /******** USB stack hardware selection options *********************/
@@ -90,14 +90,16 @@
     #define sw3                 PORTAbits.RA3
     #define mInitAllSwitches()  mInitSwitch2();
 
-	/** RS 232 lines ****************************************************/
-    #define UART_TRISTx   TRISBbits.TRISB7
-    #define UART_TRISRx   TRISBbits.TRISB5
-    #define UART_Tx       PORTBbits.RB7
-    #define UART_Rx       PORTBbits.RB5
+    #define UART_TX_TRIS	TRISBbits.TRISB7
+    #define UART_RX_TRIS	TRISBbits.TRISB5
+	#define UART_DIR_TRIS	TRISBbits.TRISB6
+
+    #define UART_TX			PORTBbits.RB7
+    #define UART_RX			PORTBbits.RB5
+	#define UART_DIR		PORTBbits.RB6
 
     /** I/O pin definitions ********************************************/
     #define INPUT_PIN 1
     #define OUTPUT_PIN 0
 
-#endif  //HARDWARE_PROFILE_LOW_PIN_COUNT_USB_DEVELOPMENT_KIT_H
+#endif

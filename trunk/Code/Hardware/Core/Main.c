@@ -46,6 +46,8 @@
 
 #include "HardwareProfile.h"
 
+#include "Default.h"
+
 /** V A R I A B L E S ********************************************************/
 #pragma udata
 
@@ -60,19 +62,13 @@ USB_HANDLE  lastTransmission;
 //BOOL stringPrinted;
 
 
-/** P R I V A T E  P R O T O T Y P E S ***************************************/
 static void InitializeSystem(void);
-void ProcessIO(void);
-void USBDeviceTasks(void);
 void YourHighPriorityISRCode();
 void YourLowPriorityISRCode();
 void BlinkUSBStatus(void);
 void UserInit(void);
 void InitializeUSART(void);
-void putcUSART(char c);
-unsigned char getcUSART ();
 
-/** VECTOR REMAPPING ***********************************************/
 #if defined(__18CXX)
 	//On PIC18 devices, addresses 0x00, 0x08, and 0x18 are used for
 	//the reset, high priority interrupt, and low priority interrupt
@@ -199,40 +195,43 @@ unsigned char getcUSART ();
     #endif
 #endif
 
-
-
-
 /** DECLARATIONS ***************************************************/
 #pragma code
 
-/******************************************************************************
- * Function:        void main(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
- *
- * Overview:        Main program entry point.
- *
- * Note:            None
- *****************************************************************************/
 #include "USB.h"
+#include "UART.h"
+#include "RTC.h"
+#include "EP.h"
+
 void main(void)
 {   
-    InitializeSystem();
+	int8 a;
+	int8 b;
+	//disable analog
+	ANSEL=0;
+	ANSELH=0;
+	ADCON0bits.ADON=0;
+	
 
-	USBInit();
+    InitializeSystem();
+	USBInit ();
+	UARTInit();
+	RTCInit ();
     while(1)
     {
+		EPUpdate();
+		RTCUpdate();
 		USBUpdate();
 		if(USBCanRead())
 		{
 			switch(USBReadInt8())
 			{
+				case 0:
+					TRISBbits.TRISB4=0;
+					PORTBbits.RB4=0;
+					TRISCbits.TRISC2=0;
+					PORTCbits.RC2=0;
+				break;
 				case 1:
 					TRISBbits.TRISB4=0;
 					PORTBbits.RB4=0;
@@ -245,6 +244,47 @@ void main(void)
 					TRISCbits.TRISC2=0;
 					PORTCbits.RC2=0;
 				break;
+				case 3:
+				{
+					EPInvokeEvent(1234,1,0);
+				}
+				break;
+				case 4:
+				{
+					EPInvokeEvent(1234,2,0);
+				}
+				break;
+				case 5:
+				{
+					if(EPPoll(1234))
+					{
+						TRISBbits.TRISB4=0;
+						PORTBbits.RB4=0;
+						TRISCbits.TRISC2=0;
+						PORTCbits.RC2=1;
+					}else{
+						TRISBbits.TRISB4=0;
+						PORTBbits.RB4=1;
+						TRISCbits.TRISC2=0;
+						PORTCbits.RC2=0;
+					}
+				}
+				break;
+/*
+				case 5:
+					RTCHour=USBReadInt8();
+					RTCMinute=USBReadInt8();
+					RTCSecond=USBReadInt8();
+				break;
+				case 6:
+					while(!USBCanRead());
+					USBWriteInt8(RTCHour);
+					while(!USBCanRead());
+					USBWriteInt8(RTCMinute);
+					while(!USBCanRead());
+					USBWriteInt8(RTCSecond);
+				break;
+*/
 			}
 		}
     }
@@ -378,7 +418,7 @@ static void InitializeSystem(void)
 void UserInit(void)
 {
 	unsigned char i;
-    InitializeUSART();
+    //InitializeUSART();
 
 // 	 Initialize the arrays
 
@@ -388,93 +428,6 @@ void UserInit(void)
 
 	mInitAllLEDs();
 }//end UserInit
-
-/******************************************************************************
- * Function:        void InitializeUSART(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
- *
- * Overview:        This routine initializes the UART to 19200
- *
- * Note:            
- *
- *****************************************************************************/
-void InitializeUSART(void)
-{
-    #if defined(__18CXX)
-	    unsigned char c;
-        #if defined(__18F14K50)
-    	    ANSELHbits.ANS11 = 0;	// Make RB5 digital so USART can use pin for Rx
-
-        #endif
-        UART_TRISRx=1;				// RX
-        UART_TRISTx=0;				// TX
-        TXSTA = 0x24;       	// TX enable BRGH=1
-        RCSTA = 0x90;       	// Single Character RX
-        SPBRG = 0x71;
-        SPBRGH = 0x02;      	// 0x0271 for 48MHz -> 19200 baud
-        BAUDCON = 0x08;     	// BRG16 = 1
-        c = RCREG;				// read 
-    #endif
-
-    #if defined(__C30__)
-        #if defined( __PIC24FJ256GB110__ )
-            // PPS - Configure U2RX - put on pin 49 (RP10)
-            RPINR19bits.U2RXR = 10;
-
-            // PPS - Configure U2TX - put on pin 50 (RP17)
-            RPOR8bits.RP17R = 5;
-        #else
-            #error Verify that any required PPPS is done here.
-        #endif
-
-        UART2Init();
-    #endif
-
-    #if defined(__C32__)
-        UART2Init();
-    #endif
-
-}//end InitializeUSART
-
-#if defined(__18CXX)
-    #define mDataRdyUSART() PIR1bits.RCIF
-    #define mTxRdyUSART()   TXSTAbits.TRMT
-#elif defined(__C30__) || defined(__C32__)
-    #define mDataRdyUSART() UART2IsPressed()
-    #define mTxRdyUSART()   U2STAbits.TRMT
-#endif
-
-/******************************************************************************
- * Function:        void putcUSART(char c)
- *
- * PreCondition:    None
- *
- * Input:           char c - character to print to the UART
- *
- * Output:          None
- *
- * Side Effects:    None
- *
- * Overview:        Print the input character to the UART
- *
- * Note:            
- *
- *****************************************************************************/
-void putcUSART(char c)  
-{
-    #if defined(__18CXX)
-	    TXREG = c;
-    #else
-        UART2PutChar(c);
-    #endif
-}
 
 
 /******************************************************************************
@@ -520,6 +473,7 @@ void mySetLineCodingHandler(void)
     }
     else
     {
+/*
         DWORD_VAL dwBaud;
 
         //Update the baudrate info in the CDC driver
@@ -539,51 +493,10 @@ void mySetLineCodingHandler(void)
             U2MODEbits.BRGH = BRGH2;
             //U2STA = 0;
         #endif
+*/
     }
 }
 #endif
-
-/******************************************************************************
- * Function:        void putcUSART(char c)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          unsigned char c - character to received on the UART
- *
- * Side Effects:    None
- *
- * Overview:        Print the input character to the UART
- *
- * Note:            
- *
- *****************************************************************************/
-unsigned char getcUSART ()
-{
-	char  c;
-
-    #if defined(__18CXX)
-
-	if (RCSTAbits.OERR)  // in case of overrun error
-	{                    // we should never see an overrun error, but if we do, 
-		RCSTAbits.CREN = 0;  // reset the port
-		c = RCREG;
-		RCSTAbits.CREN = 1;  // and keep going.
-	}
-	else
-		c = RCREG;
-// not necessary.  EUSART auto clears the flag when RCREG is cleared
-//	PIR1bits.RCIF = 0;    // clear Flag
-
-    #endif
-
-    #if defined(__C30__) || defined(__C32__)
-        c = UART2GetChar();
-    #endif
-
-	return c;
-}
 
 void ProcessIO(void)
 {
