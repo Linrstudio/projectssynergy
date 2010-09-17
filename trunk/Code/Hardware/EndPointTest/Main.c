@@ -3,7 +3,7 @@
 #include "UART.h"
 #include "EP.h"
 
-
+#define LED RC7
 #define DEVICEID 1234
 
 void main()
@@ -31,15 +31,73 @@ void main()
 	UARTRead();
 	Init();
 
+	int8 lastheader=0;
+
+	while(1)
+	{
+		if(UARTAvailable())
+		{
+			int8 read=UARTReadInt8();
+			if(read==170)
+			{
+				UARTWrite();
+				UARTWriteInt8(read);
+				UARTRead();
+				RC7=!RC7;	//LED on
+			}else{
+
+			}
+		}
+	}
+
 	while(1)
 	{
 		Tick();
-		if(UARTReadInt16()==1337)//found header this must be 
+		//find header
+		//if(!UARTAvailable())continue;
+		int8 header=UARTReadInt8();
+		if(lastheader==0&&header==255)
 		{
+			int16 DeviceID=UARTReadInt16();
+			int8  Length  =UARTReadInt8();
+			if(DeviceID==DEVICEID)
+			{
+				for(int i=0;i<Length&15;i++)UARTBuffer[i]=UARTReadInt8();
+				UARTBufferSize=0;
+				if(UARTBuffer[0])
+				{
+					InvokeEvent(UARTBuffer[0],*((int16*)&UARTBuffer[1]));
+				}else
+					Polled();
+
+				//either way we will answer
+				UARTWrite();
+				for(int i=0;i<255;i++)UARTWriteInt8(0);	//header
+				UARTWriteInt8(0);	//header
+				UARTWriteInt8(255);	//header
+				UARTWriteInt16(0);	//address of main station
+				UARTWriteInt8(UARTBufferSize);
+				for(int i=0;i<UARTBufferSize;i++)UARTWriteInt8(UARTBuffer[i]);
+				UARTRead();
+			}
+			else
+			{
+				for(int i=0;i<Length;i++)UARTReadInt8();
+			}
+		}
+		lastheader = header;
+	}
+
+	while(1)
+	{
+		Tick();
+		int8 header = UARTReadInt8();
+		if(lastheader==0&&header==255)
+		{
+			int8 packetid=UARTReadInt8();
 			int16 DeviceID=UARTReadInt16();
 			int8 event = UARTReadInt8();
 			int16 args = UARTReadInt16();
-
 			if(DeviceID==DEVICEID)
 			{
 				UARTWrite();
@@ -47,19 +105,29 @@ void main()
 				{
 					if(InvokeEvent(event,args))
 					{
+						UARTWriteInt8(0);
+						UARTWriteInt8(255);
+						UARTWriteInt8(packetid);
 						UARTWriteInt8(255);
 					}else{
+						UARTWriteInt8(0);
+						UARTWriteInt8(255);
+						UARTWriteInt8(packetid);
 						UARTWriteInt8(0);
 					}
 				}
 				else
 				{
 					Polled();
+					UARTWriteInt8(0);
+					UARTWriteInt8(255);
+					UARTWriteInt8(packetid);
 					UARTWriteInt8(255);
 				}
 				UARTRead();
 			}
 		}
+		lastheader=header;
 	}
 }
 

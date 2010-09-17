@@ -5,6 +5,8 @@
 
 #include "HardwareProfile.h"
 
+#define TIMER
+
 void UARTInit()
 {
 	TXSTAbits.SYNC=0;						//asynchronous
@@ -18,14 +20,15 @@ void UARTInit()
 
 	UART_RX_TRIS	=1;			//input
 	UART_TX_TRIS	=0;			//output
-	UART_DIR_TRIS	=0;			//output
+	UART_DIR_TRIS	=1;			//output
 	UART_DIR=0;					//read by default
 
 	//bitrate = 10417
-	BAUDCONbits.BRG16=0;
+	BAUDCONbits.BRG16=1;
 	TXSTAbits.BRGH=0;
-	SPBRGH=0;
-	SPBRG =255;
+
+	SPBRGH=4;
+	SPBRG =0;
 	
 	//invert signals
 #if 0
@@ -34,12 +37,33 @@ void UARTInit()
 #endif
 
 	UART_DIR_TRIS=0;
+
+
+	//enable timer
+	T0CONbits.PSA=0;
+	T0CONbits.T0PS0=1;
+	T0CONbits.T0PS1=1;
+	T0CONbits.T0PS2=1;
+	T0CONbits.T08BIT=1;
+	T0CONbits.TMR0ON=1;
+	T0CONbits.T0CS=0;
 }
 
 int8 UARTReadInt8(void)
 {
+#ifdef TIMER
+	TMR0L=0;
+	INTCONbits.TMR0IF=0;
+#endif
 	while(!PIR1bits.RCIF)
 	{
+#ifdef TIMER
+		if(INTCONbits.TMR0IF)
+		{
+			UARTError=255;
+			return 0;
+		}
+#endif
 		UARTClearErrors;
 	}
 	return RCREG;
@@ -54,7 +78,7 @@ int16 UARTReadInt16()
 	return var;
 }
 
-int8 UARTAvailable(void)
+int8 UARTAvailable()
 {
   if (PIR1bits.RCIF) return 255;
   return 0;
@@ -62,24 +86,25 @@ int8 UARTAvailable(void)
 
 void UARTWrite()
 {
-	int i;
-	int j;
+	//give clients a chance to go in read mode
+	TMR0L=0;
+	INTCONbits.TMR0IF=0;
+	while(!INTCONbits.TMR0IF);
+
 	UART_DIR=1;
-	for(i=0;i<255;i++);
+	PIR1bits.TXIF=0;
 	TXSTAbits.TXEN=0;
 	TXSTAbits.TXEN=1;
-	for(i=0;i<255;i++)for(i=0;i<255;i++);
 }
 
 void UARTRead()
 {
-	int i=0;
-	for(i=0;i<255;i++);
+	while(!TXSTAbits.TRMT);//wait for last write to complete
 	UART_DIR=0;
-	for(i=0;i<255;i++);
+	PIR1bits.RCIF=0;
 	RCSTAbits.CREN=0;
 	RCSTAbits.CREN=1;
-	for(i=0;i<255;i++);
+	RCREG=RCREG;
 }
 
 void UARTWriteInt8(int8 c)
@@ -88,7 +113,6 @@ void UARTWriteInt8(int8 c)
 	while(!PIR1bits.TXIF)UARTClearErrors;
 	TXREG=c;
 	while(!PIR1bits.TXIF)UARTClearErrors;
-	for(i=0;i<255;i++);
 }
 
 void UARTWriteString(register const char *str)
