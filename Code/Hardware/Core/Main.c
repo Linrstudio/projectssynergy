@@ -203,16 +203,41 @@ void InitializeUSART(void);
 #include "RTC.h"
 #include "EP.h"
 
+void SetLED(int8 _State)
+{
+	if(_State==0)
+	{
+		TRISBbits.TRISB4=0;
+		PORTBbits.RB4=0;
+		TRISCbits.TRISC2=0;
+		PORTCbits.RC2=0;
+	}
+	if(_State==1)
+	{
+		TRISBbits.TRISB4=0;
+		PORTBbits.RB4=0;
+		TRISCbits.TRISC2=0;
+		PORTCbits.RC2=1;
+	}
+	if(_State==2)
+	{
+		TRISBbits.TRISB4=0;
+		PORTBbits.RB4=1;
+		TRISCbits.TRISC2=0;
+		PORTCbits.RC2=0;
+	}
+}
+
 void main(void)
 {   
 	int8 a;
 	int8 b;
+	int8 c;
 	//disable analog
 	ANSEL=0;
 	ANSELH=0;
 	ADCON0bits.ADON=0;
 	
-
     InitializeSystem();
 	USBInit ();
 	UARTInit();
@@ -227,22 +252,13 @@ void main(void)
 			switch(USBReadInt8())
 			{
 				case 0:
-					TRISBbits.TRISB4=0;
-					PORTBbits.RB4=0;
-					TRISCbits.TRISC2=0;
-					PORTCbits.RC2=0;
+					SetLED(0);
 				break;
 				case 1:
-					TRISBbits.TRISB4=0;
-					PORTBbits.RB4=0;
-					TRISCbits.TRISC2=0;
-					PORTCbits.RC2=1;
+					SetLED(1);
 				break;
 				case 2:
-					TRISBbits.TRISB4=0;
-					PORTBbits.RB4=1;
-					TRISCbits.TRISC2=0;
-					PORTCbits.RC2=0;
+					SetLED(2);
 				break;
 				case 3:
 				{
@@ -258,16 +274,34 @@ void main(void)
 				{
 					if(EPPoll(1234))
 					{
-						TRISBbits.TRISB4=0;
-						PORTBbits.RB4=0;
-						TRISCbits.TRISC2=0;
-						PORTCbits.RC2=1;
+						SetLED(1);
 					}else{
-						TRISBbits.TRISB4=0;
-						PORTBbits.RB4=1;
-						TRISCbits.TRISC2=0;
-						PORTCbits.RC2=0;
+						SetLED(0);
 					}
+				}
+				break;
+				case 6:
+				{
+					UARTWrite();
+					UARTWriteInt8(170);
+					UARTRead();
+					for(a=0;a<255;a++)
+					{
+						for(b=0;b<255;b++);//for(c=0;c<16;c++);
+						if(UARTAvailable())
+						{
+							if(UARTReadInt8()==170)
+							{
+								SetLED(1);
+							}else SetLED(2);
+							break;
+						}else SetLED(0);
+					}
+				}
+				break;
+				case 7:
+				{
+					UARTRead();
 				}
 				break;
 /*

@@ -11,11 +11,12 @@ void UARTInit()
 	RX9=0;						//8-bit reception
 	TXEN=0;						//reset transmitter
 	TXEN=1;						//enable the transmitter
-
-	BRG16 =0;
+	
+	BRG16 =1;
 	BRGH  =0;
-	SPBRGH=0;
-	SPBRG =64;
+
+	SPBRGH=1;
+	SPBRG =0;
 
 	//invert signals
 #if 0
@@ -28,6 +29,15 @@ void UARTInit()
 
 	TRISB5=1;//RX
 	TRISB7=0;//TX
+
+
+	//enable timer
+	PSA=0;
+	PS0=1;
+	PS1=1;
+	PS2=0;
+
+	T0CS=0;
 }
 
 int8 UARTReadInt8(void)
@@ -55,46 +65,36 @@ int8 UARTReadBool(void)
 
 int8 UARTAvailable(void)
 {
-  if (RCIF) return 1;
+  if (RCIF) return 255;
   return 0;
 }
 
 void UARTWrite()
 {
-	int i,j,k;
+	TMR0=0;
+	T0IF=0;
+	while(!T0IF);
+
 	UART_DIR=1;
-	CREN=0;//disable RX
 	TXEN=0;
 	TXEN=1;//enable  TX
-	for(i=0;i<255;i++)for(j=0;j<12;j++);//for(k=0;k<2;k++);
 }
 
 void UARTRead()
 {
-	int i;
+	while(!TRMT);
+
 	UART_DIR=0;
 	RCIF=0;
-	TXEN=0;//disable TX
 	CREN=0;
 	CREN=1;//enable  RX
-	for(i=0;i<255;i++);
 }
 
 void UARTWriteInt8(int8 c)
 {
 	while(!TXIF)UARTClearErrors;
 	TXREG=c;
-	for(int i=0;i<255;i++);
 	while(!TXIF)UARTClearErrors;
-}
-
-void UARTWriteString(register const char *str)
-{
-	while((*str)!=0)
-	{
-	 	UARTWriteInt8(*str);
-		str++;
-	}
 }
 
 void UARTWriteInt16(int16 _Value)

@@ -20,6 +20,8 @@ int8 USBInBuffer[USBBUFFERSIZE];
 int8 USBInIndex=0;
 int8 USBInSize=0;
 
+int8 USBPollDelay=0;
+
 void USBInit()
 {
 	unsigned char i;
@@ -27,8 +29,12 @@ void USBInit()
 }
 void USBUpdate()
 {
-	USBDeviceTasks();
-	CDCTxService();
+	//if(USBPollDelay&32)
+	{
+		USBDeviceTasks();
+		CDCTxService();
+	}
+	USBPollDelay++;
 }
 
 int8 USBCanWrite()
