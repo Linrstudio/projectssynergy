@@ -54,7 +54,7 @@
 #include "HardwareProfile.h"
 
 #include "./USB/usb_function_hid.h"
-
+#include "USB.h"
 /** CONFIGURATION **************************************************/
 #if defined(PICDEM_FS_USB)      // Configuration bits for PICDEM FS USB Demo Board (based on PIC18F4550)
         #pragma config PLLDIV   = 5         // (20 MHz crystal on PICDEM FS USB board)
@@ -229,26 +229,7 @@
     #error No hardware board defined, see "HardwareProfile.h" and __FILE__
 #endif
 
-/** VARIABLES ******************************************************/
-#pragma udata
 
-#if defined(__18F14K50) || defined(__18F13K50) || defined(__18LF14K50) || defined(__18LF13K50) 
-    #pragma udata usbram2
-#elif defined(__18F2455) || defined(__18F2550) || defined(__18F4455) || defined(__18F4550)\
-    || defined(__18F2458) || defined(__18F2453) || defined(__18F4558) || defined(__18F4553)
-    #pragma udata USB_VARIABLES=0x500
-#elif defined(__18F4450) || defined(__18F2450)
-    #pragma udata USB_VARIABLES=0x480
-#else
-    #pragma udata
-#endif
-
-unsigned char ReceivedDataBuffer[64];
-unsigned char ToSendDataBuffer[64];
-#pragma udata
-
-USB_HANDLE USBOutHandle = 0;
-USB_HANDLE USBInHandle = 0;
 BOOL blinkStatusValid = TRUE;
 
 /** PRIVATE PROTOTYPES *********************************************/
@@ -260,7 +241,6 @@ void ProcessIO(void);
 void UserInit(void);
 void YourHighPriorityISRCode();
 void YourLowPriorityISRCode();
-WORD_VAL ReadPOT(void);
 
 /** VECTOR REMAPPING ***********************************************/
 #if defined(__18CXX)
@@ -411,7 +391,7 @@ WORD_VAL ReadPOT(void);
  * Note:            None
  *******************************************************************/
 
-
+#include "MainStation.h"
 #if defined(__18CXX)
 void main(void)
 #else
@@ -432,6 +412,7 @@ int main(void)
         USBDeviceAttach();
     #endif
 
+	MSInit();
     while(1)
     {
         #if defined(USB_POLLING)
@@ -450,10 +431,8 @@ int main(void)
         				  // execute (~50 instruction cycles) before it returns.
         #endif
     				  
-
-		// Application-specific tasks.
-		// Application related code may be added here, or in the ProcessIO() function.
-        ProcessIO();        
+		MSUpdate();
+	      
     }//end while
 }//end main
 
@@ -610,192 +589,10 @@ void UserInit(void)
     
     //initialize the variable holding the handle for the last
     // transmission
-    USBOutHandle = 0;
-    USBInHandle = 0;
+  
 
     blinkStatusValid = TRUE;
 }//end UserInit
-
-/********************************************************************
- * Function:        void ProcessIO(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
- *
- * Overview:        This function is a place holder for other user
- *                  routines. It is a mixture of both USB and
- *                  non-USB tasks.
- *
- * Note:            None
- *******************************************************************/
-void ProcessIO(void)
-{   
-    //Blink the LEDs according to the USB device status
-    if(blinkStatusValid)
-    {
-        BlinkUSBStatus();
-    }
-
-    // User Application USB tasks
-    if((USBDeviceState < CONFIGURED_STATE)||(USBSuspendControl==1)) return;
-    
-    if(!HIDRxHandleBusy(USBOutHandle))				//Check if data was received from the host.
-    {   
-        switch(ReceivedDataBuffer[0])				//Look at the data the host sent, to see what kind of application specific command it sent.
-        {
-            case 0x80:  //Toggle LEDs command
-		        blinkStatusValid = FALSE;			//Stop blinking the LEDs automatically, going to manually control them now.
-                if(mGetLED_1() == mGetLED_2())
-                {
-                    mLED_1_Toggle();
-                    mLED_2_Toggle();
-                }
-                else
-                {
-                    if(mGetLED_1())
-                    {
-                        mLED_2_On();
-                    }
-                    else
-                    {
-                        mLED_2_Off();
-                    }
-                }
-                break;
-            case 0x81:  //Get push button state
-                ToSendDataBuffer[0] = 0x81;				//Echo back to the host PC the command we are fulfilling in the first byte.  In this case, the Get Pushbutton State command.
-				if(sw2 == 1)							//pushbutton not pressed, pull up resistor on circuit board is pulling the PORT pin high
-				{
-					ToSendDataBuffer[1] = 0x01;			
-				}
-				else									//sw2 must be == 0, pushbutton is pressed and overpowering the pull up resistor
-				{
-					ToSendDataBuffer[1] = 0x00;
-				}
-                if(!HIDTxHandleBusy(USBInHandle))
-                {
-                    USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
-                }
-                break;
-
-            case 0x37:	//Read POT command.  Uses ADC to measure an analog voltage on one of the ANxx I/O pins, and returns the result to the host
-                {
-                    WORD_VAL w;
-
-	                if(!HIDTxHandleBusy(USBInHandle))
-	                {
-	                    mInitPOT();
-	                    w = ReadPOT();					//Use ADC to read the I/O pin voltage.  See the relevant HardwareProfile - xxxxx.h file for the I/O pin that it will measure.
-														//Some demo boards, like the PIC18F87J50 FS USB Plug-In Module board, do not have a potentiometer (when used stand alone).
-														//This function call will still measure the analog voltage on the I/O pin however.  To make the demo more interesting, it
-														//is suggested that an external adjustable analog voltage should be applied to this pin.
-						ToSendDataBuffer[0] = 0x37;  	//Echo back to the host the command we are fulfilling in the first byte.  In this case, the Read POT (analog voltage) command.
-						ToSendDataBuffer[1] = w.v[0];  	//Measured analog voltage LSB
-						ToSendDataBuffer[2] = w.v[1];  	//Measured analog voltage MSB
-
-	                    USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
-	                }					
-                }
-                break;
-        }
-        //Re-arm the OUT endpoint for the next packet
-        USBOutHandle = HIDRxPacket(HID_EP,(BYTE*)&ReceivedDataBuffer,64);
-    }
-
-    
-}//end ProcessIO
-
-/******************************************************************************
- * Function:        WORD_VAL ReadPOT(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          WORD_VAL - the 10-bit right justified POT value
- *
- * Side Effects:    ADC buffer value updated
- *
- * Overview:        This function reads the POT and leaves the value in the 
- *                  ADC buffer register
- *
- * Note:            None
- *****************************************************************************/
-WORD_VAL ReadPOT(void)
-{
-    WORD_VAL w;
-
-    #if defined(__18CXX)
-        mInitPOT();
-
-        ADCON0bits.GO = 1;              // Start AD conversion
-        while(ADCON0bits.NOT_DONE);     // Wait for conversion
-
-        w.v[0] = ADRESL;
-        w.v[1] = ADRESH;
-
-    #elif defined(__C30__) || defined(__C32__)
-        #if defined(PIC24FJ256GB110_PIM)
-            AD1CHS = 0x5;           //MUXA uses AN5
-
-            // Get an ADC sample
-            AD1CON1bits.SAMP = 1;           //Start sampling
-            for(w.Val=0;w.Val<1000;w.Val++); //Sample delay, conversion start automatically
-            AD1CON1bits.SAMP = 0;           //Start sampling
-            for(w.Val=0;w.Val<1000;w.Val++); //Sample delay, conversion start automatically
-            while(!AD1CON1bits.DONE);       //Wait for conversion to complete
-
-        #elif defined(PIC24FJ64GB004_PIM)
-            AD1CHS = 0x7;           //MUXA uses AN7
-
-            // Get an ADC sample
-            AD1CON1bits.SAMP = 1;           //Start sampling
-            for(w.Val=0;w.Val<1000;w.Val++); //Sample delay, conversion start automatically
-            AD1CON1bits.SAMP = 0;           //Start sampling
-            for(w.Val=0;w.Val<1000;w.Val++); //Sample delay, conversion start automatically
-            while(!AD1CON1bits.DONE);       //Wait for conversion to complete
-
-        #elif defined(PIC24F_STARTER_KIT)
-            AD1CHS = 0x0;           //MUXA uses AN0
-
-            // Get an ADC sample
-            AD1CON1bits.SAMP = 1;           //Start sampling
-            for(w.Val=0;w.Val<1000;w.Val++); //Sample delay, conversion start automatically
-            AD1CON1bits.SAMP = 0;           //Start sampling
-            for(w.Val=0;w.Val<1000;w.Val++); //Sample delay, conversion start automatically
-            while(!AD1CON1bits.DONE);       //Wait for conversion to complete
-
-        #elif defined(PIC32MX460F512L_PIM) || defined(PIC32_USB_STARTER_KIT)
-            AD1PCFG = 0xFFFB; // PORTB = Digital; RB2 = analog
-            AD1CON1 = 0x0000; // SAMP bit = 0 ends sampling ...
-            // and starts converting
-            AD1CHS = 0x00020000; // Connect RB2/AN2 as CH0 input ..
-            // in this example RB2/AN2 is the input
-            AD1CSSL = 0;
-            AD1CON3 = 0x0002; // Manual Sample, Tad = internal 6 TPB
-            AD1CON2 = 0;
-            AD1CON1SET = 0x8000; // turn ADC ON
-
-            AD1CON1SET = 0x0002; // start sampling ...
-            for(w.Val=0;w.Val<1000;w.Val++); //Sample delay, conversion start automatically
-            AD1CON1CLR = 0x0002; // start Converting
-            while (!(AD1CON1 & 0x0001));// conversion done?
-        #else
-            #error
-        #endif
-
-        w.Val = ADC1BUF0;
-
-    #endif
-
-    return w;
-}//end ReadPOT
-
 
 /********************************************************************
  * Function:        void BlinkUSBStatus(void)
@@ -1170,10 +967,7 @@ void USBCBStdSetDscHandler(void)
  *******************************************************************/
 void USBCBInitEP(void)
 {
-    //enable the HID endpoint
-    USBEnableEndpoint(HID_EP,USB_IN_ENABLED|USB_OUT_ENABLED|USB_HANDSHAKE_ENABLED|USB_DISALLOW_SETUP);
-    //Re-arm the OUT endpoint for the next packet
-    USBOutHandle = HIDRxPacket(HID_EP,(BYTE*)&ReceivedDataBuffer,64);
+	USBInitEndPoint();
 }
 
 /********************************************************************
