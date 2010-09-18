@@ -1,7 +1,7 @@
 #include "Default.h"
 
 #include "USB.h"
-
+/*
 #include "usb_config.h"
 #include "./USB/usb_device.h"
 #include "./USB/usb.h"
@@ -105,3 +105,4 @@ int16 USBReadInt16()
 
 	return un.ret;
 }
+*/
