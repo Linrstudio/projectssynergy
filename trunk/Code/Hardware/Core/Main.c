@@ -276,8 +276,9 @@ void main(void)
 					{
 						SetLED(1);
 					}else{
-						SetLED(0);
+						SetLED(2);
 					}
+
 				}
 				break;
 				case 6:
@@ -293,32 +294,13 @@ void main(void)
 							if(UARTReadInt8()==170)
 							{
 								SetLED(1);
-							}else SetLED(2);
+							}else{SetLED(2);}
 							break;
-						}else SetLED(0);
+						}
+						else{SetLED(0);}
 					}
 				}
 				break;
-				case 7:
-				{
-					UARTRead();
-				}
-				break;
-/*
-				case 5:
-					RTCHour=USBReadInt8();
-					RTCMinute=USBReadInt8();
-					RTCSecond=USBReadInt8();
-				break;
-				case 6:
-					while(!USBCanRead());
-					USBWriteInt8(RTCHour);
-					while(!USBCanRead());
-					USBWriteInt8(RTCMinute);
-					while(!USBCanRead());
-					USBWriteInt8(RTCSecond);
-				break;
-*/
 			}
 		}
     }
