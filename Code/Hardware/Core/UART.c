@@ -7,6 +7,17 @@
 
 #define TIMER
 
+
+void UARTRead()
+{
+	while(!TXSTAbits.TRMT);//wait for last write to complete
+	UART_DIR=0;
+	PIR1bits.RCIF=0;
+	RCSTAbits.CREN=0;
+	RCSTAbits.CREN=1;
+	RCREG=RCREG;
+}
+
 void UARTInit()
 {
 	TXSTAbits.SYNC=0;						//asynchronous
@@ -29,15 +40,8 @@ void UARTInit()
 
 	SPBRGH=4;
 	SPBRG =0;
-	
-	//invert signals
-#if 0
-	BAUDCONbits.CKTXP=1;
-	BAUDCONbits.DTRXP=1;
-#endif
 
 	UART_DIR_TRIS=0;
-
 
 	//enable timer
 	T0CONbits.PSA=0;
@@ -47,6 +51,8 @@ void UARTInit()
 	T0CONbits.T08BIT=1;
 	T0CONbits.TMR0ON=1;
 	T0CONbits.T0CS=0;
+
+	UARTRead();
 }
 
 int8 UARTReadInt8(void)
@@ -95,16 +101,6 @@ void UARTWrite()
 	PIR1bits.TXIF=0;
 	TXSTAbits.TXEN=0;
 	TXSTAbits.TXEN=1;
-}
-
-void UARTRead()
-{
-	while(!TXSTAbits.TRMT);//wait for last write to complete
-	UART_DIR=0;
-	PIR1bits.RCIF=0;
-	RCSTAbits.CREN=0;
-	RCSTAbits.CREN=1;
-	RCREG=RCREG;
 }
 
 void UARTWriteInt8(int8 c)

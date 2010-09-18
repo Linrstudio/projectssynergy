@@ -29,27 +29,19 @@ void main()
 	TRISB4=0;
 	UARTInit();
 	UARTRead();
+	
+	//startup glow
+	for(int i=0;i<255;i++)
+		for(int j=0;j<255;j++)
+			RC7=i<j;
+	for(int i=0;i<255;i++)
+		for(int j=0;j<255;j++)
+			RC7=i>j;
+	RC7=1;
+
 	Init();
 
 	int8 lastheader=0;
-
-	while(1)
-	{
-		if(UARTAvailable())
-		{
-			int8 read=UARTReadInt8();
-			if(read==170)
-			{
-				UARTWrite();
-				UARTWriteInt8(read);
-				UARTRead();
-				RC7=!RC7;	//LED on
-			}else{
-
-			}
-		}
-	}
-
 	while(1)
 	{
 		Tick();
@@ -62,6 +54,7 @@ void main()
 			int8  Length  =UARTReadInt8();
 			if(DeviceID==DEVICEID)
 			{
+				RC7=!RC7;
 				for(int i=0;i<Length&15;i++)UARTBuffer[i]=UARTReadInt8();
 				UARTBufferSize=0;
 				if(UARTBuffer[0])
@@ -72,7 +65,6 @@ void main()
 
 				//either way we will answer
 				UARTWrite();
-				for(int i=0;i<255;i++)UARTWriteInt8(0);	//header
 				UARTWriteInt8(0);	//header
 				UARTWriteInt8(255);	//header
 				UARTWriteInt16(0);	//address of main station

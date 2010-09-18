@@ -3,8 +3,7 @@
 //Init method for the program
 void Init()
 {
-	TRISC7=0;
-	RC7=0;
+
 }
 
 //main Tick method for the program

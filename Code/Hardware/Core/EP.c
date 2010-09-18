@@ -7,15 +7,13 @@
 #include "HardwareProfile.h"
 
 int8 PacketID=0;
-
 int16 NextDevice=1234;
-
 int8 Buffer[16];
 
 void EPSendHeader()
 {
 	int i;
-	for(i=0;i<5;i++)UARTWriteInt8(0);//send some spare bytes
+	//for(i=0;i<5;i++)UARTWriteInt8(0);//send some spare bytes
 	UARTWriteInt8(0);
 	UARTWriteInt8(255);
 }
@@ -27,26 +25,6 @@ void EPInit()//initialize Endpoints
 
 void EPUpdate()
 {
-	int a,b,c,d;
-	UARTWrite();
-	UARTWriteInt8(170);
-	UARTRead();
-	d=0;
-	for(a=0;a<255;a++)
-	{
-		for(b=0;b<255;b++)for(c=0;c<16;c++);
-		if(UARTAvailable())
-		{
-			if(UARTReadInt8()==170)
-			{
-				d=1;
-			}
-			break;
-		}
-	}
-	if(!d)SetLED(2);
-
-	return;
 	//EPPoll(123);
 	if(EPPoll(NextDevice))
 	{
@@ -144,43 +122,39 @@ int8 EPPoll(int16 _DeviceID)
 	Buffer[0]=0;
 	Buffer[1]=0;
 	Buffer[2]=0;
-	//for(i=0;i<255;i++)for(j=0;j<255;j++);
 	
 	EPWrite(_DeviceID,3,&Buffer[0]);
-
-	for(i=0;i<255;i++)for(j=0;j<128;j++)
+	for(i=0;i<2;i++)
 	{
-		PORTBbits.RB4=!PORTBbits.RB4;
-		PORTCbits.RC2=!PORTBbits.RB4;
-		UARTError=0;
-		if(UARTAvailable()&&UARTReadInt8()==0)
+		TMR0L=0;
+		INTCONbits.TMR0IF=0;
+		while(!INTCONbits.TMR0IF)
 		{
-			for(k=0;k<8;k++)
-			{
-				header=UARTReadInt8();
-				if(lastheader==0&&header==255)
-				{
-					int16 DeviceID	=UARTReadInt16();
-					int8 length		=UARTReadInt8();
-					for(l=0;l<length;l++)
-					{
-						Buffer[l&15]=UARTReadInt8();
-					}
-					
-					if(DeviceID==0)//if this is for me ( should always be true )
-					{
-						if(length==0)return 255;
-						if(Buffer[0]==255)return 255;
-					}
-				}
-				lastheader=header;
-			}
-		}
-		if(UARTError)
-		{
-			UARTError=0;
-			return 0;
+			if(UARTAvailable())break;
 		}
 	}
+
+	UARTError=0;
+	if(UARTReadInt8()==0&&UARTReadInt8()==255)
+	{
+		int16 DeviceID	=UARTReadInt16();
+		int8 length		=UARTReadInt8();
+		for(l=0;l<length;l++)
+		{
+			Buffer[l&15]=UARTReadInt8();
+		}
+		
+		if(DeviceID==0)//if this is for me ( should always be true )
+		{
+			//if(length==0)
+				return 255;
+		}
+	}
+	if(UARTError)
+	{
+		UARTError=0;
+		return 0;
+	}
+
 	return 0;
 }
