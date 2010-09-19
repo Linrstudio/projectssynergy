@@ -5,71 +5,80 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-using USBHIDDRIVER.USB;
 
 namespace MainStationFrontEnd
 {
     class MainStation
     {
-        static string Vid = "vid_04d8", Pid = "pid_003f";
-
-        static USBHIDDRIVER.USBInterface deviceinterface = null;
-        //static USBHIDDRIVER.USB.HIDUSBDevice device = null;
         public static void Connect()
         {
-
-            deviceinterface = new USBHIDDRIVER.USBInterface(Vid.ToLower(),Pid);
-
-            string[] devices = deviceinterface.getDeviceList();
-
-            foreach (string s in devices)
-            {
-                System.Diagnostics.Debugger.Log(1, "bleh", s);
-            }
-
-            if (deviceinterface.Connect())
-            {
-                System.Diagnostics.Debugger.Log(1, "MainStation", "MainStation connected");
-
-                deviceinterface.enableUsbBufferEvent(new System.EventHandler(EventCatcher));
-            }
-            else
-            {
-                System.Diagnostics.Debugger.Log(1, "MainStation", "Failed to connect to MainStation");
-            }
-
-            
-
-            //deviceinterface.startRead();
-
-            
-
+            HIDClass.MCHPHIDClass.USBHIDClassInit(0x4d8, 0x3f, 64);
         }
+
+        public static bool Connected()
+        {
+            bool con= HIDClass.MCHPHIDClass.USBHIDIsConnected();
+            return con;
+        }
+
         public static void Write(byte[] _Buffer)
         {
-            if (deviceinterface == null) return;
-
-            bool uhm = deviceinterface.write(_Buffer);
-
-        }
-
-        public static void Read()
-        {
-
-        }
-
-        private static void EventCatcher(object sender, EventArgs args)
-        {
-            USBHIDDRIVER.List.ListWithEvent list = (USBHIDDRIVER.List.ListWithEvent)sender;
-            if (list.Count > 0)
+            unsafe
             {
-                Byte[] b = (Byte[])list[0];
-                for (int i = 0; i < b.Length; i++)
-                {
-
-                }
-                list.Clear();
+                fixed (byte* ptr = _Buffer)
+                HIDClass.MCHPHIDClass.USBHIDWriteReport(ptr, (uint)_Buffer.Length);
             }
+        }
+
+        public static byte[] Read()
+        {
+            byte[] buffer = new byte[65];
+            unsafe
+            {
+                fixed (byte* ptr = buffer)
+                HIDClass.MCHPHIDClass.USBHIDReadReport(ptr);
+            }
+            return buffer;
+        }
+
+        public static void Poll(ushort _DeviceID)
+        {
+            byte[] buffer = new byte[65];
+            buffer[0] = 0x01;//send raw data to devices
+            byte[] shrt = BitConverter.GetBytes((ushort)_DeviceID);
+            buffer[1] = shrt[0];
+            buffer[2] = shrt[1];
+            Write(buffer);
+        }
+
+        public static void InvokeEvent(ushort _DeviceID,byte _Event,ushort _Arguments)
+        {
+            byte[] buffer = new byte[65];
+            buffer[0] = 0x02;//send raw data to devices
+            byte[] shrt = BitConverter.GetBytes((ushort)_DeviceID);
+            buffer[1] = shrt[0];
+            buffer[2] = shrt[1];
+            buffer[3] = 3;//buffer length
+            buffer[4] = _Event;
+            shrt = BitConverter.GetBytes((ushort)_Arguments);
+            buffer[5] = shrt[0];
+            buffer[6] = shrt[1];
+            Write(buffer);
+        }
+
+        public static void SendRaw(ushort _DeviceID, byte[] _Data)
+        {
+            byte[] buffer = new byte[65];
+            buffer[0] = 0x02;//send raw data to devices
+            byte[] shrt = BitConverter.GetBytes((ushort)_DeviceID);
+            buffer[1] = shrt[0];
+            buffer[2] = shrt[1];
+            buffer[3] = (byte)_Data.Length;//buffer length
+            for (int i = 0; i < _Data.Length; i++)
+            {
+                buffer[4 + i] = _Data[i];
+            }
+            Write(buffer);
         }
     }
 }
