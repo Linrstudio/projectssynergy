@@ -1,18 +1,18 @@
 
 #include "Default.h"
 
-#include "USB.h"
-
 #include "GenericTypeDefs.h"
 #include "Compiler.h"
 #include "usb_config.h"
 #include "./USB/usb_device.h"
 #include "./USB/usb.h"
-
 #include "HardwareProfile.h"
-
 #include "./USB/usb_function_hid.h"
 
+#include "MainStation.h"
+#include "EP.h"
+#include "USB.h"
+#include "UART.h"
 
 /** VARIABLES ******************************************************/
 #pragma udata
@@ -36,6 +36,11 @@ USB_HANDLE USBOutHandle = 0;
 USB_HANDLE USBInHandle = 0;
 
 
+extern int8 EPBuffer[16];
+extern int16 EPBufferSize;
+
+
+
 void USBInit()
 {
     //initialize the variable holding the handle for the last transmission
@@ -52,9 +57,8 @@ void USBInitEndPoint()
 }
 
 void USBUpdate()
-{   
-
-
+{
+int a;
     // User Application USB tasks
     if((USBDeviceState < CONFIGURED_STATE)||(USBSuspendControl==1)) return;
     
@@ -62,28 +66,27 @@ void USBUpdate()
     {   
         switch(ReceivedDataBuffer[0])				//Look at the data the host sent, to see what kind of application specific command it sent.
         {
-            case 0x80:  //Toggle LEDs command
-
-                if(mGetLED_1() == mGetLED_2())
-                {
-                    mLED_1_Toggle();
-                    mLED_2_Toggle();
-                }
-                else
-                {
-                    if(mGetLED_1())
-                    {
-                        mLED_2_On();
-                    }
-                    else
-                    {
-                        mLED_2_Off();
-                    }
-                }
+			case 0x01:
+				EPPoll(*(int16*)&ReceivedDataBuffer[1]);
+				break;
+			case 0x02:
+				EPBufferSize=ReceivedDataBuffer[3];
+				for(a=0;a<EPBufferSize;a++)EPBuffer[a]=ReceivedDataBuffer[a+4];
+				EPSend(*(int16*)&ReceivedDataBuffer[1]);
+				break;
+            case 0x80:
+				SetLED1(0);
+				UARTInit();
                 break;
-            case 0x81:  //Get push button state
+            case 0x81:
+				SetLED1(1);
+                break;
+            case 0x82:
+				SetLED1(2);
+                break;
+            case 0x71:  //Get push button state
                 ToSendDataBuffer[0] = 0x81;				//Echo back to the host PC the command we are fulfilling in the first byte.  In this case, the Get Pushbutton State command.
-				if(sw2 == 1)							//pushbutton not pressed, pull up resistor on circuit board is pulling the PORT pin high
+				if(1 == 1)							//pushbutton not pressed, pull up resistor on circuit board is pulling the PORT pin high
 				{
 					ToSendDataBuffer[1] = 0x01;			
 				}
@@ -97,6 +100,12 @@ void USBUpdate()
                 }
                 break;
         }
+
+        if(!HIDTxHandleBusy(USBInHandle))
+        {
+            USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
+        }
+
         //Re-arm the OUT endpoint for the next packet
         USBOutHandle = HIDRxPacket(HID_EP,(BYTE*)&ReceivedDataBuffer,64);
     }

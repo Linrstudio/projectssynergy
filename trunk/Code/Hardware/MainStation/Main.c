@@ -234,8 +234,6 @@ BOOL blinkStatusValid = TRUE;
 
 /** PRIVATE PROTOTYPES *********************************************/
 void BlinkUSBStatus(void);
-BOOL Switch2IsPressed(void);
-BOOL Switch3IsPressed(void);
 static void InitializeSystem(void);
 void ProcessIO(void);
 void UserInit(void);
@@ -581,111 +579,13 @@ static void InitializeSystem(void)
  *****************************************************************************/
 void UserInit(void)
 {
-    //Initialize all of the LED pins
-    mInitAllLEDs();
-    
-    //Initialize all of the push buttons
-    mInitAllSwitches();
-    
+   
     //initialize the variable holding the handle for the last
     // transmission
   
 
     blinkStatusValid = TRUE;
 }//end UserInit
-
-/********************************************************************
- * Function:        void BlinkUSBStatus(void)
- *
- * PreCondition:    None
- *
- * Input:           None
- *
- * Output:          None
- *
- * Side Effects:    None
- *
- * Overview:        BlinkUSBStatus turns on and off LEDs 
- *                  corresponding to the USB device state.
- *
- * Note:            mLED macros can be found in HardwareProfile.h
- *                  USBDeviceState is declared and updated in
- *                  usb_device.c.
- *******************************************************************/
-void BlinkUSBStatus(void)
-{
-    static WORD led_count=0;
-    
-    if(led_count == 0)led_count = 10000U;
-    led_count--;
-
-    #define mLED_Both_Off()         {mLED_1_Off();mLED_2_Off();}
-    #define mLED_Both_On()          {mLED_1_On();mLED_2_On();}
-    #define mLED_Only_1_On()        {mLED_1_On();mLED_2_Off();}
-    #define mLED_Only_2_On()        {mLED_1_Off();mLED_2_On();}
-
-    if(USBSuspendControl == 1)
-    {
-        if(led_count==0)
-        {
-            mLED_1_Toggle();
-            if(mGetLED_1())
-            {
-                mLED_2_On();
-            }
-            else
-            {
-                mLED_2_Off();
-            }
-        }//end if
-    }
-    else
-    {
-        if(USBDeviceState == DETACHED_STATE)
-        {
-            mLED_Both_Off();
-        }
-        else if(USBDeviceState == ATTACHED_STATE)
-        {
-            mLED_Both_On();
-        }
-        else if(USBDeviceState == POWERED_STATE)
-        {
-            mLED_Only_1_On();
-        }
-        else if(USBDeviceState == DEFAULT_STATE)
-        {
-            mLED_Only_2_On();
-        }
-        else if(USBDeviceState == ADDRESS_STATE)
-        {
-            if(led_count == 0)
-            {
-                mLED_1_Toggle();
-                mLED_2_Off();
-            }//end if
-        }
-        else if(USBDeviceState == CONFIGURED_STATE)
-        {
-            if(led_count==0)
-            {
-                mLED_1_Toggle();
-                if(mGetLED_1())
-                {
-                    mLED_2_Off();
-                }
-                else
-                {
-                    mLED_2_On();
-                }
-            }//end if
-        }//end if(...)
-    }//end if(UCONbits.SUSPND...)
-
-}//end BlinkUSBStatus
-
-
-
 
 // ******************************************************************************************************
 // ************** USB Callback Functions ****************************************************************
