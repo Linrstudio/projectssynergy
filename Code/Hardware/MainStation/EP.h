@@ -3,8 +3,9 @@
 
 #include "Default.h"
 
-extern void EPInit();
-extern void EPUpdate();
-extern int8 EPPoll(int16 _DeviceID);
+void EPInit();
+void EPUpdate();
+int8 EPSend(int16 _DeviceID);
+int8 EPPoll(int16 _DeviceID);
 
 #endif

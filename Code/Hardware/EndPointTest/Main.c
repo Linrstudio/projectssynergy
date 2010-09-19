@@ -21,6 +21,8 @@ void main()
 	ANS10=0;
 	ANS11=0;
 
+	ADON=0;
+
 	TRISC0=0;
 	TRISC1=0;
 	TRISC2=0;
@@ -30,6 +32,8 @@ void main()
 	UARTInit();
 	UARTRead();
 	
+	Init();
+
 	//startup glow
 	for(int i=0;i<255;i++)
 		for(int j=0;j<255;j++)
@@ -39,7 +43,7 @@ void main()
 			RC7=i>j;
 	RC7=1;
 
-	Init();
+
 
 	int8 lastheader=0;
 	while(1)
@@ -54,10 +58,9 @@ void main()
 			int8  Length  =UARTReadInt8();
 			if(DeviceID==DEVICEID)
 			{
-				RC7=!RC7;
 				for(int i=0;i<Length&15;i++)UARTBuffer[i]=UARTReadInt8();
 				UARTBufferSize=0;
-				if(UARTBuffer[0])
+				if(Length!=0)
 				{
 					InvokeEvent(UARTBuffer[0],*((int16*)&UARTBuffer[1]));
 				}else
@@ -78,48 +81,6 @@ void main()
 			}
 		}
 		lastheader = header;
-	}
-
-	while(1)
-	{
-		Tick();
-		int8 header = UARTReadInt8();
-		if(lastheader==0&&header==255)
-		{
-			int8 packetid=UARTReadInt8();
-			int16 DeviceID=UARTReadInt16();
-			int8 event = UARTReadInt8();
-			int16 args = UARTReadInt16();
-			if(DeviceID==DEVICEID)
-			{
-				UARTWrite();
-				if(event)
-				{
-					if(InvokeEvent(event,args))
-					{
-						UARTWriteInt8(0);
-						UARTWriteInt8(255);
-						UARTWriteInt8(packetid);
-						UARTWriteInt8(255);
-					}else{
-						UARTWriteInt8(0);
-						UARTWriteInt8(255);
-						UARTWriteInt8(packetid);
-						UARTWriteInt8(0);
-					}
-				}
-				else
-				{
-					Polled();
-					UARTWriteInt8(0);
-					UARTWriteInt8(255);
-					UARTWriteInt8(packetid);
-					UARTWriteInt8(255);
-				}
-				UARTRead();
-			}
-		}
-		lastheader=header;
 	}
 }
 
