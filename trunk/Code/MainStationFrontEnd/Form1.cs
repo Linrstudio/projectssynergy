@@ -62,7 +62,15 @@ namespace MainStationFrontEnd
 
         private void b_test_Click(object sender, EventArgs e)
         {
-            MainStation.SendRaw((ushort)numericUpDown1.Value, new byte[] {2 });
+            b_test.Text = MainStation.EEPROMRead(10).ToString();
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            byte[] buffer = new byte[65536];
+            buffer[0] = 1;
+            buffer[31] = 24;
+            MainStation.EEPROMWrite(buffer);
         }
 
         private void n_event_ValueChanged(object sender, EventArgs e)
