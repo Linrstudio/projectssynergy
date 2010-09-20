@@ -13,6 +13,7 @@
 #include "EP.h"
 #include "USB.h"
 #include "UART.h"
+#include "EEPROM.h"
 
 /** VARIABLES ******************************************************/
 #pragma udata
@@ -58,7 +59,7 @@ void USBInitEndPoint()
 
 void USBUpdate()
 {
-int a;
+	int a,b;
     // User Application USB tasks
     if((USBDeviceState < CONFIGURED_STATE)||(USBSuspendControl==1)) return;
     
@@ -74,6 +75,29 @@ int a;
 				for(a=0;a<EPBufferSize;a++)EPBuffer[a]=ReceivedDataBuffer[a+4];
 				EPSend(*(int16*)&ReceivedDataBuffer[1]);
 				break;
+			case 0x03://EEPROM WRITE
+				for(a=0;a<32;a++)
+				{
+					EEPROMWrite(ReceivedDataBuffer[1],ReceivedDataBuffer[2],ReceivedDataBuffer[3+a]);
+					(*(int16*)&ReceivedDataBuffer[1])++;
+				}
+				if(!HIDTxHandleBusy(USBInHandle))
+                {
+					ToSendDataBuffer[0]=0x03;
+                    USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
+                }
+				break;
+			case 0x04://EEPROM READ
+				if(!HIDTxHandleBusy(USBInHandle))
+                {
+					EEPROMBeginRead(ReceivedDataBuffer[1],ReceivedDataBuffer[2]);
+					ToSendDataBuffer[0]=0x04;
+					ToSendDataBuffer[1]=EEPROMRead();
+					EEPROMEndRead();
+                    USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
+                }
+				break;
+
             case 0x80:
 				SetLED1(0);
 				UARTInit();
