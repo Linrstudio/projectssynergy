@@ -2,12 +2,16 @@
 #include "EP.h"
 #include "RTC.h"
 #include "UART.h"
-
+#include "I2C.h"
 #include "Default.h"
 
 
 void MSInit()
 {
+	//turn off A lot of crap
+	CM1CON0bits.C1ON=0;
+	CM1CON0=0;
+	CM2CON0=0;
 	SRCON0bits.SRLEN=0;
 	//disable analog
 	ANSEL=0;
@@ -18,6 +22,7 @@ void MSInit()
 	RTCInit();
 	EPInit();
 	USBInit();
+	I2CInit();
 
 	LED1A_LATCH=0;
 	LED1B_LATCH=0;
