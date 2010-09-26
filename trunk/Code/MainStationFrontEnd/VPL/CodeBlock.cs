@@ -478,11 +478,6 @@ namespace MainStationFrontEnd
                 Y = (int)((idx / cnt) * Owner.height);
             }
 
-            public void Connect(Input _Input)
-            {
-
-            }
-
             public void DisconnectAll()
             {
                 foreach (Input i in Connected)
@@ -556,7 +551,7 @@ namespace MainStationFrontEnd
 
         public virtual void Draw(System.Drawing.Graphics _Graphics)
         {
-#if true
+#if false
             _Graphics.DrawString("idx:" + index.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, X, Y - 25);
             _Graphics.DrawString("depth:" + GetDepth().ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, X, Y - 35);
             if (Scope != null) _Graphics.DrawString("scope:" + Scope.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, X, Y - 45);
@@ -606,6 +601,8 @@ namespace MainStationFrontEnd
                 DataTypes = new List<DataType>();
 
                 AddDataType("int", 1, Color.Blue);
+                AddDataType("bool", 2, Color.Green);
+                AddDataType("time", 3, Color.LightGray);
             }
             if (CodeBlocks == null)
             {
@@ -613,27 +610,36 @@ namespace MainStationFrontEnd
 
                 AddCodeBlock("Event", "", typeof(DefaultEvent), false);
 
+                AddCodeBlock("RemoteEvent", "Devices", typeof(BlockRemoteEvent));
+
                 //Constants
-                AddCodeBlock("weekday", "Contant", typeof(BlockConstantWeekDay));
-                AddCodeBlock("byte", "Contant", typeof(BlockConstantByte));
+                //10
+                AddCodeBlock("Time", "Contant", typeof(BlockConstantTime));
+                AddCodeBlock("Integer", "Contant", typeof(BlockConstantByte));
+                AddCodeBlock("Boolean", "Contant", typeof(BlockConstantBool));
 
                 //Debug stuff
+                //20
                 AddCodeBlock("Set DebugLed 1", "Debug stuff", typeof(BlockSetDebugLed1));
                 AddCodeBlock("Set DebugLed 2", "Debug stuff", typeof(BlockSetDebugLed2));
 
-                //compare
+                //Compare
+                //30
                 AddCodeBlock("Equals", "Compare", typeof(BlockEquals));
                 AddCodeBlock("Differs", "Compare", typeof(BlockDiffers));
                 AddCodeBlock("Smaller Than", "Compare", typeof(BlockSmallerThan));
                 AddCodeBlock("Larget Than", "Compare", typeof(BlockLargerThan));
 
                 //Time stuff
+                //40
+                AddCodeBlock("Get current time", "Time", typeof(BlockGetTime));
                 AddCodeBlock("Get current hour", "Time", typeof(BlockGetHour));
                 AddCodeBlock("Get current minute", "Time", typeof(BlockGetMinute));
                 AddCodeBlock("Get current second", "Time", typeof(BlockGetSecond));
                 AddCodeBlock("Get current weekday", "Time", typeof(BlockGetDay));
 
                 //math
+                //50
                 AddCodeBlock("Add", "Math", typeof(BlockAdd));
                 AddCodeBlock("Substract", "Math", typeof(BlockSubstract));
                 AddCodeBlock("Multiply", "Math", typeof(BlockMultiply));
@@ -646,8 +652,7 @@ namespace MainStationFrontEnd
 
                 //Branching
                 AddCodeBlock("If", "Branches", typeof(BlockIf));
-                //AddCodeBlock("If not", "Branches", typeof(BlockIfNot));// there is a small bug in this one
-
+                AddCodeBlock("If not", "Branches", typeof(BlockIfNot));// there is a small bug in this one
             }
         }
 

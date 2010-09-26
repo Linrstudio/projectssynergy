@@ -10,7 +10,14 @@
   <Device  ID="1" Name="Dummy Device" Description="This is our test device">
     <Event ID="1" Name="On Push" Description="The button is pressed." />
     <Event ID="2" Name="On Release" Description="The button is released." />
-	<RemoteEvent ID="0" Name="Poll" Description="This device can be polled" />
+	<RemoteEvent ID="1" Name="SetLED1" Description="Sets LED1" />
+	<RemoteEvent ID="2" Name="SetLED2" Description="Sets LED2" >
+		<Input Name="State" Type="bool"/>
+		<Output Name="State" Type="bool"/>
+	</RemoteEvent>
+	<RemoteEvent ID="3" Name="GetLED2" Description="Gets LED2" >
+		<Output Name="State" Type="bool"/>
+	</RemoteEvent>
   </Device>
   
   <Device  ID="2" Name="Generic Event" Description="This device represents A generic event.">

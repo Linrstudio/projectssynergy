@@ -164,12 +164,15 @@ namespace MainStationFrontEnd
                     {
                         foreach (CodeBlock.Input i in b.Inputs)
                         {
-                            XElement connection = new XElement("Connect");
-                            connection.SetAttributeValue("Input", i.Owner.Inputs.IndexOf(i).ToString());
-                            connection.SetAttributeValue("InputOwner", e.sequence.codeblocks.IndexOf(i.Owner).ToString());
-                            connection.SetAttributeValue("Output", i.Connected.Owner.Outputs.IndexOf(i.Connected).ToString());
-                            connection.SetAttributeValue("OutputOwner", e.sequence.codeblocks.IndexOf(i.Connected.Owner).ToString());
-                            method.Add(connection);
+                            if (i.Connected!=null)
+                            {
+                                XElement connection = new XElement("Connect");
+                                connection.SetAttributeValue("Input", i.Owner.Inputs.IndexOf(i).ToString());
+                                connection.SetAttributeValue("InputOwner", e.sequence.codeblocks.IndexOf(i.Owner).ToString());
+                                connection.SetAttributeValue("Output", i.Connected.Owner.Outputs.IndexOf(i.Connected).ToString());
+                                connection.SetAttributeValue("OutputOwner", e.sequence.codeblocks.IndexOf(i.Connected.Owner).ToString());
+                                method.Add(connection);
+                            }
                         }
                     }
                     device.Add(method);
