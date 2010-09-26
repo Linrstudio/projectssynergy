@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<EEPROM>
+  <Device TypeID="1" DeviceID="1234" DeviceName="TestDevice">
+    <Event ID="1">
+      <Root GUID="0" Type="MainStationFrontEnd.DefaultEvent" Values="" />
+    </Event>
+    <Event ID="2">
+      <Root GUID="0" Type="MainStationFrontEnd.DefaultEvent" Values="" />
+    </Event>
+  </Device>
+</EEPROM>
