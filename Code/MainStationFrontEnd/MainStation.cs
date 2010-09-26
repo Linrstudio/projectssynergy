@@ -50,7 +50,12 @@ namespace MainStationFrontEnd
             Write(buffer);
         }
 
-        public static void InvokeEvent(ushort _DeviceID, byte _Event, ushort _Arguments)
+        public static void InvokeLocalEvent(ushort _DeviceID, byte _Event, ushort _Arguments)
+        {
+
+        }
+
+        public static void InvokeRemoteEvent(ushort _DeviceID, byte _Event, ushort _Arguments)
         {
             byte[] buffer = new byte[65];
             buffer[0] = 0x02;//send raw data to devices

@@ -28,7 +28,28 @@ namespace MainStationFrontEnd
                     string name = evnt.Attribute("Name").Value;
                     byte id = byte.Parse(evnt.Attribute("ID").Value);
                     string description = evnt.Attribute("Description").Value;
-                    d.events.Add(new Device.Event(name, id, description));
+                    Device.Event newevent = new Device.Event(name, id, description);
+                    d.events.Add(newevent);
+                    foreach (XElement input in evnt.Elements("Input"))
+                    {
+                        newevent.Inputs.Add(new Device.Event.Input(input.Attribute("Name").Value, input.Attribute("Type").Value));
+                    }
+                }
+                foreach (XElement evnt in device.Elements("RemoteEvent"))
+                {
+                    string name = evnt.Attribute("Name").Value;
+                    byte id = byte.Parse(evnt.Attribute("ID").Value);
+                    string description = evnt.Attribute("Description").Value;
+                    Device.RemoteEvent newevent = new Device.RemoteEvent(name, id, description);
+                    d.remoteevents.Add(newevent);
+                    foreach (XElement input in evnt.Elements("Input"))
+                    {
+                        newevent.Inputs.Add(new Device.RemoteEvent.Input(input.Attribute("Name").Value,input.Attribute("Type").Value));
+                    }
+                    foreach (XElement output in evnt.Elements("Output"))
+                    {
+                        newevent.Outputs.Add(new Device.RemoteEvent.Output(output.Attribute("Name").Value, output.Attribute("Type").Value));
+                    }
                 }
             }
         }
@@ -59,6 +80,7 @@ namespace MainStationFrontEnd
             public string Description { get { return description; } }
 
             public List<Event> events = new List<Event>();
+            public List<RemoteEvent> remoteevents = new List<RemoteEvent>();
 
             public Event GetEventByID(byte _ID)
             {
@@ -67,6 +89,56 @@ namespace MainStationFrontEnd
                     if (e.ID == _ID) return e;
                 }
                 return null;
+            }
+
+            public RemoteEvent GetRemoteEventByID(byte _ID)
+            {
+                foreach (RemoteEvent e in remoteevents)
+                {
+                    if (e.ID == _ID) return e;
+                }
+                return null;
+            }
+
+            public class RemoteEvent
+            {
+                public RemoteEvent(string _Name, byte _ID, string _Description)
+                {
+                    name = _Name;
+                    id = _ID;
+                    description = _Description;
+                }
+                byte id;
+                public byte ID { get { return id; } }
+                string name;
+                public string Name { get { return name; } }
+                string description;
+                public string Description { get { return description; } }
+
+                public List<Input> Inputs = new List<Input>();
+                public List<Output> Outputs = new List<Output>();
+
+                public class Input
+                {
+                    public Input(string _Name, string _Type)
+                    {
+                        Name = _Name;
+                        Type = _Type;
+                    }
+                    public string Name;
+                    public string Type;
+                }
+
+                public class Output
+                {
+                    public Output(string _Name, string _Type)
+                    {
+                        Name = _Name;
+                        Type = _Type;
+                    }
+                    public string Name;
+                    public string Type;
+                }
             }
 
             public class Event
@@ -83,6 +155,19 @@ namespace MainStationFrontEnd
                 public string Name { get { return name; } }
                 string description;
                 public string Description { get { return description; } }
+
+                public List<Input> Inputs = new List<Input>();
+
+                public class Input
+                {
+                    public Input(string _Name, string _Type)
+                    {
+                        Name = _Name;
+                        Type = _Type;
+                    }
+                    public string Name;
+                    public string Type;
+                }
             }
         }
     }

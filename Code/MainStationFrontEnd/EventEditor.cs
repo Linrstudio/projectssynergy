@@ -28,9 +28,15 @@ namespace MainStationFrontEnd
         private void EventEditor_Load(object sender, EventArgs e)
         {
             window = new SequenceEditWindow();
-            Controls.Add(window);
+            p_workspace.Controls.Add(window);
             if (Event != null && Event.sequence != null)
             window.Sequence = Event.sequence;
+            window.OnBlockSelect += new SequenceEditWindow.OnBlockSelectHandler(window_OnBlockSelect);
+        }
+
+        void window_OnBlockSelect(CodeBlock _SelectedBlock)
+        {
+            p_Properties.SelectedObject = _SelectedBlock;
         }
     }
 }

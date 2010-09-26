@@ -137,13 +137,13 @@ namespace MainStationFrontEnd
                         p += 1 / (float)(b.Inputs.Count + 1);
                         PointF pos = i.GetPosition();
                         if (!dependencies.Contains(i.Owner))
-                            e.Graphics.FillRectangle(new SolidBrush(i.datatype != null ? i.datatype.Color : Color.Black), new RectangleF(pos.X - 5, pos.Y - 5, 5, 10));
+                            e.Graphics.FillRectangle(new SolidBrush(i.datatype == null ? Color.Black : i.datatype.Color), new RectangleF(pos.X - 5, pos.Y - 5, 5, 10));
 
                         if (i.Connected != null)
                         {
                             PointF x = i.GetPosition();
                             PointF y = i.Connected.GetPosition();
-                            DrawPwettyLine(e.Graphics, y, x);
+                            DrawPwettyLine(e.Graphics, y, x, 1.5f, i.datatype == null ? Color.Black : i.datatype.Color);
                         }
 
                         if (i == input)
@@ -168,13 +168,13 @@ namespace MainStationFrontEnd
                 }
                 if (SelectedOutput != null && SelectedInput != null)
 
-                    DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), SelectedInput.GetPosition(), 2, Color.Black);
+                    DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), SelectedInput.GetPosition(), 2, SelectedInput.datatype == null ? Color.Black : SelectedInput.datatype.Color);
                 else
                 {
                     if (SelectedInput != null)//input to mouse
-                        DrawPwettyLine(e.Graphics, new Point(MouseX, MouseY), SelectedInput.GetPosition(), 2, Color.Black);
+                        DrawPwettyLine(e.Graphics, new Point(MouseX, MouseY), SelectedInput.GetPosition(), 2, SelectedInput.datatype == null ? Color.Black : SelectedInput.datatype.Color);
                     if (SelectedOutput != null)//output to mouse
-                        DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new Point(MouseX, MouseY), 2, Color.Black);
+                        DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new Point(MouseX, MouseY), 2, SelectedOutput.datatype == null ? Color.Black : SelectedOutput.datatype.Color);
                 }
             }
             base.OnPaint(e);
@@ -283,13 +283,22 @@ namespace MainStationFrontEnd
         {
             MenuItem item = (MenuItem)sender;
 
-            foreach (CodeBlock.Prototype p in CodeBlock.CodeBlocks)
+            if (item.Tag is string)
             {
-                if (p.Type == item.Tag)
+                CodeBlock b = new BlockRemoteEvent(Sequence);
+                b.SetValues((string)item.Tag);
+                Sequence.codeblocks.Add(b);
+            }
+            if (item.Tag is Type)
+            {
+                foreach (CodeBlock.Prototype p in CodeBlock.CodeBlocks)
                 {
-                    Sequence.codeblocks.Add((CodeBlock)p.Type.GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { Sequence }));
-                    NeedsRecompile = true;
-                    Format();
+                    if (p.Type == item.Tag)
+                    {
+                        Sequence.codeblocks.Add((CodeBlock)p.Type.GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { Sequence }));
+                        NeedsRecompile = true;
+                        Format();
+                    }
                 }
             }
         }
@@ -311,6 +320,24 @@ namespace MainStationFrontEnd
                     menuitems[p.GroupName].MenuItems.Add(item);
                 }
             }
+
+            //add remoteevent blocks
+            MenuItem eventitem = new MenuItem("Remote events");
+            menuitems.Add("Remote events", eventitem);
+            foreach (ProductDataBase.Device d in ProductDataBase.Devices)
+            {
+                bool worthadding = false;
+                MenuItem ditem = new MenuItem(d.Name);
+                foreach (ProductDataBase.Device.RemoteEvent e in d.remoteevents)
+                {
+                    MenuItem eitem = new MenuItem(e.Name, OnContextMenuItemClicked);
+                    eitem.Tag = string.Format("{0} {1} {2}", d.ID, e.ID, 0);
+                    ditem.MenuItems.Add(eitem);
+                    worthadding = true;
+                }
+                if (worthadding) eventitem.MenuItems.Add(ditem);
+            }
+
             ContextMenu menu = new ContextMenu(menuitems.Values.ToArray());
 
             menu.Show(this, new Point(x, y));

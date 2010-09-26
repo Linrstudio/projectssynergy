@@ -99,10 +99,84 @@ namespace MainStationFrontEnd
         public BaseBlockEvent(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
     }
 
+    public class BlockRemoteEvent : BaseBlockOther
+    {
+        ProductDataBase.Device device;
+        ProductDataBase.Device.RemoteEvent remoteevent;
+        ushort deviceid;
+
+        [Browsable(true), CategoryAttribute("Constant")]
+        public ushort DeviceID
+        {
+            get { return deviceid; }
+            set { deviceid = value; }
+        }
+
+        public BlockRemoteEvent(KismetSequence _Sequence)
+            : base(_Sequence, 2)
+        {
+            width = 100;
+            height = 25;
+        }
+
+        public override void SetValues(string _Values)
+        {
+            Inputs.Clear();
+            string[] split = _Values.Split(' ');
+            device = ProductDataBase.GetDeviceByID(ushort.Parse(split[0]));
+            remoteevent = device.GetRemoteEventByID(byte.Parse(split[1]));
+            deviceid = ushort.Parse(split[2]);
+            foreach (var i in remoteevent.Inputs)
+            {
+                Inputs.Add(new Input(this, i.Name, GetDataType(i.Type)));
+            }
+            foreach (var i in remoteevent.Outputs)
+            {
+                Outputs.Add(new Output(this, i.Name, GetDataType(i.Type)));
+            }
+            if (Inputs.Count == 0) Inputs.Add(new Input(this, "", null));//add one input if there are non available
+            UpdateConnectors();
+        }
+
+        public override string GetValues()
+        {
+            return string.Format("{0} {1} {2}", device.ID, remoteevent.ID, deviceid);
+        }
+
+        public override void Assamble()
+        {
+            Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex };
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            base.Draw(_Graphics);
+            DrawShape(_Graphics,
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Debug Led 1", new Font("Arial", 10), Brushes.Black, X, Y, sf);
+        }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawShapeShadow(_Graphics,
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
+            base.DrawShadow(_Graphics);
+        }
+    }
+
     public class BlockSetDebugLed1 : BaseBlockOther
     {
         public BlockSetDebugLed1(KismetSequence _Sequence)
-            : base(_Sequence, 2)
+            : base(_Sequence, 20)
         {
             width = 100;
             height = 25;
@@ -143,7 +217,7 @@ namespace MainStationFrontEnd
     public class BlockSetDebugLed2 : BaseBlockOther
     {
         public BlockSetDebugLed2(KismetSequence _Sequence)
-            : base(_Sequence, 3)
+            : base(_Sequence, 21)
         {
             width = 100;
             height = 25;
@@ -178,6 +252,30 @@ namespace MainStationFrontEnd
                 new PointF(width / 2, height / 2),
                 new PointF(width / 2, -height / 2));
             base.DrawShadow(_Graphics);
+        }
+    }
+
+    public class BlockGetTime : BaseBlockVariable
+    {
+        public BlockGetTime(KismetSequence _Sequence)
+            : base(_Sequence, 22)
+        {
+            width = 75;
+            height = 25;
+            Inputs.Add(new Input(this, "", null));
+            Outputs.Add(new Output(this, "Current Time", GetDataType("time")));
+            UpdateConnectors();
+        }
+
+        public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            base.Draw(_Graphics);
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Time", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
 
@@ -425,7 +523,7 @@ namespace MainStationFrontEnd
         }
 
         public BlockConstantByte(KismetSequence _Sequence)
-            : base(_Sequence, 1)
+            : base(_Sequence, 11)
         {
             width = 50;
             height = 50;
@@ -451,41 +549,41 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BlockConstantWeekDay : BaseBlockConstant
+    public class BlockConstantBool : BaseBlockConstant
     {
-        DayOfWeek val;
+        bool val;
 
         [Browsable(true), CategoryAttribute("Constant")]
-        public DayOfWeek Value
+        public bool Value
         {
             get { return val; }
             set { val = value; }
         }
 
-
         public override string GetValues()
         {
-            return ((int)val).ToString();
+            return val.ToString();
         }
 
         public override void SetValues(string _Values)
         {
-            val = (DayOfWeek)int.Parse(_Values);
+            val = bool.Parse(_Values);
         }
 
-        public BlockConstantWeekDay(KismetSequence _Sequence)
-            : base(_Sequence, 1)
+        public BlockConstantBool(KismetSequence _Sequence)
+            : base(_Sequence, 11)
         {
             width = 50;
             height = 50;
             Inputs.Add(new Input(this, "", null));
-            Outputs.Add(new Output(this, "Constant Weekday", GetDataType("int")));
+            Outputs.Add(new Output(this, "Constant", GetDataType("bool")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = new byte[] { BlockID, Outputs[0].RegisterIndex, 0, (byte)((int)Value) };
+            byte[] val = Utilities.FromShort(Value ? (ushort)65535 : (ushort)0);
+            Code = new byte[] { BlockID, Outputs[0].RegisterIndex, val[0], val[1] };
             base.Assamble();
         }
 
@@ -495,7 +593,58 @@ namespace MainStationFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString(Value.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y, sf);
+            _Graphics.DrawString(Value.ToString(), new Font("Arial", 12, FontStyle.Bold), Brushes.Black, X, Y, sf);
+        }
+    }
+
+    public class BlockConstantTime : BaseBlockConstant
+    {
+        TimeSpan time;
+        DayOfWeek weekday;
+
+        [Browsable(true), CategoryAttribute("Constant")]
+        public TimeSpan Time { get { return time; } set { time = value; } }
+
+        [Browsable(true), CategoryAttribute("Constant")]
+        public DayOfWeek WeekDay { get { return weekday; } set { weekday = value; } }
+
+        public override string GetValues()
+        {
+            return string.Format("{0} {1} {2} {3}", (byte)time.Hours, (byte)time.Minutes, (byte)time.Seconds, (byte)weekday);
+        }
+
+        public override void SetValues(string _Values)
+        {
+            time = new TimeSpan(
+            int.Parse(_Values.Split(' ')[0]),
+            int.Parse(_Values.Split(' ')[1]),
+            int.Parse(_Values.Split(' ')[2]));
+            weekday = (DayOfWeek)int.Parse(_Values.Split(' ')[3]);
+        }
+
+        public BlockConstantTime(KismetSequence _Sequence)
+            : base(_Sequence, 10)
+        {
+            width = 50;
+            height = 50;
+            Inputs.Add(new Input(this, "", null));
+            Outputs.Add(new Output(this, "Constant Time", GetDataType("time")));
+            UpdateConnectors();
+        }
+
+        public override void Assamble()
+        {
+            Code = new byte[] { BlockID, Outputs[0].RegisterIndex, 0, (byte)time.Hours, (byte)time.Minutes, (byte)time.Seconds, (byte)((int)weekday) };
+            base.Assamble();
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            base.Draw(_Graphics);
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString(string.Format("{0}\n{1}", time, weekday), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y, sf);
         }
     }
 
@@ -714,13 +863,13 @@ namespace MainStationFrontEnd
         {
             name = _Values;
         }
-        
+
         public BlockGetVariable(KismetSequence _Sequence)
             : base(_Sequence, 17)
         {
             height = 50;
             width = 100;
-            Inputs.Add(new Input(this, "",null));
+            Inputs.Add(new Input(this, "", null));
             Outputs.Add(new Output(this, "Value", GetDataType("int")));
             UpdateConnectors();
         }

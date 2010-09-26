@@ -1,8 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <EEPROM>
+  <Device TypeID="0" DeviceID="0" DeviceName="MainStation">
+    <Event ID="1">
+      <Root GUID="0" Type="MainStationFrontEnd.DefaultEvent" Values="" />
+    </Event>
+    <Event ID="2">
+      <Root GUID="0" Type="MainStationFrontEnd.DefaultEvent" Values="" />
+    </Event>
+    <Event ID="3">
+      <Root GUID="0" Type="MainStationFrontEnd.DefaultEvent" Values="" />
+    </Event>
+    <Event ID="4">
+      <Root GUID="0" Type="MainStationFrontEnd.DefaultEvent" Values="" />
+    </Event>
+  </Device>
   <Device TypeID="1" DeviceID="1234" DeviceName="TestDevice">
     <Event ID="1">
       <Root GUID="0" Type="MainStationFrontEnd.DefaultEvent" Values="" />
+      <Block GUID="1" Type="MainStationFrontEnd.BlockConstantByte" Values="0" />
+      <Block GUID="2" Type="MainStationFrontEnd.BlockConstantByte" Values="0" />
+      <Block GUID="3" Type="MainStationFrontEnd.BlockConstantByte" Values="0" />
+      <Block GUID="4" Type="MainStationFrontEnd.BlockEquals" Values="" />
+      <Block GUID="5" Type="MainStationFrontEnd.BlockSmallerThan" Values="" />
+      <Block GUID="6" Type="MainStationFrontEnd.BlockSetDebugLed1" Values="" />
+      <Block GUID="7" Type="MainStationFrontEnd.BlockSetDebugLed2" Values="" />
+      <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="2" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="3" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="4" Output="0" OutputOwner="1" />
+      <Connect Input="1" InputOwner="4" Output="0" OutputOwner="2" />
+      <Connect Input="0" InputOwner="5" Output="0" OutputOwner="2" />
+      <Connect Input="1" InputOwner="5" Output="0" OutputOwner="3" />
+      <Connect Input="0" InputOwner="6" Output="0" OutputOwner="4" />
+      <Connect Input="0" InputOwner="7" Output="0" OutputOwner="5" />
     </Event>
     <Event ID="2">
       <Root GUID="0" Type="MainStationFrontEnd.DefaultEvent" Values="" />

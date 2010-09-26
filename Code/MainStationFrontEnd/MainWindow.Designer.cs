@@ -111,6 +111,7 @@
             this.toolStripButton4.Name = "toolStripButton4";
             this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton4.Text = "toolStripButton2";
+            this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
             // 
             // toolStripButton5
             // 
@@ -185,8 +186,11 @@
             this.i_contents.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("i_contents.ImageStream")));
             this.i_contents.TransparentColor = System.Drawing.Color.Transparent;
             this.i_contents.Images.SetKeyName(0, "Device.png");
-            this.i_contents.Images.SetKeyName(1, "Event.PNG");
-            this.i_contents.Images.SetKeyName(2, "EventSelected.PNG");
+            this.i_contents.Images.SetKeyName(1, "mainstation.png");
+            this.i_contents.Images.SetKeyName(2, "EventLocal.png");
+            this.i_contents.Images.SetKeyName(3, "EventLocalSelected.png");
+            this.i_contents.Images.SetKeyName(4, "EventRemote.png");
+            this.i_contents.Images.SetKeyName(5, "EventRemoteSelected.png");
             // 
             // c_TreeEvent
             // 
@@ -198,8 +202,9 @@
             // b_Invoke
             // 
             this.b_Invoke.Name = "b_Invoke";
-            this.b_Invoke.Size = new System.Drawing.Size(109, 22);
+            this.b_Invoke.Size = new System.Drawing.Size(152, 22);
             this.b_Invoke.Text = "Invoke";
+            this.b_Invoke.Click += new System.EventHandler(this.b_Invoke_Click);
             // 
             // t_contents
             // 
@@ -208,11 +213,13 @@
             this.t_contents.ImageList = this.i_contents;
             this.t_contents.Location = new System.Drawing.Point(0, 25);
             this.t_contents.Name = "t_contents";
-            this.t_contents.SelectedImageIndex = 2;
+            this.t_contents.SelectedImageIndex = 0;
             this.t_contents.ShowNodeToolTips = true;
             this.t_contents.Size = new System.Drawing.Size(176, 469);
             this.t_contents.TabIndex = 5;
+            this.t_contents.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.t_contents_NodeMouseDoubleClick);
             this.t_contents.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.t_contents_MouseDoubleClick);
+            this.t_contents.MouseUp += new System.Windows.Forms.MouseEventHandler(this.t_contents_MouseUp);
             // 
             // splitter1
             // 
