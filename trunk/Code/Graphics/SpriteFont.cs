@@ -4,9 +4,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Text;
-
-using SynergyTemplate;
-
+using Synergy;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

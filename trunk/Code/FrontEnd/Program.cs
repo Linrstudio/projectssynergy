@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Synergy;
 
 namespace FrontEnd
 {
@@ -13,10 +14,11 @@ namespace FrontEnd
         [STAThread]
         static void Main()
         {
-            Framework.NetworkManager.Initialize();
+            Converter.Initialize();
+            NetworkManager.Initialize();
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
-            Form mainform = new Framework.FrontEnd();
+            Form mainform = new Synergy.FrontEnd();
             mainform.FormClosing += new FormClosingEventHandler(mainform_FormClosing);
             Application.Run(mainform);
         }
@@ -25,7 +27,5 @@ namespace FrontEnd
         {
             Environment.Exit(0);
         }
-
-
     }
 }

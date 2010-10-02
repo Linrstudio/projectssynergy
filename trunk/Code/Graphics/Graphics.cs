@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
-using SynergyTemplate;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Windows.Forms;
+using Synergy;
 
 namespace SynergyGraphics
 {
@@ -29,9 +29,9 @@ namespace SynergyGraphics
 
         public static Shader defaultshader = null;
 
-        public static SynergyTemplate.Rect GetTotalDesktopSize()
+        public static Synergy.Rect GetTotalDesktopSize()
         {
-            SynergyTemplate.Rect rect = new SynergyTemplate.Rect(new Int2(100000, 100000), new Int2(-100000, -100000));
+            Synergy.Rect rect = new Synergy.Rect(new Int2(100000, 100000), new Int2(-100000, -100000));
             foreach (Screen screen in Screen.AllScreens)
             {
                 if (screen.Bounds.Left < rect.From.X) rect.From.X = screen.Bounds.Left;

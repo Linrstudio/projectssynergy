@@ -1,21 +1,18 @@
-
 struct VSin
 {
-    float3 Position :POSITION;
-    float2 UV		:TEXCOORD;
-	float4 Color	:COLOR;
+    float4 Position :POSITION;
+    float4 Color	:COLOR;
 };
 
 struct PSin
 {
     float4 Position	:POSITION;
-    float2 UV		:TEXCOORD;
-	float4 Color	:TEXCOORD1;
+    float4 Color	:TEXCOORD;
 };
 
 texture2D DiffuseMap;
-sampler2D DiffuseSampler=sampler_state{Texture = <DiffuseMap>;MinFilter=Linear;MagFilter=Linear;MipFilter=Linear;};
-
+sampler2D DiffuseSampler=sampler_state{Texture=<DiffuseMap>;MinFilter=Linear;MagFilter=Linear;MipFilter=Linear;};
+float Progress;
 float3x3 View;
 
 PSin MainVS(VSin input)
@@ -23,15 +20,13 @@ PSin MainVS(VSin input)
     PSin output;
 	output.Position=float4(0,0,1,1);
 	output.Position.xy=mul(float3(input.Position.xy,1),View);
-	output.UV=input.UV;
 	output.Color=input.Color;
     return output;
 }
 
 float4 MainPS(PSin input):COLOR
 {
-	float4 diffuse=tex2D(DiffuseSampler,input.UV);
-	diffuse*=input.Color;
+	float4 diffuse=input.Color;
 	return diffuse;
 }
 

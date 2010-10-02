@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-using SynergyGraphics;
-using SynergyTemplate;
+using Synergy;
+
 
 namespace SynergyClient
 {

@@ -5,15 +5,15 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SynergyTemplate;
-using SynergyGraphics;
+using Synergy;
+using Synergy;
 
-namespace SynergyGraphicsTest
+namespace SynergyTest
 {
     public partial class Form1 : Form
     {
         List<RenderWindow> targets = new List<RenderWindow>();
-        SynergyGraphics.TextureGPU test;
+        Synergy.TextureGPU test;
         Shader shader = null;
 
         Rect DesktopBounds = Graphics.GetTotalDesktopSize();
@@ -27,10 +27,10 @@ namespace SynergyGraphicsTest
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            SynergyGraphics.Graphics.Initialize(Handle, new Int2(Width, Height));
+            Synergy.Graphics.Initialize(Handle, new Int2(Width, Height));
 
             shader = ShaderCompiler.Compile(System.IO.File.ReadAllText("Default.fx"));
-            test = new SynergyGraphics.TextureGPU(@"c:\test.png");
+            test = new Synergy.TextureGPU(@"c:\test.png");
             SetStyle(ControlStyles.ResizeRedraw, true);
         }
 
@@ -45,7 +45,7 @@ namespace SynergyGraphicsTest
             Pos.X = ((float)MousePosition.X - (float)DesktopBounds.From.X) / (float)DesktopBounds.Size.X;
             Pos.Y = ((float)MousePosition.Y - (float)DesktopBounds.From.Y) / (float)DesktopBounds.Size.Y;
             Graphics.Clear(new Float4(1, 0, 1, 1));
-            //SynergyGraphics.Graphics.ClearZBuffer(1);
+            //Synergy.Graphics.ClearZBuffer(1);
 
             Float3x3 mat = Float3x3.Rotate(dir) * Float3x3.Translate(new Float2(-0.5f, -0.5f));
 

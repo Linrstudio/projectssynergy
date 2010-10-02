@@ -1,4 +1,4 @@
-﻿namespace SynergyGraphicsTest
+﻿namespace SynergyTest
 {
     partial class RenderWindow
     {

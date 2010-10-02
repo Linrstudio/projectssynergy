@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using SynergyTemplate;
 
-namespace Framework
+
+namespace Synergy
 {
     public class NetworkNodeRemote : NetworkNode
     {
@@ -12,7 +12,11 @@ namespace Framework
 
         internal void AddNetworkClass(string _Name, string _TypeName)
         {
-            if (LocalDevices.ContainsKey(_Name)) Log.Write("default", Log.Line.Type.Warning, "Could not add class, node already contains A class with this name");
+            if (LocalDevices.ContainsKey(_Name))
+            {
+                Log.Write("default", Log.Line.Type.Warning, "Could not add class, node already contains A class with this name");
+                return;
+            }
 
             NetworkClassSlave inst = NetworkClassSlave.CreateFromType(_Name, _TypeName);
             if (inst != null) LocalDevices.Add(inst.Name, inst);

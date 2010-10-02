@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
-using SynergyTemplate;
+using Synergy;
 
-namespace Framework
+namespace Synergy
 {
     public class Connection
     {
@@ -89,7 +89,7 @@ namespace Framework
                 if (node.LocalDevices.ContainsKey(_ClassName))
                 {
                     NetworkClassSlave parent = node.LocalDevices[_ClassName];
-                    if (!parent.Methods.ContainsKey(_ClassName))
+                    if (!parent.Methods.ContainsKey(_MethodName))
                     {
                         NetworkClassSlave.Method method = new NetworkClassSlave.Method(_MethodName, parent, _ParameterNames.Split(' '));
                         parent.Methods.Add(_MethodName, method);
@@ -171,9 +171,7 @@ namespace Framework
                 //send classes
                 foreach (NetworkClassMaster networkclass in NetworkManager.LocalNode.NetworkClasses.Values)
                 {
-                    {
-                        SendToAll("MapClass", NetworkManager.LocalNode.NodeID, networkclass.Name, networkclass.TypeName);
-                    }
+                    SendToAll("MapClass", NetworkManager.LocalNode.NodeID, networkclass.Name, networkclass.TypeName);
 
                     //send methods
                     foreach (string methodname in networkclass.GetNetworkMethods())

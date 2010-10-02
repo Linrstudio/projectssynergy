@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using Synergy;
 
-using SynergyTemplate;
-
-namespace Framework
+namespace Synergy
 {
     public class ExecFunctions
     {
@@ -128,7 +127,12 @@ namespace Framework
             }
             Tokenizer.BracketClose(ref _Source, true); Tokenizer.WhiteSpace(ref _Source, true);
             Tokenizer.SemiColumn(ref _Source, true);
-            object result = info.Invoke(_Owner, values);
+            object result = null;
+            try
+            {
+                result = info.Invoke(_Owner, values);
+            }
+            catch { Log.Write("Exec", "Error invoking method", methodname); }
             return result;
         }
 
@@ -248,16 +252,6 @@ namespace Framework
         public void listen(int _Port)
         {
             new TCPListener(_Port);
-        }
-
-        [Exec]
-        public MasterPlugin load(string _PluginName, string _FileName)
-        {
-            if (System.IO.File.Exists(_FileName))
-                return new MasterPlugin(_PluginName, System.IO.File.ReadAllText(_FileName));
-            else
-                Log.Write("Exec", Log.Line.Type.Warning, "Failed to find plugin");
-            return null;
         }
     }
 }

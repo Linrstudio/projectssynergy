@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Framework;
-using SynergyTemplate;
+using Synergy;
 
 public class plugin
 {

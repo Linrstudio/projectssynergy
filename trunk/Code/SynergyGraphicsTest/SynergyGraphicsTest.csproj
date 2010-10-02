@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{63412F3B-6901-4016-AAE0-2C374AD764DB}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -114,13 +114,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Graphics\SynergyGraphics.csproj">
-      <Project>{405356A3-E8E6-4CAC-AFF3-EFA4DBB16F09}</Project>
-      <Name>SynergyGraphics</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Template\SynergyTemplate.csproj">
-      <Project>{234303EE-2883-407A-BEA6-47EC1501C788}</Project>
-      <Name>SynergyTemplate</Name>
+    <ProjectReference Include="..\Framework\Synergy.csproj">
+      <Project>{7F7862F6-190D-4B91-9F0D-6526A90B473D}</Project>
+      <Name>Synergy</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
