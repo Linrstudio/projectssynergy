@@ -1,11 +1,10 @@
-#ifndef EEPROM_H
-#define EEPROM_H
 
 #include "Default.h"
 
-void EEPROMWrite(int8 _AddrHi,int8 _AddrLo,int8 _Data);
-void EEPROMBeginRead(int8 _AddrHi,int8 _AddrLo);
-int8 EEPROMRead();
-void EEPROMEndRead();
+void MemoryBeginWrite(int16 _Addr);
+void MemoryWrite(int8 _Data);
+void MemoryEndWrite();
+void MemoryBeginRead(int16 _Addr);
+int8 MemoryReadInt8();
+void MemoryEndRead();
 
-#endif

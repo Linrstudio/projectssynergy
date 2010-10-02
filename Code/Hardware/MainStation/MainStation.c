@@ -4,10 +4,22 @@
 #include "UART.h"
 #include "I2C.h"
 #include "Default.h"
+#include "Kismet.h"
 
+//shared memory layout:
+//0-32 = kismet registers
+#if 1
+int8*SharedMemory[EPBUFFERSIZE+(KISMETBUFFERSIZE*2)];
 
+int16*KismetRegisters;
+int8 *EPBuffer;
+#endif
 void MSInit()
 {
+#if 1
+	KismetRegisters	=(int16*)&(SharedMemory[EPBUFFERSIZE]);
+	EPBuffer		=(int8 *)&SharedMemory[0];
+#endif
 	//turn off A lot of crap
 	CM1CON0bits.C1ON=0;
 	CM1CON0=0;
@@ -35,7 +47,6 @@ void MSInit()
 	LED2B_TRIS=0;
 
 	SetLED1(0);
-	SetLED2(0);
 }
 
 void MSUpdate()
@@ -47,22 +58,10 @@ void MSUpdate()
 
 void SetLED1(int8 _State)
 {
-	LED1A=(_State&1)!=0?1:0;
-	LED1B=(_State&2)!=0?1:0;
-}
-
-void SetLED2(int8 _State)
-{
-	LED2A=(_State&1)!=0?1:0;
-	LED2B=(_State&2)!=0?1:0;
+	LED1B=(_State&1)!=0?0:1;
 }
 
 int8 GetLED1()
 {
-	return (LED1A?1:0)|(LED1B?2:0);
-}
-
-int8 GetLED2()
-{
-	return (LED2A?1:0)|(LED2B?2:0);
+	return (LED1A?1:0);
 }
