@@ -32,8 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.p_progress = new System.Windows.Forms.ToolStripProgressBar();
+            this.t_progress = new System.Windows.Forms.ToolStripStatusLabel();
+            this.t_Connected = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
@@ -50,6 +51,7 @@
             this.b_Invoke = new System.Windows.Forms.ToolStripMenuItem();
             this.t_contents = new System.Windows.Forms.TreeView();
             this.splitter1 = new System.Windows.Forms.Splitter();
+            this.t_ConnectionCheck = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.c_TreeEvent.SuspendLayout();
@@ -59,8 +61,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
-            this.toolStripProgressBar1,
-            this.toolStripStatusLabel2});
+            this.p_progress,
+            this.t_progress,
+            this.t_Connected});
             this.statusStrip1.Location = new System.Drawing.Point(0, 494);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(850, 22);
@@ -73,16 +76,21 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(87, 17);
             this.toolStripStatusLabel1.Text = "Memory Usage";
             // 
-            // toolStripProgressBar1
+            // p_progress
             // 
-            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
-            this.toolStripProgressBar1.Size = new System.Drawing.Size(300, 16);
+            this.p_progress.Name = "p_progress";
+            this.p_progress.Size = new System.Drawing.Size(300, 16);
             // 
-            // toolStripStatusLabel2
+            // t_progress
             // 
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(23, 17);
-            this.toolStripStatusLabel2.Text = "0%";
+            this.t_progress.Name = "t_progress";
+            this.t_progress.Size = new System.Drawing.Size(23, 17);
+            this.t_progress.Text = "0%";
+            // 
+            // t_Connected
+            // 
+            this.t_Connected.Name = "t_Connected";
+            this.t_Connected.Size = new System.Drawing.Size(0, 17);
             // 
             // toolStrip1
             // 
@@ -151,6 +159,7 @@
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton1.Text = "Upload to Mainstation";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripSeparator3
             // 
@@ -202,7 +211,7 @@
             // b_Invoke
             // 
             this.b_Invoke.Name = "b_Invoke";
-            this.b_Invoke.Size = new System.Drawing.Size(152, 22);
+            this.b_Invoke.Size = new System.Drawing.Size(109, 22);
             this.b_Invoke.Text = "Invoke";
             this.b_Invoke.Click += new System.EventHandler(this.b_Invoke_Click);
             // 
@@ -228,6 +237,12 @@
             this.splitter1.Size = new System.Drawing.Size(3, 469);
             this.splitter1.TabIndex = 6;
             this.splitter1.TabStop = false;
+            // 
+            // t_ConnectionCheck
+            // 
+            this.t_ConnectionCheck.Enabled = true;
+            this.t_ConnectionCheck.Interval = 1000;
+            this.t_ConnectionCheck.Tick += new System.EventHandler(this.t_ConnectionCheck_Tick);
             // 
             // MainWindow
             // 
@@ -272,8 +287,10 @@
         private System.Windows.Forms.TreeView t_contents;
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripProgressBar p_progress;
+        private System.Windows.Forms.ToolStripStatusLabel t_progress;
+        private System.Windows.Forms.Timer t_ConnectionCheck;
+        private System.Windows.Forms.ToolStripStatusLabel t_Connected;
 
     }
 }

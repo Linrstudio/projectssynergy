@@ -8,14 +8,12 @@ namespace MainStationFrontEnd
 {
     public class CodeBlock
     {
-        public CodeBlock(KismetSequence _Sequence, byte _BlockID)
+        public CodeBlock(KismetSequence _Sequence)
         {
             Sequence = _Sequence;
-            BlockID = _BlockID;
         }
 
         public KismetSequence Sequence;
-        public byte BlockID;
 
         public List<Input> Inputs = new List<Input>();
         public List<Output> Outputs = new List<Output>();
@@ -154,7 +152,7 @@ namespace MainStationFrontEnd
                     {
                         scopeheight += c.Height / 2;
                         c.targetY = targetY + scopeheight;
-                        c.targetX = targetX + (bestdepth * 150);
+                        c.targetX = targetX + ((bestdepth - 1) * 150);
                         scopeheight += c.Height / 2;
                         scopeheight += KismetSequence.SpaceBetweenScopes / 2;
                         c.UpdateLayout();
@@ -426,7 +424,7 @@ namespace MainStationFrontEnd
 
         public class Input
         {
-            public Input(CodeBlock _Owner, string _Text,DataType _DataType)
+            public Input(CodeBlock _Owner, string _Text, DataType _DataType)
             {
                 Owner = _Owner;
                 X = -Owner.width / 2;
@@ -469,7 +467,7 @@ namespace MainStationFrontEnd
             public List<Input> Connected = new List<Input>();
             public CodeBlock Owner;
             public DataType datatype;
-            public byte RegisterIndex;
+            public KismetSequence.Register Register = null;
 
             public void UpdatePosition()
             {
@@ -579,17 +577,34 @@ namespace MainStationFrontEnd
             }
         }
 
+        public struct Time
+        {
+            public TimeSpan time;
+            public DayOfWeek WeekDay;
+        }
+
         public class DataType
         {
-            public DataType(string _Name, int _ID, Color _Color) 
+            public DataType(string _Name, Type _Type, object _DefaultValue, int _ID, Color _Color, int _RegistersNeeded)
             {
                 Name = _Name;
                 ID = _ID;
                 Color = _Color;
+                Type = _Type;
+                DefaultValue = _DefaultValue;
+                RegistersNeeded = _RegistersNeeded;
             }
             public int ID;
             public string Name;
             public Color Color;
+            public Type Type;
+            public object DefaultValue;
+            public int RegistersNeeded;
+
+            public object GetDefaultValue()
+            {
+                return DefaultValue;
+            }
         }
 
         public static List<Prototype> CodeBlocks = null;
@@ -600,38 +615,23 @@ namespace MainStationFrontEnd
             {
                 DataTypes = new List<DataType>();
 
-                AddDataType("int", 1, Color.Blue);
-                AddDataType("bool", 2, Color.Green);
-                AddDataType("time", 3, Color.LightGray);
+                AddDataType("int", typeof(int), 0, 1, Color.Blue, 1);
+                AddDataType("bool", typeof(bool), false, 2, Color.Green, 1);
+                AddDataType("time", typeof(Time), new Time(), 3, Color.LightGray, 3);
             }
             if (CodeBlocks == null)
             {
                 CodeBlocks = new List<Prototype>();
-
-                AddCodeBlock("Event", "", typeof(DefaultEvent), false);
-
-                AddCodeBlock("RemoteEvent", "Devices", typeof(BlockRemoteEvent));
-
-                //Constants
-                //10
-                AddCodeBlock("Time", "Contant", typeof(BlockConstantTime));
-                AddCodeBlock("Integer", "Contant", typeof(BlockConstantByte));
-                AddCodeBlock("Boolean", "Contant", typeof(BlockConstantBool));
+                //0
+                AddCodeBlock("LocalEvent", "", typeof(BlockLocalEvent), false);
+                AddCodeBlock("RemoteEvent", "", typeof(BlockRemoteEvent), false);
 
                 //Debug stuff
                 //20
                 AddCodeBlock("Set DebugLed 1", "Debug stuff", typeof(BlockSetDebugLed1));
-                AddCodeBlock("Set DebugLed 2", "Debug stuff", typeof(BlockSetDebugLed2));
-
-                //Compare
-                //30
-                AddCodeBlock("Equals", "Compare", typeof(BlockEquals));
-                AddCodeBlock("Differs", "Compare", typeof(BlockDiffers));
-                AddCodeBlock("Smaller Than", "Compare", typeof(BlockSmallerThan));
-                AddCodeBlock("Larget Than", "Compare", typeof(BlockLargerThan));
 
                 //Time stuff
-                //40
+                AddCodeBlock("Constant", "Time", typeof(BlockTimeConstant));
                 AddCodeBlock("Get current time", "Time", typeof(BlockGetTime));
                 AddCodeBlock("Get current hour", "Time", typeof(BlockGetHour));
                 AddCodeBlock("Get current minute", "Time", typeof(BlockGetMinute));
@@ -639,20 +639,26 @@ namespace MainStationFrontEnd
                 AddCodeBlock("Get current weekday", "Time", typeof(BlockGetDay));
 
                 //math
-                //50
-                AddCodeBlock("Add", "Math", typeof(BlockAdd));
-                AddCodeBlock("Substract", "Math", typeof(BlockSubstract));
-                AddCodeBlock("Multiply", "Math", typeof(BlockMultiply));
-                AddCodeBlock("Divide", "Math", typeof(BlockDivide));
-                AddCodeBlock("Bitwise And", "Math", typeof(BlockBitMask));
+                AddCodeBlock("Constant", "Math", typeof(BlockMathConstant));
+                AddCodeBlock("Add", "Math", typeof(BlockMathAdd));
+                AddCodeBlock("Substract", "Math", typeof(BlockMathSubstract));
+                AddCodeBlock("Multiply", "Math", typeof(BlockMathMultiply));
+                AddCodeBlock("Divide", "Math", typeof(BlockMathDivide));
+                //AddCodeBlock("Set variable", "Math", typeof(BlockMathSetVariable));
+                //AddCodeBlock("Get variable", "Math", typeof(BlockMathGetVariable));
+                AddCodeBlock("Equals", "Math", typeof(BlockMathEquals));
+                AddCodeBlock("Differs", "Math", typeof(BlockMathDiffers));
+                AddCodeBlock("Smaller Than", "Math", typeof(BlockMathSmallerThan));
+                AddCodeBlock("Larget Than", "Math", typeof(BlockMathLargerThan));
 
-                //Variable
-                AddCodeBlock("Set variable", "Variable", typeof(BlockSetVariable));
-                AddCodeBlock("Get variable", "Variable", typeof(BlockGetVariable));
-
-                //Branching
-                AddCodeBlock("If", "Branches", typeof(BlockIf));
-                AddCodeBlock("If not", "Branches", typeof(BlockIfNot));// there is a small bug in this one
+                //Boolean
+                AddCodeBlock("Constant", "Boolean", typeof(BlockBoolConstant));
+                AddCodeBlock("Equals", "Boolean", typeof(BlockBoolEquals));
+                AddCodeBlock("Differs", "Boolean", typeof(BlockBoolDiffers));
+                AddCodeBlock("And", "Boolean", typeof(BlockBoolAnd));
+                AddCodeBlock("Or", "Boolean", typeof(BlockBoolOr));
+                AddCodeBlock("Exclusive or", "Boolean", typeof(BlockBoolXOR));
+                AddCodeBlock("If", "Boolean", typeof(BlockBoolIf));
             }
         }
 
@@ -683,9 +689,9 @@ namespace MainStationFrontEnd
             CodeBlocks.Add(new Prototype(_BlockName, _Group, _Type, _UserCanAdd));
         }
 
-        private static void AddDataType(string _TypeName, int _ID, Color _Color)
+        private static void AddDataType(string _TypeName, Type _Type, object _DefaultInstance, int _ID, Color _Color, int _RegistersNeeded)
         {
-            DataTypes.Add(new DataType(_TypeName, _ID, _Color));
+            DataTypes.Add(new DataType(_TypeName, _Type, _DefaultInstance, _ID, _Color, _RegistersNeeded));
         }
     }
 }

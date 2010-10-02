@@ -1,8 +1,12 @@
 <Products>
 
   <Device  ID="0" Name="Main station" Description="This is the Main station.">
-    <Event ID="1" Name="Seconds Changed" Description="The current second on the clock changed." />
-    <Event ID="2" Name="Minutes Changed" Description="The current minute on the clock changed." />
+    <Event ID="1" Name="Seconds Changed" Description="The current second on the clock changed." >
+		<Output Name="Seconds" Type="int"/>
+	</Event>
+    <Event ID="2" Name="Minutes Changed" Description="The current minute on the clock changed." >
+		<Output Name="Minutes" Type="int"/>
+	</Event>
 	<Event ID="3" Name="Hours Changed" Description="The current hour on the clock changed." />
 	<Event ID="4" Name="Days Changed" Description="The current day on the calendar changed." />
   </Device>
@@ -10,10 +14,11 @@
   <Device  ID="1" Name="Dummy Device" Description="This is our test device">
     <Event ID="1" Name="On Push" Description="The button is pressed." />
     <Event ID="2" Name="On Release" Description="The button is released." />
-	<RemoteEvent ID="1" Name="SetLED1" Description="Sets LED1" />
+	<RemoteEvent ID="1" Name="SetLED1" Description="Sets LED1" >
+		<Input Name="State" Type="bool"/>
+	</RemoteEvent>
 	<RemoteEvent ID="2" Name="SetLED2" Description="Sets LED2" >
 		<Input Name="State" Type="bool"/>
-		<Output Name="State" Type="bool"/>
 	</RemoteEvent>
 	<RemoteEvent ID="3" Name="GetLED2" Description="Gets LED2" >
 		<Output Name="State" Type="bool"/>
