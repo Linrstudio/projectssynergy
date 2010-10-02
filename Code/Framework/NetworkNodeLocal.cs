@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SynergyTemplate;
 
-namespace Framework
+namespace Synergy
 {
     public class NetworkNodeLocal : NetworkNode
     {
@@ -27,8 +26,11 @@ namespace Framework
 
         public void AddNetworkClass(NetworkClassMaster _NetworkClass)
         {
-            NetworkClasses.Add(_NetworkClass.Name, _NetworkClass);
-            Log.Write(new Log.Variable("LocalNode", "Network Classes", NetworkClasses.Count));
+            if (!NetworkClasses.ContainsKey(_NetworkClass.Name))
+            {
+                NetworkClasses.Add(_NetworkClass.Name, _NetworkClass);
+                Log.Write(new Log.Variable("LocalNode", "Network Classes", NetworkClasses.Count));
+            }
         }
     }
 }

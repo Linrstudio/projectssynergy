@@ -6,9 +6,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SynergyTemplate;
 
-namespace Framework
+
+namespace Synergy
 {
     public partial class FrontEnd : Form
     {
@@ -229,6 +229,11 @@ namespace Framework
         private void c_Input_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("calc");
         }
     }
 }

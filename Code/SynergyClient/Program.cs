@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Framework;
+using Synergy;
 
 namespace SynergyClient
 {
@@ -13,7 +13,7 @@ namespace SynergyClient
         [STAThread]
         static void Main()
         {
-            Framework.NetworkManager.Initialize();
+            NetworkManager.Initialize();
             Application.Idle += new EventHandler(Application_Idle);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -22,7 +22,7 @@ namespace SynergyClient
 
         static void Application_Idle(object sender, EventArgs e)
         {
-            Framework.NetworkManager.Update();
+            NetworkManager.Update();
         }
     }
 }

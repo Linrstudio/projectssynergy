@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
-using Framework;
-using SynergyTemplate;
-using SynergyGraphics;
+using Synergy;
 
 namespace SynergyClient
 {

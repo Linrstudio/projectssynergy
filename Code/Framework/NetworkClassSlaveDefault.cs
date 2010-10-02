@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-using SynergyTemplate;
-
-namespace Framework
+namespace Synergy
 {
     public class NetworkClassSlaveDefault:NetworkClassSlave
     {

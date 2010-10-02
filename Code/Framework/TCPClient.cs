@@ -8,9 +8,9 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Reflection;
-using SynergyTemplate;
+using Synergy;
 
-namespace Framework
+namespace Synergy
 {
     public class TCPConnection : Connection
     {

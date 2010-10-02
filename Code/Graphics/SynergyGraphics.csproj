@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{405356A3-E8E6-4CAC-AFF3-EFA4DBB16F09}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -80,12 +80,6 @@
     <Compile Include="UIButton.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Template\SynergyTemplate.csproj">
-      <Project>{234303EE-2883-407A-BEA6-47EC1501C788}</Project>
-      <Name>SynergyTemplate</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -106,6 +100,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Framework\Synergy.csproj">
+      <Project>{7F7862F6-190D-4B91-9F0D-6526A90B473D}</Project>
+      <Name>Synergy</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

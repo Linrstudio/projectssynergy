@@ -4,9 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Text;
 
-using Framework;
-using SynergyGraphics;
-using SynergyTemplate;
+using Synergy;
+
 
 namespace SynergyClient
 {
@@ -14,14 +13,17 @@ namespace SynergyClient
     {
         Control Root = null;
         Int2 TargetResolution = new Int2(800, 600);
+        bool MouseUpdated = false;
         public Form1()
         {
             InitializeComponent();
-            SynergyGraphics.Graphics.Initialize(this.Handle, TargetResolution);
-            ClientResources.Load();
-            Root = new GenericBrowser(null);
-            Root.Transformation = Float3x3.Scale(new Float2(2, -2)) * Float3x3.Translate(new Float2(-0.5f, -0.5f));
 
+            Synergy.Graphics.Initialize(this.Handle, TargetResolution);
+            ClientResources.Load();
+            //Root = new GenericBrowser(null);
+            Root = new UIButton("", null);
+            ((UIButton)Root).Text = "my awesome button";
+            //Root.Transformation = Float3x3.Scale(new Float2(2, -2)) * Float3x3.Translate(new Float2(-0.5f, -0.5f));
             System.Windows.Forms.Application.Idle += new EventHandler(Application_Idle);
         }
 
@@ -32,15 +34,28 @@ namespace SynergyClient
 
         public void Tick()
         {
-            //Root.Transformation.X.X = Bounds.Width;
-            //Root.Transformation.Y.Y = Bounds.Height;
+
+            System.Drawing.Point mouse = PointToClient(MousePosition);
+            UIController.Default.CursorPos.X = (float)mouse.X / (float)ClientRectangle.Width;
+            UIController.Default.CursorPos.Y = (float)mouse.Y / (float)ClientRectangle.Height;
+            UIController.Default.CursorPos = UIController.Default.CursorPos * 2 - new Float2(1, 1);
+            bool yes = MouseButtons == System.Windows.Forms.MouseButtons.Left;
+            bool no = MouseButtons == System.Windows.Forms.MouseButtons.Right;
+            UIController.Default.YesDown = (yes && !UIController.Default.Yes);
+            UIController.Default.NoDown = (no && !UIController.Default.No);
+            UIController.Default.YesUp = (!yes && UIController.Default.Yes);
+            UIController.Default.NoUp = (!no && UIController.Default.No);
+            UIController.Default.Yes = yes;
+            UIController.Default.No = no;
+            if (!MouseUpdated) Root.HandleControllerInput(UIController.Default);
+            MouseUpdated = true;
+
             Root.Update();
             Root.Draw();
-
-            SynergyGraphics.Graphics.Present(p_WorkingArea.Handle);
+            Synergy.Graphics.Present(p_WorkingArea.Handle);
+            MouseUpdated = false;
+            ResourceManager.Update();
         }
-
-
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -56,12 +71,6 @@ namespace SynergyClient
         private void t_tick_Tick(object sender, EventArgs e)
         {
             Tick();
-        }
-
-        private void Form1_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            UIController.CursorPos.X = e.X / TargetResolution.X;
-            UIController.CursorPos.X = e.Y / TargetResolution.Y;
         }
     }
 }

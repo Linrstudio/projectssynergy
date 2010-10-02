@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SynergyTemplate;
 
-namespace Framework
+
+namespace Synergy
 {
     public class NetworkNode
     {

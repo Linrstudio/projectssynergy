@@ -1,6 +1,6 @@
 make graphics layer remoteable ( dual screen ? ) ( message pump ? )
 
-
+plugin system for remote controls ( buttons etc etc )
 
 
 
