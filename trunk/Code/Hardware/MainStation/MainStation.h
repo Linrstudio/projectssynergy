@@ -26,7 +26,7 @@ void MSInit();
 void MSUpdate();
 
 void SetLED1(int8 _State);
-void SetLED2(int8 _State);
+//void SetLED2(int8 _State);
 
 int8 GetLED1();
 int8 GetLED2();

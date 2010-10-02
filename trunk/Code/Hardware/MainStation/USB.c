@@ -14,6 +14,7 @@
 #include "USB.h"
 #include "UART.h"
 #include "EEPROM.h"
+#include "Kismet.h"
 
 /** VARIABLES ******************************************************/
 #pragma udata
@@ -36,11 +37,8 @@ unsigned char ToSendDataBuffer[64];
 USB_HANDLE USBOutHandle = 0;
 USB_HANDLE USBInHandle = 0;
 
-
 extern int8 EPBuffer[16];
 extern int16 EPBufferSize;
-
-
 
 void USBInit()
 {
@@ -68,18 +66,37 @@ void USBUpdate()
         switch(ReceivedDataBuffer[0])				//Look at the data the host sent, to see what kind of application specific command it sent.
         {
 			case 0x01:
-				EPPoll(*(int16*)&ReceivedDataBuffer[1]);
+				a=EPPoll(*(int16*)&ReceivedDataBuffer[1]);
+				if(!HIDTxHandleBusy(USBInHandle))
+                {
+					ToSendDataBuffer[0]=0x03;
+					if(a!=0)
+						ToSendDataBuffer[1]=0;
+					else
+						ToSendDataBuffer[1]=255;
+                    USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
+                }
 				break;
 			case 0x02:
 				EPBufferSize=ReceivedDataBuffer[3];
 				for(a=0;a<EPBufferSize;a++)EPBuffer[a]=ReceivedDataBuffer[a+4];
 				EPSend(*(int16*)&ReceivedDataBuffer[1]);
 				break;
-			case 0x03://EEPROM WRITE
-				for(a=0;a<32;a++)
+			case 0x06:
+				//SetLED1(1);
+				ToSendDataBuffer[1]=KismetExecuteEvent(((int16*)&ReceivedDataBuffer[1])[0],ReceivedDataBuffer[3]);
+				//SetLED1(0);
+				if(!HIDTxHandleBusy(USBInHandle))
+                {
+					ToSendDataBuffer[0]=0x06;
+                    USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
+                }
+				break;
+			case 0x03://EEPROM Write
 				{
-					EEPROMWrite(ReceivedDataBuffer[1],ReceivedDataBuffer[2],ReceivedDataBuffer[3+a]);
-					(*(int16*)&ReceivedDataBuffer[1])++;
+					MemoryBeginWrite(((int16*)&ReceivedDataBuffer[1])[0]);
+					MemoryWrite(ReceivedDataBuffer[3]);
+					MemoryEndWrite();
 				}
 				if(!HIDTxHandleBusy(USBInHandle))
                 {
@@ -87,20 +104,32 @@ void USBUpdate()
                     USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
                 }
 				break;
-			case 0x04://EEPROM READ
+			case 0x04://EEPROM WRITE PAGE
+				{
+					MemoryBeginWrite(((int16*)&ReceivedDataBuffer[1])[0]);
+					for(a=0;a<32;a++)
+						MemoryWrite(ReceivedDataBuffer[3+a]);
+					MemoryEndWrite();
+				}
 				if(!HIDTxHandleBusy(USBInHandle))
                 {
-					EEPROMBeginRead(ReceivedDataBuffer[1],ReceivedDataBuffer[2]);
 					ToSendDataBuffer[0]=0x04;
-					ToSendDataBuffer[1]=EEPROMRead();
-					EEPROMEndRead();
+                    USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
+                }
+				break;
+			case 0x05://EEPROM READ
+				if(!HIDTxHandleBusy(USBInHandle))
+                {
+					MemoryBeginRead(((int16*)&ReceivedDataBuffer[1])[0]);
+					ToSendDataBuffer[0]=0x04;
+					ToSendDataBuffer[1]=MemoryReadInt8();
+					MemoryEndRead();
                     USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
                 }
 				break;
 
             case 0x80:
 				SetLED1(0);
-				UARTInit();
                 break;
             case 0x81:
 				SetLED1(1);

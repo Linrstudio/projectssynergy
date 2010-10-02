@@ -3,6 +3,8 @@
 
 #include "Default.h"
 
+#define EPBUFFERSIZE 16
+
 void EPInit();
 void EPUpdate();
 int8 EPSend(int16 _DeviceID);

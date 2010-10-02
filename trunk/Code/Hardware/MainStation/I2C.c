@@ -28,7 +28,7 @@ void I2CStop()
 
 void I2CWrite(int8 _Byte)
 {
-	int i=128;
+	int8 i=128;
 	SDA_TRIS=0;
 	do
 	{
@@ -45,7 +45,7 @@ void I2CWrite(int8 _Byte)
 int8 I2CRead()
 {
 	int8 data;
-	int i=128;
+	int8 i=128;
 	SDA_TRIS=1;
 	//SDA_PULLUP=1;
 	data=0;
@@ -66,7 +66,7 @@ int8 I2CRead()
 int8 I2CAck()
 {
 #if 0
-	int res;
+	int8 res;
 	SDA_TRIS=1;
 	//SDA_PULLUP=1;
 	//Delay();
@@ -113,7 +113,7 @@ void I2CStopSlow()
 
 void I2CWriteSlow(int8 _Byte)
 {
-	int i=128;
+	int8 i=128;
 	SDA_TRIS=0;
 	do
 	{
@@ -133,7 +133,7 @@ void I2CWriteSlow(int8 _Byte)
 int8 I2CReadSlow()
 {
 	int8 data;
-	int i=128;
+	int8 i=128;
 	data=0;
 	SDA_TRIS=1;
 	do

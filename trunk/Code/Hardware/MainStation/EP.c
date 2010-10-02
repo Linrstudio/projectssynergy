@@ -8,13 +8,15 @@
 
 #include "MainStation.h"
 
-int8 PacketID=0;
+int8  PacketID=0;
 int16 NextDevice=1234;
 
-
+#if 1
+extern int8 *EPBuffer;
+#else
 int8 EPBuffer[16];
+#endif
 int16 EPBufferSize;
-
 
 void EPInit()//initialize Endpoints
 {
@@ -27,9 +29,9 @@ void EPUpdate()
 	//EPPoll(123);
 	if(EPPoll(NextDevice))
 	{
-		SetLED2(1);
+		//SetLED2(1);
 	}else{
-		SetLED2(2);
+		SetLED1(1);
 	}
 	//NextDevice++;
 }

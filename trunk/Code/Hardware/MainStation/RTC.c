@@ -1,5 +1,5 @@
 #include "RTC.h"
-//#include "Kismet.h"
+#include "Kismet.h"
 #include "Default.h"
 
 
@@ -57,8 +57,10 @@ void RTCUpdate()
 				}
 //				KismetExecuteEvent(1,3,RTCHour);	//trigger hour changed event
 			}
-//			KismetExecuteEvent(1,2,RTCMinute);		//trigger minute changed event
+			KismetSetRegister(0,(int16)RTCMinute);
+			KismetExecuteEvent(0,2);
 		}
-//		KismetExecuteEvent(1,1,RTCSecond);			//trigger second changed event
+		KismetSetRegister(0,(int16)RTCSecond);
+		KismetExecuteEvent(0,1);
 	}
 }
