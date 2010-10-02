@@ -9,7 +9,7 @@ namespace MainStationFrontEnd
 {
     public class EEPROM
     {
-        static ushort size;
+        static ushort size = 65535;
         static ushort bytesused;
         static public ushort Size { get { return size; } }
         static public ushort BytesUsed { get { return bytesused; } }
@@ -41,10 +41,28 @@ namespace MainStationFrontEnd
             }
             public string Name;
             public ushort addr = 0;
+            /// <summary>
+            /// address in memory
+            /// </summary>
             public ushort eventaddr = 0;
             public ushort ID;
             public ProductDataBase.Device device;
             public SortedDictionary<byte, Event> Events = new SortedDictionary<byte, Event>();
+
+            public bool WorthCompiling()
+            {
+                //if (ID == 0) return false;
+                bool found = false;
+                foreach (Event e in Events.Values)
+                {
+                    foreach (CodeBlock.Output output in e.sequence.root.Outputs)
+                    {
+                        if (output.Connected.Count > 0) found = true;
+                    }
+                }
+                if (!found) return false;
+                return true;
+            }
 
             public class Event
             {
@@ -55,8 +73,17 @@ namespace MainStationFrontEnd
                 public Event(Device _Device, ProductDataBase.Device.Event _Event)
                 {
                     device = _Device;
-                    sequence = new KismetSequence(this);
                     eventtype = _Event;
+                    sequence = new KismetSequence(this);
+                }
+
+                public bool WorthCompiling()
+                {
+                    foreach (CodeBlock.Output i in sequence.root.Outputs)
+                    {
+                        if (i.Connected.Count > 0) return true;
+                    }
+                    return false;
                 }
 
                 public ushort SequenceAddr;
@@ -70,6 +97,7 @@ namespace MainStationFrontEnd
             return (byte)Globals.IndexOf(_GlobalName);
         }
 
+
         public static byte[] Assamble()
         {
             Globals.Clear();
@@ -78,6 +106,7 @@ namespace MainStationFrontEnd
             ushort eventlistaddr = 0;
             foreach (Device d in Devices.Values)
             {
+                if (!d.WorthCompiling()) continue;
                 d.addr = (ushort)(idx * 4);
                 byte[] shrt = Utilities.FromShort(d.ID);
                 buffer[d.addr + 0] = shrt[0];
@@ -85,25 +114,38 @@ namespace MainStationFrontEnd
                 idx++;
                 eventlistaddr = (ushort)(d.addr + 4);
             }
-            eventlistaddr += 2;//add two blanks, indicating a null address
+            buffer[eventlistaddr++] = 0xff;
+            buffer[eventlistaddr++] = 0xff;//add two blanks, indicating there are no more devices
+
             ushort addr = eventlistaddr;
             foreach (Device d in Devices.Values)
             {
+                if (!d.WorthCompiling()) continue;
                 d.eventaddr = addr;
                 foreach (Device.Event e in d.Events.Values)
                 {
+                    if (!e.WorthCompiling()) continue;
                     e.addr = addr;
                     buffer[e.addr] = e.eventtype.ID;
-                    buffer[e.addr + 1] = 1;
-                    buffer[e.addr + 2] = 1;
+                    buffer[e.addr + 1] = 0;
+                    buffer[e.addr + 2] = 0;
                     addr += 3;
                 }
             }
-            addr += 2;//add two blanks, indicating a null event
+            buffer[addr++] = 0xff;
+            buffer[addr++] = 0xff;//add two blanks, indicating there are no more events
+
             foreach (Device d in Devices.Values)
             {
+                if (!d.WorthCompiling()) continue;
                 foreach (Device.Event e in d.Events.Values)
                 {
+                    if (!e.WorthCompiling()) continue;
+                    if (!e.sequence.CheckForErrors())
+                    {
+                        System.Windows.Forms.MessageBox.Show("Failed to connect KismetSequence, are all inputs connected ?");
+                        continue;
+                    }
                     e.SequenceAddr = addr;
                     byte[] seqcode = e.sequence.GetByteCode();
                     for (int i = 0; i < seqcode.Length; i++)
@@ -111,12 +153,13 @@ namespace MainStationFrontEnd
                     addr += (ushort)seqcode.Length;
                 }
             }
-            addr += 2;
+            //addr += 2;
             bytesused = addr;
 
             //fillin addresses
             foreach (Device d in Devices.Values)
             {
+                if (!d.WorthCompiling()) continue;
                 {
                     byte[] shrt = Utilities.FromShort(d.eventaddr);
                     buffer[d.addr + 2] = shrt[0];
@@ -124,6 +167,7 @@ namespace MainStationFrontEnd
                 }
                 foreach (Device.Event e in d.Events.Values)
                 {
+                    if (!e.WorthCompiling()) continue;
                     byte[] shrt = Utilities.FromShort(e.SequenceAddr);
                     buffer[e.addr + 1] = shrt[0];
                     buffer[e.addr + 2] = shrt[1];
@@ -133,8 +177,9 @@ namespace MainStationFrontEnd
             Console.WriteLine("EEPROM used {0} out of {1} byte ({2}%)", addr, Size, (int)(((float)addr / (float)Size) * 100));
 
             if (OnAssamble != null) OnAssamble();
-
-            return buffer;
+            byte[] newbuffer = new byte[BytesUsed];
+            for (int i = 0; i < newbuffer.Length; i++) newbuffer[i] = buffer[i];
+            return newbuffer;
         }
 
         public static void Save(string _FileName)
@@ -164,7 +209,7 @@ namespace MainStationFrontEnd
                     {
                         foreach (CodeBlock.Input i in b.Inputs)
                         {
-                            if (i.Connected!=null)
+                            if (i.Connected != null)
                             {
                                 XElement connection = new XElement("Connect");
                                 connection.SetAttributeValue("Input", i.Owner.Inputs.IndexOf(i).ToString());
@@ -243,17 +288,82 @@ namespace MainStationFrontEnd
         public EEPROM.Device.Event Event = null;
         public CodeBlock root = null;
         public List<CodeBlock> codeblocks = new List<CodeBlock>();
-
         public static float SpaceBetweenScopes = 10;
-
         public static float VecticalSpaceBetweenBlocks = 75;
-
         public static System.Drawing.Color ShadowColor = System.Drawing.Color.DarkGray;
+
+        public List<Register> Registers = new List<Register>();
+
+        public class Register
+        {
+            public Register(KismetSequence _Sequence)
+            {
+                Sequence = _Sequence;
+            }
+            KismetSequence Sequence;
+            public byte Index = 0;
+            public int Size = 0;
+            public int references = 0;
+        }
+
+        public bool[] GetRegisterMask()
+        {
+            bool[] mask = new bool[32];//registers used
+            foreach (Register r in Registers)
+            {
+                for (int i = r.Index; i < r.Index + r.Size; i++)
+                {
+                    mask[i] = true;
+                }
+            }
+            return mask;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_Count">the amount of registers you want to alloc</param>
+        /// <returns></returns>
+        public Register GetRegister(int _Count)
+        {
+            bool[] mask = GetRegisterMask();
+            for (int i = 0; i < mask.Length - _Count; i++)
+            {
+                bool found = true;
+                for (int j = 0; j < _Count; j++)
+                {
+                    if (mask[i + j]) { found = false; break; }
+                }
+                if (found)
+                {
+                    Register r = new Register(this);
+                    r.Size = _Count;
+                    r.Index = (byte)i;
+                    Registers.Add(r);
+                    return r;
+                }
+            }
+            throw new Exception("failed to alloc register");
+            return null;
+        }
+
+        public bool CheckForErrors()
+        {
+            foreach (CodeBlock c in codeblocks)
+            {
+                foreach (CodeBlock.Input i in c.Inputs)
+                {
+                    if (i.Connected == null) return false;
+                }
+            }
+            return true;
+        }
 
         public KismetSequence(EEPROM.Device.Event _Event)
         {
             Event = _Event;
-            root = new DefaultEvent(this);
+            root = new BlockLocalEvent(this);
+            root.SetValues(string.Format("{0} {1}", _Event.device.device.ID, _Event.eventtype.ID));
             if (!codeblocks.Contains(root)) codeblocks.Add(root);
         }
 
@@ -300,9 +410,39 @@ namespace MainStationFrontEnd
 
         public byte[] GetByteCode()
         {
+            if (!CheckForErrors()) throw new Exception("failed to compile kismet sequence ( are all inputs connected ? )");
             FixIndices();
             CodeBlock[] blockssorted = new CodeBlock[codeblocks.Count];
             foreach (CodeBlock b in codeblocks) { blockssorted[b.index] = b; }
+
+            //heuristic to determine register indices
+            Registers.Clear();
+            foreach (CodeBlock b in blockssorted)
+            {
+                foreach (CodeBlock.Output r in b.Outputs)
+                {
+                    if (r.datatype != null)
+                    {
+                        r.Register = GetRegister(r.datatype.RegistersNeeded);
+                        r.Register.references = r.Connected.Count;
+                    }
+                }
+                foreach (CodeBlock.Input r in b.Inputs)
+                {
+                    if (r.Connected != null)
+                    {
+                        if (r.Connected.Register != null)
+                        {
+                            r.Connected.Register.references--;
+                            if (r.Connected.Register.references == 0)
+                            {
+                                Registers.Remove(r.Connected.Register);
+                            }
+                        }
+                    }
+                }
+            }
+
             byte addr = 0;
             foreach (CodeBlock b in blockssorted)
             {
@@ -311,25 +451,7 @@ namespace MainStationFrontEnd
                 addr += (byte)b.Code.Length;
             }
 
-
-            //heuristic to determine register indices
-            byte registeridx = 0;
-            foreach (CodeBlock b in blockssorted)
-            {
-                foreach (CodeBlock.Output r in b.Outputs)
-                {
-                    r.RegisterIndex = registeridx;
-                    registeridx++;
-                }
-            }
-            Console.WriteLine("Sequence used {0} registers", registeridx);
-            foreach (CodeBlock b in blockssorted)
-            {
-                b.Assamble();
-            }
-
             List<byte> output = new List<byte>();
-
             foreach (CodeBlock b in blockssorted)
             {
                 b.Assamble();//reassamble code ( so branching blocks know where to jump to )

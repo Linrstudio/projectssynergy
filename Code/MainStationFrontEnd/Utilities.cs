@@ -9,7 +9,7 @@ namespace MainStationFrontEnd
         public static byte[] FromShort(ushort _V)
         {
             byte[] buf = BitConverter.GetBytes(_V);
-            return new byte[] { buf[1], buf[0] };
+            return new byte[] { buf[0], buf[1] };
         }
 
         public static ushort ToShort(byte[] _Buffer, int _Index)

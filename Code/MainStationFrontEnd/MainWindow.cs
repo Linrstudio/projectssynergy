@@ -22,6 +22,15 @@ namespace MainStationFrontEnd
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            EEPROM.OnAssamble += new EEPROM.OnAssambleHandler(EEPROM_OnAssamble);
+
+        }
+
+        void EEPROM_OnAssamble()
+        {
+            p_progress.Maximum = EEPROM.Size;
+            p_progress.Value = EEPROM.BytesUsed;
+            t_progress.Text = string.Format("{0:0.000}%", ((float)EEPROM.BytesUsed / EEPROM.Size) * 100.0f);
         }
 
         private void toolStripButton6_Click(object sender, EventArgs e)
@@ -127,7 +136,10 @@ namespace MainStationFrontEnd
                 EEPROM.Device device = (EEPROM.Device)tag[0];
                 ProductDataBase.Device.RemoteEvent evnt = (ProductDataBase.Device.RemoteEvent)tag[1];
                 if (MainStation.Connected())
-                    MainStation.InvokeRemoteEvent(device.ID, evnt.ID, 0);
+                {
+                    new InvokeRemoteEventWindow(evnt, device.ID).Show();
+                    //MainStation.InvokeRemoteEvent(device.ID, evnt.ID, 2);
+                }
             }
             //invoke event at mainstation
             if (t_contentsContextMenuNode.Tag is EEPROM.Device.Event)
@@ -156,6 +168,16 @@ namespace MainStationFrontEnd
                     c_TreeEvent.Show(t_contents, e.X, e.Y);
                 }
             }
+        }
+
+        private void t_ConnectionCheck_Tick(object sender, EventArgs e)
+        {
+            t_Connected.Text = MainStation.Connected() ? "Connected" : "Disconnected";
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            if(!MainStation.EEPROMWriteVerify(EEPROM.Assamble()))MessageBox.Show("Verify incorrect");
         }
     }
 }

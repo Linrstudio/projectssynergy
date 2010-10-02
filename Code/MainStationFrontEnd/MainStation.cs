@@ -9,6 +9,9 @@ namespace MainStationFrontEnd
 {
     class MainStation
     {
+        public const byte KismetRegisterSize = 32;
+        public const byte EPBufferSize = 16;
+
         public static void Connect()
         {
             HIDClass.MCHPHIDClass.USBHIDClassInit(0x4d8, 0x3f, 64);
@@ -52,7 +55,15 @@ namespace MainStationFrontEnd
 
         public static void InvokeLocalEvent(ushort _DeviceID, byte _Event, ushort _Arguments)
         {
-
+            byte[] buffer = new byte[65];
+            buffer[0] = 0x06;//send raw data to devices
+            byte[] shrt = BitConverter.GetBytes((ushort)_DeviceID);
+            buffer[1] = shrt[0];
+            buffer[2] = shrt[1];
+            buffer[3] = _Event;
+            Write(buffer);
+            System.Threading.Thread.Sleep(1000);
+            byte[] result=Read();//wait for answer
         }
 
         public static void InvokeRemoteEvent(ushort _DeviceID, byte _Event, ushort _Arguments)
@@ -68,6 +79,7 @@ namespace MainStationFrontEnd
             buffer[5] = shrt[0];
             buffer[6] = shrt[1];
             Write(buffer);
+            Read();//wait for answer
         }
 
         public static void SendRaw(ushort _DeviceID, byte[] _Data)
@@ -84,12 +96,28 @@ namespace MainStationFrontEnd
             }
             Write(buffer);
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="_Data">should be 2^16 byte long</param>
+
+        public static bool EEPROMWriteVerify(byte[] _Data)
+        {
+            EEPROMWrite(_Data);
+            byte[] read = new byte[_Data.Length];
+            for (int i = 0; i < read.Length; i++)
+            {
+                read[i] = EEPROMRead((ushort)i);
+            }
+            for (int i = 0; i < read.Length; i++)
+            {
+                if (EEPROMRead((ushort)i) != _Data[i])
+                    return false;
+            }
+            return true;
+        }
+
         public static void EEPROMWrite(byte[] _Data)
         {
+            System.IO.File.WriteAllBytes("c:\\eeprom.bin",_Data);
+
+#if false//write page
             for (int i = 0; i < _Data.Length; i += 32)
             {
                 byte[] buffer = new byte[32];
@@ -97,14 +125,33 @@ namespace MainStationFrontEnd
                 {
                     buffer[j] = _Data[i + j];
                 }
-                EEPROMWrite((ushort)i, buffer);
+                EEPROMWritePage((ushort)i, buffer);
             }
+#else
+            for (int i = 0; i < _Data.Length; i++)
+            {
+                EEPROMWrite((ushort)i, _Data[i]);
+            }
+#endif
         }
 
-        public static void EEPROMWrite(ushort _Address, byte[] _Data)
+        public static void EEPROMWrite(ushort _Address, byte _Data)
         {
             byte[] buffer = new byte[65];
             buffer[0] = 0x03;
+            byte[] shrt = BitConverter.GetBytes((ushort)_Address);
+            buffer[1] = shrt[0];
+            buffer[2] = shrt[1];
+            buffer[3] = _Data;
+            Write(buffer);
+            System.Threading.Thread.Sleep(10);
+            Read();//wait for answer
+        }
+
+        public static void EEPROMWritePage(ushort _Address, byte[] _Data)
+        {
+            byte[] buffer = new byte[65];
+            buffer[0] = 0x04;
             byte[] shrt = BitConverter.GetBytes((ushort)_Address);
             buffer[1] = shrt[0];
             buffer[2] = shrt[1];
@@ -120,12 +167,12 @@ namespace MainStationFrontEnd
         public static byte EEPROMRead(ushort _Address)
         {
             byte[] buffer = new byte[65];
-            buffer[0] = 0x04;
+            buffer[0] = 0x05;
             byte[] shrt = BitConverter.GetBytes((ushort)_Address);
             buffer[1] = shrt[0];
             buffer[2] = shrt[1];
             Write(buffer);
-
+            System.Threading.Thread.Sleep(10);
             buffer = Read();
             return buffer[1];
         }

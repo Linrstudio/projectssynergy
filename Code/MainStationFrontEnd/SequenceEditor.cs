@@ -12,6 +12,7 @@ namespace MainStationFrontEnd
     public partial class SequenceEditWindow : UserControl
     {
         public KismetSequence Sequence = null;
+        public List<CodeBlock> FloatingBlocks = new List<CodeBlock>();
         public int SelectedStartedAt = 0;
         public CodeBlock.Output SelectedOutput = null;
         public CodeBlock.Input SelectedInput = null;
@@ -180,17 +181,38 @@ namespace MainStationFrontEnd
             base.OnPaint(e);
         }
 
+        public void UpdateFloatingBlocks()
+        {
+            FloatingBlocks.Clear();
+            foreach (CodeBlock b in Sequence.codeblocks)
+            {
+                if (b == Sequence.root) continue;
+                bool found = true;
+                foreach (CodeBlock.Input i in b.Inputs)
+                {
+                    if (i.Connected != null) found = false;
+                }
+                foreach (CodeBlock.Output o in b.Outputs)
+                {
+                    if (o.Connected.Count > 0) found = false;
+                }
+                if (found) FloatingBlocks.Add(b);
+            }
+        }
+
         public void Format()
         {
             if (Sequence == null) return;
+
+
             //if (NeedsRecompile) eeprom.Assamble();
             NeedsRecompile = false;
 #if true
             foreach (CodeBlock c in Sequence.codeblocks)
             {
                 if (c == Sequence.root) continue;
-                c.targetX = 100;
-                c.targetY = 100;
+                //c.targetX = 100;
+                //c.targetY = 100;
             }
             Sequence.root.targetX = 100;
             Sequence.root.UpdateScope();
@@ -213,11 +235,15 @@ namespace MainStationFrontEnd
             Height = (int)Math.Max(Parent.Bounds.Height, Sequence.root.height + 100);
             Sequence.root.targetY = Height / 2;
 
-            /*
-            toolStripProgressBar1.Maximum = eeprom.Size;
-            toolStripProgressBar1.Value = eeprom.BytesUsed;
-            toolStripStatusLabel2.Text = string.Format("{0}/{1} Bytes used", eeprom.BytesUsed, eeprom.Size);
-            */
+            UpdateFloatingBlocks();
+            int floatx = 100;
+            foreach (CodeBlock b in FloatingBlocks)
+            {
+                b.targetX = floatx;
+                b.targetY = 100;
+                floatx += 150;
+            }
+
             Refresh();
         }
 
@@ -310,7 +336,7 @@ namespace MainStationFrontEnd
             CodeBlock.Initialize();
             foreach (CodeBlock.Prototype p in CodeBlock.CodeBlocks)
             {
-                if (p.Type.BaseType != typeof(BaseBlockEvent))
+                if (p.UserCanAdd)
                 {
                     if (!menuitems.ContainsKey(p.GroupName))
                         menuitems.Add(p.GroupName, new MenuItem(p.GroupName));

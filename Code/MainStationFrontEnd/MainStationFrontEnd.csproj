@@ -66,6 +66,12 @@
     <Compile Include="EventEditor.Designer.cs">
       <DependentUpon>EventEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="InvokeRemoteEventWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InvokeRemoteEventWindow.Designer.cs">
+      <DependentUpon>InvokeRemoteEventWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -82,6 +88,9 @@
     <EmbeddedResource Include="EventEditor.resx">
       <DependentUpon>EventEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="InvokeRemoteEventWindow.resx">
+      <DependentUpon>InvokeRemoteEventWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -94,6 +103,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -112,6 +122,7 @@
     <Compile Include="Utilities.cs" />
     <Compile Include="VPL\CodeBlock.cs" />
     <Compile Include="VPL\CodeBlocks.cs" />
+    <Compile Include="VPL\CodeInstructions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

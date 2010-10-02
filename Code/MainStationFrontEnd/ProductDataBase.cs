@@ -30,9 +30,9 @@ namespace MainStationFrontEnd
                     string description = evnt.Attribute("Description").Value;
                     Device.Event newevent = new Device.Event(name, id, description);
                     d.events.Add(newevent);
-                    foreach (XElement input in evnt.Elements("Input"))
+                    foreach (XElement output in evnt.Elements("Output"))
                     {
-                        newevent.Inputs.Add(new Device.Event.Input(input.Attribute("Name").Value, input.Attribute("Type").Value));
+                        newevent.Outputs.Add(new Device.Event.Output(output.Attribute("Name").Value, output.Attribute("Type").Value));
                     }
                 }
                 foreach (XElement evnt in device.Elements("RemoteEvent"))
@@ -156,11 +156,11 @@ namespace MainStationFrontEnd
                 string description;
                 public string Description { get { return description; } }
 
-                public List<Input> Inputs = new List<Input>();
+                public List<Output> Outputs = new List<Output>();
 
-                public class Input
+                public class Output
                 {
-                    public Input(string _Name, string _Type)
+                    public Output(string _Name, string _Type)
                     {
                         Name = _Name;
                         Type = _Type;

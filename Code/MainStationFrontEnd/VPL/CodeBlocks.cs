@@ -9,7 +9,7 @@ namespace MainStationFrontEnd
     //Archetypes
     public class BaseBlockConditions : CodeBlock
     {
-        public BaseBlockConditions(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+        public BaseBlockConditions(KismetSequence _Sequence) : base(_Sequence) { }
         public override void Draw(Graphics _Graphics)
         {
             DrawTriangle(_Graphics);
@@ -24,8 +24,8 @@ namespace MainStationFrontEnd
 
     public class BaseBlockMath : CodeBlock
     {
-        public BaseBlockMath(KismetSequence _Sequence, byte _BlockID)
-            : base(_Sequence, _BlockID)
+        public BaseBlockMath(KismetSequence _Sequence)
+            : base(_Sequence)
         {
 
         }
@@ -33,7 +33,7 @@ namespace MainStationFrontEnd
 
     public class BaseBlockConstant : CodeBlock
     {
-        public BaseBlockConstant(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+        public BaseBlockConstant(KismetSequence _Sequence) : base(_Sequence) { }
 
         public override void Draw(Graphics _Graphics)
         {
@@ -50,7 +50,7 @@ namespace MainStationFrontEnd
 
     public class BaseBlockVariable : CodeBlock
     {
-        public BaseBlockVariable(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+        public BaseBlockVariable(KismetSequence _Sequence) : base(_Sequence) { }
 
         public override void Draw(Graphics _Graphics)
         {
@@ -75,12 +75,12 @@ namespace MainStationFrontEnd
 
     public class BaseBlockOther : CodeBlock
     {
-        public BaseBlockOther(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+        public BaseBlockOther(KismetSequence _Sequence) : base(_Sequence) { }
     }
 
     public class BaseBlockBranch : CodeBlock
     {
-        public BaseBlockBranch(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+        public BaseBlockBranch(KismetSequence _Sequence) : base(_Sequence) { }
         public override void Draw(Graphics _Graphics)
         {
             DrawScope(_Graphics);
@@ -96,7 +96,64 @@ namespace MainStationFrontEnd
 
     public class BaseBlockEvent : CodeBlock
     {
-        public BaseBlockEvent(KismetSequence _Sequence, byte _BlockID) : base(_Sequence, _BlockID) { }
+        public BaseBlockEvent(KismetSequence _Sequence) : base(_Sequence) { }
+    }
+
+
+
+
+    public class BlockLocalEvent : BaseBlockEvent
+    {
+        ProductDataBase.Device device = null;
+        ProductDataBase.Device.Event evnt;
+
+        public BlockLocalEvent(KismetSequence _Sequence)
+            : base(_Sequence)
+        {
+            IsScope = true;
+            width = 120;
+            height = 200;
+        }
+
+        public override void SetValues(string _Values)
+        {
+            Inputs.Clear();
+            Outputs.Clear();
+            string[] split = _Values.Split(' ');
+            if (split.Length >= 2)
+            {
+                device = ProductDataBase.GetDeviceByID(ushort.Parse(split[0]));
+                evnt = device.GetEventByID(byte.Parse(split[1]));
+                if (evnt != null)
+                    foreach (var i in evnt.Outputs)
+                    {
+                        Outputs.Add(new Output(this, i.Name, GetDataType(i.Type)));
+                    }
+            }
+            if (Outputs.Count == 0) Outputs.Add(new Output(this, "", null));//add one output if there are non available
+            UpdateConnectors();
+        }
+
+        public override string GetValues()
+        {
+            return string.Format("{0} {1}", device.ID, evnt.ID);
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            base.Draw(_Graphics);
+            DrawScope(_Graphics);
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString(Sequence.Event.eventtype.Name, new Font("Arial", 10), Brushes.Black, X, Y, sf);
+        }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawScopeShadow(_Graphics);
+            base.DrawShadow(_Graphics);
+        }
     }
 
     public class BlockRemoteEvent : BaseBlockOther
@@ -113,7 +170,7 @@ namespace MainStationFrontEnd
         }
 
         public BlockRemoteEvent(KismetSequence _Sequence)
-            : base(_Sequence, 2)
+            : base(_Sequence)
         {
             width = 100;
             height = 25;
@@ -122,6 +179,7 @@ namespace MainStationFrontEnd
         public override void SetValues(string _Values)
         {
             Inputs.Clear();
+            Outputs.Clear();
             string[] split = _Values.Split(' ');
             device = ProductDataBase.GetDeviceByID(ushort.Parse(split[0]));
             remoteevent = device.GetRemoteEventByID(byte.Parse(split[1]));
@@ -145,7 +203,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex };
+            //Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex };
         }
 
         public override void Draw(Graphics _Graphics)
@@ -176,7 +234,7 @@ namespace MainStationFrontEnd
     public class BlockSetDebugLed1 : BaseBlockOther
     {
         public BlockSetDebugLed1(KismetSequence _Sequence)
-            : base(_Sequence, 20)
+            : base(_Sequence)
         {
             width = 100;
             height = 25;
@@ -186,7 +244,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex };
+            Code = CodeInstructions.SetLED(Inputs[0].Connected.Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -214,51 +272,10 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BlockSetDebugLed2 : BaseBlockOther
-    {
-        public BlockSetDebugLed2(KismetSequence _Sequence)
-            : base(_Sequence, 21)
-        {
-            width = 100;
-            height = 25;
-            Inputs.Add(new Input(this, "On?", GetDataType("bool")));
-            UpdateConnectors();
-        }
-
-        public override void Assamble()
-        {
-            Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex };
-        }
-
-        public override void Draw(Graphics _Graphics)
-        {
-            base.Draw(_Graphics);
-            DrawShape(_Graphics,
-                new PointF(-width / 2, -height / 2),
-                new PointF(-width / 2, height / 2),
-                new PointF(width / 2, height / 2),
-                new PointF(width / 2, -height / 2));
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center;
-            sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Debug Led 2", new Font("Arial", 10), Brushes.Black, X, Y, sf);
-        }
-
-        public override void DrawShadow(Graphics _Graphics)
-        {
-            DrawShapeShadow(_Graphics,
-                new PointF(-width / 2, -height / 2),
-                new PointF(-width / 2, height / 2),
-                new PointF(width / 2, height / 2),
-                new PointF(width / 2, -height / 2));
-            base.DrawShadow(_Graphics);
-        }
-    }
-
     public class BlockGetTime : BaseBlockVariable
     {
         public BlockGetTime(KismetSequence _Sequence)
-            : base(_Sequence, 22)
+            : base(_Sequence)
         {
             width = 75;
             height = 25;
@@ -267,7 +284,10 @@ namespace MainStationFrontEnd
             UpdateConnectors();
         }
 
-        public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
+        public override void Assamble()
+        {
+            //Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; 
+        }
 
         public override void Draw(Graphics _Graphics)
         {
@@ -282,7 +302,7 @@ namespace MainStationFrontEnd
     public class BlockGetHour : BaseBlockVariable
     {
         public BlockGetHour(KismetSequence _Sequence)
-            : base(_Sequence, 6)
+            : base(_Sequence)
         {
             width = 75;
             height = 25;
@@ -291,7 +311,10 @@ namespace MainStationFrontEnd
             UpdateConnectors();
         }
 
-        public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
+        public override void Assamble()
+        {
+            //Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; 
+        }
 
         public override void Draw(Graphics _Graphics)
         {
@@ -305,7 +328,7 @@ namespace MainStationFrontEnd
     public class BlockGetMinute : BaseBlockVariable
     {
         public BlockGetMinute(KismetSequence _Sequence)
-            : base(_Sequence, 7)
+            : base(_Sequence)
         {
             width = 75;
             height = 25;
@@ -314,7 +337,10 @@ namespace MainStationFrontEnd
             UpdateConnectors();
         }
 
-        public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
+        public override void Assamble()
+        {
+            //Code = new byte[] { BlockID, Outputs[0].RegisterIndex };
+        }
 
         public override void Draw(Graphics _Graphics)
         {
@@ -328,7 +354,7 @@ namespace MainStationFrontEnd
     public class BlockGetSecond : BaseBlockVariable
     {
         public BlockGetSecond(KismetSequence _Sequence)
-            : base(_Sequence, 8)
+            : base(_Sequence)
         {
             width = 75;
             height = 25;
@@ -337,7 +363,10 @@ namespace MainStationFrontEnd
             UpdateConnectors();
         }
 
-        public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
+        public override void Assamble()
+        {
+            //Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; 
+        }
 
         public override void Draw(Graphics _Graphics)
         {
@@ -351,7 +380,7 @@ namespace MainStationFrontEnd
     public class BlockGetDay : BaseBlockVariable
     {
         public BlockGetDay(KismetSequence _Sequence)
-            : base(_Sequence, 9)
+            : base(_Sequence)
         {
             width = 75;
             height = 25;
@@ -360,7 +389,10 @@ namespace MainStationFrontEnd
             UpdateConnectors();
         }
 
-        public override void Assamble() { Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; }
+        public override void Assamble()
+        {
+            //Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; 
+        }
 
         public override void Draw(Graphics _Graphics)
         {
@@ -372,10 +404,10 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BlockEquals : BaseBlockConditions
+    public class BlockMathEquals : BaseBlockConditions
     {
-        public BlockEquals(KismetSequence _Sequence)
-            : base(_Sequence, 5)
+        public BlockMathEquals(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             width = 100;
             height = 50;
@@ -388,11 +420,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            try
-            {
-                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
-            }
-            catch { }
+            Code = CodeInstructions.Equals(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -405,10 +433,39 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BlockDiffers : BaseBlockConditions
+    public class BlockBoolEquals : BaseBlockConditions
     {
-        public BlockDiffers(KismetSequence _Sequence)
-            : base(_Sequence, 18)
+        public BlockBoolEquals(KismetSequence _Sequence)
+            : base(_Sequence)
+        {
+            width = 100;
+            height = 50;
+            Inputs.Add(new Input(this, "A", GetDataType("bool")));
+            Inputs.Add(new Input(this, "B", GetDataType("bool")));
+            Outputs.Add(new Output(this, "A equals B", GetDataType("bool")));
+
+            UpdateConnectors();
+        }
+
+        public override void Assamble()
+        {
+            Code = CodeInstructions.Equals(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            base.Draw(_Graphics);
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Equals", new Font("Arial", 10), Brushes.Black, X, Y, sf);
+        }
+    }
+
+    public class BlockMathDiffers : BaseBlockConditions
+    {
+        public BlockMathDiffers(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             width = 100;
             height = 50;
@@ -420,11 +477,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            try
-            {
-                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
-            }
-            catch { }
+            Code = CodeInstructions.Differs(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -437,10 +490,38 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BlockSmallerThan : BaseBlockConditions
+    public class BlockBoolDiffers : BaseBlockConditions
     {
-        public BlockSmallerThan(KismetSequence _Sequence)
-            : base(_Sequence, 21)
+        public BlockBoolDiffers(KismetSequence _Sequence)
+            : base(_Sequence)
+        {
+            width = 100;
+            height = 50;
+            Inputs.Add(new Input(this, "A", GetDataType("bool")));
+            Inputs.Add(new Input(this, "B", GetDataType("bool")));
+            Outputs.Add(new Output(this, "A differs from B", GetDataType("bool")));
+            UpdateConnectors();
+        }
+
+        public override void Assamble()
+        {
+            Code = CodeInstructions.Differs(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            base.Draw(_Graphics);
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Differs", new Font("Arial", 10), Brushes.Black, X, Y, sf);
+        }
+    }
+
+    public class BlockMathSmallerThan : BaseBlockConditions
+    {
+        public BlockMathSmallerThan(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             width = 100;
             height = 50;
@@ -454,7 +535,7 @@ namespace MainStationFrontEnd
         {
             try
             {
-                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
+                //Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
             }
             catch { }
         }
@@ -469,10 +550,10 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BlockLargerThan : BaseBlockConditions
+    public class BlockMathLargerThan : BaseBlockConditions
     {
-        public BlockLargerThan(KismetSequence _Sequence)
-            : base(_Sequence, 22)
+        public BlockMathLargerThan(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             width = 100;
             height = 50;
@@ -486,7 +567,7 @@ namespace MainStationFrontEnd
         {
             try
             {
-                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
+                //Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
             }
             catch { }
         }
@@ -501,7 +582,63 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BlockConstantByte : BaseBlockConstant
+    public class BlockBoolAnd : BaseBlockMath
+    {
+        public BlockBoolAnd(KismetSequence _Sequence)
+            : base(_Sequence)
+        {
+            width = 100;
+            height = 50;
+            Inputs.Add(new Input(this, "A", GetDataType("bool")));
+            Inputs.Add(new Input(this, "B", GetDataType("bool")));
+            Outputs.Add(new Output(this, "A and B", GetDataType("bool")));
+            UpdateConnectors();
+        }
+
+        public override void Assamble()
+        {
+            Code = CodeInstructions.And(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            base.Draw(_Graphics);
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("And", new Font("Arial", 10), Brushes.Black, X, Y, sf);
+        }
+    }
+
+    public class BlockBoolOr : BaseBlockMath
+    {
+        public BlockBoolOr(KismetSequence _Sequence)
+            : base(_Sequence)
+        {
+            width = 100;
+            height = 50;
+            Inputs.Add(new Input(this, "A", GetDataType("bool")));
+            Inputs.Add(new Input(this, "B", GetDataType("bool")));
+            Outputs.Add(new Output(this, "A or B", GetDataType("bool")));
+            UpdateConnectors();
+        }
+
+        public override void Assamble()
+        {
+            Code = CodeInstructions.Or(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            base.Draw(_Graphics);
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Or", new Font("Arial", 10), Brushes.Black, X, Y, sf);
+        }
+    }
+
+    public class BlockMathConstant : BaseBlockConstant
     {
         ushort val;
 
@@ -522,8 +659,8 @@ namespace MainStationFrontEnd
             val = ushort.Parse(_Values);
         }
 
-        public BlockConstantByte(KismetSequence _Sequence)
-            : base(_Sequence, 11)
+        public BlockMathConstant(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             width = 50;
             height = 50;
@@ -534,9 +671,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            byte[] val = Utilities.FromShort(Value);
-            Code = new byte[] { BlockID, Outputs[0].RegisterIndex, val[0], val[1] };
-            base.Assamble();
+            Code = CodeInstructions.Load(Outputs[0].Register.Index, Value);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -549,7 +684,7 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BlockConstantBool : BaseBlockConstant
+    public class BlockBoolConstant : BaseBlockConstant
     {
         bool val;
 
@@ -570,8 +705,8 @@ namespace MainStationFrontEnd
             val = bool.Parse(_Values);
         }
 
-        public BlockConstantBool(KismetSequence _Sequence)
-            : base(_Sequence, 11)
+        public BlockBoolConstant(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             width = 50;
             height = 50;
@@ -582,8 +717,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            byte[] val = Utilities.FromShort(Value ? (ushort)65535 : (ushort)0);
-            Code = new byte[] { BlockID, Outputs[0].RegisterIndex, val[0], val[1] };
+            Code = CodeInstructions.Load(Outputs[0].Register.Index, (ushort)(Value ? 65535 : 0));
             base.Assamble();
         }
 
@@ -597,7 +731,7 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BlockConstantTime : BaseBlockConstant
+    public class BlockTimeConstant : BaseBlockConstant
     {
         TimeSpan time;
         DayOfWeek weekday;
@@ -622,8 +756,8 @@ namespace MainStationFrontEnd
             weekday = (DayOfWeek)int.Parse(_Values.Split(' ')[3]);
         }
 
-        public BlockConstantTime(KismetSequence _Sequence)
-            : base(_Sequence, 10)
+        public BlockTimeConstant(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             width = 50;
             height = 50;
@@ -634,7 +768,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            Code = new byte[] { BlockID, Outputs[0].RegisterIndex, 0, (byte)time.Hours, (byte)time.Minutes, (byte)time.Seconds, (byte)((int)weekday) };
+            //Code = new byte[] { BlockID, Outputs[0].RegisterIndex, 0, (byte)time.Hours, (byte)time.Minutes, (byte)time.Seconds, (byte)((int)weekday) };
             base.Assamble();
         }
 
@@ -648,10 +782,10 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BlockAdd : BaseBlockMath
+    public class BlockMathAdd : BaseBlockMath
     {
-        public BlockAdd(KismetSequence _Sequence)
-            : base(_Sequence, 10)
+        public BlockMathAdd(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             width = 100;
             height = 50;
@@ -663,11 +797,8 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            try
-            {
-                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
-            }
-            catch { }
+            Code = CodeInstructions.Add(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+
         }
 
         public override void Draw(Graphics _Graphics)
@@ -686,10 +817,46 @@ namespace MainStationFrontEnd
             base.DrawShadow(_Graphics);
         }
     }
-    public class BlockSubstract : BaseBlockMath
+
+    public class BlockBoolXOR : BaseBlockMath
     {
-        public BlockSubstract(KismetSequence _Sequence)
-            : base(_Sequence, 11)
+        public BlockBoolXOR(KismetSequence _Sequence)
+            : base(_Sequence)
+        {
+            width = 100;
+            height = 50;
+            Inputs.Add(new Input(this, "A", GetDataType("bool")));
+            Inputs.Add(new Input(this, "B", GetDataType("bool")));
+            Outputs.Add(new Output(this, "A Xor B", GetDataType("bool")));
+            UpdateConnectors();
+        }
+
+        public override void Assamble()
+        {
+            Code = CodeInstructions.Xor(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            base.Draw(_Graphics);
+            DrawBlock(_Graphics);
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Exclusive Or", new Font("Arial", 10), Brushes.Black, X, Y, sf);
+        }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawBlockShadow(_Graphics);
+            base.DrawShadow(_Graphics);
+        }
+    }
+    public class BlockMathSubstract : BaseBlockMath
+    {
+        public BlockMathSubstract(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             width = 100;
             height = 50;
@@ -701,11 +868,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            try
-            {
-                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
-            }
-            catch { }
+            Code = CodeInstructions.Substract(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
 
@@ -725,10 +888,10 @@ namespace MainStationFrontEnd
             base.DrawShadow(_Graphics);
         }
     }
-    public class BlockMultiply : BaseBlockMath
+    public class BlockMathMultiply : BaseBlockMath
     {
-        public BlockMultiply(KismetSequence _Sequence)
-            : base(_Sequence, 12)
+        public BlockMathMultiply(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             width = 100;
             height = 50;
@@ -740,11 +903,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            try
-            {
-                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
-            }
-            catch { }
+            Code = CodeInstructions.Multiply(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
 
@@ -764,10 +923,10 @@ namespace MainStationFrontEnd
             base.DrawShadow(_Graphics);
         }
     }
-    public class BlockDivide : BaseBlockMath
+    public class BlockMathDivide : BaseBlockMath
     {
-        public BlockDivide(KismetSequence _Sequence)
-            : base(_Sequence, 13)
+        public BlockMathDivide(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             width = 100;
             height = 50;
@@ -779,11 +938,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            try
-            {
-                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
-            }
-            catch { }
+            Code = CodeInstructions.Divide(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
 
@@ -803,47 +958,8 @@ namespace MainStationFrontEnd
             base.DrawShadow(_Graphics);
         }
     }
-    public class BlockBitMask : BaseBlockMath
-    {
-        public BlockBitMask(KismetSequence _Sequence)
-            : base(_Sequence, 15)
-        {
-            width = 100;
-            height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("int")));
-            Inputs.Add(new Input(this, "B", GetDataType("int")));
-            Outputs.Add(new Output(this, "A and B", GetDataType("int")));
-            UpdateConnectors();
-        }
 
-        public override void Assamble()
-        {
-            try
-            {
-                Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, Inputs[1].Connected.RegisterIndex, Outputs[0].RegisterIndex };
-            }
-            catch { }
-        }
-
-
-        public override void Draw(Graphics _Graphics)
-        {
-            DrawBlock(_Graphics);
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center;
-            sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Bitwise And", new Font("Arial", 10), Brushes.Black, X, Y, sf);
-            base.Draw(_Graphics);
-        }
-
-        public override void DrawShadow(Graphics _Graphics)
-        {
-            DrawBlockShadow(_Graphics);
-            base.DrawShadow(_Graphics);
-        }
-    }
-
-    public class BlockGetVariable : BaseBlockVariable
+    public class BlockMathGetVariable : BaseBlockVariable
     {
         string name;
 
@@ -864,8 +980,8 @@ namespace MainStationFrontEnd
             name = _Values;
         }
 
-        public BlockGetVariable(KismetSequence _Sequence)
-            : base(_Sequence, 17)
+        public BlockMathGetVariable(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             height = 50;
             width = 100;
@@ -876,7 +992,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            Code = new byte[] { BlockID, EEPROM.GetVariableAddress(name), Outputs[0].RegisterIndex };
+            //Code = new byte[] { BlockID, EEPROM.GetVariableAddress(name), Outputs[0].RegisterIndex };
         }
 
         public override void Draw(Graphics _Graphics)
@@ -889,7 +1005,7 @@ namespace MainStationFrontEnd
             _Graphics.DrawString(Name, new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y + 8, sf);
         }
     }
-    public class BlockSetVariable : BaseBlockVariable
+    public class BlockMathSetVariable : BaseBlockVariable
     {
         string name;
 
@@ -910,8 +1026,8 @@ namespace MainStationFrontEnd
             name = _Values;
         }
 
-        public BlockSetVariable(KismetSequence _Sequence)
-            : base(_Sequence, 16)
+        public BlockMathSetVariable(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             width = 100;
             height = 50;
@@ -921,7 +1037,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            Code = new byte[] { BlockID, EEPROM.GetVariableAddress(name), Inputs[0].Connected.RegisterIndex };
+            //Code = new byte[] { BlockID, EEPROM.GetVariableAddress(name), Inputs[0].Connected.RegisterIndex };
         }
 
         public override void Draw(Graphics _Graphics)
@@ -935,39 +1051,10 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class DefaultEvent : BaseBlockEvent
+    public class BlockBoolIf : BaseBlockBranch
     {
-        public DefaultEvent(KismetSequence _Sequence)
-            : base(_Sequence, 0)
-        {
-            IsScope = true;
-            width = 120;
-            height = 200;
-            Outputs.Add(new Output(this, "", null));
-            UpdateConnectors();
-        }
-
-        public override void Draw(Graphics _Graphics)
-        {
-            base.Draw(_Graphics);
-            DrawScope(_Graphics);
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center;
-            sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString(Sequence.Event.eventtype.Name, new Font("Arial", 10), Brushes.Black, X, Y, sf);
-        }
-
-        public override void DrawShadow(Graphics _Graphics)
-        {
-            DrawScopeShadow(_Graphics);
-            base.DrawShadow(_Graphics);
-        }
-    }
-
-    public class BlockIf : BaseBlockBranch
-    {
-        public BlockIf(KismetSequence _Sequence)
-            : base(_Sequence, 19)
+        public BlockBoolIf(KismetSequence _Sequence)
+            : base(_Sequence)
         {
             IsScope = true;
             width = 120;
@@ -981,7 +1068,7 @@ namespace MainStationFrontEnd
         {
             CodeBlock cwhi = GetChildWithHighestIndex();
             int target = (byte)(cwhi.address + cwhi.Code.Length);
-            Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, (byte)target };
+            Code = new byte[] { 0x80, Inputs[0].Connected.Register.Index, (byte)target };
         }
 
         public override void Draw(Graphics _Graphics)
@@ -992,36 +1079,6 @@ namespace MainStationFrontEnd
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("If", new Font("Arial", 10), Brushes.Black, X, Y, sf);
-        }
-    }
-
-    public class BlockIfNot : BaseBlockBranch
-    {
-        public BlockIfNot(KismetSequence _Sequence)
-            : base(_Sequence, 20)
-        {
-            IsScope = true;
-            width = 120;
-            height = 100;
-            Inputs.Add(new Input(this, "Condition", GetDataType("bool")));
-            Outputs.Add(new Output(this, "", null));
-            UpdateConnectors();
-        }
-
-        public override void Assamble()
-        {
-            CodeBlock cwhi = GetChildWithHighestIndex();
-            int target = (byte)(cwhi.address + cwhi.Code.Length);
-            Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex, (byte)target };
-        }
-
-        public override void Draw(Graphics _Graphics)
-        {
-            base.Draw(_Graphics);
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center;
-            sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("If not", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
 }
