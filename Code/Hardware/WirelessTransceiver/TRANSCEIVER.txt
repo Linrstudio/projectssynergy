@@ -1,0 +1,15 @@
+PIN layout
+
+  VDD -|\/|- VSS
+<-ERR -|  |- DOut->
+<- TX -|  |- OE  <-
+-> RX -|__|- DIn <-
+ 
+OE  = Transmission Enabled
+ERR = ERR is hi when there is no sensefull data coming in, aka no transmitter found
+TX  = goes to TX433 module and new data can be presented on DIn on rising edges
+RX	= goes to RX322 module and data can be read from DOut on rising edges
+
+how to use:
+simple, on each rising edge of TX the user should present a new bit on the DIn pin
+on each rising edge of RX the user should read a bit from the DOut pin
