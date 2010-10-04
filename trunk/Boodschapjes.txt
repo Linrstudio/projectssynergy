@@ -1,4 +1,1 @@
 Electra:
-20Mhz crystal
-PIC16F690
-HCF4069 2*
