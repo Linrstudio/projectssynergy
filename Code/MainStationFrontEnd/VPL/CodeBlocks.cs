@@ -104,8 +104,8 @@ namespace MainStationFrontEnd
 
     public class BlockLocalEvent : BaseBlockEvent
     {
-        ProductDataBase.Device device = null;
-        ProductDataBase.Device.Event evnt;
+        public ProductDataBase.Device device = null;
+        public ProductDataBase.Device.Event evnt;
 
         public BlockLocalEvent(KismetSequence _Sequence)
             : base(_Sequence)
@@ -158,9 +158,9 @@ namespace MainStationFrontEnd
 
     public class BlockRemoteEvent : BaseBlockOther
     {
-        ProductDataBase.Device device;
-        ProductDataBase.Device.RemoteEvent remoteevent;
-        ushort deviceid;
+        public ProductDataBase.Device device;
+        public ProductDataBase.Device.RemoteEvent remoteevent;
+        public ushort deviceid;
 
         [Browsable(true), CategoryAttribute("Constant")]
         public ushort DeviceID
@@ -173,7 +173,7 @@ namespace MainStationFrontEnd
             : base(_Sequence)
         {
             width = 100;
-            height = 25;
+            height = 50;
         }
 
         public override void SetValues(string _Values)
@@ -203,7 +203,19 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            //Code = new byte[] { BlockID, Inputs[0].Connected.RegisterIndex };
+            List<byte> code = new List<byte>();
+            //load all inputs to the EP registers
+            byte idx = 0;
+            code.AddRange(CodeInstructions.Load8(idx,remoteevent.ID));
+            idx++;
+            foreach (Input i in Inputs)
+            {
+                code.AddRange(CodeInstructions.Mov(i.Connected.Register.Index, (byte)(MainStation.EPBufferOffset + idx), (byte)i.Connected.Register.Size));
+                idx += (byte)i.datatype.RegistersNeeded;
+            }
+            code.AddRange(CodeInstructions.EPSend(deviceid, idx));
+
+            Code = code.ToArray();
         }
 
         public override void Draw(Graphics _Graphics)
@@ -217,7 +229,7 @@ namespace MainStationFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Debug Led 1", new Font("Arial", 10), Brushes.Black, X, Y, sf);
+            _Graphics.DrawString(string.Format("{0}\n({1})",remoteevent.Name,deviceid), new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
 
         public override void DrawShadow(Graphics _Graphics)

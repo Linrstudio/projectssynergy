@@ -9,7 +9,8 @@ namespace MainStationFrontEnd
 {
     class MainStation
     {
-        public const byte KismetRegisterSize = 32;
+        public const byte EPBufferOffset = 0;
+        public const byte KismetRegisterCount = 32;
         public const byte EPBufferSize = 16;
 
         public static void Connect()
@@ -63,7 +64,7 @@ namespace MainStationFrontEnd
             buffer[3] = _Event;
             Write(buffer);
             System.Threading.Thread.Sleep(1000);
-            byte[] result=Read();//wait for answer
+            byte[] result = Read();//wait for answer
         }
 
         public static void InvokeRemoteEvent(ushort _DeviceID, byte _Event, ushort _Arguments)
@@ -99,6 +100,7 @@ namespace MainStationFrontEnd
 
         public static bool EEPROMWriteVerify(byte[] _Data)
         {
+            OperationDisable();
             EEPROMWrite(_Data);
             byte[] read = new byte[_Data.Length];
             for (int i = 0; i < read.Length; i++)
@@ -110,12 +112,13 @@ namespace MainStationFrontEnd
                 if (EEPROMRead((ushort)i) != _Data[i])
                     return false;
             }
+            OperationEnable();
             return true;
         }
 
         public static void EEPROMWrite(byte[] _Data)
         {
-            System.IO.File.WriteAllBytes("c:\\eeprom.bin",_Data);
+            System.IO.File.WriteAllBytes("c:\\eeprom.bin", _Data);
 
 #if false//write page
             for (int i = 0; i < _Data.Length; i += 32)
@@ -175,6 +178,54 @@ namespace MainStationFrontEnd
             System.Threading.Thread.Sleep(10);
             buffer = Read();
             return buffer[1];
+        }
+
+        public static void OperationEnable()
+        {
+            byte[] buffer = new byte[65];
+            buffer[0] = 0x08;
+            Write(buffer);
+            Read();
+        }
+
+        public static void OperationDisable()
+        {
+            byte[] buffer = new byte[65];
+            buffer[0] = 0x07;
+            Write(buffer);
+            Read();
+        }
+
+        public struct Time
+        {
+            public TimeSpan DayTime;
+            public DayOfWeek Day;
+        }
+
+        public static Time TimeRead()
+        {
+            byte[] buffer = new byte[65];
+            buffer[0] = 0x40;
+            Write(buffer);
+            System.Threading.Thread.Sleep(10);
+            buffer = Read();
+            Time t = new Time();
+            t.DayTime = new TimeSpan(buffer[3], buffer[2], buffer[1]);
+            t.Day = (DayOfWeek)(int)buffer[4];
+            return t;
+        }
+
+        public static void TimeWrite()
+        {
+            byte[] buffer = new byte[65];
+            buffer[0] = 0x41;
+            buffer[1] = (byte)DateTime.Now.Second;
+            buffer[2] = (byte)DateTime.Now.Minute;
+            buffer[3] = (byte)DateTime.Now.Hour;
+            buffer[4] = (byte)(int)DateTime.Now.DayOfWeek;
+            Write(buffer);
+            System.Threading.Thread.Sleep(10);
+            buffer = Read();
         }
     }
 }
