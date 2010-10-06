@@ -7,8 +7,12 @@
     <Event ID="2" Name="Minutes Changed" Description="The current minute on the clock changed." >
 		<Output Name="Minutes" Type="int"/>
 	</Event>
-	<Event ID="3" Name="Hours Changed" Description="The current hour on the clock changed." />
-	<Event ID="4" Name="Days Changed" Description="The current day on the calendar changed." />
+	<Event ID="3" Name="Hours Changed" Description="The current hour on the clock changed." >
+			<Output Name="Hours" Type="int"/>
+	</Event>
+	<Event ID="4" Name="Days Changed" Description="The current day on the calendar changed." >
+			<Output Name="Day" Type="int"/>
+	</Event>
   </Device>
   
   <Device  ID="1" Name="Dummy Device" Description="This is our test device">
@@ -17,21 +21,25 @@
 	<RemoteEvent ID="1" Name="SetLED1" Description="Sets LED1" >
 		<Input Name="State" Type="bool"/>
 	</RemoteEvent>
-	<RemoteEvent ID="2" Name="SetLED2" Description="Sets LED2" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="3" Name="GetLED2" Description="Gets LED2" >
-		<Output Name="State" Type="bool"/>
-	</RemoteEvent>
-  </Device>
-  
-  <Device  ID="2" Name="Generic Event" Description="This device represents A generic event.">
-    <Event ID="1" Name="Event" Description="The event..." />
   </Device>
 
-  <Device  ID="3" Name="Generic Pushbutton" Description="This device represents A generic pushbutton.">
-    <Event ID="1" Name="On Push" Description="The button is pressed." />
-    <Event ID="2" Name="On Release" Description="The button is released." />
+  <Device  ID="3" Name="Input card" Description="This device represents the generic digital input card.">
+    <Event ID="1"  Name="1 Rising Edge" Description="Input 1 turned high." />
+    <Event ID="2"  Name="1 Falling Edge" Description="Input 1 turned low." />
+	<Event ID="3"  Name="2 Rising Edge" Description="Input 2 turned high." />
+    <Event ID="4"  Name="2 Falling Edge" Description="Input 2 turned low." />
+	<Event ID="5"  Name="3 Rising Edge" Description="Input 3 turned high." />
+    <Event ID="6"  Name="3 Falling Edge" Description="Input 3 turned low." />
+	<Event ID="7"  Name="4 Rising Edge" Description="Input 4 turned high." />
+    <Event ID="8"  Name="4 Falling Edge" Description="Input 4 turned low." />
+	<Event ID="9"  Name="5 Rising Edge" Description="Input 5 turned high." />
+    <Event ID="10" Name="5 Falling Edge" Description="Input 5 turned low." />
+	<Event ID="11" Name="6 Rising Edge" Description="Input 6 turned high." />
+    <Event ID="12" Name="6 Falling Edge" Description="Input 6 turned low." />
+	<Event ID="13" Name="7 Rising Edge" Description="Input 7 turned high." />
+    <Event ID="14" Name="7 Falling Edge" Description="Input 7 turned low." />
+	<Event ID="15" Name="8 Rising Edge" Description="Input 8 turned high." />
+    <Event ID="16" Name="8 Falling Edge" Description="Input 8 turned low." />
   </Device>
 
 </Products>

@@ -60,7 +60,7 @@ namespace MainStationFrontEnd
                 //node.Tag = d;
                 foreach (EEPROM.Device.Event e in d.Events.Values)
                 {
-                    TreeNode enode = new TreeNode(e.eventtype.Name);
+                    TreeNode enode = new TreeNode(e.Name);
                     enode.Tag = e;
                     enode.ImageIndex = 2;
                     enode.SelectedImageIndex = 3;
@@ -170,14 +170,79 @@ namespace MainStationFrontEnd
             }
         }
 
+        bool lastconnected = false;
         private void t_ConnectionCheck_Tick(object sender, EventArgs e)
         {
-            t_Connected.Text = MainStation.Connected() ? "Connected" : "Disconnected";
+            bool connected = MainStation.Connected();
+            t_Connected.Text = connected ? "Connected" : "Disconnected";
+            if (connected && !lastconnected)
+            {
+                MainStation.TimeWrite();
+                readtime();
+            }
+            lastconnected = connected;
+        }
+
+        void readtime()
+        {
+            MainStation.Time bla = MainStation.TimeRead();
+            t_time.Text = bla.DayTime.ToString() + "-" + bla.Day.ToString();
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            if(!MainStation.EEPROMWriteVerify(EEPROM.Assamble()))MessageBox.Show("Verify incorrect");
+            if (!MainStation.EEPROMWriteVerify(EEPROM.Assamble())) MessageBox.Show("Verify incorrect");
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            MainStation.TimeWrite();
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            readtime();
+        }
+
+        private void t_contents_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            TreeNode node = (TreeNode)e.Item;
+            if (node.Tag == null) return;
+            t_contents.DoDragDrop(node.Tag, DragDropEffects.Link);
+        }
+
+        private void renameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //invoke event at remote device
+            if (t_contentsContextMenuNode.Tag is object[])
+            {
+                object[] tag = (object[])t_contentsContextMenuNode.Tag;
+
+                EEPROM.Device device = (EEPROM.Device)tag[0];
+                ProductDataBase.Device.RemoteEvent evnt = (ProductDataBase.Device.RemoteEvent)tag[1];
+                if (MainStation.Connected())
+                {
+                    new InvokeRemoteEventWindow(evnt, device.ID).Show();
+                    //MainStation.InvokeRemoteEvent(device.ID, evnt.ID, 2);
+                }
+            }
+            //invoke event at mainstation
+            if (t_contentsContextMenuNode.Tag is EEPROM.Device.Event)
+            {
+                EEPROM.Device.Event evnt = (EEPROM.Device.Event)t_contentsContextMenuNode.Tag;
+
+                RenameDialog dialog = new RenameDialog(evnt.Name);
+                switch (dialog.ShowDialog())
+                {
+                    case DialogResult.Yes:
+                        evnt.Name = dialog.NewName;
+                        break;
+                    case DialogResult.No:
+                        evnt.Name = evnt.DefaultName;
+                        break;
+                }
+            }
+            UpdateTree();
         }
     }
 }

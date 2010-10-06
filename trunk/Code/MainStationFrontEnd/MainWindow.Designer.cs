@@ -45,13 +45,14 @@
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.t_time = new System.Windows.Forms.ToolStripLabel();
             this.i_contents = new System.Windows.Forms.ImageList(this.components);
             this.c_TreeEvent = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.b_Invoke = new System.Windows.Forms.ToolStripMenuItem();
             this.t_contents = new System.Windows.Forms.TreeView();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.t_ConnectionCheck = new System.Windows.Forms.Timer(this.components);
+            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.c_TreeEvent.SuspendLayout();
@@ -104,7 +105,7 @@
             this.toolStripSeparator3,
             this.toolStripButton2,
             this.toolStripButton3,
-            this.toolStripLabel1});
+            this.t_time});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(850, 25);
@@ -174,6 +175,7 @@
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton2.Text = "Sync Time";
+            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // toolStripButton3
             // 
@@ -183,12 +185,13 @@
             this.toolStripButton3.Name = "toolStripButton3";
             this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton3.Text = "Get Time";
+            this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
             // 
-            // toolStripLabel1
+            // t_time
             // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(12, 22);
-            this.toolStripLabel1.Text = "-";
+            this.t_time.Name = "t_time";
+            this.t_time.Size = new System.Drawing.Size(12, 22);
+            this.t_time.Text = "-";
             // 
             // i_contents
             // 
@@ -204,14 +207,15 @@
             // c_TreeEvent
             // 
             this.c_TreeEvent.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.b_Invoke});
+            this.b_Invoke,
+            this.renameToolStripMenuItem});
             this.c_TreeEvent.Name = "c_TreeEvent";
-            this.c_TreeEvent.Size = new System.Drawing.Size(110, 26);
+            this.c_TreeEvent.Size = new System.Drawing.Size(153, 70);
             // 
             // b_Invoke
             // 
             this.b_Invoke.Name = "b_Invoke";
-            this.b_Invoke.Size = new System.Drawing.Size(109, 22);
+            this.b_Invoke.Size = new System.Drawing.Size(152, 22);
             this.b_Invoke.Text = "Invoke";
             this.b_Invoke.Click += new System.EventHandler(this.b_Invoke_Click);
             // 
@@ -229,6 +233,7 @@
             this.t_contents.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.t_contents_NodeMouseDoubleClick);
             this.t_contents.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.t_contents_MouseDoubleClick);
             this.t_contents.MouseUp += new System.Windows.Forms.MouseEventHandler(this.t_contents_MouseUp);
+            this.t_contents.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.t_contents_ItemDrag);
             // 
             // splitter1
             // 
@@ -243,6 +248,13 @@
             this.t_ConnectionCheck.Enabled = true;
             this.t_ConnectionCheck.Interval = 1000;
             this.t_ConnectionCheck.Tick += new System.EventHandler(this.t_ConnectionCheck_Tick);
+            // 
+            // renameToolStripMenuItem
+            // 
+            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.renameToolStripMenuItem.Text = "Rename";
+            this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -280,7 +292,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ImageList i_contents;
         private System.Windows.Forms.ContextMenuStrip c_TreeEvent;
         private System.Windows.Forms.ToolStripMenuItem b_Invoke;
@@ -291,6 +302,8 @@
         private System.Windows.Forms.ToolStripStatusLabel t_progress;
         private System.Windows.Forms.Timer t_ConnectionCheck;
         private System.Windows.Forms.ToolStripStatusLabel t_Connected;
+        private System.Windows.Forms.ToolStripLabel t_time;
+        private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
 
     }
 }

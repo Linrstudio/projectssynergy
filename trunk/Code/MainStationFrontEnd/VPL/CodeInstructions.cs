@@ -10,7 +10,11 @@ namespace MainStationFrontEnd
         public static byte[] Load(byte _Reg, ushort _Value)
         {
             byte[] value = Utilities.FromShort(_Value);
-            return new byte[] { 0x01, _Reg, value[1], value[0] };//4
+            return new byte[] { 0x01, _Reg, value[0], value[1] };//4
+        }
+        public static byte[] Load8(byte _Reg, byte _Value)
+        {
+            return new byte[] { 0x02, _Reg, _Value};//4
         }
         public static byte[] Equals(byte _RegA, byte _RegB, byte _RegAnswer)
         {
@@ -52,13 +56,22 @@ namespace MainStationFrontEnd
         {
             return new byte[] { 0x0a, _Reg };//2
         }
-        public static byte[] MovKismetEP(byte _Reg, byte _EPBufferIdx)//move a register's value to the EP send buffer
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_FromReg">Source register</param>
+        /// <param name="_ToReg">Target register</param>
+        /// <param name="_Amount">amount of Registers to copy</param>
+        /// <returns></returns>
+        public static byte[] Mov(byte _FromReg, byte _ToReg, byte _Amount)//move a register's value to another register
         {
-            return new byte[] { 0x70, _Reg, _EPBufferIdx };//2
+            return new byte[] { 0x70, _FromReg, _ToReg, _Amount };//2
         }
-        public static byte[] MovEPKismet(byte _Reg, byte _EPBufferIdx)//move a register's value to the EP send buffer
+
+        public static byte[] EPSend(ushort _DeviceID, byte _EPBufferSize)
         {
-            return new byte[] { 0x71, _Reg, _EPBufferIdx };//2
+            byte[] value = Utilities.FromShort(_DeviceID);
+            return new byte[] { 0x71, value[0], value[1], _EPBufferSize };
         }
     }
 }

@@ -66,12 +66,19 @@
     <Compile Include="EventEditor.Designer.cs">
       <DependentUpon>EventEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="RenameDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RenameDialog.Designer.cs">
+      <DependentUpon>RenameDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="InvokeRemoteEventWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="InvokeRemoteEventWindow.Designer.cs">
       <DependentUpon>InvokeRemoteEventWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="KismetSequence.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -88,6 +95,9 @@
     <EmbeddedResource Include="EventEditor.resx">
       <DependentUpon>EventEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="RenameDialog.resx">
+      <DependentUpon>RenameDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="InvokeRemoteEventWindow.resx">
       <DependentUpon>InvokeRemoteEventWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -99,11 +109,13 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="SequenceEditor.resx">
+      <DependentUpon>SequenceEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

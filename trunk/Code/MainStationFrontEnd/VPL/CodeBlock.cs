@@ -516,8 +516,8 @@ namespace MainStationFrontEnd
             width = 200;
             foreach (CodeBlock c in GetAllChildren())
             {
-                height = Math.Max(height, (Math.Abs(c.Y - Y) + (c.height / 2)) * 2);
-                width = Math.Max(width, (c.X - X + c.width / 2) * 2);
+                height = Math.Max(height, (Math.Abs(c.targetY - targetY) + (c.height / 2)) * 2);
+                width = Math.Max(width, (c.targetX - targetX + c.width / 2) * 2);
             }
             //create spacing around scopes
             height += KismetSequence.SpaceBetweenScopes;
@@ -544,6 +544,19 @@ namespace MainStationFrontEnd
                 }
             }
 
+            return list.ToArray();
+        }
+
+        public CodeBlock[] GetParentScopes()
+        {
+            List<CodeBlock> list = new List<CodeBlock>();
+            CodeBlock parent = Scope;
+            while (parent!= null)
+            {
+                list.Add(parent);
+                parent = parent.Scope;
+            }
+            list.Reverse();
             return list.ToArray();
         }
 
@@ -574,6 +587,10 @@ namespace MainStationFrontEnd
                 GroupName = _GroupName;
                 Type = _Type;
                 UserCanAdd = _UserCanAdd;
+            }
+            public override string ToString()
+            {
+                return BlockName;
             }
         }
 
@@ -615,9 +632,9 @@ namespace MainStationFrontEnd
             {
                 DataTypes = new List<DataType>();
 
-                AddDataType("int", typeof(int), 0, 1, Color.Blue, 1);
-                AddDataType("bool", typeof(bool), false, 2, Color.Green, 1);
-                AddDataType("time", typeof(Time), new Time(), 3, Color.LightGray, 3);
+                AddDataType("int", typeof(int), 0, 1, Color.Blue, 2);
+                AddDataType("bool", typeof(bool), false, 2, Color.Green, 2);
+                AddDataType("time", typeof(Time), new Time(), 3, Color.LightGray, 6);
             }
             if (CodeBlocks == null)
             {
