@@ -363,6 +363,7 @@ namespace MainStationFrontEnd
         int itemaddtimeout;
         void SequenceEditWindow_SelectionChangeCommitted(object sender, EventArgs e)
         {
+            if (Sequence == null) return;
             if (itemaddtimeout < Environment.TickCount - 100)//dont ask.. windows bullshit
             {
                 var t = (ComboBox)sender;

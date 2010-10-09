@@ -23,7 +23,19 @@ namespace MainStationFrontEnd
         private void Form1_Load(object sender, EventArgs e)
         {
             EEPROM.OnAssamble += new EEPROM.OnAssambleHandler(EEPROM_OnAssamble);
+            //new SheduleWindow().ShowDialog();
+            UpdateSchedule();
+            c_day.SelectionStart = DateTime.Now;
+        }
 
+        public void UpdateSchedule()
+        {
+            List<DateTime> dates = new List<DateTime>();
+            foreach (EEPROM.ScheduleEntry entry in EEPROM.ScheduleEntries)
+            {
+                dates.Add(entry.Moment);
+            }
+            c_day.BoldedDates = dates.ToArray();
         }
 
         void EEPROM_OnAssamble()
@@ -243,6 +255,11 @@ namespace MainStationFrontEnd
                 }
             }
             UpdateTree();
+        }
+
+        private void c_day_DateChanged(object sender, DateRangeEventArgs e)
+        {
+            s_hours.SelectedDay = (ushort)TimeSpan.FromTicks(c_day.SelectionStart.Ticks - new DateTime(2000, 1, 1).Ticks).Days;
         }
     }
 }

@@ -112,6 +112,9 @@
     <EmbeddedResource Include="SequenceEditor.resx">
       <DependentUpon>SequenceEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ScheduleEditor.resx">
+      <DependentUpon>ScheduleEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -130,6 +133,12 @@
     </Compile>
     <Compile Include="SequenceEditor.Designer.cs">
       <DependentUpon>SequenceEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScheduleEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScheduleEditor.Designer.cs">
+      <DependentUpon>ScheduleEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities.cs" />
     <Compile Include="VPL\CodeBlock.cs" />
