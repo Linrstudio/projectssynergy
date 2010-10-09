@@ -30,6 +30,9 @@ namespace MainStationFrontEnd
         }
 
         static public SortedDictionary<ushort, Device> Devices = new SortedDictionary<ushort, Device>();
+        public static List<ScheduleEntry> ScheduleEntries = new List<ScheduleEntry>();
+
+        //static public List<CalendarEntry> 
 
         public class Device
         {
@@ -233,8 +236,9 @@ namespace MainStationFrontEnd
 
         public static void Clear()
         {
-            EEPROM.Devices.Clear();
-            EEPROM.Globals.Clear();
+            Devices.Clear();
+            Globals.Clear();
+            ScheduleEntries.Clear();
         }
 
         public static void FromFile(string _FileName)
@@ -286,6 +290,37 @@ namespace MainStationFrontEnd
                         int outputowner = int.Parse(connection.Attribute("OutputOwner").Value);
                         e.sequence.Connect(e.sequence.codeblocks[outputowner].Outputs[output], e.sequence.codeblocks[inputowner].Inputs[input]);
                     }
+                }
+            }
+            //Name="bla" Days="12" Hours="1" Minutes="2" Seconds="3"
+            foreach (XElement e in file.Elements("ScheduleEntry"))
+            {
+                ScheduleEntry entry = new ScheduleEntry();
+                entry.Name = e.Attribute("Name").Value;
+
+                entry.Days = int.Parse(e.Attribute("Days").Value);
+                entry.Hours = int.Parse(e.Attribute("Hours").Value);
+                entry.Minutes = int.Parse(e.Attribute("Minutes").Value);
+                entry.Seconds = int.Parse(e.Attribute("Seconds").Value);
+
+                ScheduleEntries.Add(entry);
+            }
+        }
+
+        public class ScheduleEntry
+        {
+            public string Name;
+            public int Days;
+            public int Hours;
+            public int Minutes;
+            public int Seconds;
+            public DateTime Moment
+            {
+                get
+                {
+                    DateTime dt = new DateTime(2000, 1, 1);
+                    dt.Add(new TimeSpan(Days, Hours, Minutes, Seconds));
+                    return dt;
                 }
             }
         }

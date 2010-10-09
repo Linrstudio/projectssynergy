@@ -80,4 +80,6 @@
       <Connect Input="0" InputOwner="2" Output="0" OutputOwner="1" />
     </Event>
   </Device>
+  <ScheduleEntry Name="bla" Days="3934" Hours="12" Minutes="0" Seconds="0">
+  </ScheduleEntry>
 </EEPROM>
