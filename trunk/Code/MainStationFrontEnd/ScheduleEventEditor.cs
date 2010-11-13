@@ -9,17 +9,17 @@ using System.Windows.Forms;
 
 namespace MainStationFrontEnd
 {
-    public partial class EventEditor : ChildForm
+    public partial class ScheduleEventEditor : ChildForm
     {
         KismetSequence Sequence = null;
-        public EventEditor(KismetSequence _Sequence)
+        public ScheduleEventEditor(KismetSequence _Sequence)
         {
             Sequence = _Sequence;
             Content = Sequence;
             InitializeComponent();
         }
 
-        public EventEditor()
+        public ScheduleEventEditor()
         {
             InitializeComponent();
         }

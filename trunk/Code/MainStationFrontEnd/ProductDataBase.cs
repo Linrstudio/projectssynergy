@@ -52,6 +52,7 @@ namespace MainStationFrontEnd
                     }
                 }
             }
+            Utilities.Log("Product database loaded.");
         }
 
         public static Device GetDeviceByID(ushort _ID)

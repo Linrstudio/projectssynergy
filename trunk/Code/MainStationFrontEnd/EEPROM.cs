@@ -9,7 +9,7 @@ namespace MainStationFrontEnd
 {
     public class EEPROM
     {
-        static ushort size = 65535;
+        static ushort size = 65535;//65536 byte
         static ushort bytesused;
         static public ushort Size { get { return size; } }
         static public ushort BytesUsed { get { return bytesused; } }
@@ -49,6 +49,7 @@ namespace MainStationFrontEnd
             /// </summary>
             public ushort eventaddr = 0;
             public ushort ID;
+            public bool Found = false;
             public ProductDataBase.Device device;
             public SortedDictionary<byte, Event> Events = new SortedDictionary<byte, Event>();
 
@@ -69,7 +70,7 @@ namespace MainStationFrontEnd
 
             public class Event
             {
-                public string DefaultName { get { return eventtype.Name; } }
+                public string DefaultName { get { return eventtype != null ? eventtype.Name : null; } }
                 public Device device;
                 public ushort addr = 0;
                 public ProductDataBase.Device.Event eventtype;
@@ -78,7 +79,7 @@ namespace MainStationFrontEnd
                 {
                     device = _Device;
                     eventtype = _Event;
-                    sequence = new KismetSequence(this);
+                    sequence = new KismetSequenceDeviceEvent(this, null);
                     Name = DefaultName;
                 }
 
@@ -102,10 +103,89 @@ namespace MainStationFrontEnd
             return (byte)Globals.IndexOf(_GlobalName);
         }
 
+        public static void AssambleSchedule()
+        {
+            KismetSequence target = Devices[0].Events[2].sequence;
+            target.Clear();
+            CodeBlock minute = new BlockGetMinute(target);
+            CodeBlock hour = new BlockGetHour(target);
+            target.codeblocks.Add(minute);
+            target.codeblocks.Add(hour);
+            target.Connect(target.root.Outputs[0], hour.Inputs[0]);
+            target.Connect(target.root.Outputs[0], minute.Inputs[0]);
+
+            foreach (ScheduleEntry entry in ScheduleEntries)
+            {
+                CodeBlock chour = new BlockMathConstant(target);
+                CodeBlock cmin = new BlockMathConstant(target);
+
+                cmin.SetValues(entry.Minutes.ToString());
+                chour.SetValues(entry.Hours.ToString());
+
+                CodeBlock eqhour = new BlockMathEquals(target);
+                CodeBlock eqmin = new BlockMathEquals(target);
+                CodeBlock and = new BlockBoolAnd(target);
+                CodeBlock root = new BlockBoolIf(target);
+
+                target.codeblocks.Add(eqhour);
+                target.codeblocks.Add(eqmin);
+
+                target.codeblocks.Add(chour);
+                target.codeblocks.Add(cmin);
+
+                target.codeblocks.Add(and);
+                target.codeblocks.Add(root);
+
+                target.Connect(hour.Outputs[0], eqhour.Inputs[0]);
+                target.Connect(minute.Outputs[0], eqmin.Inputs[0]);
+                target.Connect(chour.Outputs[0], eqhour.Inputs[1]);
+                target.Connect(cmin.Outputs[0], eqmin.Inputs[1]);
+
+                target.Connect(target.root.Outputs[0], chour.Inputs[0]);
+                target.Connect(target.root.Outputs[0], cmin.Inputs[0]);
+
+                target.Connect(eqhour.Outputs[0], and.Inputs[0]);
+                target.Connect(eqmin.Outputs[0], and.Inputs[1]);
+
+                target.Connect(and.Outputs[0], root.Inputs[0]);
+
+                //copy all codeblocks into our new sequence
+                Dictionary<CodeBlock, CodeBlock> map = new Dictionary<CodeBlock, CodeBlock>();
+                map.Add(entry.sequence.root, root);
+                foreach (CodeBlock block in entry.sequence.codeblocks)
+                {
+                    if (block == entry.sequence.root) continue;
+                    string blocktype = block.GetType().FullName;
+                    CodeBlock b = (CodeBlock)Type.GetType(blocktype).GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { target });
+                    b.SetValues(block.GetValues());
+                    target.codeblocks.Add(b);
+                    map.Add(block, b);
+                }
+                foreach (CodeBlock block in entry.sequence.codeblocks)
+                {
+                    if (block == entry.sequence.root) continue;
+
+                    foreach (CodeBlock.Input input in block.Inputs)
+                    {
+                        if (input.Connected != null)
+                        {
+                            int inputidx = input.Owner.Inputs.IndexOf(input);
+                            int outputidx = input.Connected.Owner.Outputs.IndexOf(input.Connected);
+
+                            target.Connect(map[input.Connected.Owner].Outputs[outputidx], map[input.Owner].Inputs[inputidx]);
+                        }
+                    }
+                }
+
+                target.FixIndices();
+            }
+        }
 
         public static byte[] Assamble()
         {
+            //add schedule entry
             Globals.Clear();
+            AssambleSchedule();
             byte[] buffer = new byte[Size];
             ushort idx = 0;
             ushort eventlistaddr = 0;
@@ -199,39 +279,30 @@ namespace MainStationFrontEnd
                 device.SetAttributeValue("DeviceName", d.Name.ToString());
                 foreach (Device.Event e in d.Events.Values)
                 {
+                    if (e.eventtype == null) continue;
                     XElement method = new XElement("Event");
                     method.SetAttributeValue("ID", e.eventtype.ID);
                     method.SetAttributeValue("Name", e.Name);
-                    foreach (CodeBlock b in e.sequence.codeblocks)
-                    {
-                        XElement block = null;
-                        if (b == e.sequence.root) block = new XElement("Root"); else block = new XElement("Block");
-                        block.SetAttributeValue("GUID", b.index);
-                        block.SetAttributeValue("Type", CodeBlock.GetCodeBlock(b.GetType()).Type.FullName);
-                        block.SetAttributeValue("Values", b.GetValues());
-                        method.Add(block);
-                    }
-                    foreach (CodeBlock b in e.sequence.codeblocks)
-                    {
-                        foreach (CodeBlock.Input i in b.Inputs)
-                        {
-                            if (i.Connected != null)
-                            {
-                                XElement connection = new XElement("Connect");
-                                connection.SetAttributeValue("Input", i.Owner.Inputs.IndexOf(i).ToString());
-                                connection.SetAttributeValue("InputOwner", e.sequence.codeblocks.IndexOf(i.Owner).ToString());
-                                connection.SetAttributeValue("Output", i.Connected.Owner.Outputs.IndexOf(i.Connected).ToString());
-                                connection.SetAttributeValue("OutputOwner", e.sequence.codeblocks.IndexOf(i.Connected.Owner).ToString());
-                                method.Add(connection);
-                            }
-                        }
-                    }
+                    e.sequence.Save(method);
                     device.Add(method);
                 }
-
                 file.Add(device);
             }
+
+            foreach (ScheduleEntry e in ScheduleEntries)
+            {
+                XElement entry = new XElement("ScheduleEntry");
+                entry.SetAttributeValue("Name", e.Name);
+                entry.SetAttributeValue("Days", e.Days.ToString());
+                entry.SetAttributeValue("Hours", e.Hours.ToString());
+                entry.SetAttributeValue("Minutes", e.Minutes.ToString());
+                entry.SetAttributeValue("Seconds", e.Seconds.ToString());
+                e.sequence.Save(entry);
+                file.Add(entry);
+            }
+
             file.Save(_FileName);
+
         }
 
         public static void Clear()
@@ -256,43 +327,18 @@ namespace MainStationFrontEnd
                 foreach (XElement method in device.Elements("Event"))
                 {
                     byte methodid = byte.Parse(method.Attribute("ID").Value);
+                    if (!d.Events.ContainsKey(methodid)) continue;
                     Device.Event e = d.Events[methodid];
                     try
                     {
                         e.Name = method.Attribute("Name").Value;
                     }
                     catch { e.Name = ProductDataBase.GetDeviceByID(typeid).GetEventByID(methodid).Name; }
-                    {
-                        XElement block = method.Element("Root");
-                        string blocktype = (string)block.Attribute("Type").Value;
-                        byte index = byte.Parse(block.Attribute("GUID").Value);
-                        CodeBlock b = (CodeBlock)Type.GetType(blocktype).GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { e.sequence });
-                        b.index = index;
-                        b.SetValues(block.Attribute("Values").Value);
-                        e.sequence = new KismetSequence(e, b);
-                    }
-
-                    foreach (XElement block in method.Elements("Block"))
-                    {
-                        string blocktype = (string)block.Attribute("Type").Value;
-                        byte index = byte.Parse(block.Attribute("GUID").Value);
-                        CodeBlock b = (CodeBlock)Type.GetType(blocktype).GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { e.sequence });
-                        b.index = index;
-                        b.SetValues(block.Attribute("Values").Value);
-                        e.sequence.codeblocks.Add(b);
-                    }
-
-                    foreach (XElement connection in method.Elements("Connect"))
-                    {
-                        int input = int.Parse(connection.Attribute("Input").Value);
-                        int inputowner = int.Parse(connection.Attribute("InputOwner").Value);
-                        int output = int.Parse(connection.Attribute("Output").Value);
-                        int outputowner = int.Parse(connection.Attribute("OutputOwner").Value);
-                        e.sequence.Connect(e.sequence.codeblocks[outputowner].Outputs[output], e.sequence.codeblocks[inputowner].Inputs[input]);
-                    }
+                    e.sequence = new KismetSequenceDeviceEvent(e, null);
+                    e.sequence.Load(method);
                 }
             }
-            //Name="bla" Days="12" Hours="1" Minutes="2" Seconds="3"
+
             foreach (XElement e in file.Elements("ScheduleEntry"))
             {
                 ScheduleEntry entry = new ScheduleEntry();
@@ -302,9 +348,11 @@ namespace MainStationFrontEnd
                 entry.Hours = int.Parse(e.Attribute("Hours").Value);
                 entry.Minutes = int.Parse(e.Attribute("Minutes").Value);
                 entry.Seconds = int.Parse(e.Attribute("Seconds").Value);
-
+                entry.sequence = new KismetSequenceScheduleEvent(entry);
+                entry.sequence.Load(e);
                 ScheduleEntries.Add(entry);
             }
+            Utilities.Log("EEPROM loaded.");
         }
 
         public class ScheduleEntry
@@ -314,6 +362,14 @@ namespace MainStationFrontEnd
             public int Hours;
             public int Minutes;
             public int Seconds;
+
+            /// <summary>
+            /// zero is dont repeat, 1 is dayly 7 is weekly etc etc
+            /// </summary>
+            public int repeat = 0;
+
+            public KismetSequence sequence = null;
+
             public DateTime Moment
             {
                 get

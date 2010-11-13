@@ -27,6 +27,8 @@ namespace MainStationFrontEnd
             t_Devices.Nodes.Clear();
             foreach (ProductDataBase.Device d in ProductDataBase.Devices)
             {
+                if (d.ID == 0) continue;//main station
+
                 TreeNode node = new TreeNode(d.Name);
                 node.Tag = d;
                 t_Devices.Nodes.Add(node);

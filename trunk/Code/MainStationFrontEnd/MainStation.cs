@@ -44,7 +44,7 @@ namespace MainStationFrontEnd
             return buffer;
         }
 
-        public static void Poll(ushort _DeviceID)
+        public static bool Poll(ushort _DeviceID)
         {
             byte[] buffer = new byte[65];
             buffer[0] = 0x01;//send raw data to devices
@@ -52,6 +52,8 @@ namespace MainStationFrontEnd
             buffer[1] = shrt[0];
             buffer[2] = shrt[1];
             Write(buffer);
+            buffer = Read();
+            return buffer[1] == 255;
         }
 
         public static void InvokeLocalEvent(ushort _DeviceID, byte _Event, ushort _Arguments)
@@ -199,7 +201,7 @@ namespace MainStationFrontEnd
         public struct Time
         {
             public TimeSpan DayTime;
-            public DayOfWeek Day;
+            public ushort Day;
         }
 
         public static Time TimeRead()
@@ -211,7 +213,7 @@ namespace MainStationFrontEnd
             buffer = Read();
             Time t = new Time();
             t.DayTime = new TimeSpan(buffer[3], buffer[2], buffer[1]);
-            t.Day = (DayOfWeek)(int)buffer[4];
+            t.Day = Utilities.ToShort(buffer, 4);
             return t;
         }
 
@@ -222,7 +224,9 @@ namespace MainStationFrontEnd
             buffer[1] = (byte)DateTime.Now.Second;
             buffer[2] = (byte)DateTime.Now.Minute;
             buffer[3] = (byte)DateTime.Now.Hour;
-            buffer[4] = (byte)(int)DateTime.Now.DayOfWeek;
+            byte[] shrt = Utilities.FromShort(Utilities.GetDay(DateTime.Now));
+            buffer[4] = shrt[0];
+            buffer[5] = shrt[1];
             Write(buffer);
             System.Threading.Thread.Sleep(10);
             buffer = Read();

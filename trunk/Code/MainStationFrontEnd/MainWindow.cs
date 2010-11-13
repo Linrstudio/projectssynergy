@@ -11,12 +11,18 @@ namespace MainStationFrontEnd
 {
     public partial class MainWindow : Form
     {
+        public static MainWindow mainwindow;
         public MainWindow()
         {
+            mainwindow = this;
             InitializeComponent();
             ProductDataBase.Load("products.xml");
             MainStation.Connect();
             EEPROM.FromFile("EEPROM.xml");
+            foreach (EEPROM.Device d in EEPROM.Devices.Values)
+            {
+                PollDevice(d);
+            }
             UpdateTree();
         }
 
@@ -51,13 +57,14 @@ namespace MainStationFrontEnd
             win.ShowDialog();
             UpdateTree();
         }
-
+        
         public void UpdateTree()
         {
             t_contents.Nodes.Clear();
             foreach (EEPROM.Device d in EEPROM.Devices.Values)
             {
                 TreeNode node = new TreeNode(string.Format("{0}({1})", d.Name, d.device.Name));
+                node.Tag = d;
                 if (d.ID == 0)
                 {
                     node.ImageIndex = 1;
@@ -65,13 +72,17 @@ namespace MainStationFrontEnd
                 }
                 else
                 {
-                    node.ImageIndex = 0;
+                    if (d.Found)
+                        node.ImageIndex = 0;
+                    else
+                        node.ImageIndex = 6;
                     node.SelectedImageIndex = 0;
                 }
                 node.ToolTipText = d.device.Description;
                 //node.Tag = d;
                 foreach (EEPROM.Device.Event e in d.Events.Values)
                 {
+                    if (e.eventtype == null) continue;
                     TreeNode enode = new TreeNode(e.Name);
                     enode.Tag = e;
                     enode.ImageIndex = 2;
@@ -116,24 +127,40 @@ namespace MainStationFrontEnd
             UpdateTree();
         }
 
-        private void t_contents_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        public void ShowDialog(ChildForm _Form)
         {
-            if (t_contents.SelectedNode.Tag is EEPROM.Device.Event)
+            foreach (ChildForm f in OpenedWindows)
             {
-                foreach (ChildForm f in OpenedWindows)
+                if (f.Content == _Form.Content)
                 {
-                    if (f.Content == t_contents.SelectedNode.Tag)
+                    try
                     {
-                        f.BringToFront();
-                        //f.Focus();
+                        f.BringToFront();// sometimes the window randomly gets disposed
                         return;
                     }
+                    catch { OpenedWindows.Remove(f); }
+                    break;
                 }
-                ChildForm form = new EventEditor((EEPROM.Device.Event)t_contents.SelectedNode.Tag);
-                form.FormClosed += new FormClosedEventHandler(form_FormClosed);
-                form.MdiParent = this;
-                form.Show();
-                OpenedWindows.Add(form);
+            }
+
+            _Form.FormClosed += new FormClosedEventHandler(form_FormClosed);
+            _Form.MdiParent = this;
+            try
+            {
+                _Form.Show();
+                if (!OpenedWindows.Contains(_Form))
+                    OpenedWindows.Add(_Form);
+            }
+            catch { }
+        }
+
+        private void t_contents_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (t_contents.SelectedNode == null) return;
+            if (t_contents.SelectedNode.Tag is EEPROM.Device.Event)
+            {
+                ChildForm form = new EventEditor(((EEPROM.Device.Event)t_contents.SelectedNode.Tag).sequence);
+                ShowDialog(form);
             }
         }
 
@@ -174,7 +201,12 @@ namespace MainStationFrontEnd
             {
                 Point p = e.Location;
                 TreeNode node = t_contents.GetNodeAt(p);
-                if (node != null && node.Tag != null)
+                if (node != null && node.Tag is EEPROM.Device)
+                {
+                    t_contentsContextMenuNode = node;
+                    c_treedevice.Show(t_contents, e.X, e.Y);
+                }
+                else if (node != null && node.Tag != null)
                 {
                     t_contentsContextMenuNode = node;
                     c_TreeEvent.Show(t_contents, e.X, e.Y);
@@ -183,9 +215,39 @@ namespace MainStationFrontEnd
         }
 
         bool lastconnected = false;
+        int lastpolled = 0;
+
+        void PollDevice(EEPROM.Device _Device)
+        {
+            bool found = !MainStation.Poll(_Device.ID);
+            if (_Device.Found != found)
+            {
+                _Device.Found = found;
+                UpdateTree();
+                Utilities.Log("Device {0} {1}", _Device.ID, found ? "located" : "is missing");
+            }
+
+        }
+
         private void t_ConnectionCheck_Tick(object sender, EventArgs e)
         {
             bool connected = MainStation.Connected();
+            if (connected)
+            {
+                lastpolled = (lastpolled + 1) % EEPROM.Devices.Count;
+                int i = 0;
+                foreach (EEPROM.Device d in EEPROM.Devices.Values)
+                {
+                    if (i == lastpolled && d.ID != 0)
+                    {
+                        PollDevice(d);
+                        break;
+                    }
+                    i++;
+                }
+                lastpolled++;
+            }
+
             t_Connected.Text = connected ? "Connected" : "Disconnected";
             if (connected && !lastconnected)
             {
@@ -259,7 +321,20 @@ namespace MainStationFrontEnd
 
         private void c_day_DateChanged(object sender, DateRangeEventArgs e)
         {
-            s_hours.SelectedDay = (ushort)TimeSpan.FromTicks(c_day.SelectionStart.Ticks - new DateTime(2000, 1, 1).Ticks).Days;
+            s_hours.SelectedDay = Utilities.GetDay(c_day.SelectionStart);
+        }
+
+        public void Log(string _Message)
+        {
+            t_Log.Text += "\r\n> " + _Message;
+            t_Log.Select(t_Log.Text.Length - 1, 0);
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            EEPROM.Devices.Remove(
+            ((EEPROM.Device)t_contentsContextMenuNode.Tag).ID);
+            UpdateTree();
         }
     }
 }

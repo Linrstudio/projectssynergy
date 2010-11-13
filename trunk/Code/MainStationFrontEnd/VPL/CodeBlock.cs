@@ -642,6 +642,7 @@ namespace MainStationFrontEnd
                 //0
                 AddCodeBlock("LocalEvent", "", typeof(BlockLocalEvent), false);
                 AddCodeBlock("RemoteEvent", "", typeof(BlockRemoteEvent), false);
+                AddCodeBlock("ScheduleEvent", "", typeof(BlockScheduleEvent), false);
 
                 //Debug stuff
                 //20

@@ -6,6 +6,11 @@ namespace MainStationFrontEnd
 {
     public static class Utilities
     {
+        public static void Log(string _Format, params object[] _Args)
+        {
+            MainWindow.mainwindow.Log(string.Format(_Format,_Args));
+        }
+
         public static byte[] FromShort(ushort _V)
         {
             byte[] buf = BitConverter.GetBytes(_V);
@@ -14,7 +19,7 @@ namespace MainStationFrontEnd
 
         public static ushort ToShort(byte[] _Buffer, int _Index)
         {
-            return BitConverter.ToUInt16(new byte[] { _Buffer[_Index + 1], _Buffer[_Index] }, 0);
+            return BitConverter.ToUInt16(new byte[] { _Buffer[_Index], _Buffer[_Index + 1] }, 0);
         }
 
         public static byte[] Cut(byte[] _Buffer, int _Index)
@@ -25,6 +30,11 @@ namespace MainStationFrontEnd
                 buffer[i] = _Buffer[i + _Index];
             }
             return buffer;
+        }
+
+        public static ushort GetDay(DateTime _Date)
+        {
+            return (ushort)TimeSpan.FromTicks(_Date.Ticks - new DateTime(2000, 1, 1).Ticks).Days;
         }
     }
 }

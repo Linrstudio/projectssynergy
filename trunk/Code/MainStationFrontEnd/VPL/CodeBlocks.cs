@@ -29,6 +29,26 @@ namespace MainStationFrontEnd
         {
 
         }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            DrawShape(_Graphics,
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
+            base.Draw(_Graphics);
+        }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawShapeShadow(_Graphics,
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
+            base.DrawShadow(_Graphics);
+        }
     }
 
     public class BaseBlockConstant : CodeBlock
@@ -102,11 +122,75 @@ namespace MainStationFrontEnd
 
 
 
+
+
+
+    public class BlockScheduleEvent : BaseBlockEvent
+    {
+        [Browsable(true), CategoryAttribute("Constant")]
+        public TimeSpan time
+        {
+            get
+            {
+                if (Sequence is KismetSequenceScheduleEvent)
+                {
+                    EEPROM.ScheduleEntry entry = ((KismetSequenceScheduleEvent)Sequence).ScheduleEntry;
+                    return new TimeSpan(entry.Hours, entry.Minutes, entry.Seconds);
+                }
+                return new TimeSpan();
+            }
+            set 
+            {
+                if (Sequence is KismetSequenceScheduleEvent)
+                {
+                    EEPROM.ScheduleEntry entry = ((KismetSequenceScheduleEvent)Sequence).ScheduleEntry;
+                    entry.Hours = value.Hours;
+                    entry.Minutes = value.Minutes;
+                    entry.Seconds = value.Seconds;
+                }
+            }
+        }
+
+        public BlockScheduleEvent(KismetSequence _Sequence)
+            : base(_Sequence)
+        {
+            IsScope = true;
+            width = 120;
+            height = 200;
+        }
+
+        public override void SetValues(string _Values)
+        {
+            Inputs.Clear();
+            Outputs.Clear();
+
+            if (Outputs.Count == 0)
+                Outputs.Add(new Output(this, "", null));//add one output if there are non available
+            UpdateConnectors();
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            base.Draw(_Graphics);
+            DrawScope(_Graphics);
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            if (Sequence is KismetSequenceScheduleEvent)
+            {
+                _Graphics.DrawString(((KismetSequenceScheduleEvent)Sequence).ScheduleEntry.Name, new Font("Arial", 10), Brushes.Black, X, Y, sf);
+            }
+        }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawScopeShadow(_Graphics);
+            base.DrawShadow(_Graphics);
+        }
+    }
+
     public class BlockLocalEvent : BaseBlockEvent
     {
-        public ProductDataBase.Device device = null;
-        public ProductDataBase.Device.Event evnt;
-
         public BlockLocalEvent(KismetSequence _Sequence)
             : base(_Sequence)
         {
@@ -119,24 +203,20 @@ namespace MainStationFrontEnd
         {
             Inputs.Clear();
             Outputs.Clear();
-            string[] split = _Values.Split(' ');
-            if (split.Length >= 2)
+            if (Sequence is KismetSequenceDeviceEvent)
             {
-                device = ProductDataBase.GetDeviceByID(ushort.Parse(split[0]));
-                evnt = device.GetEventByID(byte.Parse(split[1]));
-                if (evnt != null)
-                    foreach (var i in evnt.Outputs)
+                EEPROM.Device.Event deviceevent = ((KismetSequenceDeviceEvent)Sequence).DeviceEvent;
+                ProductDataBase.Device.Event eventtype = deviceevent.eventtype;
+                if (eventtype != null)
+                    foreach (var i in eventtype.Outputs)
                     {
                         Outputs.Add(new Output(this, i.Name, GetDataType(i.Type)));
                     }
             }
-            if (Outputs.Count == 0) Outputs.Add(new Output(this, "", null));//add one output if there are non available
-            UpdateConnectors();
-        }
 
-        public override string GetValues()
-        {
-            return string.Format("{0} {1}", device.ID, evnt.ID);
+            if (Outputs.Count == 0)
+                Outputs.Add(new Output(this, "", null));//add one output if there are non available
+            UpdateConnectors();
         }
 
         public override void Draw(Graphics _Graphics)
@@ -146,7 +226,10 @@ namespace MainStationFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString(Sequence.Event.eventtype.Name, new Font("Arial", 10), Brushes.Black, X, Y, sf);
+            if (Sequence is KismetSequenceDeviceEvent)
+            {
+                _Graphics.DrawString(((KismetSequenceDeviceEvent)Sequence).DeviceEvent.eventtype.Name, new Font("Arial", 10), Brushes.Black, X, Y, sf);
+            }
         }
 
         public override void DrawShadow(Graphics _Graphics)
@@ -206,7 +289,7 @@ namespace MainStationFrontEnd
             List<byte> code = new List<byte>();
             //load all inputs to the EP registers
             byte idx = 0;
-            code.AddRange(CodeInstructions.Load8(idx,remoteevent.ID));
+            code.AddRange(CodeInstructions.Load8(idx, remoteevent.ID));
             idx++;
             foreach (Input i in Inputs)
             {
@@ -229,7 +312,7 @@ namespace MainStationFrontEnd
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString(string.Format("{0}\n({1})",remoteevent.Name,deviceid), new Font("Arial", 10), Brushes.Black, X, Y, sf);
+            _Graphics.DrawString(string.Format("{0}\n({1})", remoteevent.Name, deviceid), new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
 
         public override void DrawShadow(Graphics _Graphics)
@@ -325,7 +408,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            //Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; 
+            Code = CodeInstructions.GetHour(Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -351,7 +434,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            //Code = new byte[] { BlockID, Outputs[0].RegisterIndex };
+            Code = CodeInstructions.GetMinute(Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -377,7 +460,7 @@ namespace MainStationFrontEnd
 
         public override void Assamble()
         {
-            //Code = new byte[] { BlockID, Outputs[0].RegisterIndex }; 
+            Code = CodeInstructions.GetSecond(Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
