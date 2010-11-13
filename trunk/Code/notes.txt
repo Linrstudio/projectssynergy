@@ -1,9 +1,0 @@
-make graphics layer remoteable ( dual screen ? ) ( message pump ? )
-
-plugin system for remote controls ( buttons etc etc )
-
-
-
-Notes:
-
-Controls will be square, since they are a separate rendertarget
