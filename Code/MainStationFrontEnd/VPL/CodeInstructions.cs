@@ -52,6 +52,20 @@ namespace MainStationFrontEnd
         {
             return new byte[] { 0x23, _RegA, _RegB, _RegAnswer };//4
         }
+
+        public static byte[] GetHour(byte _RegA)
+        {
+            return new byte[] { 0x30, _RegA };
+        }
+        public static byte[] GetMinute(byte _RegA)
+        {
+            return new byte[] { 0x31, _RegA };
+        }
+        public static byte[] GetSecond(byte _RegA)
+        {
+            return new byte[] { 0x32, _RegA };
+        }
+
         public static byte[] SetLED(byte _Reg)
         {
             return new byte[] { 0x0a, _Reg };//2

@@ -23,11 +23,6 @@ namespace MainStationFrontEnd
             get { return selectedday; }
         }
 
-        public class Element
-        {
-
-        }
-
         public ScheduleEditor()
         {
             InitializeComponent();
@@ -87,7 +82,10 @@ namespace MainStationFrontEnd
             {
                 if (SelectedDay == entry.Days)
                 {
-                    e.Graphics.DrawString(entry.Name, entryfont, Brushes.Black, CellX, (-timefont.Height / 2) + (entry.Hours + 0.25f) * CellHeight * 2);
+                    float y = (-timefont.Height / 2) + (entry.Hours + (entry.Minutes / 60.0f) + 0.25f) * CellHeight * 2;
+                    e.Graphics.DrawString(entry.Name, entryfont, Brushes.Black, CellX + 16, y);
+                    e.Graphics.DrawLine(Pens.Black, CellX, y, CellX + 16, y + CellHeight / 2);
+                    //e.Graphics.DrawLine(Pens.Black, CellX, y + CellHeight, CellX + 8, y + CellHeight);
                 }
             }
 
@@ -104,6 +102,40 @@ namespace MainStationFrontEnd
 
             Refresh();
             base.OnResize(e);
+        }
+        int mouseX;
+        int mouseY;
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            mouseX = e.X;
+            mouseY = e.Y;
+            base.OnMouseMove(e);
+        }
+
+        protected override void OnDoubleClick(EventArgs e)
+        {
+            EEPROM.ScheduleEntry best = null;
+            float time = (float)mouseY / (CellHeight * 2);
+
+            foreach (EEPROM.ScheduleEntry entry in EEPROM.ScheduleEntries)
+            {
+                float entrytime = entry.Hours + (float)entry.Minutes / 60;
+                if (best != null)
+                {
+                    float besttime = best.Hours + (float)best.Minutes / 60;
+                    if (Math.Abs(entrytime - time) < Math.Abs(besttime - time))
+                    {
+                        best = entry;
+                    }
+                }
+                else best = entry;
+            }
+            if (best != null)
+            {
+                ChildForm editor = new ScheduleEventEditor(best.sequence);
+                MainWindow.mainwindow.ShowDialog(editor);
+            }
+            base.OnDoubleClick(e);
         }
     }
 }

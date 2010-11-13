@@ -53,6 +53,12 @@
     <Compile Include="ChildForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ScheduleEventEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScheduleEventEditor.Designer.cs">
+      <DependentUpon>ScheduleEventEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="EEPROM.cs" />
     <Compile Include="AddDevice.cs">
       <SubType>Form</SubType>

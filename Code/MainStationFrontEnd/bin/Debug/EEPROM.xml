@@ -2,84 +2,96 @@
 <EEPROM>
   <Device TypeID="0" DeviceID="0" DeviceName="MainStation">
     <Event ID="1" Name="Seconds Changed">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="0 2" />
+      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="" />
     </Event>
     <Event ID="2" Name="Minutes Changed">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="0 1" />
+      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="" />
+      <Block GUID="1" Type="MainStationFrontEnd.BlockGetMinute" Values="" />
+      <Block GUID="2" Type="MainStationFrontEnd.BlockGetHour" Values="" />
+      <Block GUID="5" Type="MainStationFrontEnd.BlockMathEquals" Values="" />
+      <Block GUID="6" Type="MainStationFrontEnd.BlockMathEquals" Values="" />
+      <Block GUID="3" Type="MainStationFrontEnd.BlockMathConstant" Values="9" />
+      <Block GUID="4" Type="MainStationFrontEnd.BlockMathConstant" Values="30" />
+      <Block GUID="7" Type="MainStationFrontEnd.BlockBoolAnd" Values="" />
+      <Block GUID="13" Type="MainStationFrontEnd.BlockBoolIf" Values="" />
+      <Block GUID="14" Type="MainStationFrontEnd.BlockBoolConstant" Values="True" />
+      <Block GUID="15" Type="MainStationFrontEnd.BlockRemoteEvent" Values="1 1 1234" />
+      <Block GUID="10" Type="MainStationFrontEnd.BlockMathEquals" Values="" />
+      <Block GUID="11" Type="MainStationFrontEnd.BlockMathEquals" Values="" />
+      <Block GUID="8" Type="MainStationFrontEnd.BlockMathConstant" Values="9" />
+      <Block GUID="9" Type="MainStationFrontEnd.BlockMathConstant" Values="45" />
+      <Block GUID="12" Type="MainStationFrontEnd.BlockBoolAnd" Values="" />
+      <Block GUID="16" Type="MainStationFrontEnd.BlockBoolIf" Values="" />
+      <Block GUID="17" Type="MainStationFrontEnd.BlockBoolConstant" Values="False" />
+      <Block GUID="18" Type="MainStationFrontEnd.BlockRemoteEvent" Values="1 1 1234" />
+      <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="2" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="3" Output="0" OutputOwner="2" />
+      <Connect Input="1" InputOwner="3" Output="0" OutputOwner="5" />
+      <Connect Input="0" InputOwner="4" Output="0" OutputOwner="1" />
+      <Connect Input="1" InputOwner="4" Output="0" OutputOwner="6" />
+      <Connect Input="0" InputOwner="5" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="6" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="7" Output="0" OutputOwner="3" />
+      <Connect Input="1" InputOwner="7" Output="0" OutputOwner="4" />
+      <Connect Input="0" InputOwner="8" Output="0" OutputOwner="7" />
+      <Connect Input="0" InputOwner="9" Output="0" OutputOwner="8" />
+      <Connect Input="0" InputOwner="10" Output="0" OutputOwner="9" />
+      <Connect Input="0" InputOwner="11" Output="0" OutputOwner="2" />
+      <Connect Input="1" InputOwner="11" Output="0" OutputOwner="13" />
+      <Connect Input="0" InputOwner="12" Output="0" OutputOwner="1" />
+      <Connect Input="1" InputOwner="12" Output="0" OutputOwner="14" />
+      <Connect Input="0" InputOwner="13" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="14" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="15" Output="0" OutputOwner="11" />
+      <Connect Input="1" InputOwner="15" Output="0" OutputOwner="12" />
+      <Connect Input="0" InputOwner="16" Output="0" OutputOwner="15" />
+      <Connect Input="0" InputOwner="17" Output="0" OutputOwner="16" />
+      <Connect Input="0" InputOwner="18" Output="0" OutputOwner="17" />
     </Event>
     <Event ID="3" Name="Hours Changed">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="0 3" />
+      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="" />
+      <Block GUID="1" Type="MainStationFrontEnd.BlockBoolConstant" Values="True" />
+      <Block GUID="2" Type="MainStationFrontEnd.BlockRemoteEvent" Values="1 1 1234" />
+      <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+      <Connect Input="0" InputOwner="2" Output="0" OutputOwner="1" />
     </Event>
     <Event ID="4" Name="Days Changed">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="0 4" />
-    </Event>
-  </Device>
-  <Device TypeID="3" DeviceID="16" DeviceName="My input Device">
-    <Event ID="1" Name="1 Rising Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 1" />
-    </Event>
-    <Event ID="2" Name="1 Falling Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 2" />
-    </Event>
-    <Event ID="3" Name="2 Rising Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 3" />
-    </Event>
-    <Event ID="4" Name="2 Falling Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 4" />
-    </Event>
-    <Event ID="5" Name="3 Rising Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 5" />
-    </Event>
-    <Event ID="6" Name="3 Falling Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 6" />
-    </Event>
-    <Event ID="7" Name="4 Rising Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 7" />
-    </Event>
-    <Event ID="8" Name="4 Falling Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 8" />
-    </Event>
-    <Event ID="9" Name="5 Rising Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 9" />
-    </Event>
-    <Event ID="10" Name="5 Falling Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 10" />
-    </Event>
-    <Event ID="11" Name="6 Rising Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 11" />
-    </Event>
-    <Event ID="12" Name="6 Falling Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 12" />
-    </Event>
-    <Event ID="13" Name="7 Rising Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 13" />
-    </Event>
-    <Event ID="14" Name="7 Falling Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 14" />
-    </Event>
-    <Event ID="15" Name="8 Rising Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 15" />
-    </Event>
-    <Event ID="16" Name="8 Falling Edge">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="3 16" />
-    </Event>
-  </Device>
-  <Device TypeID="1" DeviceID="1234" DeviceName="dummy">
-    <Event ID="1" Name="On Push">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="1 1" />
-      <Block GUID="2" Type="MainStationFrontEnd.BlockRemoteEvent" Values="1 1 1234" />
-      <Block GUID="1" Type="MainStationFrontEnd.BlockBoolConstant" Values="True" />
-      <Connect Input="0" InputOwner="1" Output="0" OutputOwner="2" />
-      <Connect Input="0" InputOwner="2" Output="0" OutputOwner="0" />
-    </Event>
-    <Event ID="2" Name="On Release">
-      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="1 2" />
+      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="" />
       <Block GUID="1" Type="MainStationFrontEnd.BlockBoolConstant" Values="False" />
       <Block GUID="2" Type="MainStationFrontEnd.BlockRemoteEvent" Values="1 1 1234" />
       <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
       <Connect Input="0" InputOwner="2" Output="0" OutputOwner="1" />
     </Event>
   </Device>
-  <ScheduleEntry Name="bla" Days="3934" Hours="12" Minutes="0" Seconds="0">
+  <Device TypeID="1" DeviceID="1234" DeviceName="Dummy1">
+    <Event ID="1" Name="On Push">
+      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="" />
+    </Event>
+    <Event ID="2" Name="On Release">
+      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="" />
+    </Event>
+  </Device>
+  <Device TypeID="1" DeviceID="1235" DeviceName="Dummy2">
+    <Event ID="1" Name="On Push">
+      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="" />
+    </Event>
+    <Event ID="2" Name="On Release">
+      <Root GUID="0" Type="MainStationFrontEnd.BlockLocalEvent" Values="" />
+    </Event>
+  </Device>
+  <ScheduleEntry Name="bla" Days="3942" Hours="9" Minutes="30" Seconds="0">
+    <Root GUID="0" Type="MainStationFrontEnd.BlockScheduleEvent" Values="" />
+    <Block GUID="1" Type="MainStationFrontEnd.BlockBoolConstant" Values="True" />
+    <Block GUID="2" Type="MainStationFrontEnd.BlockRemoteEvent" Values="1 1 1234" />
+    <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+    <Connect Input="0" InputOwner="2" Output="0" OutputOwner="1" />
+  </ScheduleEntry>
+  <ScheduleEntry Name="bla 2" Days="3942" Hours="9" Minutes="45" Seconds="0">
+    <Root GUID="0" Type="MainStationFrontEnd.BlockScheduleEvent" Values="" />
+    <Block GUID="1" Type="MainStationFrontEnd.BlockBoolConstant" Values="False" />
+    <Block GUID="2" Type="MainStationFrontEnd.BlockRemoteEvent" Values="1 1 1234" />
+    <Connect Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+    <Connect Input="0" InputOwner="2" Output="0" OutputOwner="1" />
   </ScheduleEntry>
 </EEPROM>

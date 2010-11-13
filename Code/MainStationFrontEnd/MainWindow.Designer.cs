@@ -58,6 +58,10 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.splitter2 = new System.Windows.Forms.Splitter();
+            this.t_Log = new System.Windows.Forms.TextBox();
+            this.c_treedevice = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.s_hours = new MainStationFrontEnd.ScheduleEditor();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -66,6 +70,7 @@
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.c_treedevice.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -213,6 +218,7 @@
             this.i_contents.Images.SetKeyName(3, "EventLocalSelected.png");
             this.i_contents.Images.SetKeyName(4, "EventRemote.png");
             this.i_contents.Images.SetKeyName(5, "EventRemoteSelected.png");
+            this.i_contents.Images.SetKeyName(6, "DeviceError.png");
             // 
             // c_TreeEvent
             // 
@@ -321,10 +327,46 @@
             this.panel1.Size = new System.Drawing.Size(226, 278);
             this.panel1.TabIndex = 11;
             // 
+            // splitter2
+            // 
+            this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
+            this.splitter2.Location = new System.Drawing.Point(848, 25);
+            this.splitter2.MinExtra = 0;
+            this.splitter2.MinSize = 0;
+            this.splitter2.Name = "splitter2";
+            this.splitter2.Size = new System.Drawing.Size(2, 469);
+            this.splitter2.TabIndex = 12;
+            this.splitter2.TabStop = false;
+            // 
+            // t_Log
+            // 
+            this.t_Log.Dock = System.Windows.Forms.DockStyle.Right;
+            this.t_Log.Location = new System.Drawing.Point(850, 25);
+            this.t_Log.Multiline = true;
+            this.t_Log.Name = "t_Log";
+            this.t_Log.Size = new System.Drawing.Size(0, 469);
+            this.t_Log.TabIndex = 13;
+            this.t_Log.Text = "> Hi there, Im surprised you found this";
+            // 
+            // c_treedevice
+            // 
+            this.c_treedevice.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1});
+            this.c_treedevice.Name = "c_TreeEvent";
+            this.c_treedevice.Size = new System.Drawing.Size(153, 48);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem1.Text = "Remove";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            // 
             // s_hours
             // 
             this.s_hours.Location = new System.Drawing.Point(0, 0);
             this.s_hours.Name = "s_hours";
+            this.s_hours.SelectedDay = ((ushort)(0));
             this.s_hours.Size = new System.Drawing.Size(230, 768);
             this.s_hours.TabIndex = 10;
             // 
@@ -333,6 +375,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(850, 516);
+            this.Controls.Add(this.splitter2);
+            this.Controls.Add(this.t_Log);
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.toolStrip1);
@@ -350,6 +394,7 @@
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.c_treedevice.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -386,6 +431,10 @@
         private System.Windows.Forms.TabPage tabPage2;
         private ScheduleEditor s_hours;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Splitter splitter2;
+        private System.Windows.Forms.TextBox t_Log;
+        private System.Windows.Forms.ContextMenuStrip c_treedevice;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
 
     }
 }
