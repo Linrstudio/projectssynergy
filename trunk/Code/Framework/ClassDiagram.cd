@@ -1,0 +1,284 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Synergy.ByteStream" Collapsed="true">
+    <Position X="8" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAQAAABgAAAAAAAACAAAAAFAAAA=</HashCode>
+      <FileName>ByteStream.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.Connection" Collapsed="true">
+    <Position X="5.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQIAAAAAAAAICAAAEAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Connection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.Control" Collapsed="true">
+    <Position X="5.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAEAAAAAAEgAAAAAEQAQAAEAEAAAAAAAAIAAAAAQ=</HashCode>
+      <FileName>Control.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.ControlManager" Collapsed="true">
+    <Position X="9.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABEAAQAAAABEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ControlManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.Converter" Collapsed="true">
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAIAIBEAAQAAAABAAAAgAAAAAAEgAAAAAAEAAAA=</HashCode>
+      <FileName>Converter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.ExecFunctions" Collapsed="true">
+    <Position X="15" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAggAQAAAAAQAwAAAAAIAAAAAAAAAAIAiAAAAEAA=</HashCode>
+      <FileName>ExecFunctions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.FrontEnd" Collapsed="true">
+    <Position X="9.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAACAACBOCgAAACAASAAAj6BwCAgChAAAAEyQAEAAI=</HashCode>
+      <FileName>FrontEnd.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.Graphics" Collapsed="true">
+    <Position X="11.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAQSAAAAARAAAAAAAAAgAAAEAAACAAgABADAAAA=</HashCode>
+      <FileName>Graphics.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.Log" Collapsed="true">
+    <Position X="13.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACQAAAAAAEAAAAAAAAQCCAQAAAAAAAgCAAQQAANAAAA=</HashCode>
+      <FileName>Log.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.Float3x3" Collapsed="true">
+    <Position X="8" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAJAAAAAEAAAAgAAAAAEAAAEYAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.NetworkClass" Collapsed="true">
+    <Position X="1.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIQIAIgAggAAABAAAAEQAAQAAADEGBAIAAAAAAAAAAA=</HashCode>
+      <FileName>NetworkClass.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.NetworkClassMaster" Collapsed="true">
+    <Position X="2.75" Y="4.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAEAgAAAAAAAAAAAAAAAAAAAAABAAAEAA=</HashCode>
+      <FileName>NetworkClassMaster.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.NetworkClassSlave" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEgACQAAAAAAAAAAAAAAAAAAAAAAAACABAgEA=</HashCode>
+      <FileName>NetworkClassSlave.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.NetworkClassSlaveDefault" Collapsed="true">
+    <Position X="0.5" Y="6.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>NetworkClassSlaveDefault.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.NetworkManager" Collapsed="true">
+    <Position X="15" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAQIIAAAAAAAAQAAAAABAAAAAEAAEACIAAQAAACAAAQ=</HashCode>
+      <FileName>NetworkManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.NetworkNode" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQQAAAAAAAAAAAAEAAAAAAAAACAIAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>NetworkNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.NetworkNodeLocal" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>BAQAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAACAAAAA=</HashCode>
+      <FileName>NetworkNodeLocal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.NetworkNodeRemote" Collapsed="true">
+    <Position X="2.75" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>BAQAAAAAAAAAAAAAAEAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>NetworkNodeRemote.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.PluginEntry" Collapsed="true">
+    <Position X="9.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Plugin.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.PluginTick" Collapsed="true">
+    <Position X="13.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Plugin.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.PluginManager">
+    <Position X="16.75" Y="3.5" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Delegate Name="Synergy.PluginManager.OnLoadHandler">
+        <TypeIdentifier>
+          <NewMemberFileName>Plugin.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Enum Name="Synergy.PluginManager.CompilerType">
+        <TypeIdentifier>
+          <NewMemberFileName>Plugin.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAQAhAAAAAEAAAAAAgAAAAACAAAAAAAAAgAAAAAAAEA=</HashCode>
+      <FileName>Plugin.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.Plugin" Collapsed="true">
+    <Position X="8" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgQABAAACgAAAAIABAAAAAAEgAAFAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Plugin.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.RenderTarget" Collapsed="true">
+    <Position X="15" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAgAAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>RenderTarget.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.SafeInvoke" Collapsed="true">
+    <Position X="9.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIACAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SafeInvoke.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.Shader" Collapsed="true">
+    <Position X="11.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Shader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.ShaderCompiler" Collapsed="true">
+    <Position X="13.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Shader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.SpriteFont" Collapsed="true">
+    <Position X="15" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABgAAAAAAAAAgBAAAAAAAAAAiAAAAAAA=</HashCode>
+      <FileName>SpriteFont.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.TCPConnection" Collapsed="true">
+    <Position X="5.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAIAAAAUQAAAEAAEACAAAAKAAAABAAAAQADFAAIAQ=</HashCode>
+      <FileName>TCPClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.TCPListener" Collapsed="true">
+    <Position X="8" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAEAAAAAAAAAAIAAAAgAAAAAAAAAAAQ=</HashCode>
+      <FileName>TCPListener.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.TextureGPU" Collapsed="true">
+    <Position X="9.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAIAAAAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>TextureGPU.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.UIButton" Collapsed="true">
+    <Position X="5.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UIButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Synergy.Properties.Resources" Collapsed="true">
+    <Position X="8" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Synergy.Vertex" Collapsed="true">
+    <Position X="8" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>Graphics.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Synergy.Rect">
+    <Position X="15" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAgAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Rectangle.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Synergy.Int2" Collapsed="true">
+    <Position X="13.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABYAWAAgAAAAAAAAAAAAAAAAAAYiA=</HashCode>
+      <FileName>Vector.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Synergy.Float2" Collapsed="true">
+    <Position X="8" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAcAWAAgBACAAAAABAAAAAAAAAYiA=</HashCode>
+      <FileName>Vector.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Synergy.Float3" Collapsed="true">
+    <Position X="9.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACQAAAAAAcAeAAgBAqAAAAAAAAAAAAAAAYiE=</HashCode>
+      <FileName>Vector.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Synergy.Float4" Collapsed="true">
+    <Position X="11.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAcAWAAgBAiAAAAAAAAAAAAAAIYiE=</HashCode>
+      <FileName>Vector.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
