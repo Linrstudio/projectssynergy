@@ -62,7 +62,8 @@ namespace SynergyClient
                 foreach (NetworkClassSlave clas in node.LocalDevices.Values)
                 {
                     string controlname = clas.Name;
-                    if (!Children.ContainsKey(controlname))
+
+                    if (GetChild(controlname) != null)
                     {
                         addelement(node, clas);
                     }
@@ -105,7 +106,7 @@ namespace SynergyClient
         }
         public void OnDraw()
         {
-            Graphics.SetAlphaBlending(true);
+            Graphics.SetBlendMode(Graphics.BlendMode.Alpha);
             Graphics.defaultshader.SetParameter("View", GetTransformation());
             Graphics.defaultshader.SetParameter("DiffuseMap", ClientResources.GenericBrowserHeaderBackground);
             Graphics.defaultshader.Begin();
@@ -132,7 +133,7 @@ namespace SynergyClient
         }
         public void OnDraw()
         {
-            Graphics.SetAlphaBlending(true);
+            Graphics.SetBlendMode(Graphics.BlendMode.Alpha);
             Graphics.defaultshader.SetParameter("View", GetTransformation());
             Graphics.defaultshader.SetParameter("DiffuseMap", ClientResources.GenericBrowserElementBackground);
             Graphics.defaultshader.Begin();
@@ -157,7 +158,7 @@ namespace SynergyClient
             */
             //ClientResources.handwrittenfont.DrawMakeFit(new Float2(0, 0) + Fontoffset, new Float2(1, 1) - Fontoffset * 2, Name, true);
             ClientResources.handwrittenfont.Draw(new Float2(0, 0) + Fontoffset, new Float2(1, 1) - Fontoffset * 2, Name);
-            ClientResources.handwrittenfont.Draw(new Float2(90, 0) + Fontoffset, new Float2(1, 1) - Fontoffset * 2, "Fields:"+networkclass.Fields.Count);
+            ClientResources.handwrittenfont.Draw(new Float2(90, 0) + Fontoffset, new Float2(1, 1) - Fontoffset * 2, "Fields:" + networkclass.Fields.Count);
         }
     }
 }
