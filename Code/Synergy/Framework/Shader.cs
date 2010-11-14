@@ -91,6 +91,7 @@ namespace Synergy
 
             if (!shader.Success)
             {
+                System.Windows.Forms.MessageBox.Show(shader.ErrorsAndWarnings);
                 //Log.Write("ShaderCompiler", Log.Line.Type.Error, "Failed to compile shader");
                 Log.Write("ShaderCompiler", Log.Line.Type.Error, shader.ErrorsAndWarnings);
                 return null;

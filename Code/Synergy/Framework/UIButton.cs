@@ -13,7 +13,7 @@ namespace Synergy
         TextureGPUResource buttonoff = new TextureGPUResource("./content/buttonoff.png");
         public string Text;
         SpriteFont font = null;
-        bool red;
+        public bool Checked;
         public UIButton(string _Name, Control _Parent)
             : base(_Name, _Parent)
         {
@@ -31,19 +31,18 @@ namespace Synergy
             Float3 mouse = new Float3(_Event.Position, 1);
             Float3x3 mat = GetTransformation().Invert();
             Float2 localmouse = (mouse * mat).XY;
-            if (localmouse.Length() < 1 && !_Event.Released)
+            if (localmouse.Length() < 1 && _Event.Released)
             {
-                red = true;
+                Checked = !Checked;
                 return true;
             }
-            else red = false;
             return false;
         }
 
         public override void Draw()
         {
             Graphics.SetBlendMode(Graphics.BlendMode.Alpha);
-            TextureGPU img = red ? (TextureGPU)buttonoff.Get() : (TextureGPU)buttonon.Get();
+            TextureGPU img = Checked ? (TextureGPU)buttonoff.Get() : (TextureGPU)buttonon.Get();
             if (img != null)
             {
                 shader.SetParameter("View", GetTransformation());
