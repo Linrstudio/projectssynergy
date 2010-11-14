@@ -24,7 +24,11 @@ namespace SynergyClient
 
         int ScreenSaverDropTimeout = 0;
         TextureGPUResource ScreenSaverDroplet = null;
-        bool ScreenSaverEnabled = true;
+        bool ScreenSaverEnabled = false;
+
+        float SceneRotation = 0;
+
+        List<UIFloor> Floors = new List<UIFloor>();
 
         public Form1()
         {
@@ -39,16 +43,19 @@ namespace SynergyClient
 
             ScreenSaverDroplet = new TextureGPUResource("./content/droplet.png");
 
-
             //Root = new GenericBrowser(null);
 #if true
             Root = new UIBackground("", null);
 
-            UIFloor floor4 = new UIFloor("floor4", Root); floor4.level = 3;
-            UIFloor floor3 = new UIFloor("floor3", Root); floor3.level = 2;
-            UIFloor floor2 = new UIFloor("floor2", Root); floor2.level = 1;
-            UIFloor floor1 = new UIFloor("floor1", Root); floor1.level = 0;
+            UIFloor floor4 = new UIFloor("floor4", Root); floor4.Level = 3;
+            UIFloor floor3 = new UIFloor("floor3", Root); floor3.Level = 2;
+            UIFloor floor2 = new UIFloor("floor2", Root); floor2.Level = 1;
+            UIFloor floor1 = new UIFloor("floor1", Root); floor1.Level = 0;
 
+            Floors.Add(floor1);
+            Floors.Add(floor2);
+            Floors.Add(floor3);
+            Floors.Add(floor4);
 
             Control button1 = new UIButton("b1", floor4);
             button1.Transformation = Float3x3.Scale(0.1f) * Float3x3.Translate(new Float2(1, 1));
@@ -121,7 +128,17 @@ namespace SynergyClient
             if (ScreenSaverEnabled)
                 Graphics.SetRenderTarget(ScreenSaverTarget);
 
+            //rotate scene
+            SceneRotation += 0.005f;
+            foreach (UIFloor f in Floors)
+            {
+                f.Rotation = (float)Math.Cos(SceneRotation) *( (float)Math.PI / 8.0f);
+            }
+            
+
             Root.Draw();
+
+
             if (Environment.TickCount > ScreenSaverStartTimer && ScreenSaverStartTimer != 0) { ScreenSaverEnabled = true; ScreenSaverStartTimer = 0; ScreenSaverStopTimer = 0; frame1 = true; }
             if (ScreenSaverEnabled)
             {

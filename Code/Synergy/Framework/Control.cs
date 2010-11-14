@@ -13,11 +13,13 @@ namespace Synergy
         public Control Parent;
         List<Control> Children = new List<Control>();
         //position and size, but you dont need to wory about that
-        public Float3x3 Transformation;
+        public Float3x3 Transformation = Float3x3.Identity;
         public delegate void Render();
         public Render OnRender;
         public bool RelativeToParent = true;
         protected int depth;
+
+        public bool HandleChildInputFirst = false;
 
         public void AddChild(Control _Control)
         {
@@ -52,7 +54,15 @@ namespace Synergy
         public bool HandleControllerInput(UITouchEvent _Event)
         {
             bool anyhandled = false;
-            if (OnControllerInput != null)
+            if (HandleChildInputFirst)
+            {
+                for (int i = Children.Count - 1; i >= 0; i--)
+                {
+                    if (Children[i].HandleControllerInput(_Event)) { anyhandled = true; break; }
+                }
+            }
+
+            if (OnControllerInput != null && !anyhandled)
             {
                 foreach (Delegate d in OnControllerInput.GetInvocationList())
                 {
@@ -68,11 +78,13 @@ namespace Synergy
 
                 }
             }
-            //might want to change this priority
-            // if we dont need the Input try one of our children
-            for (int i = Children.Count - 1; i >= 0; i--)
+
+            if (!HandleChildInputFirst)
             {
-                if (Children[i].HandleControllerInput(_Event)) break;
+                for (int i = Children.Count - 1; i >= 0; i--)
+                {
+                    if (Children[i].HandleControllerInput(_Event)) { anyhandled = true; break; }
+                }
             }
             return anyhandled;
         }
