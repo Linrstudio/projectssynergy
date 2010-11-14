@@ -51,7 +51,7 @@ float4 WobblePS(PSin input):COLOR
 	float height = c.x;
 	float speed = c.y;
 	
-	speed+=(targetheight-height)/2;
+	speed+=(targetheight-height)/4;
 	height+=speed;
 	height*=0.98f;//friction
 	
