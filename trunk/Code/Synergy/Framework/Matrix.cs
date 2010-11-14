@@ -51,14 +51,14 @@ namespace Synergy
             Y = _Y;
             T = _T;
         }
-
+        
         public static Float3x3 operator *(Float3x3 _A, Float3x3 _B)
         {
             // THIS ONE WORKS
             Float3x3 ret = new Float3x3(
-                Float3.Dot(_B.Row[0], _A.Column[0]), Float3.Dot(_B.Row[0], _A.Column[1]), Float3.Dot(_B.Row[0], _A.Column[2]),
-                Float3.Dot(_B.Row[1], _A.Column[0]), Float3.Dot(_B.Row[1], _A.Column[1]), Float3.Dot(_B.Row[1], _A.Column[2]),
-                Float3.Dot(_B.Row[2], _A.Column[0]), Float3.Dot(_B.Row[2], _A.Column[1]), Float3.Dot(_B.Row[2], _A.Column[2]));
+                Float3.Dot(_A.Row[0], _B.Column[0]), Float3.Dot(_A.Row[0], _B.Column[1]), Float3.Dot(_A.Row[0], _B.Column[2]),
+                Float3.Dot(_A.Row[1], _B.Column[0]), Float3.Dot(_A.Row[1], _B.Column[1]), Float3.Dot(_A.Row[1], _B.Column[2]),
+                Float3.Dot(_A.Row[2], _B.Column[0]), Float3.Dot(_A.Row[2], _B.Column[1]), Float3.Dot(_A.Row[2], _B.Column[2]));
             return ret;
         }
 
@@ -98,7 +98,7 @@ namespace Synergy
             return r;
         }
 
-        public static Float3x3 Rotate(float _Radians) { return new Float3x3((float)Math.Cos(_Radians), (float)Math.Sin(_Radians), 0, (float)-Math.Sin(_Radians), (float)Math.Cos(_Radians), 0, 0, 0, 0); }
+        public static Float3x3 Rotate(float _Radians) { return new Float3x3((float)Math.Cos(_Radians), (float)Math.Sin(_Radians), 0, (float)-Math.Sin(_Radians), (float)Math.Cos(_Radians), 0, 0, 0, 1); }
         public static Float3x3 Translate(Float2 _Translation) { return new Float3x3(1, 0, 0, 0, 1, 0, _Translation.X, _Translation.Y, 1); }
         public static Float3x3 Scale(float _Scale) { return new Float3x3(_Scale, 0, 0, 0, _Scale, 0, 0, 0, 1); }
         public static Float3x3 Scale(Float2 _Scale) { return new Float3x3(_Scale.X, 0, 0, 0, _Scale.Y, 0, 0, 0, 1); }

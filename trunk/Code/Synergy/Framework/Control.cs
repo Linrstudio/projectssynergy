@@ -16,6 +16,7 @@ namespace Synergy
         public Float3x3 Transformation;
         public delegate void Render();
         public Render OnRender;
+        public bool RelativeToParent = true;
         protected int depth;
 
         public void AddChild(Control _Control)
@@ -115,7 +116,7 @@ namespace Synergy
 
         public Float3x3 GetTransformation()
         {
-            if (Parent != null) return Parent.Transformation * Transformation;
+            if (Parent != null && RelativeToParent) return Transformation * Parent.Transformation;
             return Transformation;
         }
 
