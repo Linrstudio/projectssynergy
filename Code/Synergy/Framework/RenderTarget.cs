@@ -13,7 +13,8 @@ namespace Synergy
         public enum SurfaceFormat
         {
             Color = Microsoft.Xna.Framework.Graphics.SurfaceFormat.Color,
-            Float4 = Microsoft.Xna.Framework.Graphics.SurfaceFormat.Vector4
+            Float4 = Microsoft.Xna.Framework.Graphics.SurfaceFormat.Vector4,
+            Float4Half = Microsoft.Xna.Framework.Graphics.SurfaceFormat.HalfVector4
         }
 
         internal RenderTarget2D rendertarget;

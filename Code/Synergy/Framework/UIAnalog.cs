@@ -27,7 +27,7 @@ namespace Synergy
             loadingshader = ShaderCompiler.Compile(System.IO.File.ReadAllText("Loading.fx"));
 
             font = new SpriteFont("./content/Arial.png", "./content/Arial.xml");
-
+            NormalTransformation = Transformation;
             OnControllerInput += new OnControllerInputHandler(UIButton_OnControllerInput);
         }
 
@@ -37,7 +37,7 @@ namespace Synergy
             Float3x3 mat = GetTransformation();
             Float3x3 matinv = mat.Invert();
             Float2 localmouse = (mouse * matinv).XY;
-            
+
             if (zoomed)
             {
                 if (localmouse.Length() > 1 && _Event.Released)
@@ -59,12 +59,12 @@ namespace Synergy
                 if (localmouse.Length() < 1 && zoomstate < 0.1f && _Event.Released)
                 {
                     NormalTransformation = Transformation;
+                    RelativeToParent = false;
                     zoomed = true;
                     BringToFront();
                     return true;
                 }
             }
-           
             return false;
         }
 
@@ -76,9 +76,9 @@ namespace Synergy
                 {
                     zoomstate += 0.04f;
                     float t = (float)Math.Sin((zoomstate - 0.5) * Math.PI) * 0.5f + 0.5f;
-                    Transformation = Float3x3.Interpolate(NormalTransformation, ZoomedTransformation, t);
+                    Transformation = Float3x3.Interpolate(NormalTransformation * Parent.Transformation, ZoomedTransformation, t);
                 }
-                else zoomstate = 1;
+                else if (zoomstate != 1) { zoomstate = 1; }
             }
             else
             {
@@ -86,9 +86,9 @@ namespace Synergy
                 {
                     zoomstate -= 0.04f;
                     float t = (float)Math.Sin((zoomstate - 0.5) * Math.PI) * 0.5f + 0.5f;
-                    Transformation = Float3x3.Interpolate(NormalTransformation, ZoomedTransformation, t);
+                    Transformation = Float3x3.Interpolate(NormalTransformation * Parent.Transformation, ZoomedTransformation, t);
                 }
-                else zoomstate = 0;
+                else if (zoomstate != 0) { zoomstate = 0; Transformation = NormalTransformation; RelativeToParent = true; }
             }
 
             Graphics.SetBlendMode(Graphics.BlendMode.Alpha);
