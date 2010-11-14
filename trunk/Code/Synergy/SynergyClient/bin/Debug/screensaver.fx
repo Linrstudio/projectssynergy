@@ -17,7 +17,12 @@ texture2D DiffuseMap;
 sampler2D DiffuseSampler=sampler_state{Texture = <DiffuseMap>;MinFilter=Linear;MagFilter=Linear;MipFilter=Linear;};
 
 texture2D WobblerMap;
-sampler2D WobblerSampler=sampler_state{Texture = <WobblerMap>;MinFilter=Linear;MagFilter=Linear;MipFilter=Linear; BorderColor=float4(0,0,0,0); 
+sampler2D WobblerSampler=sampler_state{Texture = <WobblerMap>;MinFilter=Point;MagFilter=Point;MipFilter=Point; BorderColor=float4(0,0,0,0); 
+AddressU=CLAMP;
+AddressV=CLAMP;
+};
+
+sampler2D WobblerResultSampler=sampler_state{Texture = <WobblerMap>;MinFilter=Linear;MagFilter=Linear;MipFilter=Point; BorderColor=float4(0,0,0,0); 
 AddressU=CLAMP;
 AddressV=CLAMP;
 };
@@ -29,7 +34,7 @@ PSin MainVS(VSin input)
     PSin output;
 	output.Position=float4(0,0,1,1);
 	output.Position.xy=input.Position.xy;
-	output.UV=input.UV;
+	output.UV=input.UV+float2(0.05,0.05)/RenderSize;
 	output.Color=input.Color;
     return output;
 }
@@ -58,7 +63,7 @@ float4 WobblePS(PSin input):COLOR
 
 float4 MainPS(PSin input):COLOR
 {
-	float4 wobble=tex2D(WobblerSampler,input.UV);
+	float4 wobble=tex2D(WobblerResultSampler,input.UV);
 	float3 normal = normalize(float3(wobble.zw,0.5));
 
 	//float4 diffuse=tex2D(DiffuseSampler,input.UV+(wobble.zw*2-1)/(RenderSize/10));

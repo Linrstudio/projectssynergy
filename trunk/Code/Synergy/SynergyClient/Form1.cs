@@ -6,7 +6,6 @@ using System.Text;
 
 using Synergy;
 
-
 namespace SynergyClient
 {
     public partial class Form1 : System.Windows.Forms.Form
@@ -32,7 +31,7 @@ namespace SynergyClient
             Graphics.Initialize(this.Handle, TargetResolution);
             ClientResources.Load();
             ScreenSaverTarget = new RenderTarget(TargetResolution);
-            ScreenSaverWobbleTarget = new RenderTarget(TargetResolution, RenderTarget.SurfaceFormat.Float4);
+            ScreenSaverWobbleTarget = new RenderTarget(TargetResolution/8, RenderTarget.SurfaceFormat.Float4);
             ScreenSaverShader = ShaderCompiler.Compile(System.IO.File.ReadAllText("screensaver.fx"));
             ScreenSaverBuffer = new TextureGPU(TargetResolution);
 
@@ -41,7 +40,7 @@ namespace SynergyClient
 
             //Root = new GenericBrowser(null);
 
-            Control button1 = new UIAnalog("b1", null);
+            Control button1 = new UIButton("b1", null);
             button1.Transformation = Float3x3.Translate(new Float2(0.5f, 0.5f)) * Float3x3.Scale(0.1f);
             Control button2 = new UIAnalog("b2", null);
             button2.Transformation = Float3x3.Translate(new Float2(0.5f, -0.5f)) * Float3x3.Scale(0.1f);
@@ -50,7 +49,7 @@ namespace SynergyClient
             Control button4 = new UIAnalog("b4", null);
             button4.Transformation = Float3x3.Translate(new Float2(-0.5f, -0.5f)) * Float3x3.Scale(0.1f);
 
-            ((UIAnalog)button1).Text = "button1";
+            ((UIButton)button1).Text = "button1";
             ((UIAnalog)button2).Text = "button2";
             ((UIAnalog)button3).Text = "button3";
             ((UIAnalog)button4).Text = "button4";
@@ -70,9 +69,10 @@ namespace SynergyClient
         {
             Tick();
         }
-        Float2 lastpos;
+
         bool lastpress = false;
         bool frame1 = true;
+        Float2 lastpos;
         public void Tick()
         {
             System.Drawing.Point mouse = PointToClient(MousePosition);

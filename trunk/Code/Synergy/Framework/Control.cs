@@ -69,9 +69,9 @@ namespace Synergy
             }
             //might want to change this priority
             // if we dont need the Input try one of our children
-            foreach (Control c in Children)
+            for (int i = Children.Count - 1; i >= 0; i--)
             {
-                c.HandleControllerInput(_Event);
+                if (Children[i].HandleControllerInput(_Event)) break;
             }
             return anyhandled;
         }
