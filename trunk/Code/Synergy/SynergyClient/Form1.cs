@@ -19,6 +19,8 @@ namespace SynergyClient
         Shader ScreenSaverShader = null;
         int ScreenSaverStartTimer = 0;
         int ScreenSaverStopTimer = 0;
+        bool ScreenSaverCustomDroplet = false;
+        Float2 ScreenSaverDropletPos = new Float2(0, 0);
 
         int ScreenSaverDropTimeout = 0;
         TextureGPUResource ScreenSaverDroplet = null;
@@ -31,7 +33,7 @@ namespace SynergyClient
             Graphics.Initialize(this.Handle, TargetResolution);
             ClientResources.Load();
             ScreenSaverTarget = new RenderTarget(TargetResolution);
-            ScreenSaverWobbleTarget = new RenderTarget(TargetResolution/8, RenderTarget.SurfaceFormat.Float4);
+            ScreenSaverWobbleTarget = new RenderTarget(TargetResolution / 8, RenderTarget.SurfaceFormat.Float4Half);
             ScreenSaverShader = ShaderCompiler.Compile(System.IO.File.ReadAllText("screensaver.fx"));
             ScreenSaverBuffer = new TextureGPU(TargetResolution);
 
@@ -39,7 +41,21 @@ namespace SynergyClient
 
 
             //Root = new GenericBrowser(null);
+#if true
+            Root = new UIBackground("", null);
 
+            UIFloor floor4 = new UIFloor("floor4", Root); floor4.level = 3;
+            UIFloor floor3 = new UIFloor("floor3", Root); floor3.level = 2;
+            UIFloor floor2 = new UIFloor("floor2", Root); floor2.level = 1;
+            UIFloor floor1 = new UIFloor("floor1", Root); floor1.level = 0;
+
+
+            Control button1 = new UIButton("b1", floor4);
+            button1.Transformation = Float3x3.Scale(0.1f) * Float3x3.Translate(new Float2(1, 1));
+
+            Control button2 = new UIAnalog("b2", floor4);
+            button2.Transformation = Float3x3.Scale(0.1f) * Float3x3.Translate(new Float2(0, 0));
+#else
             Control button1 = new UIButton("b1", null);
             button1.Transformation = Float3x3.Translate(new Float2(0.5f, 0.5f)) * Float3x3.Scale(0.1f);
             Control button2 = new UIAnalog("b2", null);
@@ -60,7 +76,7 @@ namespace SynergyClient
             Root.AddChild(button2);
             Root.AddChild(button3);
             Root.AddChild(button4);
-
+#endif
             //Root.Transformation = Float3x3.Scale(new Float2(2, -2)) * Float3x3.Translate(new Float2(-0.5f, -0.5f));
             System.Windows.Forms.Application.Idle += new EventHandler(Application_Idle);
         }
@@ -70,6 +86,7 @@ namespace SynergyClient
             Tick();
         }
 
+        int presstime = 0;
         bool lastpress = false;
         bool frame1 = true;
         Float2 lastpos;
@@ -83,11 +100,21 @@ namespace SynergyClient
             cursorpos = cursorpos * 2 - new Float2(1, 1);
             cursorpos.Y = -cursorpos.Y;
             bool press = MouseButtons == System.Windows.Forms.MouseButtons.Left;
+            if (press && !lastpress) presstime = Environment.TickCount;
             if ((press && lastpos != cursorpos) || lastpress != press)
                 Root.HandleControllerInput(new UITouchEvent(cursorpos, press != lastpress && press == true, press != lastpress && press == false));
-            lastpress = press;
             if (press) ScreenSaverStartTimer = Environment.TickCount + 60000;
-            if (press && ScreenSaverEnabled) ScreenSaverStopTimer = Environment.TickCount + 10000;
+
+            if (!press && lastpress && ScreenSaverEnabled && Environment.TickCount - presstime < 250)
+                ScreenSaverStopTimer = Environment.TickCount + 10000;
+            if (press)
+            {
+                ScreenSaverDropletPos = cursorpos;
+                ScreenSaverCustomDroplet = true;
+            }
+            lastpress = press;
+
+
 
             Root.Update();
             //optionally apply screensaver
@@ -113,20 +140,38 @@ namespace SynergyClient
                     new Float2(1, -1), 0.5f);
                 ScreenSaverShader.End();
                 if (frame1) Graphics.Clear(new Float4(0, 0, 0, 0));
-                if (Environment.TickCount > ScreenSaverDropTimeout && ScreenSaverDroplet.Get() != null && ScreenSaverStopTimer == 0)
+                if (ScreenSaverStopTimer == 0 && ScreenSaverDroplet.Get() != null)
                 {
-                    ScreenSaverDropTimeout = Environment.TickCount + random.Next(2000);
-                    Graphics.SetBlendMode(Graphics.BlendMode.Add);
-                    Graphics.defaultshader.SetParameter("View", new Float3x3(0.05f, 0, 0, 0, 0.05f, 0, (float)random.NextDouble() * 2 - 1, (float)random.NextDouble() * 2 - 1, 1));
-                    Graphics.defaultshader.SetParameter("DiffuseMap", (TextureGPU)ScreenSaverDroplet.Get());
-                    Graphics.defaultshader.Begin();
-                    Graphics.DrawRectangle(
-                        new Float2(-1, 1),
-                        new Float2(1, 1),
-                        new Float2(-1, -1),
-                        new Float2(1, -1), 0.5f);
-                    Graphics.defaultshader.End();
-                    Graphics.SetBlendMode(Graphics.BlendMode.None);
+                    if (ScreenSaverCustomDroplet)
+                    {
+                        Graphics.SetBlendMode(Graphics.BlendMode.Alpha);
+                        Graphics.defaultshader.SetParameter("View", new Float3x3(0.1f, 0, 0, 0, 0.1f, 0, ScreenSaverDropletPos.X, ScreenSaverDropletPos.Y, 1));
+                        Graphics.defaultshader.SetParameter("DiffuseMap", (TextureGPU)ScreenSaverDroplet.Get());
+                        Graphics.defaultshader.Begin();
+                        Graphics.DrawRectangle(
+                            new Float2(-1, 1),
+                            new Float2(1, 1),
+                            new Float2(-1, -1),
+                            new Float2(1, -1), 0.5f);
+                        Graphics.defaultshader.End();
+                        Graphics.SetBlendMode(Graphics.BlendMode.None);
+                        ScreenSaverCustomDroplet = false;
+                    }
+                    if (Environment.TickCount > ScreenSaverDropTimeout)
+                    {
+                        ScreenSaverDropTimeout = Environment.TickCount + random.Next(2000);
+                        Graphics.SetBlendMode(Graphics.BlendMode.Add);
+                        Graphics.defaultshader.SetParameter("View", new Float3x3(0.05f, 0, 0, 0, 0.05f, 0, (float)random.NextDouble() * 2 - 1, (float)random.NextDouble() * 2 - 1, 1));
+                        Graphics.defaultshader.SetParameter("DiffuseMap", (TextureGPU)ScreenSaverDroplet.Get());
+                        Graphics.defaultshader.Begin();
+                        Graphics.DrawRectangle(
+                            new Float2(-1, 1),
+                            new Float2(1, 1),
+                            new Float2(-1, -1),
+                            new Float2(1, -1), 0.5f);
+                        Graphics.defaultshader.End();
+                        Graphics.SetBlendMode(Graphics.BlendMode.None);
+                    }
                 }
                 Graphics.SetRenderTarget(null);
                 ScreenSaverBuffer = ScreenSaverWobbleTarget.Resolve();
@@ -150,7 +195,7 @@ namespace SynergyClient
         private void Form1_Load(object sender, EventArgs e)
         {
             Bounds = new System.Drawing.Rectangle(0, 0, TargetResolution.X, TargetResolution.Y);
-            new FrontEnd().Show();
+            //new FrontEnd().Show();
         }
 
         private void Form1_FormClosed(object sender, System.Windows.Forms.FormClosedEventArgs e)
