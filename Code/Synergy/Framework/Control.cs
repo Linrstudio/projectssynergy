@@ -79,7 +79,7 @@ namespace Synergy
                 }
             }
 
-            if (!HandleChildInputFirst)
+            if (!HandleChildInputFirst && !anyhandled)
             {
                 for (int i = Children.Count - 1; i >= 0; i--)
                 {
