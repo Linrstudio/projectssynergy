@@ -24,7 +24,6 @@ namespace SynergyClient
         {
             RelativeToParent = false;
             ZoomedTransform = new Float3x3(0.9f, 0, 0, 0, 0.9f, 0, 0, 0, 1);
-
             OnControllerInput += new OnControllerInputHandler(UIButton_OnControllerInput);
         }
 
@@ -40,6 +39,7 @@ namespace SynergyClient
                 if (localmouse.Length() > 1 && _Event.Released)
                 {
                     zoomed = false;
+                    HandleChildInputFirst = false;
                     return true;
                 }
                 else
@@ -54,9 +54,10 @@ namespace SynergyClient
             }
             else
             {
-                if (localmouse.Length() < 1 && zoomstate < 0.1f && _Event.Released)
+                if (localmouse.Length() < 1 && zoomstate < 0.1f && _Event.Released&&!zoomed)
                 {
                     zoomed = true;
+                    HandleChildInputFirst = true;
                     BringToFront();
                     return true;
                 }
