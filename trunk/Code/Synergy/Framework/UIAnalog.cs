@@ -7,14 +7,14 @@ namespace Synergy
 {
     public class UIAnalog : Control
     {
-        Shader shader = null;
-        Shader loadingshader = null;
-        TextureGPUResource buttonon = new TextureGPUResource("./content/buttonon.png");
-        TextureGPUResource buttonoff = new TextureGPUResource("./content/buttonoff.png");
+        TextureGPUResource background = new TextureGPUResource("./content/backplateButton.png");
+        TextureGPUResource knob = new TextureGPUResource("./content/newbutton.png");
         public string Text;
         SpriteFont font = null;
-        bool red;
+        public float Value = 0.0f;
         bool zoomed = false;
+        float OffsetValue;
+        float OffsetAngle;
         float zoomstate = 0;
         Float3x3 ZoomedTransformation;
         Float3x3 NormalTransformation;
@@ -23,8 +23,6 @@ namespace Synergy
         {
             Transformation = new Float3x3(0.1f, 0, 0, 0, 0.1f, 0, 0, 0, 1);
             ZoomedTransformation = new Float3x3(0.9f, 0, 0, 0, 0.9f, 0, 0, 0, 1);
-            shader = ShaderCompiler.Compile(System.IO.File.ReadAllText("Default.fx"));
-            loadingshader = ShaderCompiler.Compile(System.IO.File.ReadAllText("Loading.fx"));
 
             font = new SpriteFont("./content/Arial.png", "./content/Arial.xml");
             NormalTransformation = Transformation;
@@ -47,16 +45,30 @@ namespace Synergy
                 }
                 else
                 {
-                    if (_Event.Released)
+                    if (_Event.Pressed)
                     {
-                        red = !red;
-                        return true;
+                        OffsetAngle = -(float)Math.Atan2(localmouse.Y, localmouse.X);
+                        OffsetValue = Value - OffsetAngle / ((float)Math.PI * 2);
                     }
+
+                    float angle = -(float)Math.Atan2(localmouse.Y, localmouse.X);
+
+                    float shortestangle = angle - OffsetAngle;
+                    if (shortestangle > Math.PI) shortestangle = ((float)Math.PI * 2) - shortestangle;
+                    if (shortestangle < -Math.PI) shortestangle = ((float)Math.PI * 2) + shortestangle;
+
+                    Value += shortestangle / ((float)Math.PI * 2);
+
+                    OffsetAngle = angle;
+
+                    if (Value > 1) Value = 1f;
+                    if (Value < 0) Value = 0;
+                    return true;
                 }
             }
             else
             {
-                if (localmouse.Length() < 1 && zoomstate < 0.1f && _Event.Released)
+                if (localmouse.Length() < 1 && _Event.Released)
                 {
                     NormalTransformation = Transformation;
                     RelativeToParent = false;
@@ -90,53 +102,43 @@ namespace Synergy
                 }
                 else if (zoomstate != 0) { zoomstate = 0; Transformation = NormalTransformation; RelativeToParent = true; }
             }
+            //blaat
 
             Graphics.SetBlendMode(Graphics.BlendMode.Alpha);
-            TextureGPU img = red ? (TextureGPU)buttonoff.Get() : (TextureGPU)buttonon.Get();
+            TextureGPU img = (TextureGPU)background.Get();
+
             if (img != null)
             {
-                shader.SetParameter("View", GetTransformation());
-                shader.SetParameter("DiffuseMap", img);
-                shader.Begin();
+                Graphics.defaultshader.SetParameter("View", GetTransformation());
+                Graphics.defaultshader.SetParameter("DiffuseMap", img);
+                Graphics.defaultshader.Begin();
                 Graphics.DrawRectangle(
                     new Float2(-1, -1),
                     new Float2(1, -1),
                     new Float2(-1, 1),
                     new Float2(1, 1), 0.5f);
-                shader.End();
-                Graphics.defaultshader.SetParameter("View", GetTransformation());
-                font.Draw(new Float2(-1, 1), 2, Text);
+                Graphics.defaultshader.End();
+
             }
-            else
+
+            img = (TextureGPU)knob.Get();
+
+            float angle = Value * (float)Math.PI * 2;
+            if (img != null)
             {
-                loadingshader.SetParameter("View", GetTransformation());
-                loadingshader.Begin();
-                Graphics.DrawLine(
-                    new Float2(-1, -1),
-                    new Float2(-1, 1),
-                    new Float4(1, 0, 0, 1),
-                    new Float4(1, 0, 0, 1), 4);
-
-                Graphics.DrawLine(
+                Graphics.defaultshader.SetParameter("View", Float3x3.Rotate(-angle) * GetTransformation());
+                Graphics.defaultshader.SetParameter("DiffuseMap", img);
+                Graphics.defaultshader.Begin();
+                Graphics.DrawRectangle(
                     new Float2(-1, -1),
                     new Float2(1, -1),
-                    new Float4(1, 0, 0, 1),
-                    new Float4(1, 0, 0, 1), 4);
-
-                Graphics.DrawLine(
-                    new Float2(1, 1),
                     new Float2(-1, 1),
-                    new Float4(1, 0, 0, 1),
-                    new Float4(1, 0, 0, 1), 4);
-
-                Graphics.DrawLine(
-                    new Float2(1, 1),
-                    new Float2(1, -1),
-                    new Float4(1, 0, 0, 1),
-                    new Float4(1, 0, 0, 1), 4);
-
-                loadingshader.End();
+                    new Float2(1, 1), 0.5f);
+                Graphics.defaultshader.End();
+                Graphics.defaultshader.SetParameter("View", GetTransformation());
+                font.Draw(new Float2(-1, 1), 2, string.Format("{0}", Value));
             }
+
         }
     }
 }
