@@ -62,6 +62,10 @@ namespace SynergyClient
 
             Control button2 = new UIAnalog("b2", floor4);
             button2.Transformation = Float3x3.Scale(0.1f) * Float3x3.Translate(new Float2(0, 0));
+
+            UIProgressBar progress = new UIProgressBar("p1", floor4);
+            progress.Transformation = Float3x3.Scale(new Float2(0.3f,0.1f) )* Float3x3.Translate(new Float2(0, 0.5f));
+            progress.Value = 50;
 #else
             Control button1 = new UIButton("b1", null);
             button1.Transformation = Float3x3.Translate(new Float2(0.5f, 0.5f)) * Float3x3.Scale(0.1f);

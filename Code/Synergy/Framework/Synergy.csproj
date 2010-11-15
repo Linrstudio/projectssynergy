@@ -114,6 +114,7 @@
     <Compile Include="UIBackground.cs" />
     <Compile Include="UIButton.cs" />
     <Compile Include="UIController.cs" />
+    <Compile Include="UIProgressBar.cs" />
     <Compile Include="Vector.cs" />
   </ItemGroup>
   <ItemGroup>
