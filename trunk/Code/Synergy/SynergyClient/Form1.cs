@@ -24,7 +24,7 @@ namespace SynergyClient
 
         int ScreenSaverDropTimeout = 0;
         TextureGPUResource ScreenSaverDroplet = null;
-        bool ScreenSaverEnabled = false;
+        bool ScreenSaverEnabled = true;
 
         float SceneRotation = 0;
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Synergy
@@ -12,7 +11,7 @@ namespace Synergy
         static Queue<Variable> VariableQueue = new Queue<Variable>();
 
         public List<Line> Lines = new List<Line>();
-        public List<Variable> Variables= new List<Variable>();
+        public List<Variable> Variables = new List<Variable>();
 
         public static List<Line> AllLines = new List<Line>();
         public static List<Variable> AllVariables = new List<Variable>();
@@ -24,7 +23,7 @@ namespace Synergy
 
         public static void Write(string _Log, string _Format, params object[] _Arguments)
         {
-            Write(new Line(_Log,string.Format(_Format, _Arguments), Line.Type.Message));
+            Write(new Line(_Log, string.Format(_Format, _Arguments), Line.Type.Message));
         }
 
         public static void Write(string _Log, Log.Line.Type _Type, string _Format, params object[] _Arguments)
@@ -32,7 +31,7 @@ namespace Synergy
             string result = "";
             try
             {
-                 result = string.Format(_Format, _Arguments);
+                result = string.Format(_Format, _Arguments);
             }
             catch { result = _Format; }
             Write(new Log.Line(_Log, result, _Type));
