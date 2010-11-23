@@ -16,7 +16,8 @@
 
 void USBInit();
 void USBInitEndPoint();
-
+void USBWrite();
+int8 USBBusy();//determines if one could read/write or not
 void USBUpdate();
 
 #endif

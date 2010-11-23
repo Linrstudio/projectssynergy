@@ -2,6 +2,11 @@
 #include "Kismet.h"
 #include "Default.h"
 
+int8 RTCSecond;
+int8 RTCMinute;
+int8 RTCHour;
+int16 RTCDay;
+int8 RTCEdge;//possibly a better way of reading TMR1
 
 void RTCInit()
 {
@@ -49,13 +54,11 @@ void RTCUpdate()
 					RTCHour=0;
 					RTCDay++;
 				
-					if(RTCDay>=7)
-					{
-						RTCDay=0;
-					}
-//					KismetExecuteEvent(1,4,RTCDay);	//trigger day changed event
+					KismetSetRegister(0,(int16)RTCDay);
+					KismetExecuteEvent(0,4);
 				}
-//				KismetExecuteEvent(1,3,RTCHour);	//trigger hour changed event
+				KismetSetRegister(0,(int16)RTCHour);
+				KismetExecuteEvent(0,3);
 			}
 			KismetSetRegister(0,(int16)RTCMinute);
 			KismetExecuteEvent(0,2);
