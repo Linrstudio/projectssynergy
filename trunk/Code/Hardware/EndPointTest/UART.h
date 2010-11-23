@@ -3,25 +3,28 @@
 
 #include "Default.h"
 
-#define UARTClearErrors\
+#define UART_TX_TRIS	TRISB7
+#define UART_RX_TRIS	TRISB5
+#define UART_DIR_TRIS	TRISB6
+
+#define UART_TX			RB7
+#define UART_RX			RB5
+#define UART_DIR		RB6
+
+#define UARTClearErrors \
 {\
 if (OERR){TXEN=0;TXEN=1;CREN=0;CREN=1;}\
 if (FERR){TXEN=0;TXEN=1;}\
 }
 
-static int8 UARTBuffer[16];
-static int8 UARTBufferSize;
+static int8 UARTError=0;
 
-#define UART_DIR RB6
-#define UART_DIR_TRIS TRISB6
-
-extern void UARTWrite();
-extern void UARTRead();
-extern void UARTInit();
-extern int8 UARTReadInt8(void);
-extern int16 UARTReadInt16();
-extern int8 UARTReadBool(void);
-extern int8 UARTAvailable(void);
-extern void UARTWriteInt8(int8 c);
-extern void UARTWriteInt16(int16 _Value);
+void UARTWrite();
+void UARTRead();
+void UARTInit();
+int8 UARTReadInt8();
+int16 UARTReadInt16();
+int8 UARTAvailable();
+void UARTWriteInt8(int8 c); 
+void UARTWriteInt16(int16 _Value);
 #endif
