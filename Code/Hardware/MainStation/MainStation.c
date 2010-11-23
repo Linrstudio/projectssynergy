@@ -8,18 +8,12 @@
 
 //shared memory layout:
 //0-32 = kismet registers
-#if 1
-int8*SharedMemory[EPBUFFERSIZE+(KISMETBUFFERSIZE*2)];
+int8 SharedMemory[EPBUFFERSIZE+(KISMETBUFFERSIZE*2)];
 
-int16*KismetRegisters;
-int8 *EPBuffer;
-#endif
+int8 OperationEnabled=255;
+
 void MSInit()
 {
-#if 1
-	KismetRegisters	=(int16*)&(SharedMemory[EPBUFFERSIZE]);
-	EPBuffer		=(int8 *)&SharedMemory[0];
-#endif
 	//turn off A lot of crap
 	CM1CON0bits.C1ON=0;
 	CM1CON0=0;

@@ -38,7 +38,7 @@ void UARTInit()
 	BAUDCONbits.BRG16=1;
 	TXSTAbits.BRGH=0;
 
-	SPBRGH=4;
+	SPBRGH=1;
 	SPBRG =0;
 
 	PIE1bits.TXIE=0;
@@ -47,7 +47,7 @@ void UARTInit()
 	//enable timer
 	T0CONbits.PSA=0;
 	T0CONbits.T0PS0=1;
-	T0CONbits.T0PS1=1;
+	T0CONbits.T0PS1=0;
 	T0CONbits.T0PS2=1;
 	T0CONbits.T08BIT=1;
 	T0CONbits.TMR0ON=1;

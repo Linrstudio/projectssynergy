@@ -37,8 +37,16 @@ unsigned char ToSendDataBuffer[64];
 USB_HANDLE USBOutHandle = 0;
 USB_HANDLE USBInHandle = 0;
 
-extern int8 EPBuffer[16];
+extern int8 RTCSecond;
+extern int8 RTCMinute;
+extern int8 RTCHour;
+extern int16 RTCDay;
+
+extern int8 SharedMemory[EPBUFFERSIZE+(KISMETBUFFERSIZE*2)];
+
 extern int16 EPBufferSize;
+
+extern int8 OperationEnabled;
 
 void USBInit()
 {
@@ -55,6 +63,16 @@ void USBInitEndPoint()
     USBOutHandle = HIDRxPacket(HID_EP,(BYTE*)&ReceivedDataBuffer,64);
 }
 
+void USBWrite()
+{
+	USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
+}
+
+int8 USBBusy()
+{
+	return HIDTxHandleBusy(USBInHandle);
+}
+
 void USBUpdate()
 {
 	int a,b;
@@ -67,98 +85,110 @@ void USBUpdate()
         {
 			case 0x01:
 				a=EPPoll(*(int16*)&ReceivedDataBuffer[1]);
-				if(!HIDTxHandleBusy(USBInHandle))
+				if(USBBusy()==0)
                 {
 					ToSendDataBuffer[0]=0x03;
 					if(a!=0)
 						ToSendDataBuffer[1]=0;
 					else
 						ToSendDataBuffer[1]=255;
-                    USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
+					USBWrite();
                 }
 				break;
 			case 0x02:
 				EPBufferSize=ReceivedDataBuffer[3];
-				for(a=0;a<EPBufferSize;a++)EPBuffer[a]=ReceivedDataBuffer[a+4];
+				for(a=0;a<EPBufferSize;a++)SharedMemory[a]=ReceivedDataBuffer[a+4];
 				EPSend(*(int16*)&ReceivedDataBuffer[1]);
+				if(USBBusy()==0)
+                {
+					ToSendDataBuffer[0]=0x02;
+                    USBWrite();
+                }
 				break;
 			case 0x06:
-				//SetLED1(1);
 				ToSendDataBuffer[1]=KismetExecuteEvent(((int16*)&ReceivedDataBuffer[1])[0],ReceivedDataBuffer[3]);
-				//SetLED1(0);
-				if(!HIDTxHandleBusy(USBInHandle))
+				if(USBBusy()==0)
                 {
 					ToSendDataBuffer[0]=0x06;
-                    USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
+                    USBWrite();
+                }
+				break;
+			case 0x07:
+				OperationEnabled=0;
+				if(!USBBusy())
+                {
+					ToSendDataBuffer[0]=0x07;
+                    USBWrite();
+                }
+				break;
+			case 0x08:
+				OperationEnabled=0xff;
+				if(!USBBusy())
+                {
+					ToSendDataBuffer[0]=0x08;
+                    USBWrite();
                 }
 				break;
 			case 0x03://EEPROM Write
-				{
-					MemoryBeginWrite(((int16*)&ReceivedDataBuffer[1])[0]);
-					MemoryWrite(ReceivedDataBuffer[3]);
-					MemoryEndWrite();
-				}
-				if(!HIDTxHandleBusy(USBInHandle))
+				MemoryBeginWrite(((int16*)&ReceivedDataBuffer[1])[0]);
+				MemoryWrite(ReceivedDataBuffer[3]);
+				MemoryEndWrite();
+				if(!USBBusy())
                 {
 					ToSendDataBuffer[0]=0x03;
-                    USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
+                    USBWrite();
                 }
 				break;
 			case 0x04://EEPROM WRITE PAGE
-				{
-					MemoryBeginWrite(((int16*)&ReceivedDataBuffer[1])[0]);
-					for(a=0;a<32;a++)
-						MemoryWrite(ReceivedDataBuffer[3+a]);
-					MemoryEndWrite();
-				}
-				if(!HIDTxHandleBusy(USBInHandle))
+				MemoryBeginWrite(((int16*)&ReceivedDataBuffer[1])[0]);
+				for(a=0;a<32;a++)
+					MemoryWrite(ReceivedDataBuffer[3+a]);
+				MemoryEndWrite();
+				if(!USBBusy())
                 {
 					ToSendDataBuffer[0]=0x04;
-                    USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
+                    USBWrite();
                 }
 				break;
 			case 0x05://EEPROM READ
-				if(!HIDTxHandleBusy(USBInHandle))
+				if(!USBBusy())
                 {
 					MemoryBeginRead(((int16*)&ReceivedDataBuffer[1])[0]);
 					ToSendDataBuffer[0]=0x04;
 					ToSendDataBuffer[1]=MemoryReadInt8();
 					MemoryEndRead();
-                    USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
+                    USBWrite();
                 }
 				break;
-
-            case 0x80:
-				SetLED1(0);
-                break;
-            case 0x81:
-				SetLED1(1);
-                break;
-            case 0x82:
-				SetLED1(2);
-                break;
-            case 0x71:  //Get push button state
-                ToSendDataBuffer[0] = 0x81;				//Echo back to the host PC the command we are fulfilling in the first byte.  In this case, the Get Pushbutton State command.
-				if(1 == 1)							//pushbutton not pressed, pull up resistor on circuit board is pulling the PORT pin high
-				{
-					ToSendDataBuffer[1] = 0x01;			
-				}
-				else									//sw2 must be == 0, pushbutton is pressed and overpowering the pull up resistor
-				{
-					ToSendDataBuffer[1] = 0x00;
-				}
-                if(!HIDTxHandleBusy(USBInHandle))
+			case 0x40://READ TIME
+				if(!USBBusy())
                 {
-                    USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
+					ToSendDataBuffer[0]=0x40;
+					ToSendDataBuffer[1]=RTCSecond;
+					ToSendDataBuffer[2]=RTCMinute;
+					ToSendDataBuffer[3]=RTCHour;
+					INT16(ToSendDataBuffer[4])=RTCDay;
+					USBWrite();
                 }
-                break;
+				break;
+			case 0x41://WRITE TIME
+				RTCSecond	=ReceivedDataBuffer[1];
+				RTCMinute	=ReceivedDataBuffer[2];
+				RTCHour		=ReceivedDataBuffer[3];
+				RTCDay		=INT16(ReceivedDataBuffer[4]);
+				if(!USBBusy())
+                {
+					ToSendDataBuffer[0]=0x41;
+					USBWrite();
+                }
+				break;
         }
 
         if(!HIDTxHandleBusy(USBInHandle))
         {
             USBInHandle = HIDTxPacket(HID_EP,(BYTE*)&ToSendDataBuffer[0],64);
         }
-
+		ReceivedDataBuffer[0]=0;
         //Re-arm the OUT endpoint for the next packet
         USBOutHandle = HIDRxPacket(HID_EP,(BYTE*)&ReceivedDataBuffer,64);
     }

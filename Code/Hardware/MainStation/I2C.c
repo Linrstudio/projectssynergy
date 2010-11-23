@@ -1,6 +1,8 @@
 #include"Default.h"
 #include"I2C.h"
 
+#define I2CDelay {Nop();Nop();Nop();Nop();Nop();}
+
 void I2CInit()
 {
 	SCL_TRIS=0;
@@ -87,7 +89,6 @@ int8 I2CAck()
 
 //SLOW FUNCTIONS for calendar IC etc
 
-
 void I2CDelaySlow()
 {
 	int i,j;
@@ -97,18 +98,16 @@ void I2CDelaySlow()
 void I2CStartSlow()
 {
 	SDA_TRIS=0;
-	SDA=0;
-	I2CDelaySlow();
-	SCL=0;
-	I2CDelaySlow();
+	I2CDelay;SDA=0;I2CDelay;
+	I2CDelay;SCL=0;I2CDelay;
 }
 
 void I2CStopSlow()
 {
 	SDA_TRIS=0;
-	SCL=1;
+	I2CDelay;SCL=1;I2CDelay;
 	I2CDelaySlow();
-	SDA=1;
+	I2CDelay;SDA=1;I2CDelay;
 }
 
 void I2CWriteSlow(int8 _Byte)
@@ -117,15 +116,9 @@ void I2CWriteSlow(int8 _Byte)
 	SDA_TRIS=0;
 	do
 	{
-		SCL=0;
-		I2CDelaySlow();
-//ok,, here magic happens these two lines should to the same, strangely enough it only works when I put both..., I just died a little
-		SDA=((_Byte&i)!=0)?1:0;
 		if((_Byte&i)!=0)SDA=1;else SDA=0;
-
-		SCL=1;
-		I2CDelaySlow();
-		SCL=0;
+		I2CDelay;SCL=1;I2CDelay;
+		I2CDelay;SCL=0;I2CDelay;
 		i>>=1;
   	}while(i!=0);
 }
@@ -138,12 +131,9 @@ int8 I2CReadSlow()
 	SDA_TRIS=1;
 	do
 	{
-		SCL=0;
-		I2CDelaySlow();
-		SCL=1;
+		I2CDelay;SCL=1;I2CDelay;
 		if(SDA)data|=i;
-		I2CDelaySlow();
-		SCL=0;
+		I2CDelay;SCL=0;I2CDelay;
 		i>>=1;
   	}while(i!=0);
 	SDA_TRIS=0;
@@ -152,23 +142,8 @@ int8 I2CReadSlow()
 
 int8 I2CAckSlow()
 {
-#if 0
-	int res;
-	SDA_TRIS=1;
-	//SDA_PULLUP=1;
-	I2CDelaySlow();
-	SCL=1;
-	res=SDA;
-	I2CDelaySlow();
-	SCL=0;
-	SDA_TRIS=0;	
-	return res?0:255;
-#else
 	SDA=0;
-	I2CDelaySlow();
-	SCL=1;
-	I2CDelaySlow();
-	SCL=0;
+	I2CDelay;SCL=1;I2CDelay;
+	I2CDelay;SCL=0;I2CDelay;
 	return 255;
-#endif
 }
