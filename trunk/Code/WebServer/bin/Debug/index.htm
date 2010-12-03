@@ -1,17 +1,65 @@
 <html>
 
 <head>
-<meta http-equiv="refresh" content="60;URL=../" /> 
 <title>Web-interface</title>
+
+<script>
+if(typeof $ != 'function') 
+{ 
+	$ = function(id) { return document.getElementById(id) }
+}
+
+function newAjaxObject()
+{
+	if (window.XMLHttpRequest)
+	{
+		// code for IE7+, Firefox, Chrome, Opera, Safari
+		return new XMLHttpRequest();
+	}
+	else if (window.ActiveXObject)
+	{
+		// code for IE6, IE5
+		return new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	else
+	{
+		return null;
+	}
+}
+
+function toggleLight(id)
+{
+	var obj=newAjaxObject();
+	obj.onreadystatechange=function()
+	{
+		if(obj.readyState==4)
+		{
+			if(obj.responseText=="2")
+			{
+				$('light_'+id).src="?res=lampoff";
+				
+			}
+			if(obj.responseText=="1")
+			{
+				$('light_'+id).src="?res=lampon";
+			}
+		    $('light_'+id).onclick=function() {toggleLight(id); return false;}
+		    $('light_'+id).id="light_"+id;
+		    
+		}
+	}
+	obj.open('GET', '?command='+id, true);
+	obj.send(null);
+}
+</script>
+
 </head>
 
 <body>
 
-<img src="<<<<BGNAME>>>>" width="<<<<WIDTH>>>>" height="<<<<HEIGHT>>>>" usemap="#map" />
+<img src="<<<<BGNAME>>>>" width="<<<<WIDTH>>>>" height="<<<<HEIGHT>>>>"/>
 
-<map name="map">
 <<<<AREAS>>>>
-</map>
 
 </body>
 </html>

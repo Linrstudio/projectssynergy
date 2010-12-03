@@ -68,11 +68,13 @@ namespace WebServer
             string Areas = "";
             foreach (Scene.ClickableRegion p in ClickablePoints)
             {
-                Areas += string.Format("<area shape=\"circle\" coords=\"{0},{1},{2}\" href=\"{3}\" alt=\"{4}\" />", p.GetX(_Settings), p.GetY(_Settings), p.GetRadius(_Settings) / 2, p.Target, p.Target);
+                Areas += string.Format("<img src=\"{0}\" onclick=\"toggleLight(\'{1}\'); return false;\" id=\"light_{1}\" style=\"position: absolute; left:{2}px; top:{3}px; z-index: 3; display: block\" />",
+                    p.Pressed ? "?res=lampon" : "?res=lampoff", p.Target.Trim(),
+                    p.GetX(_Settings), p.GetY(_Settings), p.GetRadius(_Settings) / 2, p.GetRadius(_Settings) / 2);
             }
             string response = System.IO.File.ReadAllText("index.htm");
             response = response.Replace("<<<<AREAS>>>>", Areas);
-            string backgroundname = "background-" + Guid.NewGuid().ToString();
+            string backgroundname = "?res=background" + "?width=" + _Settings.Width + "?height=" + _Settings.Height + "?detail=" + _Settings.Detail;
             response = response.Replace("<<<<BGNAME>>>>", backgroundname);
             response = response.Replace("<<<<WIDTH>>>>", _Settings.Width.ToString());
             response = response.Replace("<<<<HEIGHT>>>>", _Settings.Height.ToString());
@@ -84,6 +86,7 @@ namespace WebServer
             Bitmap b = new Bitmap(_Settings.Width / _Settings.Detail, _Settings.Height / _Settings.Detail);
             Graphics graphics = Graphics.FromImage(b);
             graphics.DrawImage(BackgroundImage, 0, 0, b.Width, b.Height);
+            /*
             foreach (ClickableRegion p in ClickablePoints)
             {
                 Image on = p.On != null ? p.On : DefaultOnImage;
@@ -94,7 +97,7 @@ namespace WebServer
                         (p.GetY(_Settings) - p.GetRadius(_Settings) / 2.0f) / _Settings.Detail,
                         p.GetRadius(_Settings) / _Settings.Detail, p.GetRadius(_Settings) / _Settings.Detail));
             }
-
+            */
             return (Image)b;
         }
     }
