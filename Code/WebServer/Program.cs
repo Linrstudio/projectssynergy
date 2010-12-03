@@ -73,28 +73,62 @@ namespace WebServer
                     }
 
                     HttpListenerRequest request = context.Request;
-                    string parameters = request.RawUrl.Replace("?", "");
+                    URLParser parser = new URLParser(request.Url.Query);
+                    Console.WriteLine(request.Url.Query);
+
+                    Scene.Settings settings = new Scene.Settings();
+                    string resource = "";
+                    string command = "";
+                    try
+                    {
+                        settings.Width = int.Parse(parser.Get("width"));
+                    }
+                    catch { }
+                    try
+                    {
+                        settings.Height = int.Parse(parser.Get("height"));
+                    }
+                    catch { }
+                    try
+                    {
+                        settings.Detail = int.Parse(parser.Get("detail"));
+                    }
+                    catch { }
+                    resource = parser.Get("res");
+                    command = parser.Get("command");
+
+
+                    string parameters = request.RawUrl;
                     // Obtain a response object.
                     HttpListenerResponse response = context.Response;
+
+                    string ResponseString = scene.GetHTML(settings);
+                    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(ResponseString);
                     //handle button press
                     foreach (Scene.ClickableRegion p in scene.ClickablePoints)
                     {
-                        if (parameters == "/" + p.Target)
+                        if (command == p.Target)
                         {
                             p.Pressed = !p.Pressed;
                             Console.WriteLine(p.Target + " Pressed");
+                            buffer =new byte[]{(byte)(p.Pressed?'1':'2')};
                         }
                     }
 
-                    string ResponseString = scene.GetHTML(new Scene.Settings());
-                    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(ResponseString);
-
-                    if (parameters.Contains("background"))
+                    switch (resource.ToLower() )
                     {
-                        Image bitmap = scene.GetImage(new Scene.Settings());
+                        case "background":
+                        Image bitmap = scene.GetImage(settings);
                         System.IO.MemoryStream stream = new System.IO.MemoryStream();
                         bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
                         buffer = stream.ToArray();
+                        break;
+                        case "lampon":
+                        buffer = System.IO.File.ReadAllBytes("On.png");
+                        break;
+                        case "lampoff":
+                        buffer = System.IO.File.ReadAllBytes("Off.png");
+                        break;
                     }
                     // Get a response stream and write the response to it.
                     response.ContentLength64 = buffer.Length;
