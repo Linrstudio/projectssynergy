@@ -10,14 +10,18 @@ namespace WebServer
         public Dictionary<string, string> Parameters;
         public URLParser(string _Source)
         {
-            Parameters = new Dictionary<string, string>();
-            string[] split = _Source.Split('?');
-            foreach (string s in split)
+            try
             {
-                string[] spl = s.Split('=');
-                if (spl.Length == 2)
-                    Parameters.Add(spl[0], spl[1]);
+                Parameters = new Dictionary<string, string>();
+                string[] split = _Source.Split('?')[1].Split('&');
+                foreach (string s in split)
+                {
+                    string[] spl = s.Split('=');
+                    if (spl.Length == 2)
+                        Parameters.Add(spl[0], spl[1]);
+                }
             }
+            catch { }
         }
 
         public string Get(string _Name)
