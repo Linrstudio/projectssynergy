@@ -11,30 +11,25 @@ namespace WebServer
 {
     class Program
     {
-        public static Scene scene = new Scene();
-
         public static Size Resolution = new Size(240, 320);
-
-        public static Image backgroundimage;
-        public static Image On;
-        public static Image Off;
 
         public static HttpListener listener;
         static void Main(string[] args)
         {
             if (!HttpListener.IsSupported) Console.WriteLine("HTTPListener class is not supported on your machine.");
 
-            scene.BackgroundImage = Image.FromFile("background.png");
-            scene.DefaultOnImage = Image.FromFile("On.png");
-            scene.DefaultOffImage = Image.FromFile("Off.png");
+            Scene scene1 = new Scene("portrait");
+            scene1.ClickablePoints.Add(new Scene.ClickableRegion(280.0f / 320, 40.0f / 480, 0.2f, "Solder"));
+            scene1.ClickablePoints.Add(new Scene.ClickableRegion(40.0f / 320, 40.0f / 480, 0.2f, "Lamp"));
 
+            scene1.ClickablePoints.Add(new Scene.ClickableRegion(280.0f / 320, 350.0f / 480, 0.2f, "Charger"));
+            scene1.ClickablePoints.Add(new Scene.ClickableRegion(280.0f / 320, 450.0f / 480, 0.2f, "Kitchen"));
 
-            scene.ClickablePoints.Add(new Scene.ClickableRegion(40.0f / 320, 40.0f / 480, 0.2f, "Button1"));
-            scene.ClickablePoints.Add(new Scene.ClickableRegion(200.0f / 320, 300.0f / 480, 0.2f, "Button2"));
+            scene1.Background = Image.FromStream(new System.IO.FileStream("background.png",System.IO.FileMode.Open));
 
-            scene.ClickablePoints.Add(new Scene.ClickableRegion(160.0f / 320, 120.0f / 480, 0.2f, "Button3"));
-            scene.ClickablePoints.Add(new Scene.ClickableRegion(200.0f / 320, 200.0f / 480, 0.2f, "Button4"));
+            Scene.Scenes.Add(scene1);
 
+            Scene.Scenes.Add(new Scene("landscape", scene1));
 
             // Create a listener.
             listener = new HttpListener();
@@ -57,87 +52,38 @@ namespace WebServer
             listener.Stop();
         }
 
+        public static Interface1 interface1 = new Interface1();
+        public static Interface2 interface2 = new Interface2();
+
         static void listen()
         {
             while (true)
             {
-                try
+                HttpListenerContext context = listener.GetContext();
+                //check username/password
+                if (context.User != null && context.User.Identity is HttpListenerBasicIdentity)
                 {
-                    // Note: The GetContext method blocks while waiting for a request. 
-                    HttpListenerContext context = listener.GetContext();
-                    //check username/password
-                    if (context.User != null && context.User.Identity is HttpListenerBasicIdentity)
-                    {
-                        HttpListenerBasicIdentity identity = (HttpListenerBasicIdentity)context.User.Identity;
-                        if (identity.Name != "Roeny" && identity.Password != "Baloony") continue;
-                    }
-
-                    HttpListenerRequest request = context.Request;
-                    URLParser parser = new URLParser(request.Url.Query);
-                    Console.WriteLine(request.Url.Query);
-
-                    Scene.Settings settings = new Scene.Settings();
-                    string resource = "";
-                    string command = "";
-                    try
-                    {
-                        settings.Width = int.Parse(parser.Get("width"));
-                    }
-                    catch { }
-                    try
-                    {
-                        settings.Height = int.Parse(parser.Get("height"));
-                    }
-                    catch { }
-                    try
-                    {
-                        settings.Detail = int.Parse(parser.Get("detail"));
-                    }
-                    catch { }
-                    resource = parser.Get("res");
-                    command = parser.Get("command");
-
-
-                    string parameters = request.RawUrl;
-                    // Obtain a response object.
-                    HttpListenerResponse response = context.Response;
-
-                    string ResponseString = scene.GetHTML(settings);
-                    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(ResponseString);
-                    //handle button press
-                    foreach (Scene.ClickableRegion p in scene.ClickablePoints)
-                    {
-                        if (command == p.Target)
-                        {
-                            p.Pressed = !p.Pressed;
-                            Console.WriteLine(p.Target + " Pressed");
-                            buffer =new byte[]{(byte)(p.Pressed?'1':'2')};
-                        }
-                    }
-
-                    switch (resource.ToLower() )
-                    {
-                        case "background":
-                        Image bitmap = scene.GetImage(settings);
-                        System.IO.MemoryStream stream = new System.IO.MemoryStream();
-                        bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
-                        buffer = stream.ToArray();
-                        break;
-                        case "lampon":
-                        buffer = System.IO.File.ReadAllBytes("On.png");
-                        break;
-                        case "lampoff":
-                        buffer = System.IO.File.ReadAllBytes("Off.png");
-                        break;
-                    }
-                    // Get a response stream and write the response to it.
-                    response.ContentLength64 = buffer.Length;
-                    System.IO.Stream output = response.OutputStream;
-                    output.Write(buffer, 0, buffer.Length);
-                    // You must close the output stream.
-                    output.Close();
+                    HttpListenerBasicIdentity identity = (HttpListenerBasicIdentity)context.User.Identity;
+                    if (identity.Name != "Roeny" && identity.Password != "Baloony") continue;
                 }
-                catch (Exception ex) { Console.WriteLine(ex.Message); }
+                HttpListenerResponse response = context.Response;
+                URLParser parser = new URLParser(context.Request.Url.Query);
+                byte[] buffer;
+                string iface = parser.Get("interface");
+                if (iface == interface1.Name)
+                {
+                    buffer = interface1.HandleCommand(parser);
+                }
+                else// if (iface == interface2.Name)
+                {
+                    buffer = interface2.HandleCommand(parser);
+                }
+
+                response.ContentLength64 = buffer.Length;
+                System.IO.Stream output = response.OutputStream;
+                output.Write(buffer, 0, buffer.Length);
+                // You must close the output stream.
+                output.Close();
             }
         }
     }
