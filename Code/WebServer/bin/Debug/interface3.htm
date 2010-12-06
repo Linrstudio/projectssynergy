@@ -1,0 +1,53 @@
+<html>
+
+<head>
+<title>Web-interface</title>
+
+<script>
+    if (typeof $ != 'function') {
+        $ = function(id) { return document.getElementById(id) }
+    }
+
+    function newAjaxObject() {
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            return new XMLHttpRequest();
+        }
+        else if (window.ActiveXObject) {
+            // code for IE6, IE5
+            return new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        else {
+            return null;
+        }
+    }
+
+    function toggleLight(id) {
+        $('light_' + id).src = "?res=lamploading";
+        var obj = newAjaxObject();
+        obj.onreadystatechange = function() {
+            if (obj.readyState == 4) {$
+                if (obj.responseText == "0") {
+                    $('light_' + id).src = "?res=lampoff";
+
+                }
+                if (obj.responseText == "1") {
+                    $('light_' + id).src = "?res=lampon";
+                }
+            }
+        }
+        obj.open('POST', '?command=' + id + '&boreme=' + Math.random(), true);
+        obj.send(null);
+    }
+</script>
+
+</head>
+
+<body>
+
+<img src="<<<<BGNAME>>>>" width="100%" height="100%"/>
+
+<<<<AREAS>>>>
+
+</body>
+</html>
