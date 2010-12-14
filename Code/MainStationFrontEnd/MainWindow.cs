@@ -57,7 +57,7 @@ namespace MainStationFrontEnd
             win.ShowDialog();
             UpdateTree();
         }
-        
+
         public void UpdateTree()
         {
             t_contents.Nodes.Clear();
@@ -73,10 +73,15 @@ namespace MainStationFrontEnd
                 else
                 {
                     if (d.Found)
+                    {
                         node.ImageIndex = 0;
+                        node.SelectedImageIndex = 0;
+                    }
                     else
+                    {
                         node.ImageIndex = 6;
-                    node.SelectedImageIndex = 0;
+                        node.SelectedImageIndex = 6;
+                    }
                 }
                 node.ToolTipText = d.device.Description;
                 //node.Tag = d;
