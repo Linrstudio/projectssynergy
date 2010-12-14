@@ -119,12 +119,6 @@ namespace MainStationFrontEnd
         public BaseBlockEvent(KismetSequence _Sequence) : base(_Sequence) { }
     }
 
-
-
-
-
-
-
     public class BlockScheduleEvent : BaseBlockEvent
     {
         [Browsable(true), CategoryAttribute("Constant")]
@@ -139,7 +133,7 @@ namespace MainStationFrontEnd
                 }
                 return new TimeSpan();
             }
-            set 
+            set
             {
                 if (Sequence is KismetSequenceScheduleEvent)
                 {
@@ -289,7 +283,7 @@ namespace MainStationFrontEnd
             List<byte> code = new List<byte>();
             //load all inputs to the EP registers
             byte idx = 0;
-            code.AddRange(CodeInstructions.Load8(idx, remoteevent.ID));
+            code.AddRange(CodeInstructions.Load8((byte)(MainStation.EPBufferOffset + idx), remoteevent.ID));
             idx++;
             foreach (Input i in Inputs)
             {
@@ -1004,12 +998,12 @@ namespace MainStationFrontEnd
 
         public override void Draw(Graphics _Graphics)
         {
+            base.Draw(_Graphics);
             DrawBlock(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Multiply", new Font("Arial", 10), Brushes.Black, X, Y, sf);
-            base.Draw(_Graphics);
         }
 
         public override void DrawShadow(Graphics _Graphics)
@@ -1036,15 +1030,14 @@ namespace MainStationFrontEnd
             Code = CodeInstructions.Divide(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
-
         public override void Draw(Graphics _Graphics)
         {
+            base.Draw(_Graphics);
             DrawBlock(_Graphics);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Divide", new Font("Arial", 10), Brushes.Black, X, Y, sf);
-            base.Draw(_Graphics);
         }
 
         public override void DrawShadow(Graphics _Graphics)

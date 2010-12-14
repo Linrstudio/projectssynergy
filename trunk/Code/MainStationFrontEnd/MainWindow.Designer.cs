@@ -269,7 +269,7 @@
             // t_ConnectionCheck
             // 
             this.t_ConnectionCheck.Enabled = true;
-            this.t_ConnectionCheck.Interval = 1000;
+            this.t_ConnectionCheck.Interval = 500;
             this.t_ConnectionCheck.Tick += new System.EventHandler(this.t_ConnectionCheck_Tick);
             // 
             // c_day
@@ -353,12 +353,12 @@
             this.c_treedevice.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1});
             this.c_treedevice.Name = "c_TreeEvent";
-            this.c_treedevice.Size = new System.Drawing.Size(153, 48);
+            this.c_treedevice.Size = new System.Drawing.Size(118, 26);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(117, 22);
             this.toolStripMenuItem1.Text = "Remove";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
