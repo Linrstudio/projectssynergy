@@ -87,24 +87,38 @@ namespace MainStationFrontEnd
 
         private void DrawPwettyLine(Graphics g, PointF A, PointF B)
         {
-            DrawPwettyLine(g, A, B, 1.5f, System.Drawing.Color.Black);
+            DrawPwettyLine(g, A, B, 1.5f, System.Drawing.Color.Black,true);
         }
 
         private void DrawPwettyLineShadow(Graphics g, PointF A, PointF B)
         {
-            DrawPwettyLine(g, A, B, 1.5f, KismetSequence.ShadowColor);
+            DrawPwettyLine(g, A, B, 1.5f, KismetSequence.ShadowColor,true);
         }
 
-        private void DrawPwettyLine(Graphics g, PointF A, PointF B, float _Width, System.Drawing.Color _Color)
+        private void DrawPwettyLine(Graphics g, PointF A, PointF B, float _Width, System.Drawing.Color _Color, bool _IsVertical)
         {
-            B.X -= 15;
-            PointF c = new PointF((A.X + B.X) / 2, (A.Y + B.Y) / 2);
-            g.DrawBezier(new Pen(new SolidBrush(_Color), _Width), A.X, A.Y, c.X, A.Y, c.X, B.Y, B.X, B.Y);
-            g.FillPolygon(new SolidBrush(_Color), new PointF[]{
-                new PointF(B.X + 15, B.Y),
-                new PointF(B.X, B.Y - 5),
-                new PointF(B.X, B.Y + 5)
-            }, System.Drawing.Drawing2D.FillMode.Alternate);
+            if (_IsVertical)
+            {
+                B.Y -= 15;
+                PointF c = new PointF((A.X + B.X) / 2, (A.Y + B.Y) / 2);
+                g.DrawBezier(new Pen(new SolidBrush(_Color), _Width), A.X, A.Y, A.X, c.Y, B.X, c.Y, B.X, B.Y);
+                g.FillPolygon(new SolidBrush(_Color), new PointF[]{
+                    new PointF(B.X, B.Y+15),
+                    new PointF(B.X-5, B.Y),
+                    new PointF(B.X+5, B.Y)
+                }, System.Drawing.Drawing2D.FillMode.Alternate);
+            }
+            else
+            { 
+                  B.X -= 15;
+                PointF c = new PointF((A.X + B.X) / 2, (A.Y + B.Y) / 2);
+                g.DrawBezier(new Pen(new SolidBrush(_Color), _Width), A.X, A.Y, A.X, c.Y, B.X, c.Y, B.X, B.Y);
+                g.FillPolygon(new SolidBrush(_Color), new PointF[]{
+                    new PointF(B.X+15, B.Y),
+                    new PointF(B.X, B.Y+5),
+                    new PointF(B.X, B.Y-5)
+                }, System.Drawing.Drawing2D.FillMode.Alternate);
+            }
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -154,7 +168,7 @@ namespace MainStationFrontEnd
                         {
                             PointF x = i.GetPosition();
                             PointF y = i.Connected.GetPosition();
-                            DrawPwettyLine(e.Graphics, y, x, 1.5f, i.datatype == null ? Color.Black : i.datatype.Color);
+                            DrawPwettyLine(e.Graphics, y, x, 1.5f, i.datatype == null ? Color.Black : i.datatype.Color,true);
                         }
 
                         if (i == input)
@@ -179,13 +193,13 @@ namespace MainStationFrontEnd
                 }
                 if (SelectedOutput != null && SelectedInput != null)
 
-                    DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), SelectedInput.GetPosition(), 2, SelectedInput.datatype == null ? Color.Black : SelectedInput.datatype.Color);
+                    DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), SelectedInput.GetPosition(), 2, SelectedInput.datatype == null ? Color.Black : SelectedInput.datatype.Color,true);
                 else
                 {
                     if (SelectedInput != null)//input to mouse
-                        DrawPwettyLine(e.Graphics, new Point(MouseX, MouseY), SelectedInput.GetPosition(), 2, SelectedInput.datatype == null ? Color.Black : SelectedInput.datatype.Color);
+                        DrawPwettyLine(e.Graphics, new Point(MouseX, MouseY), SelectedInput.GetPosition(), 2, SelectedInput.datatype == null ? Color.Black : SelectedInput.datatype.Color,true);
                     if (SelectedOutput != null)//output to mouse
-                        DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new Point(MouseX, MouseY), 2, SelectedOutput.datatype == null ? Color.Black : SelectedOutput.datatype.Color);
+                        DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new Point(MouseX, MouseY), 2, SelectedOutput.datatype == null ? Color.Black : SelectedOutput.datatype.Color,true);
                 }
             }
             base.OnPaint(e);

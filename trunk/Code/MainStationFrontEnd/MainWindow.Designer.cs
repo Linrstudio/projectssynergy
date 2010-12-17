@@ -50,26 +50,16 @@
             this.c_TreeEvent = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.b_Invoke = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.t_contents = new System.Windows.Forms.TreeView();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.t_ConnectionCheck = new System.Windows.Forms.Timer(this.components);
-            this.c_day = new System.Windows.Forms.MonthCalendar();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.splitter2 = new System.Windows.Forms.Splitter();
             this.t_Log = new System.Windows.Forms.TextBox();
             this.c_treedevice = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.s_hours = new MainStationFrontEnd.ScheduleEditor();
+            this.t_contents = new System.Windows.Forms.TreeView();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.c_TreeEvent.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.c_treedevice.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -233,7 +223,6 @@
             this.b_Invoke.Name = "b_Invoke";
             this.b_Invoke.Size = new System.Drawing.Size(117, 22);
             this.b_Invoke.Text = "Invoke";
-            
             // 
             // renameToolStripMenuItem
             // 
@@ -242,25 +231,9 @@
             this.renameToolStripMenuItem.Text = "Rename";
             this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
-            // t_contents
-            // 
-            this.t_contents.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.t_contents.ImageIndex = 0;
-            this.t_contents.ImageList = this.i_contents;
-            this.t_contents.Location = new System.Drawing.Point(0, 0);
-            this.t_contents.Name = "t_contents";
-            this.t_contents.SelectedImageIndex = 0;
-            this.t_contents.ShowNodeToolTips = true;
-            this.t_contents.Size = new System.Drawing.Size(226, 440);
-            this.t_contents.TabIndex = 5;
-            this.t_contents.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.t_contents_NodeMouseDoubleClick);
-            this.t_contents.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.t_contents_MouseDoubleClick);
-            this.t_contents.MouseUp += new System.Windows.Forms.MouseEventHandler(this.t_contents_MouseUp);
-            this.t_contents.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.t_contents_ItemDrag);
-            // 
             // splitter1
             // 
-            this.splitter1.Location = new System.Drawing.Point(234, 25);
+            this.splitter1.Location = new System.Drawing.Point(226, 25);
             this.splitter1.Name = "splitter1";
             this.splitter1.Size = new System.Drawing.Size(3, 469);
             this.splitter1.TabIndex = 6;
@@ -271,61 +244,6 @@
             this.t_ConnectionCheck.Enabled = true;
             this.t_ConnectionCheck.Interval = 500;
             this.t_ConnectionCheck.Tick += new System.EventHandler(this.t_ConnectionCheck_Tick);
-            // 
-            // c_day
-            // 
-            this.c_day.Dock = System.Windows.Forms.DockStyle.Top;
-            this.c_day.Location = new System.Drawing.Point(0, 0);
-            this.c_day.Margin = new System.Windows.Forms.Padding(0);
-            this.c_day.MaxSelectionCount = 1;
-            this.c_day.Name = "c_day";
-            this.c_day.TabIndex = 9;
-            this.c_day.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.c_day_DateChanged);
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.tabControl1.Location = new System.Drawing.Point(0, 25);
-            this.tabControl1.Multiline = true;
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(234, 469);
-            this.tabControl1.TabIndex = 9;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.t_contents);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(226, 440);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Network";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.panel1);
-            this.tabPage2.Controls.Add(this.c_day);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(226, 440);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Shedule";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // panel1
-            // 
-            this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.s_hours);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 162);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(226, 278);
-            this.panel1.TabIndex = 11;
             // 
             // splitter2
             // 
@@ -362,13 +280,21 @@
             this.toolStripMenuItem1.Text = "Remove";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
-            // s_hours
+            // t_contents
             // 
-            this.s_hours.Location = new System.Drawing.Point(0, 0);
-            this.s_hours.Name = "s_hours";
-            this.s_hours.SelectedDay = ((ushort)(0));
-            this.s_hours.Size = new System.Drawing.Size(230, 768);
-            this.s_hours.TabIndex = 10;
+            this.t_contents.Dock = System.Windows.Forms.DockStyle.Left;
+            this.t_contents.ImageIndex = 0;
+            this.t_contents.ImageList = this.i_contents;
+            this.t_contents.Location = new System.Drawing.Point(0, 25);
+            this.t_contents.Name = "t_contents";
+            this.t_contents.SelectedImageIndex = 0;
+            this.t_contents.ShowNodeToolTips = true;
+            this.t_contents.Size = new System.Drawing.Size(226, 469);
+            this.t_contents.TabIndex = 5;
+            this.t_contents.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.t_contents_NodeMouseDoubleClick);
+            this.t_contents.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.t_contents_MouseDoubleClick);
+            this.t_contents.MouseUp += new System.Windows.Forms.MouseEventHandler(this.t_contents_MouseUp);
+            this.t_contents.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.t_contents_ItemDrag);
             // 
             // MainWindow
             // 
@@ -378,7 +304,7 @@
             this.Controls.Add(this.splitter2);
             this.Controls.Add(this.t_Log);
             this.Controls.Add(this.splitter1);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.t_contents);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip1);
             this.IsMdiContainer = true;
@@ -390,10 +316,6 @@
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.c_TreeEvent.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
             this.c_treedevice.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -416,7 +338,6 @@
         private System.Windows.Forms.ImageList i_contents;
         private System.Windows.Forms.ContextMenuStrip c_TreeEvent;
         private System.Windows.Forms.ToolStripMenuItem b_Invoke;
-        private System.Windows.Forms.TreeView t_contents;
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripProgressBar p_progress;
@@ -425,16 +346,12 @@
         private System.Windows.Forms.ToolStripStatusLabel t_Connected;
         private System.Windows.Forms.ToolStripLabel t_time;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
-        private System.Windows.Forms.MonthCalendar c_day;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private ScheduleEditor s_hours;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Splitter splitter2;
         private System.Windows.Forms.TextBox t_Log;
         private System.Windows.Forms.ContextMenuStrip c_treedevice;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.TreeView t_contents;
+      
 
     }
 }
