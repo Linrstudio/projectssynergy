@@ -30,18 +30,8 @@ namespace MainStationFrontEnd
         {
             //EEPROM.OnAssamble += new EEPROM.OnAssambleHandler(EEPROM_OnAssamble);
             //new SheduleWindow().ShowDialog();
-            c_day.SelectionStart = DateTime.Now;
         }
-
-        void EEPROM_OnAssamble()
-        {
-            /*
-            p_progress.Maximum = EEPROM.Size;
-            p_progress.Value = EEPROM.BytesUsed;
-            t_progress.Text = string.Format("{0:0.000}%", ((float)EEPROM.BytesUsed / EEPROM.Size) * 100.0f);
-            */
-        }
-
+              
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
             AddDevice win = new AddDevice();
@@ -145,9 +135,6 @@ namespace MainStationFrontEnd
             }
         }
 
-        bool lastconnected = false;
-        int lastpolled = 0;
-
         void PollDevice(MainStation.Device _Device)
         {
             bool found = !MainStation.Poll(_Device.ID);
@@ -244,11 +231,6 @@ namespace MainStationFrontEnd
                 }
             }*/
             UpdateTree();
-        }
-
-        private void c_day_DateChanged(object sender, DateRangeEventArgs e)
-        {
-            s_hours.SelectedDay = Utilities.GetDay(c_day.SelectionStart);
         }
 
         public void Log(string _Message)
