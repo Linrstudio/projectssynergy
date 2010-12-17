@@ -390,10 +390,10 @@ namespace MainStationFrontEnd
         {
             public Input(CodeBlock _Owner, string _Text, DataType _DataType)
             {
-                Owner = _Owner;
-                X = -Owner.width / 2;
+                Owner = _Owner;   
                 Text = _Text;
                 datatype = _DataType;
+                UpdatePosition();
             }
             public string Text;
 
@@ -410,7 +410,8 @@ namespace MainStationFrontEnd
             {
                 float cnt = Owner.Inputs.Count;
                 float idx = (float)Owner.Inputs.IndexOf(this) - ((cnt - 1) / 2);
-                Y = (int)((idx / cnt) * Owner.height);
+                Y = -Owner.Height / 2;
+                X = (int)((idx / cnt) * Owner.height);
             }
 
             public System.Drawing.PointF GetPosition()
@@ -418,9 +419,16 @@ namespace MainStationFrontEnd
                 return new System.Drawing.PointF(Owner.X + X, Owner.Y + Y);
             }
         }
+
         public class Output
         {
-            public Output(CodeBlock _Owner, string _Text, DataType _DataType) { Owner = _Owner; X = Owner.width / 2; Text = _Text; datatype = _DataType; }
+            public Output(CodeBlock _Owner, string _Text, DataType _DataType) 
+            {
+                Owner = _Owner;
+                Text = _Text;
+                datatype = _DataType;
+                UpdatePosition();
+            }
 
             public string Text;
             public System.Windows.Forms.ToolTip tooptip = new System.Windows.Forms.ToolTip();
@@ -437,7 +445,8 @@ namespace MainStationFrontEnd
             {
                 float cnt = Owner.Outputs.Count;
                 float idx = (float)Owner.Outputs.IndexOf(this) - ((cnt - 1) / 2);
-                Y = (int)((idx / cnt) * Owner.height);
+                Y = Owner.Height / 2;
+                X = (int)((idx / cnt) * Owner.height);
             }
 
             public void DisconnectAll()
