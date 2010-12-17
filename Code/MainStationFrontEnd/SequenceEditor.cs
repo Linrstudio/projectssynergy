@@ -29,6 +29,7 @@ namespace MainStationFrontEnd
         public SequenceEditWindow()
         {
             InitializeComponent();
+            AllowDrop = true;
         }
 
         private void SequenceEditWindow_Load(object sender, EventArgs e)
@@ -36,7 +37,6 @@ namespace MainStationFrontEnd
             AllowDrop = true;
             DoubleBuffered = true;
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.EnableNotifyMessage | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
-            RebuildBlockBar();
         }
 
         public CodeBlock.Input GetNearestInput(PointF _pos)
@@ -75,6 +75,14 @@ namespace MainStationFrontEnd
                 }
             }
             return best;
+        }
+
+        CodeBlock GetCodeBlock(Point _Pos)
+        {
+            if (Sequence == null) return null;
+            foreach (CodeBlock c in Sequence.codeblocks)
+                if (c.Intersect(_Pos)) return c;
+            return null;
         }
 
         private void DrawPwettyLine(Graphics g, PointF A, PointF B)
@@ -188,7 +196,6 @@ namespace MainStationFrontEnd
             FloatingBlocks.Clear();
             foreach (CodeBlock b in Sequence.codeblocks)
             {
-                if (b == Sequence.root) continue;
                 bool found = true;
                 foreach (CodeBlock.Input i in b.Inputs)
                 {
@@ -209,50 +216,59 @@ namespace MainStationFrontEnd
 
             //if (NeedsRecompile) eeprom.Assamble();
             NeedsRecompile = false;
-#if true
-            foreach (CodeBlock c in Sequence.codeblocks)
-            {
-                if (c == Sequence.root) continue;
-                //c.targetX = 100;
-                //c.targetY = 100;
-            }
-            Sequence.root.targetX = 100;
-            Sequence.root.UpdateScope();
-            Sequence.root.UpdateLayout();
-#else
-            int siblingdist = 150;
+
+            float minX = 0;
+            float minY = 0;
+            float maxX = 0;
+            float maxY = 0;
+
             foreach (CodeBlock b in Sequence.codeblocks)
             {
-                if (b == Sequence.root) continue;
-                b.targetX = 100 + b.GetDepth() * 150;
-                List<CodeBlock> siblings = new List<CodeBlock>(b.GetSibblings(Sequence.codeblocks.ToArray()));
-                int idx = siblings.IndexOf(b);
-                b.targetY = idx * siblingdist;
-                b.targetY -= (float)(siblings.Count-1) * (float)(siblingdist / 2);
-                b.targetY += b.GetAvarageParentHeight();
+                minX = Math.Min(minX, b.X);
+                minY = Math.Min(minY, b.Y);
             }
-#endif
-            Sequence.root.UpdateLayout();
-            Width = (int)Math.Max(Parent.Bounds.Width, Sequence.root.targetX + Sequence.root.width / 2 + 20);
-            Height = (int)Math.Max(Parent.Bounds.Height, Sequence.root.height + 100);
-            Sequence.root.targetY = Height / 2;
 
+            foreach (CodeBlock b in Sequence.codeblocks)
+            {
+                b.X -= minX;
+                b.Y -= minY;
+
+                maxX = Math.Max(maxX, b.X + b.Width);
+                maxY = Math.Max(maxY, b.Y + b.Height);
+            }
+
+            Width = (int)Math.Max(Parent.Bounds.Width, maxX + 20);
+            Height = (int)Math.Max(Parent.Bounds.Height, maxY + 20);
+            /*
             UpdateFloatingBlocks();
             int floatx = 100;
             foreach (CodeBlock b in FloatingBlocks)
             {
-                b.targetX = floatx;
-                b.targetY = 100;
+                b.X = floatx;
+                b.Y = 100;
                 floatx += 150;
             }
-
+*/
             Refresh();
         }
-
+        int doublerightclicktimer = 0;
+        bool doublerightclicktimervar = false;
         public void MouseEvent(MouseEventArgs e, bool _LClick)
         {
             MouseX = e.X;
             MouseY = e.Y;
+
+            if (!doublerightclicktimervar && e.Button == MouseButtons.Right)
+            {
+                if (doublerightclicktimer > Environment.TickCount)
+                {
+                    CodeBlock b = GetCodeBlock(new Point(MouseX, MouseY));
+                    if (b != null) Sequence.Remove(b);
+                }
+                doublerightclicktimer = Environment.TickCount + 500;
+            }
+
+            doublerightclicktimervar = e.Button == MouseButtons.Right;
 
             if (Sequence == null) return;
 
@@ -285,11 +301,27 @@ namespace MainStationFrontEnd
                 //select nearest codeblock
                 if (_LClick)
                 {
-                    if (nearestout != null && SelectedBlock != nearestout.Owner) { SelectedBlock = nearestout.Owner; if (OnBlockSelect != null)OnBlockSelect(SelectedBlock); }
-                    if (nearestin != null && SelectedBlock != nearestin.Owner) { SelectedBlock = nearestin.Owner; if (OnBlockSelect != null)OnBlockSelect(SelectedBlock); }
+                    SelectedBlock = GetCodeBlock(new Point(MouseX, MouseY));
+                    if (SelectedBlock != null) Sequence.Select(SelectedBlock);
                 }
                 else { SelectedBlock = null; }
+
+
             }
+
+            if (e.Button == MouseButtons.Right)
+            {
+                if (Dragging == null)
+                {
+                    Dragging = GetCodeBlock(new Point(MouseX, MouseY));
+                }
+                else
+                {
+                    Dragging.X = MouseX;
+                    Dragging.Y = MouseY;
+                }
+            }
+
             if (e.Button == MouseButtons.None)
             {
                 if (SelectedOutput != null && SelectedInput != null)
@@ -303,6 +335,8 @@ namespace MainStationFrontEnd
                     }
                 }
                 SelectedOutput = null; SelectedInput = null;
+
+                Dragging = null;
             }
             //Format();
         }
@@ -313,9 +347,9 @@ namespace MainStationFrontEnd
 
             if (item.Tag is string)
             {
-                CodeBlock b = new BlockRemoteEvent(Sequence);
-                b.SetValues((string)item.Tag);
-                Sequence.codeblocks.Add(b);
+                //CodeBlock b = new BlockRemoteEvent(Sequence);
+                //b.SetValues((string)item.Tag);
+                //Sequence.codeblocks.Add(b);
             }
             if (item.Tag is Type)
             {
@@ -331,52 +365,7 @@ namespace MainStationFrontEnd
             }
         }
 
-        public void RebuildBlockBar()
-        {
-            CodeBlock.Initialize();//load codeblocks if not loaded yet
-            Dictionary<string, ComboBox> menuitems = new Dictionary<string, ComboBox>();
-
-            foreach (CodeBlock.Prototype p in CodeBlock.CodeBlocks)
-            {
-                if (!p.UserCanAdd) continue;
-
-                if (!menuitems.ContainsKey(p.GroupName))
-                {
-                    ComboBox c = new ComboBox();
-                    menuitems.Add(p.GroupName, c);
-                    Panel panel = new Panel();
-                    Label l = new Label();
-                    c.Top = 16;
-                    c.DropDownStyle = ComboBoxStyle.DropDownList;
-                    l.Text = p.GroupName;
-                    l.Dock = DockStyle.Top;
-                    panel.AutoSize = true;
-                    panel.Controls.Add(c);
-                    panel.Controls.Add(l);
-                    f_BlockBar.Controls.Add(panel);
-                }
-                menuitems[p.GroupName].Items.Add(p);
-                menuitems[p.GroupName].SelectionChangeCommitted += new EventHandler(SequenceEditWindow_SelectionChangeCommitted);
-            }
-        }
-
-        int itemaddtimeout;
-        void SequenceEditWindow_SelectionChangeCommitted(object sender, EventArgs e)
-        {
-            if (Sequence == null) return;
-            if (itemaddtimeout < Environment.TickCount - 100)//dont ask.. windows bullshit
-            {
-                var t = (ComboBox)sender;
-
-                CodeBlock.Prototype p = (CodeBlock.Prototype)t.SelectedItem;
-                if (p == null) return;
-                Sequence.codeblocks.Add((CodeBlock)p.Type.GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { Sequence }));
-                NeedsRecompile = true;
-                Format();
-                itemaddtimeout = Environment.TickCount;
-            }
-        }
-
+        [Obsolete]
         public void ShowContextMenu(int x, int y)
         {
             Dictionary<string, MenuItem> menuitems = new Dictionary<string, MenuItem>();
@@ -453,15 +442,10 @@ namespace MainStationFrontEnd
                             input.Connected = null;
                             NeedsRecompile = true;
                         }
-                        else
-                        {
-                            foreach (CodeBlock.Output o in input.Owner.Outputs) o.DisconnectAll();
-                            Sequence.codeblocks.Remove(input.Owner);
-                        }
                     }
                     else
                     {
-                        ShowContextMenu(MouseX, MouseY);
+                        //ShowContextMenu(MouseX, MouseY);
                     }
                 }
             }
@@ -473,45 +457,67 @@ namespace MainStationFrontEnd
             foreach (CodeBlock c in Sequence.codeblocks) c.Update();
             Format();
         }
-        CodeBlock Draging = null;
+        CodeBlock Dragging = null;
         private void SequenceEditWindow_DragDrop(object sender, DragEventArgs e)
         {
-            Draging = null;
+            Dragging = null;
         }
 
         private void SequenceEditWindow_DragEnter(object sender, DragEventArgs e)
         {
-            if (Draging == null)
+            if (Dragging == null)
             {
-                BlockRemoteEvent b = new BlockRemoteEvent(Sequence);
                 object[] data = (object[])(e.Data.GetData(typeof(object[])));
-                EEPROM.Device dev = (EEPROM.Device)data[0];
-                ProductDataBase.Device.RemoteEvent evnt = ((ProductDataBase.Device.RemoteEvent)data[1]);
-                b.SetValues(string.Format("{0} {1} {2}",
-                    dev.device.ID, evnt.ID, dev.ID));
-                Draging = b;
-                Sequence.codeblocks.Add((CodeBlock)b);
+                if (data[0] is MainStation.Device)
+                {
+                    /*BlockRemoteEvent b = new BlockRemoteEvent(Sequence);
+                    EEPROM.Device dev = (EEPROM.Device)data[0];
+                    ProductDataBase.Device.RemoteEvent evnt = ((ProductDataBase.Device.RemoteEvent)data[1]);
+                    b.SetValues(string.Format("{0} {1} {2}",
+                        dev.device.ID, evnt.ID, dev.ID));
+                    Dragging = b;
+                    Sequence.codeblocks.Add((CodeBlock)b);
+
+                    e.Effect = DragDropEffects.Copy;
+                    */
+                }
+                else
+                    if (data[0] is CodeBlock.Prototype)
+                    {
+                        CodeBlock.Prototype p = (CodeBlock.Prototype)data[0];
+
+                        CodeBlock b = (CodeBlock)p.Type.GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { Sequence });
+                        Sequence.codeblocks.Add(b);
+
+                        NeedsRecompile = true;
+                        Format();
+
+                        Dragging = b;
+                        Sequence.codeblocks.Add((CodeBlock)b);
+
+                        e.Effect = DragDropEffects.Copy;
+                    }
+                    else e.Effect = DragDropEffects.None;
             }
-            e.Effect = DragDropEffects.Link;
+            else e.Effect = DragDropEffects.None;
         }
 
         private void SequenceEditWindow_DragLeave(object sender, EventArgs e)
         {
-            if (Draging != null)
+            //TODO does this make sense ?
+            if (Dragging != null)
             {
-                Sequence.codeblocks.Remove(Draging);
-                Draging = null;
+                Sequence.codeblocks.Remove(Dragging);
+                Dragging = null;
             }
         }
 
         private void SequenceEditWindow_DragOver(object sender, DragEventArgs e)
         {
-            if (Draging != null)
+            if (Dragging != null)
             {
-                Draging.X = e.X - PointToScreen(new Point(0, 0)).X;
-                Draging.Y = e.Y - PointToScreen(new Point(0, 0)).Y;
-                Draging.targetX = Draging.X;
-                Draging.targetY = Draging.Y;
+                Dragging.X = e.X - PointToScreen(new Point(0, 0)).X;
+                Dragging.Y = e.Y - PointToScreen(new Point(0, 0)).Y;
             }
         }
     }

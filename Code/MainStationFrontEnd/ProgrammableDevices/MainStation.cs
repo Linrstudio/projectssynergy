@@ -7,8 +7,70 @@ using System.Threading;
 
 namespace MainStationFrontEnd
 {
-    class MainStation
+    class MainStation : ProgrammableDevice
     {
+        List<Device> devices = new List<Device>();
+        public Device[] Devices { get { return devices.ToArray(); } }
+
+        public override void Load(System.Xml.Linq.XElement _Data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override System.Xml.Linq.XElement Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Device RegisterDevice(string _Name, ProductDataBase.Device _Device, ushort _DeviceID)
+        {
+            Device d = new Device(_Name, _Device, _DeviceID);
+            foreach (ProductDataBase.Device.Event e in _Device.events)
+            {
+                d.Events.Add(e.ID, new Device.Event(d, e));
+            }
+            devices.Add( d);
+            return d;
+        }
+
+
+        public class Device
+        {
+            public Device(string _Name, ProductDataBase.Device _Device, ushort _ID)
+            {
+                Name = _Name;
+                device = _Device;
+                ID = _ID;
+            }
+            public string Name;
+            public ushort addr = 0;
+            /// <summary>
+            /// address in memory
+            /// </summary>
+            public ushort eventaddr = 0;
+            public ushort ID;
+            public bool Found = false;
+            public ProductDataBase.Device device;
+            public SortedDictionary<byte, Event> Events = new SortedDictionary<byte, Event>();
+
+            public class Event
+            {
+                public string DefaultName { get { return eventtype != null ? eventtype.Name : null; } }
+                public Device device;
+
+                public ProductDataBase.Device.Event eventtype;
+
+                public string Name;
+                public Event(Device _Device, ProductDataBase.Device.Event _Event)
+                {
+                    device = _Device;
+                    eventtype = _Event;
+                    Name = DefaultName;
+                }
+            }
+        }
+
+
         public const byte EPBufferOffset = 0;
         public const byte KismetRegisterCount = 32;
         public const byte EPBufferSize = 16;

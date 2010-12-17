@@ -53,24 +53,25 @@
     <Compile Include="ChildForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ProgrammableDevices\Computer.cs" />
+    <Compile Include="ProgrammableDevice.cs" />
     <Compile Include="ScheduleEventEditor.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ScheduleEventEditor.Designer.cs">
       <DependentUpon>ScheduleEventEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="EEPROM.cs" />
     <Compile Include="AddDevice.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="AddDevice.Designer.cs">
       <DependentUpon>AddDevice.cs</DependentUpon>
     </Compile>
-    <Compile Include="EventEditor.cs">
+    <Compile Include="SequenceEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EventEditor.Designer.cs">
-      <DependentUpon>EventEditor.cs</DependentUpon>
+    <Compile Include="SequenceEditorForm.Designer.cs">
+      <DependentUpon>SequenceEditorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="RenameDialog.cs">
       <SubType>Form</SubType>
@@ -91,15 +92,15 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainStation.cs" />
+    <Compile Include="ProgrammableDevices\MainStation.cs" />
     <Compile Include="ProductDataBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AddDevice.resx">
       <DependentUpon>AddDevice.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EventEditor.resx">
-      <DependentUpon>EventEditor.cs</DependentUpon>
+    <EmbeddedResource Include="SequenceEditorForm.resx">
+      <DependentUpon>SequenceEditorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="RenameDialog.resx">
       <DependentUpon>RenameDialog.cs</DependentUpon>
@@ -146,6 +147,7 @@
     <Compile Include="ScheduleEditor.Designer.cs">
       <DependentUpon>ScheduleEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Solution.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="VPL\CodeBlock.cs" />
     <Compile Include="VPL\CodeBlocks.cs" />

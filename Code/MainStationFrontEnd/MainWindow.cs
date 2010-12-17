@@ -12,43 +12,34 @@ namespace MainStationFrontEnd
     public partial class MainWindow : Form
     {
         public static MainWindow mainwindow;
+        TreeNode t_contentsContextMenuNode = null;
+
+
         public MainWindow()
         {
             mainwindow = this;
             InitializeComponent();
             ProductDataBase.Load("products.xml");
             MainStation.Connect();
-            EEPROM.FromFile("EEPROM.xml");
-            foreach (EEPROM.Device d in EEPROM.Devices.Values)
-            {
-                PollDevice(d);
-            }
+            Solution.Load("Solution.xml");
+
             UpdateTree();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            EEPROM.OnAssamble += new EEPROM.OnAssambleHandler(EEPROM_OnAssamble);
+            //EEPROM.OnAssamble += new EEPROM.OnAssambleHandler(EEPROM_OnAssamble);
             //new SheduleWindow().ShowDialog();
-            UpdateSchedule();
             c_day.SelectionStart = DateTime.Now;
-        }
-
-        public void UpdateSchedule()
-        {
-            List<DateTime> dates = new List<DateTime>();
-            foreach (EEPROM.ScheduleEntry entry in EEPROM.ScheduleEntries)
-            {
-                dates.Add(entry.Moment);
-            }
-            c_day.BoldedDates = dates.ToArray();
         }
 
         void EEPROM_OnAssamble()
         {
+            /*
             p_progress.Maximum = EEPROM.Size;
             p_progress.Value = EEPROM.BytesUsed;
             t_progress.Text = string.Format("{0:0.000}%", ((float)EEPROM.BytesUsed / EEPROM.Size) * 100.0f);
+            */
         }
 
         private void toolStripButton6_Click(object sender, EventArgs e)
@@ -61,50 +52,13 @@ namespace MainStationFrontEnd
         public void UpdateTree()
         {
             t_contents.Nodes.Clear();
-            foreach (EEPROM.Device d in EEPROM.Devices.Values)
+            TreeNode Root = new TreeNode("Root");
+            t_contents.Nodes.Add(Root);
+            foreach (ProgrammableDevice pd in Solution.ProgrammableDevices)
             {
-                TreeNode node = new TreeNode(string.Format("{0}({1})", d.Name, d.device.Name));
-                node.Tag = d;
-                if (d.ID == 0)
-                {
-                    node.ImageIndex = 1;
-                    node.SelectedImageIndex = 1;
-                }
-                else
-                {
-                    if (d.Found)
-                    {
-                        node.ImageIndex = 0;
-                        node.SelectedImageIndex = 0;
-                    }
-                    else
-                    {
-                        node.ImageIndex = 6;
-                        node.SelectedImageIndex = 6;
-                    }
-                }
-                node.ToolTipText = d.device.Description;
-                //node.Tag = d;
-                foreach (EEPROM.Device.Event e in d.Events.Values)
-                {
-                    if (e.eventtype == null) continue;
-                    TreeNode enode = new TreeNode(e.Name);
-                    enode.Tag = e;
-                    enode.ImageIndex = 2;
-                    enode.SelectedImageIndex = 3;
-                    enode.ToolTipText = e.eventtype.Description;
-                    node.Nodes.Add(enode);
-                }
-                foreach (ProductDataBase.Device.RemoteEvent e in d.device.remoteevents)
-                {
-                    TreeNode enode = new TreeNode(e.Name);
-                    enode.Tag = new object[] { d, e };
-                    enode.ImageIndex = 4;
-                    enode.SelectedImageIndex = 5;
-                    enode.ToolTipText = e.Description;
-                    node.Nodes.Add(enode);
-                }
-                t_contents.Nodes.Add(node);
+                TreeNode node = new TreeNode(string.Format("{0}", pd.Name));
+                node.Tag = pd;
+                Root.Nodes.Add(node);
             }
             t_contents.ExpandAll();
         }
@@ -122,13 +76,13 @@ namespace MainStationFrontEnd
 
         private void toolStripButton5_Click(object sender, EventArgs e)
         {
-            EEPROM.FromFile("EEPROM.xml");
+            Solution.Load("Solution.xml");
             UpdateTree();
         }
 
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
-            EEPROM.Save("EEPROM.xml");
+            Solution.Save("Solution.xml");
             UpdateTree();
         }
 
@@ -162,38 +116,10 @@ namespace MainStationFrontEnd
         private void t_contents_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (t_contents.SelectedNode == null) return;
-            if (t_contents.SelectedNode.Tag is EEPROM.Device.Event)
+            if (t_contents.SelectedNode.Tag is ProgrammableDevice)
             {
-                ChildForm form = new EventEditor(((EEPROM.Device.Event)t_contents.SelectedNode.Tag).sequence);
+                ChildForm form = new SequenceEditorForm(((ProgrammableDevice)t_contents.SelectedNode.Tag).Sequence);
                 ShowDialog(form);
-            }
-        }
-
-        TreeNode t_contentsContextMenuNode = null;
-        private void b_Invoke_Click(object sender, EventArgs e)
-        {
-            //invoke event at remote device
-            if (t_contentsContextMenuNode.Tag is object[])
-            {
-                object[] tag = (object[])t_contentsContextMenuNode.Tag;
-
-                EEPROM.Device device = (EEPROM.Device)tag[0];
-                ProductDataBase.Device.RemoteEvent evnt = (ProductDataBase.Device.RemoteEvent)tag[1];
-                if (MainStation.Connected())
-                {
-                    new InvokeRemoteEventWindow(evnt, device.ID).Show();
-                    //MainStation.InvokeRemoteEvent(device.ID, evnt.ID, 2);
-                }
-            }
-            //invoke event at mainstation
-            if (t_contentsContextMenuNode.Tag is EEPROM.Device.Event)
-            {
-                EEPROM.Device.Event device = (EEPROM.Device.Event)t_contentsContextMenuNode.Tag;
-                ushort deviceid = device.device.ID;
-                byte eventid = device.eventtype.ID;
-
-                if (MainStation.Connected())
-                    MainStation.InvokeLocalEvent(deviceid, eventid, 0);
             }
         }
 
@@ -206,7 +132,7 @@ namespace MainStationFrontEnd
             {
                 Point p = e.Location;
                 TreeNode node = t_contents.GetNodeAt(p);
-                if (node != null && node.Tag is EEPROM.Device)
+                if (node != null && node.Tag is MainStation.Device)
                 {
                     t_contentsContextMenuNode = node;
                     c_treedevice.Show(t_contents, e.X, e.Y);
@@ -222,7 +148,7 @@ namespace MainStationFrontEnd
         bool lastconnected = false;
         int lastpolled = 0;
 
-        void PollDevice(EEPROM.Device _Device)
+        void PollDevice(MainStation.Device _Device)
         {
             bool found = !MainStation.Poll(_Device.ID);
             if (_Device.Found != found)
@@ -236,23 +162,16 @@ namespace MainStationFrontEnd
 
         private void t_ConnectionCheck_Tick(object sender, EventArgs e)
         {
-            bool connected = MainStation.Connected();
-            if (connected)
-            {
-                lastpolled = (lastpolled + 1) % EEPROM.Devices.Count;
-                int i = 0;
-                foreach (EEPROM.Device d in EEPROM.Devices.Values)
-                {
-                    if (i == lastpolled && d.ID != 0)
-                    {
-                        PollDevice(d);
-                        break;
-                    }
-                    i++;
-                }
-                lastpolled++;
-            }
 
+            foreach (ProgrammableDevice d in Solution.ProgrammableDevices)
+            {
+                if (d is MainStation)
+                {
+                    // POLL device
+                }
+
+            }
+            /*
             t_Connected.Text = connected ? "Connected" : "Disconnected";
             if (connected && !lastconnected)
             {
@@ -260,6 +179,7 @@ namespace MainStationFrontEnd
                 readtime();
             }
             lastconnected = connected;
+            */
         }
 
         void readtime()
@@ -270,7 +190,7 @@ namespace MainStationFrontEnd
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            if (!MainStation.EEPROMWriteVerify(EEPROM.Assamble())) MessageBox.Show("Verify incorrect");
+            //if (!MainStation.EEPROMWriteVerify(EEPROM.Assamble())) MessageBox.Show("Verify incorrect");
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
@@ -287,12 +207,13 @@ namespace MainStationFrontEnd
         {
             TreeNode node = (TreeNode)e.Item;
             if (node.Tag == null) return;
-            t_contents.DoDragDrop(node.Tag, DragDropEffects.Link);
+            t_contents.DoDragDrop(node.Tag, DragDropEffects.Copy);
         }
 
         private void renameToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //invoke event at remote device
+            /*
             if (t_contentsContextMenuNode.Tag is object[])
             {
                 object[] tag = (object[])t_contentsContextMenuNode.Tag;
@@ -305,6 +226,7 @@ namespace MainStationFrontEnd
                     //MainStation.InvokeRemoteEvent(device.ID, evnt.ID, 2);
                 }
             }
+            
             //invoke event at mainstation
             if (t_contentsContextMenuNode.Tag is EEPROM.Device.Event)
             {
@@ -320,7 +242,7 @@ namespace MainStationFrontEnd
                         evnt.Name = evnt.DefaultName;
                         break;
                 }
-            }
+            }*/
             UpdateTree();
         }
 
@@ -337,8 +259,7 @@ namespace MainStationFrontEnd
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            EEPROM.Devices.Remove(
-            ((EEPROM.Device)t_contentsContextMenuNode.Tag).ID);
+
             UpdateTree();
         }
     }

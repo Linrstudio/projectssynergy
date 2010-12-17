@@ -7,39 +7,9 @@ using System.Xml.Linq;
 
 namespace MainStationFrontEnd
 {
-
-    public class KismetSequenceDeviceEvent : KismetSequence
-    {
-        public EEPROM.Device.Event DeviceEvent;
-        public KismetSequenceDeviceEvent(EEPROM.Device.Event _Event, CodeBlock _Root)
-        {
-            DeviceEvent = _Event;
-            if (_Root == null)
-            {
-                root = new BlockLocalEvent(this);
-            }
-            else root = _Root;
-            //root.SetValues(string.Format("{0} {1}", _Event.device.device.ID, _Event.eventtype.ID));
-            if (!codeblocks.Contains(root)) codeblocks.Add(root);
-        }
-    }
-
-    public class KismetSequenceScheduleEvent : KismetSequence
-    {
-        public EEPROM.ScheduleEntry ScheduleEntry;
-        public KismetSequenceScheduleEvent(EEPROM.ScheduleEntry _Entry)
-        {
-            ScheduleEntry = _Entry;
-        }
-    }
-
     public class KismetSequence
     {
-        //public EEPROM.Device.Event Event = null;
-        public CodeBlock root = null;
         public List<CodeBlock> codeblocks = new List<CodeBlock>();
-        public static float SpaceBetweenScopes = 10;
-        public static float VecticalSpaceBetweenBlocks = 75;
         public static System.Drawing.Color ShadowColor = System.Drawing.Color.DarkGray;
 
         public List<Register> Registers = new List<Register>();
@@ -59,8 +29,6 @@ namespace MainStationFrontEnd
         public void Clear()
         {
             codeblocks.Clear();
-            codeblocks.Add(root);
-            foreach (CodeBlock.Output o in root.Outputs) o.Connected.Clear();
         }
 
         public bool[] GetRegisterMask()
@@ -117,10 +85,10 @@ namespace MainStationFrontEnd
 
         public KismetSequence() { }
 
-        public KismetSequence(CodeBlock _Root)
+        public void Select(params CodeBlock[] _CodeBlocks)
         {
-            root = _Root;
-            codeblocks.Add(root);
+            foreach (CodeBlock b in codeblocks) b.Selected = false;
+            foreach (CodeBlock b in _CodeBlocks) b.Selected = true;
         }
 
         public void Connect(CodeBlock.Output _Out, CodeBlock.Input _In)
@@ -149,9 +117,6 @@ namespace MainStationFrontEnd
             if (!codeblocks.Contains(_Out.Owner)) codeblocks.Add(_Out.Owner);
             if (!codeblocks.Contains(_In.Owner)) codeblocks.Add(_In.Owner);
             _In.Owner.Sequence = _Out.Owner.Sequence = this;
-            root.Scope = root;
-            root.UpdateScope();
-            FixIndices();
         }
 
         public CodeBlock[] GetChildrenInScope(CodeBlock _Scope)
@@ -164,111 +129,56 @@ namespace MainStationFrontEnd
             return found.ToArray();
         }
 
-        public void FixIndices()
+        public void Remove(CodeBlock _CodeBlock)
         {
-            root.index = 0;
-            int idx = 1;
-            root.FixIndices(ref idx);
-        }
-
-        public byte[] GetByteCode()
-        {
-            if (!CheckForErrors()) throw new Exception("failed to compile kismet sequence ( are all inputs connected ? )");
-            FixIndices();
-            CodeBlock[] blockssorted = new CodeBlock[codeblocks.Count];
-            foreach (CodeBlock b in codeblocks) { blockssorted[b.index] = b; }
-
-            //heuristic to determine register indices
-            Registers.Clear();
-            foreach (CodeBlock b in blockssorted)
-            {
-                foreach (CodeBlock.Output r in b.Outputs)
-                {
-                    if (r.datatype != null)
-                    {
-                        r.Register = GetRegister(r.datatype.RegistersNeeded);
-                        r.Register.references = r.Connected.Count;
-                    }
-                }
-                foreach (CodeBlock.Input r in b.Inputs)
-                {
-                    if (r.Connected != null)
-                    {
-                        if (r.Connected.Register != null)
-                        {
-                            r.Connected.Register.references--;
-                            if (r.Connected.Register.references == 0)
-                            {
-                                Registers.Remove(r.Connected.Register);
-                            }
-                        }
-                    }
-                }
-            }
-
-            byte addr = 0;
-            foreach (CodeBlock b in blockssorted)
-            {
-                b.Assamble();
-                b.address = addr;
-                addr += (byte)b.Code.Length;
-            }
-
-            List<byte> output = new List<byte>();
-            foreach (CodeBlock b in blockssorted)
-            {
-                b.Assamble();//reassamble code ( so branching blocks know where to jump to )
-                output.AddRange(b.Code);
-            }
-            output.Add(0);//add a zero instruction, this is a return aka stop the event
-            Console.WriteLine("Sequence used {0} bytes", output.Count);
-            return output.ToArray();
+            _CodeBlock.DisconnectAllInputs();
+            _CodeBlock.DisconnectAllOutputs();
+            codeblocks.Remove(_CodeBlock);
         }
 
         public void Load(XElement _Sequence)
         {
             codeblocks.Clear();
+            try
             {
-                XElement block = _Sequence.Element("Root");
-                string blocktype = (string)block.Attribute("Type").Value;
-                byte index = byte.Parse(block.Attribute("GUID").Value);
-                CodeBlock b = (CodeBlock)Type.GetType(blocktype).GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { this });
-                b.index = index;
-                b.SetValues(block.Attribute("Values").Value);
-                root = b;
-                codeblocks.Add(b);
-            }
+                foreach (XElement block in _Sequence.Elements("Block"))
+                {
+                    string blocktype = (string)block.Attribute("Type").Value;
+                    byte index = byte.Parse(block.Attribute("GUID").Value);
+                    CodeBlock b = (CodeBlock)Type.GetType(blocktype).GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { this });
+                    b.index = index;
+                    b.X = float.Parse(block.Attribute("X").Value);
+                    b.Y = float.Parse(block.Attribute("Y").Value);
+                    b.SetValues(block.Attribute("Values").Value);
+                    codeblocks.Add(b);
+                }
 
-            foreach (XElement block in _Sequence.Elements("Block"))
-            {
-                string blocktype = (string)block.Attribute("Type").Value;
-                byte index = byte.Parse(block.Attribute("GUID").Value);
-                CodeBlock b = (CodeBlock)Type.GetType(blocktype).GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { this });
-                b.index = index;
-                b.SetValues(block.Attribute("Values").Value);
-                codeblocks.Add(b);
+                foreach (XElement connection in _Sequence.Elements("Connect"))
+                {
+                    int input = int.Parse(connection.Attribute("Input").Value);
+                    int inputowner = int.Parse(connection.Attribute("InputOwner").Value);
+                    int output = int.Parse(connection.Attribute("Output").Value);
+                    int outputowner = int.Parse(connection.Attribute("OutputOwner").Value);
+                    Connect(codeblocks[outputowner].Outputs[output], codeblocks[inputowner].Inputs[input]);
+                }
             }
-
-            foreach (XElement connection in _Sequence.Elements("Connect"))
-            {
-                int input = int.Parse(connection.Attribute("Input").Value);
-                int inputowner = int.Parse(connection.Attribute("InputOwner").Value);
-                int output = int.Parse(connection.Attribute("Output").Value);
-                int outputowner = int.Parse(connection.Attribute("OutputOwner").Value);
-                Connect(codeblocks[outputowner].Outputs[output], codeblocks[inputowner].Inputs[input]);
+            catch { //FIXME 
             }
         }
 
-        public void Save(XElement _Target)
+        public XElement Save()
         {
+            XElement sequence = new XElement("Sequence");
             foreach (CodeBlock b in codeblocks)
             {
                 XElement block = null;
-                if (b == root) block = new XElement("Root"); else block = new XElement("Block");
+                block = new XElement("Block");
                 block.SetAttributeValue("GUID", b.index);
+                block.SetAttributeValue("X", b.X);
+                block.SetAttributeValue("Y", b.Y);
                 block.SetAttributeValue("Type", CodeBlock.GetCodeBlock(b.GetType()).Type.FullName);
                 block.SetAttributeValue("Values", b.GetValues());
-                _Target.Add(block);
+                sequence.Add(block);
             }
             foreach (CodeBlock b in codeblocks)
             {
@@ -281,10 +191,11 @@ namespace MainStationFrontEnd
                         connection.SetAttributeValue("InputOwner", codeblocks.IndexOf(i.Owner).ToString());
                         connection.SetAttributeValue("Output", i.Connected.Owner.Outputs.IndexOf(i.Connected).ToString());
                         connection.SetAttributeValue("OutputOwner", codeblocks.IndexOf(i.Connected.Owner).ToString());
-                        _Target.Add(connection);
+                        sequence.Add(connection);
                     }
                 }
             }
+            return sequence;
         }
     }
 }
