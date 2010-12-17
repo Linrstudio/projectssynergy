@@ -233,7 +233,7 @@
             this.b_Invoke.Name = "b_Invoke";
             this.b_Invoke.Size = new System.Drawing.Size(117, 22);
             this.b_Invoke.Text = "Invoke";
-            this.b_Invoke.Click += new System.EventHandler(this.b_Invoke_Click);
+            
             // 
             // renameToolStripMenuItem
             // 

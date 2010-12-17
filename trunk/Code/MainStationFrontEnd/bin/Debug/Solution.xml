@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Solution>
+  <ProgrammableDevice Name="My Main-Station" Type="MainStation">
+    <Sequence>
+      <Block GUID="0" X="1041" Y="214" Type="MainStationFrontEnd.BlockGetTime" Values="" />
+      <Block GUID="0" X="1041" Y="214" Type="MainStationFrontEnd.BlockGetTime" Values="" />
+    </Sequence>
+  </ProgrammableDevice>
+  <ProgrammableDevice Name="My Computer" Type="Computer">
+    <Sequence />
+  </ProgrammableDevice>
+</Solution>

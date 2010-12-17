@@ -50,6 +50,7 @@ namespace MainStationFrontEnd
 
         public bool CanAdd()
         {
+            /*
             if (t_Devices.SelectedNode == null) return false;
             foreach (EEPROM.Device d in EEPROM.Devices.Values)
             {
@@ -57,7 +58,7 @@ namespace MainStationFrontEnd
                 if (d.Name == t_Name.Text) return false;
             }
             if (t_Name.Text != System.Text.RegularExpressions.Regex.Match(t_Name.Text, "[-_a-zA-Z0-9\\s]*").Value) return false;
-
+            */
             return true;
         }
 
@@ -65,19 +66,20 @@ namespace MainStationFrontEnd
         {
             if (!CanAdd()) return;
 
-            EEPROM.RegisterDevice(t_Name.Text, (ProductDataBase.Device)(t_Devices.SelectedNode.Tag), (ushort)n_ID.Value);
+            //EEPROM.RegisterDevice(t_Name.Text, (ProductDataBase.Device)(t_Devices.SelectedNode.Tag), (ushort)n_ID.Value);
             Close();
         }
 
         void InputChanged()
         {
+            /*
             bool found = false;
             foreach (EEPROM.Device d in EEPROM.Devices.Values)
             {
                 if (d.ID == n_ID.Value) found = true;
             }
             n_ID.BackColor = found ? Color.Red : SystemColors.Window;
-
+            */
             if (t_Name.Text == System.Text.RegularExpressions.Regex.Match(t_Name.Text, "[-_a-zA-Z0-9\\s]*").Value)
                 t_Name.BackColor = SystemColors.Window;
             else t_Name.BackColor = Color.Red;

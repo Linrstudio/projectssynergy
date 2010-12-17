@@ -18,6 +18,8 @@ namespace MainStationFrontEnd
         public List<Input> Inputs = new List<Input>();
         public List<Output> Outputs = new List<Output>();
 
+        public bool Selected = false;
+
         List<int> InputRegisters = new List<int>();
 
         /// <summary>
@@ -26,8 +28,6 @@ namespace MainStationFrontEnd
         public CodeBlock Scope = null;
 
         //editor stuff
-        public float targetX;
-        public float targetY;
         public float X;
         public float Y;
         public float width = 200;
@@ -78,6 +78,11 @@ namespace MainStationFrontEnd
                 return h / c;
             else
                 return Y;
+        }
+
+        public virtual bool Intersect(Point _Point)
+        {
+            return _Point.X > X - Width / 2 && _Point.Y > Y - Height / 2 && _Point.X < X + Width / 2 && _Point.Y < Y + Height / 2;
         }
 
         //determines the scope for this object
@@ -132,67 +137,9 @@ namespace MainStationFrontEnd
             return c;
         }
 
-        public void UpdateLayout()
-        {
-            if (IsScope)
-            {
-                int bestdepth = 0;
-                foreach (CodeBlock c in Sequence.codeblocks)
-                {
-                    if (c.Scope == this)
-                    {
-                        int d = (c.GetDepth() - c.Scope.GetDepth()) + 1;
-                        if (d > bestdepth) bestdepth = d;
-                    }
-                }
-                float scopeheight = 0;
-                foreach (CodeBlock c in Sequence.codeblocks)
-                {
-                    if (c.Scope == this && c.IsScope)//all children scopes
-                    {
-                        scopeheight += c.Height / 2;
-                        c.targetY = targetY + scopeheight;
-                        c.targetX = targetX + ((bestdepth - 1) * 150);
-                        scopeheight += c.Height / 2;
-                        scopeheight += KismetSequence.SpaceBetweenScopes / 2;
-                        c.UpdateLayout();
-                    }
-                }
-                scopeheight -= KismetSequence.SpaceBetweenScopes / 2;
-                foreach (CodeBlock c in Sequence.codeblocks)
-                {
-                    if (c.Scope == this && c.IsScope)//all children scopes
-                    {
-                        c.targetY -= scopeheight / 2;
-                        c.UpdateLayout();
-                    }
-                }
-                foreach (CodeBlock c in Sequence.codeblocks)
-                {
-                    if (c.Scope == this)
-                    {
-                        c.UpdateLayout();
-                    }
-                }
-            }
-            else
-            {
-                List<CodeBlock> sibblings = new List<CodeBlock>(GetSibblings());
-                sibblings.Sort(CompareCodeBlockByTargetHeight);
-                int idx = sibblings.IndexOf(this);
-                int d = GetDepth() - Scope.GetDepth();
-                targetY = Scope.targetY + idx * KismetSequence.VecticalSpaceBetweenBlocks;
-                targetY -= (sibblings.Count - 1) * (KismetSequence.VecticalSpaceBetweenBlocks / 2);
-                targetX = Scope.targetX + (d * 150);
-            }
-        }
-
         public void Update()
         {
-            X -= (X - targetX) / 2;
-            Y -= (Y - targetY) / 2;
 
-            if (IsScope) ConcatenateSizeWithChildren();
         }
 
         public PointF GetShadowOffset()
@@ -354,6 +301,23 @@ namespace MainStationFrontEnd
             }
         }
 
+        public void DisconnectAllInputs()
+        {
+            foreach (Input i in Inputs)
+            {
+                if (i.Connected != null)
+                    i.Connected.Connected.Remove(i);
+            }
+        }
+        public void DisconnectAllOutputs()
+        {
+            foreach (Output o in Outputs)
+            {
+                foreach (Input i in o.Connected) i.Connected = null;
+                o.Connected.Clear();
+            }
+        }
+
         public CodeBlock[] GetInputs()
         {
             List<CodeBlock> inputs = new List<CodeBlock>();
@@ -510,20 +474,6 @@ namespace MainStationFrontEnd
             return list.ToArray();
         }
 
-        public void ConcatenateSizeWithChildren()
-        {
-            height = 50;
-            width = 200;
-            foreach (CodeBlock c in GetAllChildren())
-            {
-                height = Math.Max(height, (Math.Abs(c.targetY - targetY) + (c.height / 2)) * 2);
-                width = Math.Max(width, (c.targetX - targetX + c.width / 2) * 2);
-            }
-            //create spacing around scopes
-            height += KismetSequence.SpaceBetweenScopes;
-            width += KismetSequence.SpaceBetweenScopes;
-        }
-
         /// <summary>
         /// returns a list of codeblocks this code block is dependent on, also this codeblock can never connect anything to one of these codeblocks
         /// </summary>
@@ -551,7 +501,7 @@ namespace MainStationFrontEnd
         {
             List<CodeBlock> list = new List<CodeBlock>();
             CodeBlock parent = Scope;
-            while (parent!= null)
+            while (parent != null)
             {
                 list.Add(parent);
                 parent = parent.Scope;
@@ -639,10 +589,6 @@ namespace MainStationFrontEnd
             if (CodeBlocks == null)
             {
                 CodeBlocks = new List<Prototype>();
-                //0
-                AddCodeBlock("LocalEvent", "", typeof(BlockLocalEvent), false);
-                AddCodeBlock("RemoteEvent", "", typeof(BlockRemoteEvent), false);
-                AddCodeBlock("ScheduleEvent", "", typeof(BlockScheduleEvent), false);
 
                 //Debug stuff
                 //20
@@ -667,7 +613,7 @@ namespace MainStationFrontEnd
                 AddCodeBlock("Equals", "Math", typeof(BlockMathEquals));
                 AddCodeBlock("Differs", "Math", typeof(BlockMathDiffers));
                 AddCodeBlock("Smaller Than", "Math", typeof(BlockMathSmallerThan));
-                AddCodeBlock("Larget Than", "Math", typeof(BlockMathLargerThan));
+                AddCodeBlock("Larger Than", "Math", typeof(BlockMathLargerThan));
 
                 //Boolean
                 AddCodeBlock("Constant", "Boolean", typeof(BlockBoolConstant));

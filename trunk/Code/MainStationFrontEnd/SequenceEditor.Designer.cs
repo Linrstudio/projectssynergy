@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.t_Update = new System.Windows.Forms.Timer(this.components);
-            this.f_BlockBar = new System.Windows.Forms.FlowLayoutPanel();
             this.SuspendLayout();
             // 
             // t_Update
@@ -39,20 +38,11 @@
             this.t_Update.Interval = 50;
             this.t_Update.Tick += new System.EventHandler(this.t_Update_Tick);
             // 
-            // f_BlockBar
-            // 
-            this.f_BlockBar.AutoSize = true;
-            this.f_BlockBar.Dock = System.Windows.Forms.DockStyle.Top;
-            this.f_BlockBar.Location = new System.Drawing.Point(0, 0);
-            this.f_BlockBar.Name = "f_BlockBar";
-            this.f_BlockBar.Size = new System.Drawing.Size(455, 0);
-            this.f_BlockBar.TabIndex = 2;
-            // 
             // SequenceEditWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.f_BlockBar);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(211)))), ((int)(((byte)(233)))), ((int)(((byte)(245)))));
             this.Name = "SequenceEditWindow";
             this.Size = new System.Drawing.Size(455, 150);
             this.Load += new System.EventHandler(this.SequenceEditWindow_Load);
@@ -63,13 +53,11 @@
             this.DragLeave += new System.EventHandler(this.SequenceEditWindow_DragLeave);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.SequenceEditWindow_DragEnter);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.Timer t_Update;
-        private System.Windows.Forms.FlowLayoutPanel f_BlockBar;
     }
 }

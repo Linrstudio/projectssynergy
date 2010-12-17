@@ -77,7 +77,7 @@ namespace MainStationFrontEnd
                 //e.Graphics.DrawLine(Pens.DarkGray, CellX, (h + 0.5f) * CellHeight * 2 + CellHeight, Width, (h + 0.5f) * CellHeight * 2 + CellHeight);
                 //e.Graphics.DrawLine(Pens.Black, 0, (h + 1) * CellHeight*2, CellX, (h + 1) * CellHeight * 2);
             }
-
+            /*
             foreach (EEPROM.ScheduleEntry entry in EEPROM.ScheduleEntries)
             {
                 if (SelectedDay == entry.Days)
@@ -88,7 +88,7 @@ namespace MainStationFrontEnd
                     //e.Graphics.DrawLine(Pens.Black, CellX, y + CellHeight, CellX + 8, y + CellHeight);
                 }
             }
-
+            */
             int x = CellX;
             e.Graphics.DrawLine(Pens.Black, x, 0, x, Height);
 
@@ -114,27 +114,7 @@ namespace MainStationFrontEnd
 
         protected override void OnDoubleClick(EventArgs e)
         {
-            EEPROM.ScheduleEntry best = null;
-            float time = (float)mouseY / (CellHeight * 2);
-
-            foreach (EEPROM.ScheduleEntry entry in EEPROM.ScheduleEntries)
-            {
-                float entrytime = entry.Hours + (float)entry.Minutes / 60;
-                if (best != null)
-                {
-                    float besttime = best.Hours + (float)best.Minutes / 60;
-                    if (Math.Abs(entrytime - time) < Math.Abs(besttime - time))
-                    {
-                        best = entry;
-                    }
-                }
-                else best = entry;
-            }
-            if (best != null)
-            {
-                ChildForm editor = new ScheduleEventEditor(best.sequence);
-                MainWindow.mainwindow.ShowDialog(editor);
-            }
+           
             base.OnDoubleClick(e);
         }
     }
