@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MainStationFrontEnd", "Main
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynergySequence", "SynergySequence\SynergySequence.csproj", "{80813922-BFA7-41DC-9DC0-2E86A0AB59F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopCodeBlocks", "DesktopCodeBlocks\DesktopCodeBlocks.csproj", "{88F52436-24FE-48C4-8E14-2F8E8E8B5476}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{80813922-BFA7-41DC-9DC0-2E86A0AB59F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80813922-BFA7-41DC-9DC0-2E86A0AB59F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80813922-BFA7-41DC-9DC0-2E86A0AB59F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88F52436-24FE-48C4-8E14-2F8E8E8B5476}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88F52436-24FE-48C4-8E14-2F8E8E8B5476}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88F52436-24FE-48C4-8E14-2F8E8E8B5476}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88F52436-24FE-48C4-8E14-2F8E8E8B5476}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
