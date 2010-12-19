@@ -53,7 +53,7 @@ namespace MainStationFrontEnd
             t_contents.ExpandAll();
         }
 
-        List<ChildForm> OpenedWindows = new List<ChildForm>();
+        List<Form> OpenedWindows = new List<Form>();
         private void t_contents_MouseDoubleClick(object sender, MouseEventArgs e)
         {
 
@@ -61,7 +61,7 @@ namespace MainStationFrontEnd
 
         void form_FormClosed(object sender, FormClosedEventArgs e)
         {
-            OpenedWindows.Remove((ChildForm)sender);
+            OpenedWindows.Remove((Form)sender);
         }
 
         private void toolStripButton5_Click(object sender, EventArgs e)
@@ -76,11 +76,11 @@ namespace MainStationFrontEnd
             UpdateTree();
         }
 
-        public void ShowDialog(ChildForm _Form)
+        public void ShowDialog(Form _Form)
         {
-            foreach (ChildForm f in OpenedWindows)
+            foreach (Form f in OpenedWindows)
             {
-                if (f.Content == _Form.Content)
+                if (f.Tag == _Form.Tag)
                 {
                     try
                     {
@@ -108,7 +108,8 @@ namespace MainStationFrontEnd
             if (t_contents.SelectedNode == null) return;
             if (t_contents.SelectedNode.Tag is ProgrammableDevice)
             {
-                ChildForm form = new SequenceEditorForm(((ProgrammableDevice)t_contents.SelectedNode.Tag).Sequence);
+                //((ProgrammableDevice)t_contents.SelectedNode.Tag).Sequence
+                Form form = new SynergySequence.SequenceEditorForm();
                 ShowDialog(form);
             }
         }

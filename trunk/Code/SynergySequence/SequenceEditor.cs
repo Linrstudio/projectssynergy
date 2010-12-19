@@ -7,11 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace MainStationFrontEnd
+namespace SynergySequence
 {
     public partial class SequenceEditWindow : UserControl
     {
-        public KismetSequence Sequence = null;
+        public Sequence Sequence = null;
         public List<CodeBlock> FloatingBlocks = new List<CodeBlock>();
         public int SelectedStartedAt = 0;
         public CodeBlock.Output SelectedOutput = null;
@@ -92,7 +92,7 @@ namespace MainStationFrontEnd
 
         private void DrawPwettyLineShadow(Graphics g, PointF A, PointF B)
         {
-            DrawPwettyLine(g, A, B, 1.5f, KismetSequence.ShadowColor, true);
+            DrawPwettyLine(g, A, B, 1.5f, Sequence.ShadowColor, true);
         }
 
         private void DrawPwettyLine(Graphics g, PointF A, PointF B, float _Width, System.Drawing.Color _Color, bool _IsVertical)
@@ -400,11 +400,11 @@ namespace MainStationFrontEnd
             }
             if (item.Tag is Type)
             {
-                foreach (CodeBlock.Prototype p in CodeBlock.CodeBlocks)
+                foreach (SynergySequence.Prototype p in SynergySequence.Prototypes)
                 {
-                    if (p.Type == item.Tag)
+                    if (p.BlockType == item.Tag)
                     {
-                        CodeBlock block = (CodeBlock)p.Type.GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { Sequence });
+                        CodeBlock block = (CodeBlock)p.Create();
                         Sequence.AddCodeBlock(block);
                         NeedsRecompile = true;
                         Format();
@@ -418,33 +418,15 @@ namespace MainStationFrontEnd
         {
             Dictionary<string, MenuItem> menuitems = new Dictionary<string, MenuItem>();
 
-            CodeBlock.Initialize();
-            foreach (CodeBlock.Prototype p in CodeBlock.CodeBlocks)
+            foreach (SynergySequence.Prototype p in SynergySequence.Prototypes)
             {
                 if (!p.UserCanAdd) continue;
                 if (!menuitems.ContainsKey(p.GroupName))
                     menuitems.Add(p.GroupName, new MenuItem(p.GroupName));
 
-                MenuItem item = new MenuItem(p.BlockName, OnContextMenuItemClicked);
-                item.Tag = p.Type;
+                MenuItem item = new MenuItem(p.Name, OnContextMenuItemClicked);
+                item.Tag = p.BlockType;
                 menuitems[p.GroupName].MenuItems.Add(item);
-            }
-
-            //add remoteevent blocks
-            MenuItem eventitem = new MenuItem("Remote events");
-            menuitems.Add("Remote events", eventitem);
-            foreach (ProductDataBase.Device d in ProductDataBase.Devices)
-            {
-                bool worthadding = false;
-                MenuItem ditem = new MenuItem(d.Name);
-                foreach (ProductDataBase.Device.RemoteEvent e in d.remoteevents)
-                {
-                    MenuItem eitem = new MenuItem(e.Name, OnContextMenuItemClicked);
-                    eitem.Tag = string.Format("{0} {1} {2}", d.ID, e.ID, 0);
-                    ditem.MenuItems.Add(eitem);
-                    worthadding = true;
-                }
-                if (worthadding) eventitem.MenuItems.Add(ditem);
             }
 
             ContextMenu menu = new ContextMenu(menuitems.Values.ToArray());
@@ -529,36 +511,22 @@ namespace MainStationFrontEnd
             if (Dragging == null)
             {
                 object[] data = (object[])(e.Data.GetData(typeof(object[])));
-                if (data[0] is MainStation.Device)
+
+                if (data[0] is CodeBlock.Prototype)
                 {
-                    /*BlockRemoteEvent b = new BlockRemoteEvent(Sequence);
-                    EEPROM.Device dev = (EEPROM.Device)data[0];
-                    ProductDataBase.Device.RemoteEvent evnt = ((ProductDataBase.Device.RemoteEvent)data[1]);
-                    b.SetValues(string.Format("{0} {1} {2}",
-                        dev.device.ID, evnt.ID, dev.ID));
+                    CodeBlock.Prototype p = (CodeBlock.Prototype)data[0];
+                    CodeBlock b = (CodeBlock)Activator.CreateInstance(p.Type);
+                    Sequence.AddCodeBlock(b);
+
+                    NeedsRecompile = true;
+                    Format();
+
                     Dragging = b;
-                    Sequence.codeblocks.Add((CodeBlock)b);
 
                     e.Effect = DragDropEffects.Copy;
-                    */
                 }
-                else
-                    if (data[0] is CodeBlock.Prototype)
-                    {
-                        CodeBlock.Prototype p = (CodeBlock.Prototype)data[0];
-                        CodeBlock b = (CodeBlock)Activator.CreateInstance(p.Type);
-                        Sequence.AddCodeBlock(b);
-
-                        NeedsRecompile = true;
-                        Format();
-
-                        Dragging = b;
-
-                        e.Effect = DragDropEffects.Copy;
-                    }
-                    else e.Effect = DragDropEffects.None;
+                else e.Effect = DragDropEffects.None;
             }
-            else e.Effect = DragDropEffects.None;
         }
 
         private void SequenceEditWindow_DragLeave(object sender, EventArgs e)

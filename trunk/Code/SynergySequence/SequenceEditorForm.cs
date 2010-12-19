@@ -7,15 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace MainStationFrontEnd
+namespace SynergySequence
 {
-    public partial class SequenceEditorForm : ChildForm
+    public partial class SequenceEditorForm:Form
     {
-        KismetSequence Sequence = null;
-        public SequenceEditorForm(KismetSequence _Sequence)
+        Sequence Sequence = null;
+        public SequenceEditorForm(Sequence _Sequence)
         {
             Sequence = _Sequence;
-            Content = Sequence;
             InitializeComponent();
         }
 
@@ -31,9 +30,9 @@ namespace MainStationFrontEnd
             p_workspace.Controls.Add(window);
             if (Sequence != null) window.Sequence = Sequence;
             window.OnBlockSelect += new SequenceEditWindow.OnBlockSelectHandler(window_OnBlockSelect);
-            CodeBlock.Initialize();
+            
             Dictionary<string, ListViewGroup> groups = new Dictionary<string, ListViewGroup>();
-            foreach (CodeBlock.Prototype p in CodeBlock.CodeBlocks)
+            foreach (SynergySequence.Prototype p in SynergySequence.Prototypes)
             {
                 if (p.UserCanAdd)
                 {
@@ -43,7 +42,7 @@ namespace MainStationFrontEnd
                         l_CodeBlocks.Groups.Add(group);
                         groups.Add(p.GroupName, group);
                     }
-                    ListViewItem item = new ListViewItem(p.BlockName, groups[p.GroupName]);
+                    ListViewItem item = new ListViewItem(p.Name, groups[p.GroupName]);
                     item.Tag = p;
                     l_CodeBlocks.Items.Add(item);
                 }
