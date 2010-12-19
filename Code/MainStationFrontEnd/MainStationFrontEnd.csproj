@@ -50,9 +50,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChildForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ProgrammableDevices\Computer.cs" />
     <Compile Include="ProgrammableDevice.cs" />
     <Compile Include="AddDevice.cs">
@@ -60,12 +57,6 @@
     </Compile>
     <Compile Include="AddDevice.Designer.cs">
       <DependentUpon>AddDevice.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SequenceEditorForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SequenceEditorForm.Designer.cs">
-      <DependentUpon>SequenceEditorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="RenameDialog.cs">
       <SubType>Form</SubType>
@@ -93,9 +84,6 @@
     <EmbeddedResource Include="AddDevice.resx">
       <DependentUpon>AddDevice.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SequenceEditorForm.resx">
-      <DependentUpon>SequenceEditorForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="RenameDialog.resx">
       <DependentUpon>RenameDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -110,9 +98,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SequenceEditor.resx">
-      <DependentUpon>SequenceEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -126,17 +111,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="SequenceEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SequenceEditor.Designer.cs">
-      <DependentUpon>SequenceEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="Solution.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="VPL\CodeBlock.cs" />
     <Compile Include="VPL\CodeBlocks.cs" />
     <Compile Include="VPL\CodeInstructions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SynergySequence\SynergySequence.csproj">
+      <Project>{80813922-BFA7-41DC-9DC0-2E86A0AB59F9}</Project>
+      <Name>SynergySequence</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

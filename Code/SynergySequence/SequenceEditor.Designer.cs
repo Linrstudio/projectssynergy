@@ -1,4 +1,4 @@
-﻿namespace MainStationFrontEnd
+﻿namespace SynergySequence
 {
     partial class SequenceEditWindow
     {
