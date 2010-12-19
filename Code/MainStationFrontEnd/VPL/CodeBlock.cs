@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 using System.Drawing;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace MainStationFrontEnd
 {
-    public class CodeBlock
+    public abstract class CodeBlock
     {
+        public CodeBlock()
+        {
+        }
+        [Obsolete]
         public CodeBlock(KismetSequence _Sequence)
         {
             Sequence = _Sequence;
@@ -15,17 +21,18 @@ namespace MainStationFrontEnd
 
         public KismetSequence Sequence;
 
-        public List<Input> Inputs = new List<Input>();
-        public List<Output> Outputs = new List<Output>();
+        public List<DataInput> DataInputs = new List<DataInput>();
+        public List<DataOutput> DataOutputs = new List<DataOutput>();
+        public List<TriggerInput> TriggerInputs = new List<TriggerInput>();
+        public List<TriggerOutput> TriggerOutputs = new List<TriggerOutput>();
 
+        [Browsable(false)]
+        public Input[] Inputs { get { List<Input> l = new List<Input>(DataInputs.ToArray()); l.AddRange(TriggerInputs.ToArray()); return l.ToArray(); } }
+        [Browsable(false)]
+        public Output[] Outputs { get { List<Output> l = new List<Output>(DataOutputs.ToArray()); l.AddRange(TriggerOutputs.ToArray()); return l.ToArray(); } }
         public bool Selected = false;
 
         List<int> InputRegisters = new List<int>();
-
-        /// <summary>
-        /// indicates the codeblock that defines the scope this codeblock is in
-        /// </summary>
-        public CodeBlock Scope = null;
 
         //editor stuff
         public float X;
@@ -37,104 +44,16 @@ namespace MainStationFrontEnd
         [Browsable(false)]
         public float Height { get { return height; } }
 
-        //used for assambling
-        public byte[] Code = new byte[] { };
-        public int index = 0;
-        public byte address;
-        /// <summary>
-        /// branch this block is connected to ( events/ifstatements are branches of some kind )
-        /// </summary>
-
-        public bool IsScope = false;
-        public int ScopeDepth = 0;
+        public bool IsEvent = false;
 
         //for save and load purposes
-        public virtual void SetValues(string _Values)
-        {
-
-        }
-        public virtual string GetValues()
-        {
-            return "";
-        }
-
-        public float GetAvarageParentHeight()
-        {
-            float h = 0;
-            int c = 0;
-            foreach (Input i in Inputs)
-            {
-                if (i.Connected != null)
-                {
-
-                    if (i.Connected.Owner.Scope == Scope || Scope == i.Connected.Owner)
-                    {
-                        h += i.Connected.Owner.Y;
-                        c++;
-                    }
-                }
-            }
-            if (c > 0)
-                return h / c;
-            else
-                return Y;
-        }
+        //TODO make these abstract
+        public abstract void Save(XElement _Data);
+        public abstract void Load(XElement _Data);
 
         public virtual bool Intersect(Point _Point)
         {
             return _Point.X > X - Width / 2 && _Point.Y > Y - Height / 2 && _Point.X < X + Width / 2 && _Point.Y < Y + Height / 2;
-        }
-
-        //determines the scope for this object
-        public void UpdateScope()
-        {
-            int bestdepth = 0;
-            CodeBlock bestscope = null;
-
-            foreach (Input i in Inputs)
-            {
-                if (i.Connected != null)
-                {
-                    CodeBlock pscope = i.Connected.Owner.IsScope ? i.Connected.Owner : i.Connected.Owner.Scope;
-                    if (pscope != null)
-                    {
-                        if (bestscope == null || pscope.ScopeDepth > bestdepth)
-                        {
-                            bestscope = pscope;
-                        }
-                    }
-                }
-            }
-
-            Scope = bestscope;
-            if (Scope != null) ScopeDepth = Scope.ScopeDepth;
-            if (IsScope)
-            {
-                if (Scope != null)
-                {
-                    ScopeDepth = Scope.ScopeDepth + 1;
-                }
-            }
-
-            foreach (Output o in Outputs) foreach (Input i in o.Connected) i.Owner.UpdateScope();
-        }
-
-        /// <summary>
-        /// returns the ( possibly indirect ) child with the highest index
-        /// </summary>
-        /// <returns></returns>
-        public CodeBlock GetChildWithHighestIndex()
-        {
-            CodeBlock c = this;
-            foreach (Output o in Outputs)
-            {
-                foreach (Input i in o.Connected)
-                {
-                    CodeBlock f = i.Owner.GetChildWithHighestIndex();
-                    if (f.index > c.index) c = f;
-                }
-            }
-            return c;
         }
 
         public void Update()
@@ -145,7 +64,7 @@ namespace MainStationFrontEnd
         public PointF GetShadowOffset()
         {
             //float h = (float)Math.Sqrt(ScopeDepth + 1);
-            float h = ScopeDepth + 1;
+            float h = 1;
             return new PointF(h * 2.5f, h * 5);
         }
 
@@ -248,8 +167,10 @@ namespace MainStationFrontEnd
 
         public void UpdateConnectors()
         {
-            foreach (Input i in Inputs) i.UpdatePosition();
-            foreach (Output o in Outputs) o.UpdatePosition();
+            foreach (DataInput i in DataInputs) i.UpdatePosition();
+            foreach (DataOutput o in DataOutputs) o.UpdatePosition();
+            foreach (TriggerInput i in TriggerInputs) i.UpdatePosition();
+            foreach (TriggerOutput o in TriggerOutputs) o.UpdatePosition();
         }
 
         public virtual void Assamble()
@@ -257,173 +178,99 @@ namespace MainStationFrontEnd
 
         }
 
-        public void FixIndices(ref int _CurrentIndex)
-        {
-            if (IsScope)
-            {
-                CodeBlock[] samescope = Sequence.GetChildrenInScope(this);
-                foreach (CodeBlock c in samescope)
-                {
-                    if (!c.IsScope) c.index = _CurrentIndex++;
-                }
-                bool found = true;
-                while (found)
-                {
-                    found = false;
-                    foreach (CodeBlock a in samescope)
-                    {
-                        if (!a.IsScope)
-                        {
-                            foreach (CodeBlock b in a.GetInputs())
-                            {
-                                if (b.Scope == this)//if the block is in the same scope
-                                {
-                                    if (a.index < b.index)
-                                    {
-                                        int i = a.index;
-                                        a.index = b.index;
-                                        b.index = i;
-                                        found = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                foreach (CodeBlock c in samescope)
-                {
-                    if (c.IsScope)
-                    {
-                        c.index = _CurrentIndex++;
-                        c.FixIndices(ref _CurrentIndex);
-                    }
-                }
-            }
-        }
-
         public void DisconnectAllInputs()
         {
-            foreach (Input i in Inputs)
+            foreach (DataInput i in DataInputs)
             {
                 if (i.Connected != null)
                     i.Connected.Connected.Remove(i);
             }
+            foreach (TriggerInput i in TriggerInputs)
+            {
+                foreach (TriggerOutput o in i.Connected) o.Connected.Remove(i);
+                i.Connected.Clear();
+            }
         }
         public void DisconnectAllOutputs()
         {
-            foreach (Output o in Outputs)
+            foreach (DataOutput o in DataOutputs)
             {
-                foreach (Input i in o.Connected) i.Connected = null;
+                foreach (DataInput i in o.Connected) i.Connected = null;
+                o.Connected.Clear();
+            }
+            foreach (TriggerOutput o in TriggerOutputs)
+            {
+                foreach (TriggerInput i in o.Connected) i.Connected.Remove(o);
                 o.Connected.Clear();
             }
         }
 
-        public CodeBlock[] GetInputs()
-        {
-            List<CodeBlock> inputs = new List<CodeBlock>();
-            foreach (Input i in Inputs)
-                if (i.Connected != null) inputs.Add(i.Connected.Owner);
-            return inputs.ToArray();
-        }
-
-        public CodeBlock[] GetOutputs()
-        {
-            List<CodeBlock> outputs = new List<CodeBlock>();
-            foreach (Output o in Outputs)
-                foreach (Input i in o.Connected)
-                    outputs.Add(i.Connected.Owner);
-            return outputs.ToArray();
-        }
-
         /// <summary>
-        /// retrive depth
+        /// ///////////////////////////////////////////////////////////////////////////
         /// </summary>
-        /// <returns></returns>
-        public int GetDepth() { return getdepth(0); }
-        private int getdepth(int curdepth)
+        public abstract class Connector
         {
-            int depth = curdepth;
-            foreach (Input i in Inputs)
+            public CodeBlock Owner;
+            public float X;
+            public float Y;
+            public Connector(CodeBlock _Owner) { Owner = _Owner; }
+            public System.Drawing.PointF GetPosition()
             {
-                if (i.Connected != null)
-                    depth = Math.Max(depth, i.Connected.Owner.getdepth(curdepth + 1));
+                return new System.Drawing.PointF(Owner.X + X, Owner.Y + Y);
             }
-            return depth;
+            public abstract bool AnyConnected { get; }
+        };
+
+        public abstract class Input : Connector
+        {
+            public Input(CodeBlock _CodeBlock) : base(_CodeBlock) { }
+
         }
 
-        private static int CompareCodeBlockByTargetHeight(CodeBlock A, CodeBlock B)
+        public abstract class Output : Connector
         {
-            if (A.GetAvarageParentHeight() < B.GetAvarageParentHeight()) return -1; else return 1;
+            public Output(CodeBlock _CodeBlock) : base(_CodeBlock) { }
         }
 
-        public CodeBlock[] GetSibblings()
+        public class DataInput : Input
         {
-            List<CodeBlock> blocksfound = new List<CodeBlock>();
-            int depth = GetDepth();
-            foreach (CodeBlock b in Sequence.codeblocks)
+            public DataInput(CodeBlock _Owner, string _Text, DataType _DataType)
+                : base(_Owner)
             {
-                if (b.GetDepth() == depth && b.Scope == Scope) blocksfound.Add(b);
-            }
-            blocksfound.Sort(CompareCodeBlockByTargetHeight);
-            return blocksfound.ToArray();
-        }
-
-        public float GetTargetHeight()
-        {
-            float outcount = 0;
-            float outheight = 0;
-            foreach (Output o in Outputs)
-            {
-                foreach (Input c in o.Connected)
-                {
-                    outheight += c.GetPosition().Y;
-                    outcount++;
-                }
-            }
-            if (outcount > 0)
-                return (outheight / outcount);
-            else
-                return 0;
-        }
-
-        public class Input
-        {
-            public Input(CodeBlock _Owner, string _Text, DataType _DataType)
-            {
-                Owner = _Owner;   
+                if (_DataType == null) throw new Exception("null DataType");
+                Owner = _Owner;
                 Text = _Text;
                 datatype = _DataType;
                 UpdatePosition();
             }
             public string Text;
 
+
+
             public System.Windows.Forms.ToolTip tooptip = new System.Windows.Forms.ToolTip();
 
             //position in codeblock
-            public float X;
-            public float Y;
-            public Output Connected = null;
+            public DataOutput Connected = null;
             public CodeBlock Owner;
             public DataType datatype;
 
+            public override bool AnyConnected { get { return Connected != null; } }
+
             public void UpdatePosition()
             {
-                float cnt = Owner.Inputs.Count;
-                float idx = (float)Owner.Inputs.IndexOf(this) - ((cnt - 1) / 2);
+                float cnt = Owner.DataInputs.Count;
+                float idx = (float)Owner.DataInputs.IndexOf(this) - ((cnt - 1) / 2);
                 Y = -Owner.Height / 2;
                 X = (int)((idx / cnt) * Owner.height);
             }
-
-            public System.Drawing.PointF GetPosition()
-            {
-                return new System.Drawing.PointF(Owner.X + X, Owner.Y + Y);
-            }
         }
 
-        public class Output
+        public class DataOutput : Output
         {
-            public Output(CodeBlock _Owner, string _Text, DataType _DataType) 
+            public DataOutput(CodeBlock _Owner, string _Text, DataType _DataType)
+                : base(_Owner)
             {
+                if (_DataType == null) throw new Exception("null DataType");
                 Owner = _Owner;
                 Text = _Text;
                 datatype = _DataType;
@@ -434,53 +281,105 @@ namespace MainStationFrontEnd
             public System.Windows.Forms.ToolTip tooptip = new System.Windows.Forms.ToolTip();
 
             //position in codeblock
-            public float X;
-            public float Y;
-            public List<Input> Connected = new List<Input>();
+            public List<DataInput> Connected = new List<DataInput>();
             public CodeBlock Owner;
             public DataType datatype;
             public KismetSequence.Register Register = null;
 
+            public override bool AnyConnected { get { return Connected.Count != 0; } }
+
             public void UpdatePosition()
             {
-                float cnt = Owner.Outputs.Count;
-                float idx = (float)Owner.Outputs.IndexOf(this) - ((cnt - 1) / 2);
+                float cnt = Owner.DataOutputs.Count;
+                float idx = (float)Owner.DataOutputs.IndexOf(this) - ((cnt - 1) / 2);
                 Y = Owner.Height / 2;
                 X = (int)((idx / cnt) * Owner.height);
             }
 
             public void DisconnectAll()
             {
-                foreach (Input i in Connected)
+                foreach (DataInput i in Connected)
                 {
                     i.Connected = null;
                 }
                 Connected.Clear();
             }
+        }
 
-            public System.Drawing.PointF GetPosition()
+        public class TriggerInput : Input
+        {
+            public TriggerInput(CodeBlock _Owner, string _Text)
+                : base(_Owner)
             {
-                return new System.Drawing.PointF(Owner.X + X, Owner.Y + Y);
+                Owner = _Owner;
+                Text = _Text;
+                UpdatePosition();
+            }
+
+            public string Text;
+            public System.Windows.Forms.ToolTip tooptip = new System.Windows.Forms.ToolTip();
+
+            //position in codeblock
+            public List<TriggerOutput> Connected = new List<TriggerOutput>();
+            public CodeBlock Owner;
+            public KismetSequence.Register Register = null;
+
+            public override bool AnyConnected { get { return Connected.Count != 0; } }
+
+            public void UpdatePosition()
+            {
+                float cnt = Owner.TriggerInputs.Count;
+                float idx = (float)Owner.TriggerInputs.IndexOf(this) - ((cnt - 1) / 2);
+                X = -Owner.Width / 2;
+                Y = (int)((idx / cnt) * Owner.height);
+            }
+
+            public void DisconnectAll()
+            {
+                foreach (TriggerOutput i in Connected)
+                {
+                    i.Connected.Remove(this);
+                }
+                Connected.Clear();
             }
         }
 
-        public CodeBlock[] GetAllChildren()
+        public class TriggerOutput : Output
         {
-            List<CodeBlock> list = new List<CodeBlock>();
-
-            foreach (Output i in Outputs)
+            public TriggerOutput(CodeBlock _Owner, string _Text)
+                : base(_Owner)
             {
-                foreach (Input b in i.Connected)
-                {
-                    if (!list.Contains(b.Owner)) list.Add(b.Owner);
-                    foreach (CodeBlock c in b.Owner.GetAllChildren())
-                    {
-                        if (!list.Contains(c)) list.Add(c);
-                    }
-                }
+                Owner = _Owner;
+                Text = _Text;
+                UpdatePosition();
             }
 
-            return list.ToArray();
+            public string Text;
+            public System.Windows.Forms.ToolTip tooptip = new System.Windows.Forms.ToolTip();
+
+            //position in codeblock
+            public List<TriggerInput> Connected = new List<TriggerInput>();
+            public CodeBlock Owner;
+            public KismetSequence.Register Register = null;
+
+            public override bool AnyConnected { get { return Connected.Count != 0; } }
+
+            public void UpdatePosition()
+            {
+                float cnt = Owner.TriggerOutputs.Count;
+                float idx = (float)Owner.TriggerOutputs.IndexOf(this) - ((cnt - 1) / 2);
+                X = Owner.Width / 2;
+                Y = (int)((idx / cnt) * Owner.height);
+            }
+
+            public void DisconnectAll()
+            {
+                foreach (TriggerInput i in Connected)
+                {
+                    i.Connected.Remove(this);
+                }
+                Connected.Clear();
+            }
         }
 
         /// <summary>
@@ -491,31 +390,7 @@ namespace MainStationFrontEnd
         {
             List<CodeBlock> list = new List<CodeBlock>();
             list.Add(this);
-            foreach (Input i in Inputs)
-            {
-                if (i.Connected != null)
-                {
-                    if (!list.Contains(i.Connected.Owner)) list.Add(i.Connected.Owner);
-                    foreach (CodeBlock c in i.Connected.Owner.GetDependencies())
-                    {
-                        if (!list.Contains(c)) list.Add(c);
-                    }
-                }
-            }
 
-            return list.ToArray();
-        }
-
-        public CodeBlock[] GetParentScopes()
-        {
-            List<CodeBlock> list = new List<CodeBlock>();
-            CodeBlock parent = Scope;
-            while (parent != null)
-            {
-                list.Add(parent);
-                parent = parent.Scope;
-            }
-            list.Reverse();
             return list.ToArray();
         }
 
@@ -599,12 +474,13 @@ namespace MainStationFrontEnd
             {
                 CodeBlocks = new List<Prototype>();
 
+                AddCodeBlock("Scheduled Event", "Events", typeof(BlockEventSchedule));
+
                 //Debug stuff
                 //20
                 AddCodeBlock("Set DebugLed 1", "Debug stuff", typeof(BlockSetDebugLed1));
 
                 //Time stuff
-                AddCodeBlock("Constant", "Time", typeof(BlockTimeConstant));
                 AddCodeBlock("Get current time", "Time", typeof(BlockGetTime));
                 AddCodeBlock("Get current hour", "Time", typeof(BlockGetHour));
                 AddCodeBlock("Get current minute", "Time", typeof(BlockGetMinute));
@@ -631,7 +507,6 @@ namespace MainStationFrontEnd
                 AddCodeBlock("And", "Boolean", typeof(BlockBoolAnd));
                 AddCodeBlock("Or", "Boolean", typeof(BlockBoolOr));
                 AddCodeBlock("Exclusive or", "Boolean", typeof(BlockBoolXOR));
-                AddCodeBlock("If", "Boolean", typeof(BlockBoolIf));
             }
         }
 

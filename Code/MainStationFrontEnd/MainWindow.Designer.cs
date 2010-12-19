@@ -310,6 +310,7 @@
             this.IsMdiContainer = true;
             this.Name = "MainWindow";
             this.Text = "FrontEnd";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();

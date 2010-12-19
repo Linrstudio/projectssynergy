@@ -9,7 +9,10 @@ namespace MainStationFrontEnd
 {
     public class KismetSequence
     {
-        public List<CodeBlock> codeblocks = new List<CodeBlock>();
+        List<CodeBlock> codeblocks = new List<CodeBlock>();
+        public CodeBlock[] CodeBlocks { get { return codeblocks.ToArray(); } }
+        public void AddCodeBlock(CodeBlock _CodeBlock) { if (codeblocks.Contains(_CodeBlock))return; codeblocks.Add(_CodeBlock); _CodeBlock.Sequence = this; }
+        public void RemoveCodeBlock(CodeBlock _CodeBlock) { if (codeblocks.Contains(_CodeBlock)) { _CodeBlock.DisconnectAllInputs(); _CodeBlock.DisconnectAllOutputs(); codeblocks.Remove(_CodeBlock); } }
         public static System.Drawing.Color ShadowColor = System.Drawing.Color.DarkGray;
 
         public List<Register> Registers = new List<Register>();
@@ -68,19 +71,26 @@ namespace MainStationFrontEnd
                     return r;
                 }
             }
-            throw new Exception("failed to alloc register");
+            throw new Exception("failed to allocate register");
         }
 
-        public bool CheckForErrors()
+        XElement CompileForDesktop()
         {
-            foreach (CodeBlock c in codeblocks)
+            XElement sequence = new XElement("Sequence");
+
+            foreach (CodeBlock b in codeblocks)
             {
-                foreach (CodeBlock.Input i in c.Inputs)
+                if (b.IsEvent)
                 {
-                    if (i.Connected == null) return false;
+                    XElement Event = new XElement("Event");
+                    XElement data = new XElement("Data");
+                    b.Save(data);
+                    Event.Add(data);
+                    
                 }
             }
-            return true;
+
+            return sequence;
         }
 
         public KismetSequence() { }
@@ -93,77 +103,75 @@ namespace MainStationFrontEnd
 
         public void Connect(CodeBlock.Output _Out, CodeBlock.Input _In)
         {
-            //check for illegal connect attempts ( for example between two parallel ifstatements )
-            foreach (CodeBlock.Input i in _In.Owner.Inputs)
+            if (_Out is CodeBlock.TriggerOutput && _In is CodeBlock.TriggerInput)
             {
-                if (i == _In || i.Connected == null) continue;
-                CodeBlock[] ascope = i.Connected.Owner.GetParentScopes();
-                CodeBlock[] bscope = _Out.Owner.GetParentScopes();
-                for (int idx = 0; idx < Math.Min(ascope.Length, bscope.Length); idx++)
-                {
-                    if (ascope[idx] != bscope[idx]) return;
-                }
+                CodeBlock.TriggerOutput Out = (CodeBlock.TriggerOutput)_Out;
+                CodeBlock.TriggerInput In = (CodeBlock.TriggerInput)_In;
+                if (!Out.Connected.Contains(In)) Out.Connected.Add(In);
+                if (!In.Connected.Contains(Out)) In.Connected.Add(Out);
+
+                if (!codeblocks.Contains(Out.Owner)) codeblocks.Add(Out.Owner);
+                if (!codeblocks.Contains(In.Owner)) codeblocks.Add(In.Owner);
+                In.Owner.Sequence = Out.Owner.Sequence = this;
             }
 
-            //only allow connections of the right datatypes
-            if (_Out.datatype == null && _In.datatype != null) return;
-            if (_Out.datatype != null && _In.datatype != null && _Out.datatype.ID != _In.datatype.ID) return;
-
-            //remove any connection that will be overriden
-            foreach (CodeBlock b in codeblocks) foreach (CodeBlock.Output o in b.Outputs) foreach (CodeBlock.Input i in o.Connected.ToArray()) if (i == _In) o.Connected.Remove(i);
-
-            _Out.Connected.Add(_In);
-            _In.Connected = _Out;
-            if (!codeblocks.Contains(_Out.Owner)) codeblocks.Add(_Out.Owner);
-            if (!codeblocks.Contains(_In.Owner)) codeblocks.Add(_In.Owner);
-            _In.Owner.Sequence = _Out.Owner.Sequence = this;
-        }
-
-        public CodeBlock[] GetChildrenInScope(CodeBlock _Scope)
-        {
-            List<CodeBlock> found = new List<CodeBlock>();
-            foreach (CodeBlock c in codeblocks)
+            if (_Out is CodeBlock.DataOutput && _In is CodeBlock.DataInput)
             {
-                if (c.Scope == _Scope) found.Add(c);
-            }
-            return found.ToArray();
-        }
+                CodeBlock.DataOutput Out = (CodeBlock.DataOutput)_Out;
+                CodeBlock.DataInput In = (CodeBlock.DataInput)_In;
+                if (!Out.Connected.Contains(In)) Out.Connected.Add(In);
 
-        public void Remove(CodeBlock _CodeBlock)
-        {
-            _CodeBlock.DisconnectAllInputs();
-            _CodeBlock.DisconnectAllOutputs();
-            codeblocks.Remove(_CodeBlock);
+                if (In.Connected != null) In.Connected.Connected.Remove(In);// override connection
+                In.Connected = Out;
+                if (!codeblocks.Contains(Out.Owner)) codeblocks.Add(Out.Owner);
+                if (!codeblocks.Contains(In.Owner)) codeblocks.Add(In.Owner);
+                In.Owner.Sequence = Out.Owner.Sequence = this;
+
+                //remove any connection that will be overriden
+                //foreach (CodeBlock b in codeblocks) foreach (CodeBlock.DataOutput o in b.DataOutputs) foreach (CodeBlock.DataInput i in o.Connected.ToArray()) if (i == _In) o.Connected.Remove(i);
+            }
         }
 
         public void Load(XElement _Sequence)
         {
             codeblocks.Clear();
-            try
+            //try
             {
                 foreach (XElement block in _Sequence.Elements("Block"))
                 {
                     string blocktype = (string)block.Attribute("Type").Value;
-                    byte index = byte.Parse(block.Attribute("GUID").Value);
-                    CodeBlock b = (CodeBlock)Type.GetType(blocktype).GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { this });
-                    b.index = index;
+                    CodeBlock b = (CodeBlock)Activator.CreateInstance(null, "MainStationFrontEnd." + blocktype).Unwrap();
                     b.X = float.Parse(block.Attribute("X").Value);
                     b.Y = float.Parse(block.Attribute("Y").Value);
-                    b.SetValues(block.Attribute("Values").Value);
+                    try
+                    {
+                        b.Load(block.Element("Data"));
+                    }
+                    catch { /*FIXME*/ }
                     codeblocks.Add(b);
                 }
-
-                foreach (XElement connection in _Sequence.Elements("Connect"))
+            }
+            //catch{ /* FIXME */}
+            //try
+            {
+                foreach (XElement connection in _Sequence.Elements("ConnectData"))
                 {
                     int input = int.Parse(connection.Attribute("Input").Value);
                     int inputowner = int.Parse(connection.Attribute("InputOwner").Value);
                     int output = int.Parse(connection.Attribute("Output").Value);
                     int outputowner = int.Parse(connection.Attribute("OutputOwner").Value);
-                    Connect(codeblocks[outputowner].Outputs[output], codeblocks[inputowner].Inputs[input]);
+                    Connect(codeblocks[outputowner].DataOutputs[output], codeblocks[inputowner].DataInputs[input]);
+                }
+                foreach (XElement connection in _Sequence.Elements("ConnectTrigger"))
+                {
+                    int input = int.Parse(connection.Attribute("Input").Value);
+                    int inputowner = int.Parse(connection.Attribute("InputOwner").Value);
+                    int output = int.Parse(connection.Attribute("Output").Value);
+                    int outputowner = int.Parse(connection.Attribute("OutputOwner").Value);
+                    Connect(codeblocks[outputowner].TriggerOutputs[output], codeblocks[inputowner].TriggerInputs[input]);
                 }
             }
-            catch { //FIXME 
-            }
+            //catch { /* FIXME */ }
         }
 
         public XElement Save()
@@ -173,24 +181,37 @@ namespace MainStationFrontEnd
             {
                 XElement block = null;
                 block = new XElement("Block");
-                block.SetAttributeValue("GUID", b.index);
                 block.SetAttributeValue("X", b.X);
                 block.SetAttributeValue("Y", b.Y);
-                block.SetAttributeValue("Type", CodeBlock.GetCodeBlock(b.GetType()).Type.FullName);
-                block.SetAttributeValue("Values", b.GetValues());
+                block.SetAttributeValue("Type", CodeBlock.GetCodeBlock(b.GetType()).Type.Name);
+                XElement data =new XElement("Data");
+                b.Save(data);
+                block.Add(data);
                 sequence.Add(block);
             }
             foreach (CodeBlock b in codeblocks)
             {
-                foreach (CodeBlock.Input i in b.Inputs)
+                foreach (CodeBlock.DataInput i in b.DataInputs)
                 {
                     if (i.Connected != null)
                     {
-                        XElement connection = new XElement("Connect");
-                        connection.SetAttributeValue("Input", i.Owner.Inputs.IndexOf(i).ToString());
+                        XElement connection = new XElement("ConnectData");
+                        connection.SetAttributeValue("Input", i.Owner.DataInputs.IndexOf(i).ToString());
                         connection.SetAttributeValue("InputOwner", codeblocks.IndexOf(i.Owner).ToString());
-                        connection.SetAttributeValue("Output", i.Connected.Owner.Outputs.IndexOf(i.Connected).ToString());
+                        connection.SetAttributeValue("Output", i.Connected.Owner.DataOutputs.IndexOf(i.Connected).ToString());
                         connection.SetAttributeValue("OutputOwner", codeblocks.IndexOf(i.Connected.Owner).ToString());
+                        sequence.Add(connection);
+                    }
+                }
+                foreach (CodeBlock.TriggerOutput o in b.TriggerOutputs)
+                {
+                    foreach (CodeBlock.TriggerInput i in o.Connected)
+                    {
+                        XElement connection = new XElement("ConnectTrigger");
+                        connection.SetAttributeValue("Input", i.Owner.TriggerInputs.IndexOf(i).ToString());
+                        connection.SetAttributeValue("InputOwner", codeblocks.IndexOf(i.Owner).ToString());
+                        connection.SetAttributeValue("Output", o.Owner.TriggerOutputs.IndexOf(o).ToString());
+                        connection.SetAttributeValue("OutputOwner", codeblocks.IndexOf(o.Owner).ToString());
                         sequence.Add(connection);
                     }
                 }

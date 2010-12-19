@@ -45,7 +45,7 @@ namespace MainStationFrontEnd
 
             float bestdist = 20;
             CodeBlock.Input best = null;
-            foreach (CodeBlock d in Sequence.codeblocks)
+            foreach (CodeBlock d in Sequence.CodeBlocks)
             {
                 foreach (CodeBlock.Input o in d.Inputs)
                 {
@@ -64,7 +64,7 @@ namespace MainStationFrontEnd
 
             float bestdist = 20;
             CodeBlock.Output best = null;
-            foreach (CodeBlock d in Sequence.codeblocks)
+            foreach (CodeBlock d in Sequence.CodeBlocks)
             {
                 foreach (CodeBlock.Output o in d.Outputs)
                 {
@@ -80,19 +80,19 @@ namespace MainStationFrontEnd
         CodeBlock GetCodeBlock(Point _Pos)
         {
             if (Sequence == null) return null;
-            foreach (CodeBlock c in Sequence.codeblocks)
+            foreach (CodeBlock c in Sequence.CodeBlocks)
                 if (c.Intersect(_Pos)) return c;
             return null;
         }
 
         private void DrawPwettyLine(Graphics g, PointF A, PointF B)
         {
-            DrawPwettyLine(g, A, B, 1.5f, System.Drawing.Color.Black,true);
+            DrawPwettyLine(g, A, B, 1.5f, System.Drawing.Color.Black, true);
         }
 
         private void DrawPwettyLineShadow(Graphics g, PointF A, PointF B)
         {
-            DrawPwettyLine(g, A, B, 1.5f, KismetSequence.ShadowColor,true);
+            DrawPwettyLine(g, A, B, 1.5f, KismetSequence.ShadowColor, true);
         }
 
         private void DrawPwettyLine(Graphics g, PointF A, PointF B, float _Width, System.Drawing.Color _Color, bool _IsVertical)
@@ -109,8 +109,8 @@ namespace MainStationFrontEnd
                 }, System.Drawing.Drawing2D.FillMode.Alternate);
             }
             else
-            { 
-                  B.X -= 15;
+            {
+                B.X -= 15;
                 PointF c = new PointF((A.X + B.X) / 2, (A.Y + B.Y) / 2);
                 g.DrawBezier(new Pen(new SolidBrush(_Color), _Width), A.X, A.Y, A.X, c.Y, B.X, c.Y, B.X, B.Y);
                 g.FillPolygon(new SolidBrush(_Color), new PointF[]{
@@ -130,10 +130,10 @@ namespace MainStationFrontEnd
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             if (Sequence != null)
             {
-                foreach (CodeBlock b in Sequence.codeblocks)
+                foreach (CodeBlock b in Sequence.CodeBlocks)
                 {
                     b.DrawShadow(e.Graphics);
-                    foreach (CodeBlock.Input i in b.Inputs)
+                    foreach (CodeBlock.DataInput i in b.DataInputs)
                     {
                         if (i.Connected != null)
                         {
@@ -147,7 +147,7 @@ namespace MainStationFrontEnd
                         }
                     }
                 }
-                foreach (CodeBlock b in Sequence.codeblocks)
+                foreach (CodeBlock b in Sequence.CodeBlocks)
                 {
                     List<CodeBlock> dependencies = new List<CodeBlock>();
                     if (SelectedOutput != null) dependencies.AddRange(SelectedOutput.Owner.GetDependencies());
@@ -156,19 +156,17 @@ namespace MainStationFrontEnd
                     CodeBlock.Output output = GetNearestOutput(new Point(MouseX, MouseY));
 
                     //e.Graphics.DrawRectangle(Pens.Red, b.x, b.y, 100, 50);
-                    float p = 0;
-                    foreach (CodeBlock.Input i in b.Inputs)
+                    foreach (CodeBlock.DataInput i in b.DataInputs)
                     {
-                        p += 1 / (float)(b.Inputs.Count + 1);
                         PointF pos = i.GetPosition();
                         if (!dependencies.Contains(i.Owner))
-                            e.Graphics.FillRectangle(new SolidBrush(i.datatype == null ? Color.Black : i.datatype.Color), new RectangleF(pos.X - 5, pos.Y - 5, 5, 10));
+                            e.Graphics.FillRectangle(new SolidBrush(i.datatype == null ? Color.Black : i.datatype.Color), new RectangleF(pos.X - 5, pos.Y - 5, 10, 5));
 
                         if (i.Connected != null)
                         {
                             PointF x = i.GetPosition();
                             PointF y = i.Connected.GetPosition();
-                            DrawPwettyLine(e.Graphics, y, x, 1.5f, i.datatype == null ? Color.Black : i.datatype.Color,true);
+                            DrawPwettyLine(e.Graphics, y, x, 1.5f, i.datatype == null ? Color.Black : i.datatype.Color, true);
                         }
 
                         if (i == input)
@@ -176,30 +174,64 @@ namespace MainStationFrontEnd
                             i.tooptip.Show(i.Text, this, new Point((int)pos.X, (int)pos.Y), 1000);
                         }
                     }
-                    p = 0;
-                    foreach (CodeBlock.Output i in b.Outputs)
+
+                    foreach (CodeBlock.DataOutput i in b.DataOutputs)
                     {
-                        p += 1 / (float)(b.Inputs.Count + 1);
+
                         PointF pos = i.GetPosition();
                         if (!dependencies.Contains(i.Owner))
-                            e.Graphics.FillRectangle(new SolidBrush(i.datatype != null ? i.datatype.Color : Color.Black), new RectangleF(pos.X, pos.Y - 5, 5, 10));
+                            e.Graphics.FillRectangle(new SolidBrush(i.datatype != null ? i.datatype.Color : Color.Black), new RectangleF(pos.X - 5, pos.Y, 10, 5));
 
                         if (i == output)
                         {
                             i.tooptip.Show(i.Text, this, new Point((int)pos.X, (int)pos.Y), 1000);
                         }
                     }
+
+                    foreach (CodeBlock.TriggerInput i in b.TriggerInputs)
+                    {
+                        PointF pos = i.GetPosition();
+
+                        e.Graphics.FillRectangle(new SolidBrush(Color.Black), new RectangleF(pos.X - 5, pos.Y - 5, 5, 10));
+                    }
+
+                    foreach (CodeBlock.TriggerOutput o in b.TriggerOutputs)
+                    {
+                        PointF pos = o.GetPosition();
+
+                        foreach (CodeBlock.TriggerInput i in o.Connected)
+                        {
+                            DrawPwettyLine(e.Graphics, pos, i.GetPosition(), 1.5f, Color.Black, false);
+                        }
+
+                        e.Graphics.FillRectangle(new SolidBrush(Color.Black), new RectangleF(pos.X, pos.Y - 5, 5, 10));
+                    }
                     b.Draw(e.Graphics);
                 }
                 if (SelectedOutput != null && SelectedInput != null)
-
-                    DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), SelectedInput.GetPosition(), 2, SelectedInput.datatype == null ? Color.Black : SelectedInput.datatype.Color,true);
+                {
+                    if (SelectedOutput is CodeBlock.DataOutput && SelectedInput is CodeBlock.DataInput)
+                        DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), SelectedInput.GetPosition(), 2, ((CodeBlock.DataInput)SelectedInput).datatype.Color, true);
+                    else
+                        DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), SelectedInput.GetPosition(), 2, Color.Black, false);
+                }
                 else
                 {
-                    if (SelectedInput != null)//input to mouse
-                        DrawPwettyLine(e.Graphics, new Point(MouseX, MouseY), SelectedInput.GetPosition(), 2, SelectedInput.datatype == null ? Color.Black : SelectedInput.datatype.Color,true);
-                    if (SelectedOutput != null)//output to mouse
-                        DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new Point(MouseX, MouseY), 2, SelectedOutput.datatype == null ? Color.Black : SelectedOutput.datatype.Color,true);
+                    if (SelectedOutput != null)
+                    {
+                        if (SelectedOutput is CodeBlock.DataOutput)
+                            DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new PointF(MouseX, MouseY), 2, ((CodeBlock.DataOutput)SelectedOutput).datatype.Color, true);
+                        else
+                            DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new PointF(MouseX, MouseY), 2, Color.Black, false);
+                    }
+
+                    if (SelectedInput != null)
+                    {
+                        if (SelectedInput is CodeBlock.DataInput)
+                            DrawPwettyLine(e.Graphics, new PointF(MouseX, MouseY), SelectedInput.GetPosition(), 2, ((CodeBlock.DataInput)SelectedInput).datatype.Color, true);
+                        else
+                            DrawPwettyLine(e.Graphics, new PointF(MouseX, MouseY), SelectedInput.GetPosition(), 2, Color.Black, false);
+                    }
                 }
             }
             base.OnPaint(e);
@@ -208,16 +240,16 @@ namespace MainStationFrontEnd
         public void UpdateFloatingBlocks()
         {
             FloatingBlocks.Clear();
-            foreach (CodeBlock b in Sequence.codeblocks)
+            foreach (CodeBlock b in Sequence.CodeBlocks)
             {
                 bool found = true;
                 foreach (CodeBlock.Input i in b.Inputs)
                 {
-                    if (i.Connected != null) found = false;
+                    if (i.AnyConnected) found = false;
                 }
                 foreach (CodeBlock.Output o in b.Outputs)
                 {
-                    if (o.Connected.Count > 0) found = false;
+                    if (o.AnyConnected) found = false;
                 }
                 if (found) FloatingBlocks.Add(b);
             }
@@ -236,13 +268,13 @@ namespace MainStationFrontEnd
             float maxX = 0;
             float maxY = 0;
 
-            foreach (CodeBlock b in Sequence.codeblocks)
+            foreach (CodeBlock b in Sequence.CodeBlocks)
             {
                 minX = Math.Min(minX, b.X);
                 minY = Math.Min(minY, b.Y);
             }
 
-            foreach (CodeBlock b in Sequence.codeblocks)
+            foreach (CodeBlock b in Sequence.CodeBlocks)
             {
                 b.X -= minX;
                 b.Y -= minY;
@@ -277,7 +309,7 @@ namespace MainStationFrontEnd
                 if (doublerightclicktimer > Environment.TickCount)
                 {
                     CodeBlock b = GetCodeBlock(new Point(MouseX, MouseY));
-                    if (b != null) Sequence.Remove(b);
+                    if (b != null) Sequence.RemoveCodeBlock(b);
                 }
                 doublerightclicktimer = Environment.TickCount + 500;
             }
@@ -316,6 +348,7 @@ namespace MainStationFrontEnd
                 if (_LClick)
                 {
                     SelectedBlock = GetCodeBlock(new Point(MouseX, MouseY));
+                    OnBlockSelect(SelectedBlock);
                     if (SelectedBlock != null) Sequence.Select(SelectedBlock);
                 }
                 else { SelectedBlock = null; }
@@ -371,7 +404,8 @@ namespace MainStationFrontEnd
                 {
                     if (p.Type == item.Tag)
                     {
-                        Sequence.codeblocks.Add((CodeBlock)p.Type.GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { Sequence }));
+                        CodeBlock block = (CodeBlock)p.Type.GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { Sequence });
+                        Sequence.AddCodeBlock(block);
                         NeedsRecompile = true;
                         Format();
                     }
@@ -441,20 +475,33 @@ namespace MainStationFrontEnd
                 CodeBlock.Output output = GetNearestOutput(new Point(MouseX, MouseY));
                 if (output != null)
                 {
-                    foreach (CodeBlock.Input i in output.Connected) i.Connected = null;
-                    output.Connected.Clear();
-                    NeedsRecompile = true;
+                    if (output is CodeBlock.DataOutput)
+                    {
+                        foreach (CodeBlock.DataInput i in ((CodeBlock.DataOutput)output).Connected) i.Connected = null;
+                        ((CodeBlock.DataOutput)output).Connected.Clear();
+                        NeedsRecompile = true;
+                    }
+                    if (output is CodeBlock.TriggerOutput)
+                    {
+                        CodeBlock.TriggerOutput o = (CodeBlock.TriggerOutput)output;
+                        foreach (CodeBlock.TriggerInput i in o.Connected) i.Connected.Remove(o);
+                        o.Connected.Clear();
+                        NeedsRecompile = true;
+                    }
                 }
                 else
                 {
                     CodeBlock.Input input = GetNearestInput(new Point(MouseX, MouseY));
                     if (input != null)
                     {
-                        if (input.Connected != null)
+                        if (input is CodeBlock.DataInput)
                         {
-                            input.Connected.Connected.Remove(input);
-                            input.Connected = null;
-                            NeedsRecompile = true;
+                            if (((CodeBlock.DataInput)input).Connected != null)
+                            {
+                                ((CodeBlock.DataInput)input).Connected.Connected.Remove(((CodeBlock.DataInput)input));
+                                ((CodeBlock.DataInput)input).Connected = null;
+                                NeedsRecompile = true;
+                            }
                         }
                     }
                     else
@@ -468,7 +515,7 @@ namespace MainStationFrontEnd
         private void t_Update_Tick(object sender, EventArgs e)
         {
             if (Sequence == null) return;
-            foreach (CodeBlock c in Sequence.codeblocks) c.Update();
+            foreach (CodeBlock c in Sequence.CodeBlocks) c.Update();
             Format();
         }
         CodeBlock Dragging = null;
@@ -499,15 +546,13 @@ namespace MainStationFrontEnd
                     if (data[0] is CodeBlock.Prototype)
                     {
                         CodeBlock.Prototype p = (CodeBlock.Prototype)data[0];
-
-                        CodeBlock b = (CodeBlock)p.Type.GetConstructor(new Type[] { typeof(KismetSequence) }).Invoke(new object[] { Sequence });
-                        Sequence.codeblocks.Add(b);
+                        CodeBlock b = (CodeBlock)Activator.CreateInstance(p.Type);
+                        Sequence.AddCodeBlock(b);
 
                         NeedsRecompile = true;
                         Format();
 
                         Dragging = b;
-                        Sequence.codeblocks.Add((CodeBlock)b);
 
                         e.Effect = DragDropEffects.Copy;
                     }
@@ -521,7 +566,7 @@ namespace MainStationFrontEnd
             //TODO does this make sense ?
             if (Dragging != null)
             {
-                Sequence.codeblocks.Remove(Dragging);
+                Sequence.RemoveCodeBlock(Dragging);
                 Dragging = null;
             }
         }
