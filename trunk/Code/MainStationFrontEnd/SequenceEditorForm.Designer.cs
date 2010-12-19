@@ -83,7 +83,7 @@
             this.splitter2.TabIndex = 3;
             this.splitter2.TabStop = false;
             // 
-            // EventEditor
+            // SequenceEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -93,8 +93,9 @@
             this.Controls.Add(this.p_Properties);
             this.Controls.Add(this.splitter2);
             this.Controls.Add(this.l_CodeBlocks);
-            this.Name = "EventEditor";
+            this.Name = "SequenceEditorForm";
             this.Text = "EventEditor";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.EventEditor_Load);
             this.ResumeLayout(false);
 

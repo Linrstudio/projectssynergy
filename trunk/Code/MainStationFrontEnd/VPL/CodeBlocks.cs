@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 using System.Drawing;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace MainStationFrontEnd
 {
     //Archetypes
-    public class BaseBlockConditions : CodeBlock
+    public abstract class BaseBlockConditions : CodeBlock
     {
-        public BaseBlockConditions(KismetSequence _Sequence) : base(_Sequence) { }
         public override void Draw(Graphics _Graphics)
         {
             DrawTriangle(_Graphics);
@@ -22,14 +23,8 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BaseBlockMath : CodeBlock
+    public abstract class BaseBlockMath : CodeBlock
     {
-        public BaseBlockMath(KismetSequence _Sequence)
-            : base(_Sequence)
-        {
-
-        }
-
         public override void Draw(Graphics _Graphics)
         {
             DrawShape(_Graphics,
@@ -51,10 +46,8 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BaseBlockConstant : CodeBlock
+    public abstract class BaseBlockConstant : CodeBlock
     {
-        public BaseBlockConstant(KismetSequence _Sequence) : base(_Sequence) { }
-
         public override void Draw(Graphics _Graphics)
         {
             DrawConstant(_Graphics);
@@ -68,10 +61,8 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BaseBlockVariable : CodeBlock
+    public abstract class BaseBlockVariable : CodeBlock
     {
-        public BaseBlockVariable(KismetSequence _Sequence) : base(_Sequence) { }
-
         public override void Draw(Graphics _Graphics)
         {
             DrawShape(_Graphics,
@@ -93,14 +84,12 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BaseBlockOther : CodeBlock
+    public abstract class BaseBlockOther : CodeBlock
     {
-        public BaseBlockOther(KismetSequence _Sequence) : base(_Sequence) { }
     }
 
-    public class BaseBlockBranch : CodeBlock
+    public abstract class BaseBlockBranch : CodeBlock
     {
-        public BaseBlockBranch(KismetSequence _Sequence) : base(_Sequence) { }
         public override void Draw(Graphics _Graphics)
         {
             DrawScope(_Graphics);
@@ -114,25 +103,47 @@ namespace MainStationFrontEnd
         }
     }
 
-    public class BaseBlockEvent : CodeBlock
+    public abstract class BaseBlockEvent : CodeBlock
     {
-        public BaseBlockEvent(KismetSequence _Sequence) : base(_Sequence) { }
+        public override void Draw(Graphics _Graphics)
+        {
+            DrawShape(_Graphics,
+             new PointF(-width / 2, height / 4),
+             new PointF(-width / 2, -height / 4),
+             new PointF(0, -height / 2),
+             new PointF(width / 2, -height / 4),
+             new PointF(width / 2, height / 4),
+             new PointF(0, height / 2));
+            base.Draw(_Graphics);
+        }
+
+        public override void DrawShadow(Graphics _Graphics)
+        {
+            DrawShapeShadow(_Graphics,
+             new PointF(-width / 2, height / 4),
+             new PointF(-width / 2, -height / 4),
+             new PointF(0, -height / 2),
+             new PointF(width / 2, -height / 4),
+             new PointF(width / 2, height / 4),
+             new PointF(0, height / 2));
+            base.DrawShadow(_Graphics);
+        }
     }
 
     public class BlockSetDebugLed1 : BaseBlockOther
     {
-        public BlockSetDebugLed1(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockSetDebugLed1()
         {
             width = 100;
             height = 25;
-            Inputs.Add(new Input(this, "On?", GetDataType("bool")));
+            TriggerInputs.Add(new TriggerInput(this, "Invoke"));
+            DataInputs.Add(new DataInput(this, "On?", GetDataType("bool")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.SetLED(Inputs[0].Connected.Register.Index);
+            //Code = CodeInstructions.SetLED(Inputs[0].Connected.Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -158,17 +169,17 @@ namespace MainStationFrontEnd
                 new PointF(width / 2, -height / 2));
             base.DrawShadow(_Graphics);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
     public class BlockGetTime : BaseBlockVariable
     {
-        public BlockGetTime(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockGetTime()
         {
             width = 75;
             height = 25;
-            Inputs.Add(new Input(this, "", null));
-            Outputs.Add(new Output(this, "Current Time", GetDataType("time")));
+            DataOutputs.Add(new DataOutput(this, "Current Time", GetDataType("time")));
             UpdateConnectors();
         }
 
@@ -185,23 +196,24 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Time", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
     public class BlockGetHour : BaseBlockVariable
     {
-        public BlockGetHour(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockGetHour()
         {
             width = 75;
             height = 25;
-            Inputs.Add(new Input(this, "", null));
-            Outputs.Add(new Output(this, "Current Hour", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "", null));
+            DataOutputs.Add(new DataOutput(this, "Current Hour", GetDataType("int")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.GetHour(Outputs[0].Register.Index);
+            //Code = CodeInstructions.GetHour(Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -212,22 +224,22 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Hour", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
     public class BlockGetMinute : BaseBlockVariable
     {
-        public BlockGetMinute(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockGetMinute()
         {
             width = 75;
             height = 25;
-            Inputs.Add(new Input(this, "", null));
-            Outputs.Add(new Output(this, "Current Minute", GetDataType("int")));
+            DataOutputs.Add(new DataOutput(this, "Current Minute", GetDataType("int")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.GetMinute(Outputs[0].Register.Index);
+            //Code = CodeInstructions.GetMinute(Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -238,22 +250,22 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Minute", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
     public class BlockGetSecond : BaseBlockVariable
     {
-        public BlockGetSecond(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockGetSecond()
         {
             width = 75;
             height = 25;
-            Inputs.Add(new Input(this, "", null));
-            Outputs.Add(new Output(this, "Current Second", GetDataType("int")));
+            DataOutputs.Add(new DataOutput(this, "Current Second", GetDataType("int")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.GetSecond(Outputs[0].Register.Index);
+            //Code = CodeInstructions.GetSecond(Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -264,16 +276,16 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Second", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
     public class BlockGetDay : BaseBlockVariable
     {
-        public BlockGetDay(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockGetDay()
         {
             width = 75;
             height = 25;
-            Inputs.Add(new Input(this, "", null));
-            Outputs.Add(new Output(this, "Current Weekday", GetDataType("int")));
+            DataOutputs.Add(new DataOutput(this, "Current Weekday", GetDataType("int")));
             UpdateConnectors();
         }
 
@@ -290,25 +302,27 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Day", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
     public class BlockMathEquals : BaseBlockConditions
     {
-        public BlockMathEquals(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockMathEquals()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("int")));
-            Inputs.Add(new Input(this, "B", GetDataType("int")));
-            Outputs.Add(new Output(this, "A equals B", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "A", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "B", GetDataType("int")));
+            TriggerOutputs.Add(new TriggerOutput(this, "True"));
+            TriggerOutputs.Add(new TriggerOutput(this, "False"));
 
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.Equals(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+            //Code = CodeInstructions.Equals(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -319,25 +333,26 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Equals", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
     public class BlockBoolEquals : BaseBlockConditions
     {
-        public BlockBoolEquals(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockBoolEquals()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("bool")));
-            Inputs.Add(new Input(this, "B", GetDataType("bool")));
-            Outputs.Add(new Output(this, "A equals B", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "A", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "B", GetDataType("bool")));
+            DataOutputs.Add(new DataOutput(this, "A equals B", GetDataType("bool")));
 
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.Equals(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+            //Code = CodeInstructions.Equals(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -348,24 +363,25 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Equals", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
     public class BlockMathDiffers : BaseBlockConditions
     {
-        public BlockMathDiffers(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockMathDiffers()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("int")));
-            Inputs.Add(new Input(this, "B", GetDataType("int")));
-            Outputs.Add(new Output(this, "A differs from B", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "A", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "B", GetDataType("int")));
+            DataOutputs.Add(new DataOutput(this, "A differs from B", GetDataType("bool")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.Differs(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+            //Code = CodeInstructions.Differs(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -376,24 +392,25 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Differs", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
     public class BlockBoolDiffers : BaseBlockConditions
     {
-        public BlockBoolDiffers(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockBoolDiffers()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("bool")));
-            Inputs.Add(new Input(this, "B", GetDataType("bool")));
-            Outputs.Add(new Output(this, "A differs from B", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "A", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "B", GetDataType("bool")));
+            DataOutputs.Add(new DataOutput(this, "A differs from B", GetDataType("bool")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.Differs(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+            //Code = CodeInstructions.Differs(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -404,18 +421,19 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Differs", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
     public class BlockMathSmallerThan : BaseBlockConditions
     {
-        public BlockMathSmallerThan(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockMathSmallerThan()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("int")));
-            Inputs.Add(new Input(this, "B", GetDataType("int")));
-            Outputs.Add(new Output(this, "A smaller than B", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "A", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "B", GetDataType("int")));
+            DataOutputs.Add(new DataOutput(this, "A smaller than B", GetDataType("bool")));
             UpdateConnectors();
         }
 
@@ -436,18 +454,19 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Smaller Than", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
     public class BlockMathLargerThan : BaseBlockConditions
     {
-        public BlockMathLargerThan(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockMathLargerThan()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("int")));
-            Inputs.Add(new Input(this, "B", GetDataType("int")));
-            Outputs.Add(new Output(this, "A larger than B", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "A", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "B", GetDataType("int")));
+            DataOutputs.Add(new DataOutput(this, "A larger than B", GetDataType("bool")));
             UpdateConnectors();
         }
 
@@ -468,24 +487,25 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Larger Than", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
     public class BlockBoolAnd : BaseBlockMath
     {
-        public BlockBoolAnd(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockBoolAnd()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("bool")));
-            Inputs.Add(new Input(this, "B", GetDataType("bool")));
-            Outputs.Add(new Output(this, "A and B", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "A", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "B", GetDataType("bool")));
+            DataOutputs.Add(new DataOutput(this, "A and B", GetDataType("bool")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.And(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+            //Code = CodeInstructions.And(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -496,24 +516,25 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("And", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
     public class BlockBoolOr : BaseBlockMath
     {
-        public BlockBoolOr(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockBoolOr()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("bool")));
-            Inputs.Add(new Input(this, "B", GetDataType("bool")));
-            Outputs.Add(new Output(this, "A or B", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "A", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "B", GetDataType("bool")));
+            DataOutputs.Add(new DataOutput(this, "A or B", GetDataType("bool")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.Or(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+            //Code = CodeInstructions.Or(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -524,6 +545,8 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Or", new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
     public class BlockMathConstant : BaseBlockConstant
@@ -537,28 +560,17 @@ namespace MainStationFrontEnd
             set { val = value; }
         }
 
-        public override string GetValues()
-        {
-            return val.ToString();
-        }
-
-        public override void SetValues(string _Values)
-        {
-            val = ushort.Parse(_Values);
-        }
-
-        public BlockMathConstant(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockMathConstant()
         {
             width = 50;
             height = 50;
-            Outputs.Add(new Output(this, "Constant", GetDataType("int")));
+            DataOutputs.Add(new DataOutput(this, "Constant", GetDataType("int")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.Load(Outputs[0].Register.Index, Value);
+            //Code = CodeInstructions.Load(Outputs[0].Register.Index, Value);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -569,6 +581,8 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString(Value.ToString(), new Font("Arial", 20, FontStyle.Bold), Brushes.Black, X, Y, sf);
         }
+        public override void Load(XElement _Data) { val = ushort.Parse(_Data.Value.ToString()); }
+        public override void Save(XElement _Data) { _Data.Value = val.ToString(); }
     }
 
     public class BlockBoolConstant : BaseBlockConstant
@@ -582,28 +596,17 @@ namespace MainStationFrontEnd
             set { val = value; }
         }
 
-        public override string GetValues()
-        {
-            return val.ToString();
-        }
-
-        public override void SetValues(string _Values)
-        {
-            val = bool.Parse(_Values);
-        }
-
-        public BlockBoolConstant(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockBoolConstant()
         {
             width = 50;
             height = 50;
-            Outputs.Add(new Output(this, "Constant", GetDataType("bool")));
+            DataOutputs.Add(new DataOutput(this, "Constant", GetDataType("bool")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.Load(Outputs[0].Register.Index, (ushort)(Value ? 65535 : 0));
+            //Code = CodeInstructions.Load(Outputs[0].Register.Index, (ushort)(Value ? 65535 : 0));
             base.Assamble();
         }
 
@@ -615,75 +618,25 @@ namespace MainStationFrontEnd
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString(Value.ToString(), new Font("Arial", 12, FontStyle.Bold), Brushes.Black, X, Y, sf);
         }
-    }
-
-    public class BlockTimeConstant : BaseBlockConstant
-    {
-        TimeSpan time;
-        DayOfWeek weekday;
-
-        [Browsable(true), CategoryAttribute("Constant")]
-        public TimeSpan Time { get { return time; } set { time = value; } }
-
-        [Browsable(true), CategoryAttribute("Constant")]
-        public DayOfWeek WeekDay { get { return weekday; } set { weekday = value; } }
-
-        public override string GetValues()
-        {
-            return string.Format("{0} {1} {2} {3}", (byte)time.Hours, (byte)time.Minutes, (byte)time.Seconds, (byte)weekday);
-        }
-
-        public override void SetValues(string _Values)
-        {
-            time = new TimeSpan(
-            int.Parse(_Values.Split(' ')[0]),
-            int.Parse(_Values.Split(' ')[1]),
-            int.Parse(_Values.Split(' ')[2]));
-            weekday = (DayOfWeek)int.Parse(_Values.Split(' ')[3]);
-        }
-
-        public BlockTimeConstant(KismetSequence _Sequence)
-            : base(_Sequence)
-        {
-            width = 50;
-            height = 50;
-            Inputs.Add(new Input(this, "", null));
-            Outputs.Add(new Output(this, "Constant Time", GetDataType("time")));
-            UpdateConnectors();
-        }
-
-        public override void Assamble()
-        {
-            //Code = new byte[] { BlockID, Outputs[0].RegisterIndex, 0, (byte)time.Hours, (byte)time.Minutes, (byte)time.Seconds, (byte)((int)weekday) };
-            base.Assamble();
-        }
-
-        public override void Draw(Graphics _Graphics)
-        {
-            base.Draw(_Graphics);
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center;
-            sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString(string.Format("{0}\n{1}", time, weekday), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y, sf);
-        }
+        public override void Load(XElement _Data) { val = bool.Parse(_Data.Value); }
+        public override void Save(XElement _Data) { _Data.Value=val.ToString(); }
     }
 
     public class BlockMathAdd : BaseBlockMath
     {
-        public BlockMathAdd(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockMathAdd()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("int")));
-            Inputs.Add(new Input(this, "B", GetDataType("int")));
-            Outputs.Add(new Output(this, "A + B", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "A", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "B", GetDataType("int")));
+            DataOutputs.Add(new DataOutput(this, "A + B", GetDataType("int")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.Add(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+            //Code = CodeInstructions.Add(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
 
         }
 
@@ -702,24 +655,25 @@ namespace MainStationFrontEnd
             DrawBlockShadow(_Graphics);
             base.DrawShadow(_Graphics);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
     public class BlockBoolXOR : BaseBlockMath
     {
-        public BlockBoolXOR(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockBoolXOR()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("bool")));
-            Inputs.Add(new Input(this, "B", GetDataType("bool")));
-            Outputs.Add(new Output(this, "A Xor B", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "A", GetDataType("bool")));
+            DataInputs.Add(new DataInput(this, "B", GetDataType("bool")));
+            DataOutputs.Add(new DataOutput(this, "A Xor B", GetDataType("bool")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.Xor(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+            //Code = CodeInstructions.Xor(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
 
         }
 
@@ -738,23 +692,24 @@ namespace MainStationFrontEnd
             DrawBlockShadow(_Graphics);
             base.DrawShadow(_Graphics);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
     public class BlockMathSubstract : BaseBlockMath
     {
-        public BlockMathSubstract(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockMathSubstract()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("int")));
-            Inputs.Add(new Input(this, "B", GetDataType("int")));
-            Outputs.Add(new Output(this, "A-B", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "A", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "B", GetDataType("int")));
+            DataOutputs.Add(new DataOutput(this, "A-B", GetDataType("int")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.Substract(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+            //Code = CodeInstructions.Substract(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
 
@@ -773,23 +728,24 @@ namespace MainStationFrontEnd
             DrawBlockShadow(_Graphics);
             base.DrawShadow(_Graphics);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
     public class BlockMathMultiply : BaseBlockMath
     {
-        public BlockMathMultiply(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockMathMultiply()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("int")));
-            Inputs.Add(new Input(this, "B", GetDataType("int")));
-            Outputs.Add(new Output(this, "A*B", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "A", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "B", GetDataType("int")));
+            DataOutputs.Add(new DataOutput(this, "A*B", GetDataType("int")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.Multiply(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+            //Code = CodeInstructions.Multiply(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
 
@@ -808,23 +764,24 @@ namespace MainStationFrontEnd
             DrawBlockShadow(_Graphics);
             base.DrawShadow(_Graphics);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
     public class BlockMathDivide : BaseBlockMath
     {
-        public BlockMathDivide(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockMathDivide()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "A", GetDataType("int")));
-            Inputs.Add(new Input(this, "B", GetDataType("int")));
-            Outputs.Add(new Output(this, "A/B", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "A", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "B", GetDataType("int")));
+            DataOutputs.Add(new DataOutput(this, "A/B", GetDataType("int")));
             UpdateConnectors();
         }
 
         public override void Assamble()
         {
-            Code = CodeInstructions.Divide(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
+            //Code = CodeInstructions.Divide(Inputs[0].Connected.Register.Index, Inputs[1].Connected.Register.Index, Outputs[0].Register.Index);
         }
 
         public override void Draw(Graphics _Graphics)
@@ -842,9 +799,11 @@ namespace MainStationFrontEnd
             DrawBlockShadow(_Graphics);
             base.DrawShadow(_Graphics);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
-    public class BlockMathGetVariable : BaseBlockVariable
+    public class BlockMathVariable : BaseBlockConstant
     {
         string name;
 
@@ -855,68 +814,12 @@ namespace MainStationFrontEnd
             set { name = value; }
         }
 
-        public override string GetValues()
-        {
-            return name;
-        }
-
-        public override void SetValues(string _Values)
-        {
-            name = _Values;
-        }
-
-        public BlockMathGetVariable(KismetSequence _Sequence)
-            : base(_Sequence)
-        {
-            height = 50;
-            width = 100;
-            Inputs.Add(new Input(this, "", null));
-            Outputs.Add(new Output(this, "Value", GetDataType("int")));
-            UpdateConnectors();
-        }
-
-        public override void Assamble()
-        {
-            //Code = new byte[] { BlockID, EEPROM.GetVariableAddress(name), Outputs[0].RegisterIndex };
-        }
-
-        public override void Draw(Graphics _Graphics)
-        {
-            base.Draw(_Graphics);
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center;
-            sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Get Variable", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y - 8, sf);
-            _Graphics.DrawString(Name, new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y + 8, sf);
-        }
-    }
-    public class BlockMathSetVariable : BaseBlockVariable
-    {
-        string name;
-
-        [Browsable(true)]
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
-
-        public override string GetValues()
-        {
-            return name;
-        }
-
-        public override void SetValues(string _Values)
-        {
-            name = _Values;
-        }
-
-        public BlockMathSetVariable(KismetSequence _Sequence)
-            : base(_Sequence)
+        public BlockMathVariable()
         {
             width = 100;
             height = 50;
-            Inputs.Add(new Input(this, "Value", GetDataType("int")));
+            DataInputs.Add(new DataInput(this, "Value", GetDataType("int")));
+            DataOutputs.Add(new DataOutput(this, "Value", GetDataType("int")));
             UpdateConnectors();
         }
 
@@ -934,36 +837,32 @@ namespace MainStationFrontEnd
             _Graphics.DrawString("Set Variable", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y - 8, sf);
             _Graphics.DrawString(Name, new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y + 8, sf);
         }
+        public override void Load(XElement _Data) { name = _Data.Value; }
+        public override void Save(XElement _Data) { _Data.Value = name; }
     }
 
-    public class BlockBoolIf : BaseBlockBranch
+    public class BlockEventSchedule : BaseBlockEvent
     {
-        public BlockBoolIf(KismetSequence _Sequence)
-            : base(_Sequence)
+        Time time;
+        public BlockEventSchedule()
         {
-            IsScope = true;
-            width = 120;
-            height = 100;
-            Inputs.Add(new Input(this, "Condition", GetDataType("bool")));
-            Outputs.Add(new Output(this, "", null));
+            width = 100;
+            height = 50;
+            TriggerOutputs.Add(new TriggerOutput(this, ""));
             UpdateConnectors();
-        }
-
-        public override void Assamble()
-        {
-            CodeBlock cwhi = GetChildWithHighestIndex();
-            int target = (byte)(cwhi.address + cwhi.Code.Length);
-            Code = new byte[] { 0x80, Inputs[0].Connected.Register.Index, (byte)target };
+            IsEvent = true;
         }
 
         public override void Draw(Graphics _Graphics)
         {
             base.Draw(_Graphics);
-
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("If", new Font("Arial", 10), Brushes.Black, X, Y, sf);
+            _Graphics.DrawString("Schedule", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y - 8, sf);
+            _Graphics.DrawString(string.Format("{0:00}:{1:00}", time.time.Hours, time.time.Minutes), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y + 8, sf);
         }
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 }
