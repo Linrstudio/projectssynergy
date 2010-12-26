@@ -160,13 +160,13 @@ namespace SynergySequence
                     {
                         PointF pos = i.GetPosition();
                         if (!dependencies.Contains(i.Owner))
-                            e.Graphics.FillRectangle(new SolidBrush(i.datatype == null ? Color.Black : i.datatype.Color), new RectangleF(pos.X - 5, pos.Y - 5, 10, 5));
+                            e.Graphics.FillRectangle(new SolidBrush(Sequence.Manager.GetDataType(i.datatype).Color), new RectangleF(pos.X - 5, pos.Y - 5, 10, 5));
 
                         if (i.Connected != null)
                         {
                             PointF x = i.GetPosition();
                             PointF y = i.Connected.GetPosition();
-                            DrawPwettyLine(e.Graphics, y, x, 1.5f, i.datatype == null ? Color.Black : i.datatype.Color, true);
+                            DrawPwettyLine(e.Graphics, y, x, 1.5f, Sequence.Manager.GetDataType(i.datatype).Color, true);
                         }
 
                         if (i == input)
@@ -180,7 +180,7 @@ namespace SynergySequence
 
                         PointF pos = i.GetPosition();
                         if (!dependencies.Contains(i.Owner))
-                            e.Graphics.FillRectangle(new SolidBrush(i.datatype != null ? i.datatype.Color : Color.Black), new RectangleF(pos.X - 5, pos.Y, 10, 5));
+                            e.Graphics.FillRectangle(new SolidBrush(Sequence.Manager.GetDataType(i.datatype).Color), new RectangleF(pos.X - 5, pos.Y, 10, 5));
 
                         if (i == output)
                         {
@@ -207,11 +207,14 @@ namespace SynergySequence
                         e.Graphics.FillRectangle(new SolidBrush(Color.Black), new RectangleF(pos.X, pos.Y - 5, 5, 10));
                     }
                     b.Draw(e.Graphics);
+                    b.DrawText(e.Graphics);
                 }
                 if (SelectedOutput != null && SelectedInput != null)
                 {
                     if (SelectedOutput is CodeBlock.DataOutput && SelectedInput is CodeBlock.DataInput)
-                        DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), SelectedInput.GetPosition(), 2, ((CodeBlock.DataInput)SelectedInput).datatype.Color, true);
+                    {
+                        DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), SelectedInput.GetPosition(), 2, Sequence.Manager.GetDataType(((CodeBlock.DataInput)SelectedInput).datatype).Color, true);
+                    }
                     else
                         DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), SelectedInput.GetPosition(), 2, Color.Black, false);
                 }
@@ -220,7 +223,7 @@ namespace SynergySequence
                     if (SelectedOutput != null)
                     {
                         if (SelectedOutput is CodeBlock.DataOutput)
-                            DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new PointF(MouseX, MouseY), 2, ((CodeBlock.DataOutput)SelectedOutput).datatype.Color, true);
+                            DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new PointF(MouseX, MouseY), 2, Sequence.Manager.GetDataType( ((CodeBlock.DataOutput)SelectedOutput).datatype).Color, true);
                         else
                             DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new PointF(MouseX, MouseY), 2, Color.Black, false);
                     }
@@ -228,7 +231,7 @@ namespace SynergySequence
                     if (SelectedInput != null)
                     {
                         if (SelectedInput is CodeBlock.DataInput)
-                            DrawPwettyLine(e.Graphics, new PointF(MouseX, MouseY), SelectedInput.GetPosition(), 2, ((CodeBlock.DataInput)SelectedInput).datatype.Color, true);
+                            DrawPwettyLine(e.Graphics, new PointF(MouseX, MouseY), SelectedInput.GetPosition(), 2, Sequence.Manager.GetDataType( ((CodeBlock.DataInput)SelectedInput).datatype).Color, true);
                         else
                             DrawPwettyLine(e.Graphics, new PointF(MouseX, MouseY), SelectedInput.GetPosition(), 2, Color.Black, false);
                     }
@@ -400,7 +403,7 @@ namespace SynergySequence
             }
             if (item.Tag is Type)
             {
-                foreach (SynergySequence.Prototype p in SynergySequence.Prototypes)
+                foreach (SequenceManager.Prototype p in Sequence.Manager.Prototypes)
                 {
                     if (p.BlockType == item.Tag)
                     {
@@ -418,7 +421,7 @@ namespace SynergySequence
         {
             Dictionary<string, MenuItem> menuitems = new Dictionary<string, MenuItem>();
 
-            foreach (SynergySequence.Prototype p in SynergySequence.Prototypes)
+            foreach (SequenceManager.Prototype p in Sequence.Manager.Prototypes)
             {
                 if (!p.UserCanAdd) continue;
                 if (!menuitems.ContainsKey(p.GroupName))
@@ -512,10 +515,10 @@ namespace SynergySequence
             {
                 object[] data = (object[])(e.Data.GetData(typeof(object[])));
 
-                if (data[0] is CodeBlock.Prototype)
+                if (data[0] is SequenceManager.Prototype)
                 {
-                    CodeBlock.Prototype p = (CodeBlock.Prototype)data[0];
-                    CodeBlock b = (CodeBlock)Activator.CreateInstance(p.Type);
+                    SequenceManager.Prototype p = (SequenceManager.Prototype)data[0];
+                    CodeBlock b = Sequence.Manager.CreateCodeBlock(p);
                     Sequence.AddCodeBlock(b);
 
                     NeedsRecompile = true;

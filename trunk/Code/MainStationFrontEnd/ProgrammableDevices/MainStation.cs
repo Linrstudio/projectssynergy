@@ -32,8 +32,7 @@ namespace MainStationFrontEnd
             devices.Add( d);
             return d;
         }
-
-
+        
         public class Device
         {
             public Device(string _Name, ProductDataBase.Device _Device, ushort _ID)
@@ -69,7 +68,6 @@ namespace MainStationFrontEnd
                 }
             }
         }
-
 
         public const byte EPBufferOffset = 0;
         public const byte KismetRegisterCount = 32;

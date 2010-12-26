@@ -14,29 +14,16 @@ namespace SynergySequence
         public void AddCodeBlock(CodeBlock _CodeBlock) { if (codeblocks.Contains(_CodeBlock))return; codeblocks.Add(_CodeBlock); _CodeBlock.Sequence = this; }
         public void RemoveCodeBlock(CodeBlock _CodeBlock) { if (codeblocks.Contains(_CodeBlock)) { _CodeBlock.DisconnectAllInputs(); _CodeBlock.DisconnectAllOutputs(); codeblocks.Remove(_CodeBlock); } }
         public static System.Drawing.Color ShadowColor = System.Drawing.Color.DarkGray;
+        public SequenceManager Manager;
+
+        public Sequence(SequenceManager _Manager)
+        {
+            Manager = _Manager;
+        }
 
         public void Clear()
         {
             codeblocks.Clear();
-        }
-
-        XElement CompileForDesktop()
-        {
-            XElement sequence = new XElement("Sequence");
-
-            foreach (CodeBlock b in codeblocks)
-            {
-                if (b.IsEvent)
-                {
-                    XElement Event = new XElement("Event");
-                    XElement data = new XElement("Data");
-                    b.Save(data);
-                    Event.Add(data);
-
-                }
-            }
-
-            return sequence;
         }
 
         public Sequence() { }
@@ -86,7 +73,8 @@ namespace SynergySequence
                 foreach (XElement block in _Sequence.Elements("Block"))
                 {
                     string blocktype = (string)block.Attribute("Type").Value;
-                    CodeBlock b = (CodeBlock)Activator.CreateInstance(null, "MainStationFrontEnd." + blocktype).Unwrap();
+                    CodeBlock b = Manager.CreateCodeBlock(blocktype);
+                    //CodeBlock b =(CodeBlock) Activator.CreateInstance(null, blocktype).Unwrap();//will not work if codeblock isnt in this assambly
                     b.X = float.Parse(block.Attribute("X").Value);
                     b.Y = float.Parse(block.Attribute("Y").Value);
                     try
@@ -97,7 +85,7 @@ namespace SynergySequence
                     codeblocks.Add(b);
                 }
             }
-            //catch{ /* FIXME */}
+            //catch { /*FIXME*/}
             //try
             {
                 foreach (XElement connection in _Sequence.Elements("ConnectData"))
@@ -129,7 +117,7 @@ namespace SynergySequence
                 block = new XElement("Block");
                 block.SetAttributeValue("X", b.X);
                 block.SetAttributeValue("Y", b.Y);
-                block.SetAttributeValue("Type", b.GetType().Name);
+                block.SetAttributeValue("Type", b.GetType().FullName);
                 XElement data = new XElement("Data");
                 b.Save(data);
                 block.Add(data);

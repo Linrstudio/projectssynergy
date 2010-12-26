@@ -35,14 +35,6 @@ namespace WebServer
             listener = new HttpListener();
             //listener.AuthenticationSchemes = AuthenticationSchemes.Basic;//might be phun
 
-            string LocalIP = Dns.GetHostName();
-            Console.WriteLine("HostName:" + LocalIP);
-            LocalIP = Dns.GetHostByName(LocalIP).AddressList[0].ToString();
-            Console.WriteLine("HostIP:" + LocalIP);
-            listener.Prefixes.Add("http://" + LocalIP + ":80/");
-
-            listener.Start();
-            Console.WriteLine("Listening...");
             Thread thread = new Thread(new ThreadStart(listen));
             thread.Start();
 

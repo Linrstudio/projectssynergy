@@ -46,6 +46,8 @@ namespace SynergySequence
 
         public bool IsEvent = false;
 
+        public string Name;
+
         //for save and load purposes
         //TODO make these abstract
         public abstract void Save(XElement _Data);
@@ -77,6 +79,14 @@ namespace SynergySequence
             }
             _Graphics.FillPolygon(new SolidBrush(Color.FromArgb(150, 150, 255)), _Points);
             _Graphics.DrawPolygon(new Pen(Brushes.Black, 2), _Points);
+        }
+
+        public void DrawText(Graphics _Graphics)
+        {
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString(Name, new Font("Arial", 20, FontStyle.Bold), Brushes.Black, X, Y, sf);
         }
 
         public void DrawShapeShadow(Graphics _Graphics, params PointF[] _Points)
@@ -135,47 +145,12 @@ namespace SynergySequence
             _Graphics.FillEllipse(new SolidBrush(Sequence.ShadowColor), new RectangleF(GetShadowOffset().X + X - Width / 2, GetShadowOffset().Y + Y - Height / 2, Width, Height));
         }
 
-        public void DrawScope(Graphics _Graphics)
-        {
-            _Graphics.DrawRectangle(new Pen(Brushes.Black, 2),
-                X, Y - height / 2,
-                width / 2, height);
-
-            DrawShape(_Graphics,
-                new Point(-60, 10),
-                new Point(-60, -10),
-                new Point(0, -20),
-                new Point(60, -10),
-                new Point(60, 10),
-                new Point(0, 20));
-        }
-
-        public void DrawScopeShadow(Graphics _Graphics)
-        {
-            _Graphics.DrawRectangle(new Pen(Sequence.ShadowColor, 2),
-                X + GetShadowOffset().X, Y + GetShadowOffset().Y - height / 2,
-                width / 2, height);
-
-            DrawShapeShadow(_Graphics,
-                new Point(-60, 10),
-                new Point(-60, -10),
-                new Point(0, -20),
-                new Point(60, -10),
-                new Point(60, 10),
-                new Point(0, 20));
-        }
-
         public void UpdateConnectors()
         {
             foreach (DataInput i in DataInputs) i.UpdatePosition();
             foreach (DataOutput o in DataOutputs) o.UpdatePosition();
             foreach (TriggerInput i in TriggerInputs) i.UpdatePosition();
             foreach (TriggerOutput o in TriggerOutputs) o.UpdatePosition();
-        }
-
-        public virtual void Assamble()
-        {
-
         }
 
         public void DisconnectAllInputs()
@@ -234,7 +209,7 @@ namespace SynergySequence
 
         public class DataInput : Input
         {
-            public DataInput(CodeBlock _Owner, string _Text, DataType _DataType)
+            public DataInput(CodeBlock _Owner, string _Text, string _DataType)
                 : base(_Owner)
             {
                 if (_DataType == null) throw new Exception("null DataType");
@@ -252,7 +227,7 @@ namespace SynergySequence
             //position in codeblock
             public DataOutput Connected = null;
             public CodeBlock Owner;
-            public DataType datatype;
+            public string datatype;
 
             public override bool AnyConnected { get { return Connected != null; } }
 
@@ -267,7 +242,7 @@ namespace SynergySequence
 
         public class DataOutput : Output
         {
-            public DataOutput(CodeBlock _Owner, string _Text, DataType _DataType)
+            public DataOutput(CodeBlock _Owner, string _Text, string _DataType)
                 : base(_Owner)
             {
                 if (_DataType == null) throw new Exception("null DataType");
@@ -283,7 +258,7 @@ namespace SynergySequence
             //position in codeblock
             public List<DataInput> Connected = new List<DataInput>();
             public CodeBlock Owner;
-            public DataType datatype;
+            public string datatype;
 
             public override bool AnyConnected { get { return Connected.Count != 0; } }
 
@@ -456,6 +431,18 @@ namespace SynergySequence
         }
 
         public static List<DataType> DataTypes = null;
+
+        public static void InitDataTypes()
+        {
+
+        }
+
+        public static DataType GetDataType(string _Name)
+        {
+            if (DataTypes == null) return null;
+            foreach (DataType t in DataTypes) if (t.Name.ToLower() == _Name.ToLower()) return t;
+            return null;
+        }
        
         private static void AddDataType(string _TypeName, Type _Type, object _DefaultInstance, int _ID, Color _Color, int _RegistersNeeded)
         {

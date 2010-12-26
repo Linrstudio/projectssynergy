@@ -64,13 +64,6 @@
     <Compile Include="RenameDialog.Designer.cs">
       <DependentUpon>RenameDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="InvokeRemoteEventWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="InvokeRemoteEventWindow.Designer.cs">
-      <DependentUpon>InvokeRemoteEventWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="KismetSequence.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,9 +79,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RenameDialog.resx">
       <DependentUpon>RenameDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="InvokeRemoteEventWindow.resx">
-      <DependentUpon>InvokeRemoteEventWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
@@ -113,14 +103,20 @@
     </Compile>
     <Compile Include="Solution.cs" />
     <Compile Include="Utilities.cs" />
-    <Compile Include="VPL\CodeBlock.cs" />
-    <Compile Include="VPL\CodeBlocks.cs" />
     <Compile Include="VPL\CodeInstructions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DesktopCodeBlocks\DesktopCodeBlocks.csproj">
+      <Project>{88F52436-24FE-48C4-8E14-2F8E8E8B5476}</Project>
+      <Name>DesktopCodeBlocks</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SynergySequence\SynergySequence.csproj">
       <Project>{80813922-BFA7-41DC-9DC0-2E86A0AB59F9}</Project>
       <Name>SynergySequence</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebInterface\WebInterface.csproj">
+      <Project>{2813D323-8B45-4AF3-8FC8-FBB5F0467748}</Project>
+      <Name>WebInterface</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
