@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>__SCENE__</title>
+<script>
+    if (typeof $ != 'function') { $ = function(id) { return document.getElementById(id) } }
+
+    function newAjaxObject() {
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            return new XMLHttpRequest();
+        }
+        else if (window.ActiveXObject) {
+            // code for IE6, IE5
+            return new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        else {
+            return null;
+        }
+    }
+
+    function ToggleSwitch(id)
+	{
+        $('control_' + id).src = "?res=SwitchLoading.gif";
+        var obj = newAjaxObject();
+        obj.onreadystatechange = function() {
+            if (obj.readyState == 4) {
+                if (obj.responseText == "0") {
+                    $('control_' + id).src = "?res=SwitchOff.png";
+
+                }
+                if (obj.responseText == "1") {
+                    $('control_' + id).src = "?res=SwitchOn.png";
+                }
+            }
+        }
+        obj.open('POST', '?command=ToggleState&scene=scene1&control=' + id + '&boreme=' + Math.random(), true);
+        obj.send(null);
+    }
+	
+	function GetImage(id)
+	{
+        $('control_' + id).src = "?res=SwitchLoading.gif";
+		var obj = newAjaxObject();
+        obj.onreadystatechange = function() {
+            if (obj.readyState == 4) {
+                if (obj.responseText == "0") {
+                    $('control_' + id).src = "?res=SwitchOff.png";
+
+                }
+                if (obj.responseText == "1") {
+                    $('control_' + id).src = "?res=SwitchOn.png";
+                }
+            }
+        }
+        obj.open('POST', '?command=GetState&scene=scene1&control=' + id + '&boreme=' + Math.random(), true);
+        obj.send(null);
+    }
+</script>
+
+</head>
+
+<body onload="__PAGEONLOAD__">
+
+<img src="__BGSRC__" width="__WIDTH__" height="__HEIGHT__"/>
+
+__CONTROLS__
+
+</body>
+</html>

@@ -4,9 +4,7 @@
 <title>Web-interface</title>
 
 <script>
-    if (typeof $ != 'function') {
-        $ = function(id) { return document.getElementById(id) }
-    }
+    if (typeof $ != 'function') { $ = function(id) { return document.getElementById(id) } }
 
     function newAjaxObject() {
         if (window.XMLHttpRequest) {

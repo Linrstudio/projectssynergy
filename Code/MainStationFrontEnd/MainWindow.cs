@@ -14,7 +14,6 @@ namespace MainStationFrontEnd
         public static MainWindow mainwindow;
         TreeNode t_contentsContextMenuNode = null;
 
-
         public MainWindow()
         {
             mainwindow = this;
@@ -31,7 +30,7 @@ namespace MainStationFrontEnd
             //EEPROM.OnAssamble += new EEPROM.OnAssambleHandler(EEPROM_OnAssamble);
             //new SheduleWindow().ShowDialog();
         }
-              
+
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
             AddDevice win = new AddDevice();
@@ -74,6 +73,8 @@ namespace MainStationFrontEnd
         {
             Solution.Save("Solution.xml");
             UpdateTree();
+       
+            ((Computer)Solution.ProgrammableDevices[1]).Compile();
         }
 
         public void ShowDialog(Form _Form)
@@ -94,13 +95,11 @@ namespace MainStationFrontEnd
 
             _Form.FormClosed += new FormClosedEventHandler(form_FormClosed);
             _Form.MdiParent = this;
-            try
-            {
-                _Form.Show();
-                if (!OpenedWindows.Contains(_Form))
-                    OpenedWindows.Add(_Form);
-            }
-            catch { }
+
+            _Form.Show();
+            if (!OpenedWindows.Contains(_Form))
+                OpenedWindows.Add(_Form);
+
         }
 
         private void t_contents_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -108,8 +107,9 @@ namespace MainStationFrontEnd
             if (t_contents.SelectedNode == null) return;
             if (t_contents.SelectedNode.Tag is ProgrammableDevice)
             {
-                //((ProgrammableDevice)t_contents.SelectedNode.Tag).Sequence
-                Form form = new SynergySequence.SequenceEditorForm();
+                ProgrammableDevice p = (ProgrammableDevice)t_contents.SelectedNode.Tag;
+                Form form = new SynergySequence.SequenceEditorForm(p.Sequence);
+                form.Tag = p;
                 ShowDialog(form);
             }
         }

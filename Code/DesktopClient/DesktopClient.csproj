@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{80813922-BFA7-41DC-9DC0-2E86A0AB59F9}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{FBF37D61-57D1-4FFB-9D04-BF517FD50902}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SynergySequence</RootNamespace>
-    <AssemblyName>SynergySequence</AssemblyName>
+    <RootNamespace>DesktopClient</RootNamespace>
+    <AssemblyName>DesktopClient</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -35,8 +35,6 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -44,33 +42,55 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sequence.cs" />
-    <Compile Include="SequenceEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SequenceEditor.Designer.cs">
-      <DependentUpon>SequenceEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SequenceEditorForm.cs">
+    <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SequenceEditorForm.Designer.cs">
-      <DependentUpon>SequenceEditorForm.cs</DependentUpon>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="SequenceManager.cs" />
-    <Compile Include="CodeBlock.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SequenceEditor.resx">
-      <DependentUpon>SequenceEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SequenceEditorForm.resx">
-      <DependentUpon>SequenceEditorForm.cs</DependentUpon>
-    </EmbeddedResource>
+    <ProjectReference Include="..\DesktopCodeBlocks\DesktopCodeBlocks.csproj">
+      <Project>{88F52436-24FE-48C4-8E14-2F8E8E8B5476}</Project>
+      <Name>DesktopCodeBlocks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SynergySequence\SynergySequence.csproj">
+      <Project>{80813922-BFA7-41DC-9DC0-2E86A0AB59F9}</Project>
+      <Name>SynergySequence</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebInterface\WebInterface.csproj">
+      <Project>{2813D323-8B45-4AF3-8FC8-FBB5F0467748}</Project>
+      <Name>WebInterface</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

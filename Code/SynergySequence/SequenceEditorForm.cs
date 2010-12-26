@@ -18,11 +18,6 @@ namespace SynergySequence
             InitializeComponent();
         }
 
-        public SequenceEditorForm()
-        {
-            InitializeComponent();
-        }
-
         SequenceEditWindow window;
         private void EventEditor_Load(object sender, EventArgs e)
         {
@@ -32,19 +27,22 @@ namespace SynergySequence
             window.OnBlockSelect += new SequenceEditWindow.OnBlockSelectHandler(window_OnBlockSelect);
             
             Dictionary<string, ListViewGroup> groups = new Dictionary<string, ListViewGroup>();
-            foreach (SynergySequence.Prototype p in SynergySequence.Prototypes)
+            if (Sequence != null && Sequence.Manager != null)
             {
-                if (p.UserCanAdd)
+                foreach (SequenceManager.Prototype p in Sequence.Manager.Prototypes)
                 {
-                    if (!groups.ContainsKey(p.GroupName))
+                    if (p.UserCanAdd)
                     {
-                        ListViewGroup group = new ListViewGroup(p.GroupName, HorizontalAlignment.Left);
-                        l_CodeBlocks.Groups.Add(group);
-                        groups.Add(p.GroupName, group);
+                        if (!groups.ContainsKey(p.GroupName))
+                        {
+                            ListViewGroup group = new ListViewGroup(p.GroupName, HorizontalAlignment.Left);
+                            l_CodeBlocks.Groups.Add(group);
+                            groups.Add(p.GroupName, group);
+                        }
+                        ListViewItem item = new ListViewItem(p.Name, groups[p.GroupName]);
+                        item.Tag = p;
+                        l_CodeBlocks.Items.Add(item);
                     }
-                    ListViewItem item = new ListViewItem(p.Name, groups[p.GroupName]);
-                    item.Tag = p;
-                    l_CodeBlocks.Items.Add(item);
                 }
             }
         }

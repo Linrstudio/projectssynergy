@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Reflection;
+using SynergySequence;
 
 namespace MainStationFrontEnd
 {
@@ -20,9 +21,11 @@ namespace MainStationFrontEnd
             foreach (XElement element in file.Elements("ProgrammableDevice"))
             {
                 string typename = element.Attribute("Type").Value;
-                ProgrammableDevice d = (ProgrammableDevice)Activator.CreateInstance(null, "MainStationFrontEnd." + typename).Unwrap();
+                ProgrammableDevice d;
+                d = (ProgrammableDevice)Activator.CreateInstance(null, "MainStationFrontEnd." + typename).Unwrap();
+                if(d.Manager!=null)
+                d.Manager.CreateCodeBlock(d.Manager.Prototypes[0]);
                 d.Name = element.Attribute("Name").Value;
-                d.Sequence = new KismetSequence();
                 d.Sequence.Load(element.Element("Sequence"));
                 programmabledevices.Add(d);
             }
