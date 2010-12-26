@@ -1,0 +1,33 @@
+save indices for the code according to every device
+
+
+
+block1:
+	deviceID hi
+	deviceID lo
+	eventaddr hi
+	eventaddr lo
+...
+
+
+block2:
+	eventtype
+	codeaddr hi
+	codeaddr lo
+...
+0
+...
+
+
+codeblock:
+something here
+
+
+
+
+Client -> Server
+trigger event packet
+
+int16 DeviceID
+int8 EventID
+int8 Paramters

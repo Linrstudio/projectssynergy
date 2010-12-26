@@ -3,18 +3,19 @@
 
 #include "Default.h"
 
-#define UART_TX_TRIS	TRISB7
-#define UART_RX_TRIS	TRISB5
-#define UART_DIR_TRIS	TRISB6
+#define UART_TX_TRIS	TRISBbits.TRISB7
+#define UART_RX_TRIS	TRISBbits.TRISB5
+#define UART_DIR_TRIS	TRISBbits.TRISB6
 
-#define UART_TX			RB7
-#define UART_RX			RB5
-#define UART_DIR		RB6
+#define UART_TX			PORTBbits.RB7
+#define UART_RX			PORTBbits.RB5
+//#define UART_DIR		LATBbits.LATB6
+#define UART_DIR		PORTBbits.RB6
 
 #define UARTClearErrors \
 {\
-if (OERR){TXEN=0;TXEN=1;CREN=0;CREN=1;}\
-if (FERR){TXEN=0;TXEN=1;}\
+if (RCSTAbits.OERR){TXSTAbits.TXEN=0;TXSTAbits.TXEN=1;RCSTAbits.CREN=0;RCSTAbits.CREN=1;}\
+if (RCSTAbits.FERR){TXSTAbits.TXEN=0;TXSTAbits.TXEN=1;}\
 }
 
 static int8 UARTError=0;
