@@ -4,11 +4,11 @@
 #include "Default.h"
 #include "EP.h"
 
-void Init();
-void Tick();
+void EPInit();
+void EPTick();
 
-void Polled();
+void EPPolled();
 
-int8 InvokeEvent(int8 _Event,int16 _Args);
+int8 EPInvokeEvent(int8 _Event,int8* _Args);
 
 #endif

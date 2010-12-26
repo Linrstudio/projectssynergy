@@ -4,68 +4,149 @@
 extern int8 EPBuffer[16];
 extern int8 EPBufferSize;
 
+#define DEVICE_RELAY8
+#define DEVICE_DIGITALIN8
+
+#ifdef DEVICE_DIGITALIN8
+int8 PrevState[8];
+int8 ReportState[8];
+#endif
 //Init method for the program
-void Init()
+void EPInit()
 {
-	TRISC0=1;
-	ANS4=1;
-	TRISC1=1;
-	TRISC7=0;
-	RC0=0;
+#ifdef DEVICE_DIGITALOUT8
+	TRISC=0x00;
+	PrevState[0]=PORTC0;
+	PrevState[1]=PORTC1;
+	PrevState[2]=PORTC2;
+	PrevState[3]=PORTC3;
+	PrevState[4]=PORTC4;
+	PrevState[5]=PORTC5;
+	PrevState[6]=PORTC6;
+	PrevState[7]=PORTC7;
+#endif
+#ifdef DEVICE_RELAY8
+	TRISC=0xFF;
+#endif
 }
 
-int8 GetAnalog(int8 _Port)
+//main Update method for the program
+void EPUpdate()
 {
-	ADON=1;
-	ADFM=0;
-	CHS0=((_Port>>0)&1)?1:0;
-	CHS1=((_Port>>1)&1)?1:0;
-	CHS2=((_Port>>2)&1)?1:0;
-	CHS3=((_Port>>3)&1)?1:0;
-	ADCON0|=2;
-	while((ADCON0&2)?1:0);
-	return ADRESH;
+#ifdef DEVICE_DIGITALIN8
+	int8 state[8];
+	state[0]=PORTC0;
+	state[1]=PORTC1;
+	state[2]=PORTC2;
+	state[3]=PORTC3;
+	state[4]=PORTC4;
+	state[5]=PORTC5;
+	state[6]=PORTC6;
+	state[7]=PORTC7;
+	
+	if(state[0]!=PrevState[0])ReportState[0]=1;
+
+	PrevState[1]=state[1];
+	PrevState[2]=state[2];
+	PrevState[3]=state[3];
+	PrevState[4]=state[4];
+	PrevState[5]=state[5];
+	PrevState[6]=state[6];
+	PrevState[7]=state[7];	
+#endif	
 }
 
-//main Tick method for the program
-void Tick()
-{
-	int8 value = GetAnalog(4);
-	//RB4=!RB4;
-	RB4=0;
-	for(int i=0;i<value;i++);
-	RB4=1;
-	value=255-value;
-	for(int j=0;j<value;j++);
-}
-
-int8 laststate=0;
 //when polled by the main station
-void Polled()
+void EPPolled()
 {
-	if(laststate!=RC1)
+#ifdef DEVICE_DIGITALIN8
+	int8 i;
+	for(i=0;i<8;i++)
 	{
-		laststate=RC1;
-		if(laststate)
+		if(ReportState[i])
 		{
-			EPBuffer[0]=1;
-			EPBufferSize=1;
-		}else{
-			EPBuffer[0]=2;
-			EPBufferSize=1;
+			
+			PrevState[i]=state[i];
 		}
 	}
-	//RC7=!RC7;
+DONE:
+
+#endif
 }
 
 //request to invoke event
 //returns wether the event was successfully invoked
-int8 InvokeEvent(int8 _Event,int16 _Args)
+int8 EPInvokeEvent(int8 _Event,int8* _Args)
 {
-	switch(_Event)
+#ifdef DEVICE_RELAY8
+	if(_Event==1)
 	{
-		case 1:
-		RC7=(_Args&1)?1:0;
-		break;
+		if(_Args[0])PORTCbits.RC4=0;else PORTCbits.RC4=1;
 	}
+	if(_Event==2)
+	{
+		if(_Args[0])PORTCbits.RC5=0;else PORTCbits.RC5=1;
+	}
+	if(_Event==3)
+	{
+		if(_Args[0])PORTCbits.RC3=0;else PORTCbits.RC3=1;
+	}
+	if(_Event==4)
+	{
+		if(_Args[0])PORTCbits.RC6=0;else PORTCbits.RC6=1;
+	}
+	if(_Event==5)
+	{
+		if(_Args[0])PORTCbits.RC7=0;else PORTCbits.RC7=1;
+	}
+	if(_Event==6)
+	{
+		if(_Args[0])PORTCbits.RC0=0;else PORTCbits.RC0=1;
+	}
+	if(_Event==7)
+	{
+		if(_Args[0])PORTCbits.RC1=0;else PORTCbits.RC1=1;
+	}
+	if(_Event==8)
+	{
+		if(_Args[0])PORTCbits.RC2=0;else PORTCbits.RC2=1;
+	}
+
+	if(_Event==9)
+	{
+		PORTCbits.RC4=!PORTCbits.RC4;
+	}
+	if(_Event==10)
+	{
+		PORTCbits.RC5=!PORTCbits.RC5;
+	}
+	if(_Event==11)
+	{
+		PORTCbits.RC3=!PORTCbits.RC3;
+	}
+	if(_Event==12)
+	{
+		PORTCbits.RC6=!PORTCbits.RC6;
+	}
+	if(_Event==13)
+	{
+		PORTCbits.RC7=!PORTCbits.RC7;
+	}
+	if(_Event==14)
+	{
+		PORTCbits.RC0=!PORTCbits.RC0;
+	}
+	if(_Event==15)
+	{
+		PORTCbits.RC1=!PORTCbits.RC1;
+	}
+	if(_Event==16)
+	{
+		PORTCbits.RC2=!PORTCbits.RC2;
+	}
+	return 255;
+#endif
+#ifdef DEVICE_DIGITALIN8
+	
+#endif
 }
