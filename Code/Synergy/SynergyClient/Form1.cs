@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Text;
+using WiimoteLib;
 
 using Synergy;
 
@@ -64,7 +65,7 @@ namespace SynergyClient
             button2.Transformation = Float3x3.Scale(0.1f) * Float3x3.Translate(new Float2(0, 0));
 
             UIProgressBar progress = new UIProgressBar("p1", floor4);
-            progress.Transformation = Float3x3.Scale(new Float2(0.3f,0.1f) )* Float3x3.Translate(new Float2(0, 0.5f));
+            progress.Transformation = Float3x3.Scale(new Float2(0.3f, 0.1f)) * Float3x3.Translate(new Float2(0, 0.5f));
             progress.Value = 50;
 #else
             Control button1 = new UIButton("b1", null);
@@ -136,12 +137,10 @@ namespace SynergyClient
             SceneRotation += 0.005f;
             foreach (UIFloor f in Floors)
             {
-                f.Rotation = (float)Math.Cos(SceneRotation) *( (float)Math.PI / 8.0f);
+                f.Rotation = (float)Math.Cos(SceneRotation) * ((float)Math.PI / 8.0f);
             }
-            
 
             Root.Draw();
-
 
             if (Environment.TickCount > ScreenSaverStartTimer && ScreenSaverStartTimer != 0) { ScreenSaverEnabled = true; ScreenSaverStartTimer = 0; ScreenSaverStopTimer = 0; frame1 = true; }
             if (ScreenSaverEnabled)

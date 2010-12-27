@@ -59,7 +59,7 @@
 
 </head>
 
-<body onload="__PAGEONLOAD__">
+<body onload="__PAGEONLOAD__" marginwidth="0" marginheight="0 leftmargin="0" topmargin="0">
 
 <img src="__BGSRC__" width="__WIDTH__" height="__HEIGHT__"/>
 
