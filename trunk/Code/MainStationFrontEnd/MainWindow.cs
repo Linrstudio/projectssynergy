@@ -145,7 +145,6 @@ namespace MainStationFrontEnd
                 UpdateTree();
                 Utilities.Log("Device {0} {1}", _Device.ID, found ? "located" : "is missing");
             }
-
         }
 
         private void t_ConnectionCheck_Tick(object sender, EventArgs e)

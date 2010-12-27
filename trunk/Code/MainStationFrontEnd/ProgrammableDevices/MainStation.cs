@@ -2,13 +2,37 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Runtime.InteropServices;
-using System.Threading;
+using System.Xml;
+using System.Xml.Linq;
+using SynergySequence;
+
+
 
 namespace MainStationFrontEnd
 {
-    class MainStation : ProgrammableDevice
+    public class MainStationSequenceManager : SequenceManager
     {
+        public override CodeBlock CreateCodeBlock(Prototype _Prototype)
+        {
+            return (CodeBlock)Activator.CreateInstance(_Prototype.BlockType);
+        }
+    }
+
+    public class MainStation : ProgrammableDevice
+    {
+        public MainStation()
+            : base()
+        {
+            Manager = new MainStationSequenceManager();
+            MainStationCodeBlock.AddAllPrototypes(Manager);
+
+
+            Manager.AddDataType(new SequenceManager.DataType("int", System.Drawing.Color.Blue));
+            Manager.AddDataType(new SequenceManager.DataType("bool", System.Drawing.Color.Green));
+
+            Sequence = new Sequence(Manager);
+        }
+
         List<Device> devices = new List<Device>();
         public Device[] Devices { get { return devices.ToArray(); } }
 
@@ -29,10 +53,10 @@ namespace MainStationFrontEnd
             {
                 d.Events.Add(e.ID, new Device.Event(d, e));
             }
-            devices.Add( d);
+            devices.Add(d);
             return d;
         }
-        
+
         public class Device
         {
             public Device(string _Name, ProductDataBase.Device _Device, ushort _ID)

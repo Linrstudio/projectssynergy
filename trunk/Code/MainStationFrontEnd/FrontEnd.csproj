@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MainStationCodeBlocks.cs" />
     <Compile Include="ProgrammableDevices\Computer.cs" />
     <Compile Include="ProgrammableDevice.cs" />
     <Compile Include="AddDevice.cs">

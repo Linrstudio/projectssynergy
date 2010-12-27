@@ -5,6 +5,8 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using SynergySequence;
+using DesktopCodeBlocks;
+using WebInterface;
 
 namespace MainStationFrontEnd
 {
@@ -18,13 +20,14 @@ namespace MainStationFrontEnd
 
     public class Computer : ProgrammableDevice
     {
-        public Computer():base()
+        public Computer()
+            : base()
         {
             Manager = new ComputerSequenceManager();
-            DesktopCodeBlocks.DesktopCodeBlock.AddAllPrototypes(Manager);
-            WebInterface.WebInterfaceCodeBlocks.AddAllPrototypes(Manager);
+            DesktopCodeBlock.AddAllPrototypes(Manager);
+            WebInterfaceCodeBlocks.AddAllPrototypes(Manager);
 
-            Manager.AddDataType(new SequenceManager.DataType("int",System.Drawing.Color.Blue));
+            Manager.AddDataType(new SequenceManager.DataType("int", System.Drawing.Color.Blue));
             Manager.AddDataType(new SequenceManager.DataType("bool", System.Drawing.Color.Green));
 
             Sequence = new Sequence(Manager);
