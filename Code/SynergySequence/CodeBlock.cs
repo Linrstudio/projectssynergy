@@ -49,9 +49,8 @@ namespace SynergySequence
         public string Name;
 
         //for save and load purposes
-        //TODO make these abstract
-        public abstract void Save(XElement _Data);
-        public abstract void Load(XElement _Data);
+        public virtual void Save(XElement _Data){}
+        public virtual void Load(XElement _Data){}
 
         public virtual bool Intersect(Point _Point)
         {
@@ -81,12 +80,12 @@ namespace SynergySequence
             _Graphics.DrawPolygon(new Pen(Brushes.Black, 2), _Points);
         }
 
-        public void DrawText(Graphics _Graphics)
+        public virtual void DrawText(Graphics _Graphics)
         {
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString(Name, new Font("Arial", 20, FontStyle.Bold), Brushes.Black, X, Y, sf);
+            _Graphics.DrawString(Name, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, X, Y, sf);
         }
 
         public void DrawShapeShadow(Graphics _Graphics, params PointF[] _Points)
@@ -400,12 +399,6 @@ namespace SynergySequence
             }
         }
 
-        public struct Time
-        {
-            public TimeSpan time;
-            public DayOfWeek WeekDay;
-        }
-
         public class DataType
         {
             public DataType(string _Name, Type _Type, object _DefaultValue, int _ID, Color _Color, int _RegistersNeeded)
@@ -443,7 +436,7 @@ namespace SynergySequence
             foreach (DataType t in DataTypes) if (t.Name.ToLower() == _Name.ToLower()) return t;
             return null;
         }
-       
+
         private static void AddDataType(string _TypeName, Type _Type, object _DefaultInstance, int _ID, Color _Color, int _RegistersNeeded)
         {
             DataTypes.Add(new DataType(_TypeName, _Type, _DefaultInstance, _ID, _Color, _RegistersNeeded));
