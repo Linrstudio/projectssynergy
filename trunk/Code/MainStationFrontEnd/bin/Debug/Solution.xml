@@ -1,7 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Solution>
   <ProgrammableDevice Name="My Main-Station" Type="MainStation">
-    <Sequence />
+    <Sequence>
+      <Block X="110" Y="398" Type="MainStationCodeBlocks.BlockEventSchedule">
+        <Data />
+      </Block>
+      <Block X="299" Y="111" Type="MainStationCodeBlocks.BlockBoolConstant">
+        <Data>False</Data>
+      </Block>
+      <Block X="300" Y="259" Type="MainStationCodeBlocks.BlockBoolInvert">
+        <Data />
+      </Block>
+      <ConnectData Input="0" InputOwner="2" Output="0" OutputOwner="1" />
+    </Sequence>
   </ProgrammableDevice>
   <ProgrammableDevice Name="My Computer" Type="Computer">
     <Sequence>

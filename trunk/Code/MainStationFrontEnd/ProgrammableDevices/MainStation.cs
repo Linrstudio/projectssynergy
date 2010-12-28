@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ComponentModel;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using SynergySequence;
-
+using MainStationCodeBlocks;
 
 
 namespace MainStationFrontEnd
@@ -284,8 +285,17 @@ namespace MainStationFrontEnd
 
         public struct Time
         {
-            public TimeSpan DayTime;
-            public ushort Day;
+            TimeSpan daytime;
+            [Browsable(true)]
+            public TimeSpan DayTime { get { return daytime; } set { daytime = value; } }
+            ushort day;
+            [Browsable(true)]
+            public ushort Day{ get { return day; } set { day = value; } }
+
+            public override string ToString()
+            {
+                return DayTime.Hours.ToString() + ":" + DayTime.Minutes.ToString();
+            }
         }
 
         public static Time TimeRead()

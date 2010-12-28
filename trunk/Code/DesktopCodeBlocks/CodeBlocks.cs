@@ -244,7 +244,6 @@ namespace DesktopCodeBlocks
     public class BlockBoolConstant : BaseBlockData
     {
         bool val;
-
         [Browsable(true), CategoryAttribute("Constant")]
         public bool Value
         {
@@ -332,7 +331,7 @@ namespace DesktopCodeBlocks
 
     public class BlockEventSchedule : BaseBlockEvent
     {
-        Time time;
+        DateTime Time;
         public BlockEventSchedule()
         {
             width = 100;
