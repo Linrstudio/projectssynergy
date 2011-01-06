@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace WebInterface
 {
@@ -12,10 +14,14 @@ namespace WebInterface
         // note that a scene is 1 by 1 in size
         public float X, Y, Width, Height;
         public string Name;
+
+        public virtual void Load(XElement _Data) { }
+        public virtual void Save(XElement _Data) { }
     }
 
     public class Switch : Control
     {
+        public Switch() : base() { }
         public Switch(string _Name, float _X, float _Y, float _Width, float _Height) : base(_Name, _X, _Y, _Width, _Height) { }
         public string ImageOn = "switchon.png";
         public string ImageOff = "switchoff.png";

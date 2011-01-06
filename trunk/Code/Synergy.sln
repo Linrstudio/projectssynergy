@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopClient", "DesktopCli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebInterface", "WebInterface\WebInterface.csproj", "{2813D323-8B45-4AF3-8FC8-FBB5F0467748}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LazyNetworking", "LazyNetworking\LazyNetworking.csproj", "{21DED97D-08C2-402B-A143-8913F285F01F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "K8055", "K8055\K8055.csproj", "{06502D43-9D05-4AA1-8D22-B7AB29095DF9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +41,14 @@ Global
 		{2813D323-8B45-4AF3-8FC8-FBB5F0467748}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2813D323-8B45-4AF3-8FC8-FBB5F0467748}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2813D323-8B45-4AF3-8FC8-FBB5F0467748}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21DED97D-08C2-402B-A143-8913F285F01F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21DED97D-08C2-402B-A143-8913F285F01F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21DED97D-08C2-402B-A143-8913F285F01F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21DED97D-08C2-402B-A143-8913F285F01F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06502D43-9D05-4AA1-8D22-B7AB29095DF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06502D43-9D05-4AA1-8D22-B7AB29095DF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06502D43-9D05-4AA1-8D22-B7AB29095DF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06502D43-9D05-4AA1-8D22-B7AB29095DF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

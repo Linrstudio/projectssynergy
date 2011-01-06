@@ -23,10 +23,7 @@ namespace MainStationFrontEnd
                 string typename = element.Attribute("Type").Value;
                 ProgrammableDevice d;
                 d = (ProgrammableDevice)Activator.CreateInstance(null, "MainStationFrontEnd." + typename).Unwrap();
-                if(d.Manager!=null)
-                d.Manager.CreateCodeBlock(d.Manager.Prototypes[0]);
-                d.Name = element.Attribute("Name").Value;
-                d.Sequence.Load(element.Element("Sequence"));
+                d.Load(element);
                 programmabledevices.Add(d);
             }
         }
@@ -37,9 +34,8 @@ namespace MainStationFrontEnd
             foreach (ProgrammableDevice d in ProgrammableDevices)
             {
                 XElement element = new XElement("ProgrammableDevice");
-                element.SetAttributeValue("Name", d.Name);
                 element.SetAttributeValue("Type", d.GetType().Name);
-                element.Add(d.Sequence.Save());
+                d.Save(element);
                 file.Add(element);
             }
             file.Save(_File);

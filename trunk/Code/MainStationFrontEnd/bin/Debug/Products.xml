@@ -68,28 +68,28 @@
 		<Input Name="State" Type="bool"/>
 	</RemoteEvent>
 	
-	<RemoteEvent ID="1" Name="ToggleRelay1" Description="Toggles Relay1" >
+	<RemoteEvent ID="9" Name="ToggleRelay1" Description="Toggles Relay1" >
 		<Input Name="" Type="void"/>
 	</RemoteEvent>
-	<RemoteEvent ID="2" Name="ToggleRelay2" Description="Toggles Relay2" >
+	<RemoteEvent ID="10" Name="ToggleRelay2" Description="Toggles Relay2" >
 		<Input Name="" Type="void"/>
 	</RemoteEvent>
-	<RemoteEvent ID="3" Name="ToggleRelay3" Description="Toggles Relay3" >
+	<RemoteEvent ID="11" Name="ToggleRelay3" Description="Toggles Relay3" >
 		<Input Name="" Type="void"/>
 	</RemoteEvent>
-	<RemoteEvent ID="4" Name="ToggleRelay4" Description="Toggles Relay4" >
+	<RemoteEvent ID="12" Name="ToggleRelay4" Description="Toggles Relay4" >
 		<Input Name="" Type="void"/>
 	</RemoteEvent>
-	<RemoteEvent ID="5" Name="ToggleRelay5" Description="Toggles Relay5" >
+	<RemoteEvent ID="13" Name="ToggleRelay5" Description="Toggles Relay5" >
 		<Input Name="" Type="void"/>
 	</RemoteEvent>
-	<RemoteEvent ID="6" Name="ToggleRelay6" Description="Toggles Relay6" >
+	<RemoteEvent ID="14" Name="ToggleRelay6" Description="Toggles Relay6" >
 		<Input Name="" Type="void"/>
 	</RemoteEvent>
-	<RemoteEvent ID="7" Name="ToggleRelay7" Description="Toggles Relay7" >
+	<RemoteEvent ID="15" Name="ToggleRelay7" Description="Toggles Relay7" >
 		<Input Name="" Type="void"/>
 	</RemoteEvent>
-	<RemoteEvent ID="8" Name="ToggleRelay8" Description="Toggles Relay8" >
+	<RemoteEvent ID="16" Name="ToggleRelay8" Description="Toggles Relay8" >
 		<Input Name="" Type="void"/>
 	</RemoteEvent>
   </Device>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using System.Windows.Forms;
 using SynergySequence;
 
 namespace MainStationFrontEnd
@@ -19,7 +20,9 @@ namespace MainStationFrontEnd
             Sequence = new Sequence();
         }
 
-        public abstract XElement Save();
+        public abstract TreeNode GetTreeNode();
+
+        public abstract void Save(XElement _Data);
         public abstract void Load(XElement _Data);
     }
 }
