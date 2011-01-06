@@ -22,18 +22,21 @@
 	{
         $('control_' + id).src = "?res=SwitchLoading.gif";
         var obj = newAjaxObject();
-        obj.onreadystatechange = function() {
-            if (obj.readyState == 4) {
-                if (obj.responseText == "0") {
+        obj.onreadystatechange = function()
+		{
+            if (obj.readyState == 4)
+			{
+                if (obj.responseText == "0")
+				{
                     $('control_' + id).src = "?res=SwitchOff.png";
-
                 }
-                if (obj.responseText == "1") {
+                if (obj.responseText == "1")
+				{
                     $('control_' + id).src = "?res=SwitchOn.png";
                 }
             }
         }
-        obj.open('POST', '?command=ToggleState&scene=scene1&control=' + id + '&boreme=' + Math.random(), true);
+        obj.open('POST', '?command=ToggleState&scene=__SCENE__&control=' + id + '&boreme=' + Math.random(), true);
         obj.send(null);
     }
 	
@@ -41,27 +44,28 @@
 	{
         $('control_' + id).src = "?res=SwitchLoading.gif";
 		var obj = newAjaxObject();
-        obj.onreadystatechange = function() {
-            if (obj.readyState == 4) {
-                if (obj.responseText == "0") {
+        obj.onreadystatechange = function()
+		{
+            if (obj.readyState == 4)
+			{
+                if (obj.responseText == "0")
+				{
                     $('control_' + id).src = "?res=SwitchOff.png";
-
                 }
-                if (obj.responseText == "1") {
+                if (obj.responseText == "1")
+				{
                     $('control_' + id).src = "?res=SwitchOn.png";
                 }
             }
         }
-        obj.open('POST', '?command=GetState&scene=scene1&control=' + id + '&boreme=' + Math.random(), true);
+        obj.open('POST', '?command=GetState&scene=__SCENE__&control=' + id + '&boreme=' + Math.random(), true);
         obj.send(null);
     }
 </script>
 
 </head>
 
-<body onload="__PAGEONLOAD__" marginwidth="0" marginheight="0 leftmargin="0" topmargin="0">
-
-<img src="__BGSRC__" width="__WIDTH__" height="__HEIGHT__"/>
+<body onload="__PAGEONLOAD__" marginwidth="0" marginheight="0 leftmargin="0" topmargin="0" background="__BGSRC__" style="background-repeat: no-repeat; background-size: 100% 100%;">
 
 __CONTROLS__
 
