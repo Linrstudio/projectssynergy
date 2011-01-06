@@ -290,6 +290,30 @@ namespace DesktopCodeBlocks
         }
     }
 
+    public class BlockBoolEquals : BaseBlockInstruction
+    {
+        public BlockBoolEquals()
+        {
+            width = 100;
+            height = 25;
+            DataInputs.Add(new DataInput(this, "", "bool"));
+            DataInputs.Add(new DataInput(this, "", "bool"));
+            DataOutputs.Add(new DataOutput(this, "", "bool"));
+            UpdateConnectors();
+            Name = "Invert";
+        }
+
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { }
+        public override void HandleTrigger(TriggerInput _Input) { throw new NotImplementedException(); }
+        public override object HandleOutput(DataOutput _Output)
+        {
+            return ((bool)GetInput(DataInputs[0])==(bool)GetInput(DataInputs[1]));
+        }
+    }
+
     public class BlockMathVariable : BaseBlockData
     {
         static Dictionary<string, float> variables = new Dictionary<string, float>();

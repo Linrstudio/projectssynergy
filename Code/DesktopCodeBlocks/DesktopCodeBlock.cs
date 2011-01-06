@@ -18,17 +18,18 @@ namespace DesktopCodeBlocks
                 ((DesktopCodeBlock)i.Owner).HandleTrigger(i);
             }
         }
+
         public object GetInput(CodeBlock.DataInput _Input)
         {
             return ((DesktopCodeBlock)_Input.Connected.Owner).HandleOutput(_Input.Connected);
         }
-
 
         public static void AddAllPrototypes(SynergySequence.SequenceManager _Manager)
         {
             _Manager.AddPrototype(new SequenceManager.Prototype("Schedule", "Generic Events", "i like u", typeof(DesktopCodeBlocks.BlockEventSchedule)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Boolean", "i like u", typeof(DesktopCodeBlocks.BlockBoolConstant)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Invert", "Boolean", "i like u", typeof(DesktopCodeBlocks.BlockBoolInvert)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Equals", "Boolean", "i like u", typeof(DesktopCodeBlocks.BlockBoolEquals)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Set debug LED", "mygroup", "i like u", typeof(DesktopCodeBlocks.BlockSetDebugLed1)));
 
             _Manager.AddPrototype(new SequenceManager.Prototype("Multiply", "Math", "i like u", typeof(DesktopCodeBlocks.BlockMathMultiply)));

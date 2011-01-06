@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using System.Windows.Forms;
 using SynergySequence;
 using MainStationCodeBlocks;
 
@@ -27,7 +28,6 @@ namespace MainStationFrontEnd
             Manager = new MainStationSequenceManager();
             MainStationCodeBlock.AddAllPrototypes(Manager);
 
-
             Manager.AddDataType(new SequenceManager.DataType("int", System.Drawing.Color.Blue));
             Manager.AddDataType(new SequenceManager.DataType("bool", System.Drawing.Color.Green));
 
@@ -37,14 +37,21 @@ namespace MainStationFrontEnd
         List<Device> devices = new List<Device>();
         public Device[] Devices { get { return devices.ToArray(); } }
 
-        public override void Load(System.Xml.Linq.XElement _Data)
+        public override System.Windows.Forms.TreeNode GetTreeNode()
         {
-            throw new NotImplementedException();
+            TreeNode node = new TreeNode("mainstation");
+            node.Tag = this;
+            return node;
         }
 
-        public override System.Xml.Linq.XElement Save()
+        public override void Load(System.Xml.Linq.XElement _Data)
         {
-            throw new NotImplementedException();
+            Sequence.Load(_Data.Element("Sequence"));
+        }
+
+        public override void Save(System.Xml.Linq.XElement _Data)
+        {
+            _Data.Add(Sequence.Save());
         }
 
         public Device RegisterDevice(string _Name, ProductDataBase.Device _Device, ushort _DeviceID)
@@ -206,7 +213,6 @@ namespace MainStationFrontEnd
         public static void EEPROMWrite(byte[] _Data)
         {
             System.IO.File.WriteAllBytes("c:\\eeprom.bin", _Data);
-
 #if false//write page
             for (int i = 0; i < _Data.Length; i += 32)
             {

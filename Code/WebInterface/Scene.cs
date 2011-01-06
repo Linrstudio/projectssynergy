@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace WebInterface
 {
@@ -24,6 +26,21 @@ namespace WebInterface
 
         public Scene() { }
         public Scene(string _Name) { Name = _Name; }
+        public Scene(XElement _Data)
+        {
+            name = _Data.Attribute("Name").Value;
+            foreach (XElement element in _Data.Elements("Control"))
+            {
+                Control c = (Control)Activator.CreateInstance(null, "WebInterface." + element.Attribute("Type").Value).Unwrap();
+                c.Name = element.Attribute("Name").Value;
+                c.X = float.Parse(element.Attribute("X").Value);
+                c.Y = float.Parse(element.Attribute("Y").Value);
+                c.Width = float.Parse(element.Attribute("Width").Value);
+                c.Height = float.Parse(element.Attribute("Height").Value);
+                c.Load(element.Element("Data"));
+                Controls.Add(c);
+            }
+        }
 
         bool LoginEnabled = false;//do users need to login ?
         List<Credentials> Credentials = new List<Credentials>();

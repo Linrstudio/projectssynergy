@@ -68,6 +68,7 @@ namespace SynergySequence
         public void Load(XElement _Sequence)
         {
             codeblocks.Clear();
+            if (_Sequence == null) return;
             //try
             {
                 foreach (XElement block in _Sequence.Elements("Block"))

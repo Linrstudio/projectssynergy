@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using System.Threading;
+using System.Xml.Linq;
 
 namespace WebInterface
 {
     public class WebInterface
     {
-        static ushort Port = 80;
+        static ushort Port = 8080;
 
         static HttpListener httplistener;
         static Thread httplistenerthread;
@@ -33,8 +34,17 @@ namespace WebInterface
             return null;
         }
 
-        public static void Init()
+        public static void Init(XElement _Data)
         {
+            Stop();
+            Port = ushort.Parse(_Data.Attribute("Port").Value);
+
+            foreach (XElement element in _Data.Elements("Scene"))
+            {
+                Scene scene = new Scene(element);
+                scenes.Add(scene);
+            }
+
             if (!HttpListener.IsSupported) Console.WriteLine("HTTPListener class is not supported on your machine.");
             httplistener = new HttpListener();
 
@@ -43,11 +53,50 @@ namespace WebInterface
             LocalIP = Dns.GetHostByName(LocalIP).AddressList[0].ToString();
             Console.WriteLine("HostIP:" + LocalIP);
             httplistener.Prefixes.Add("http://" + LocalIP + ":" + Port + "/");
-            httplistener.Start();
+            try
+            {
+
+                httplistener.Start();
+            }
+            catch { System.Windows.Forms.MessageBox.Show("Failed to start HTTPListener at port " + Port.ToString()); }
 
             httplistenerthread = new Thread(new ThreadStart(httplistenermain));
             httplistenerthread.Start();
+        }
 
+        public static void Init()
+        {
+            Stop();
+            if (!HttpListener.IsSupported) Console.WriteLine("HTTPListener class is not supported on your machine.");
+            httplistener = new HttpListener();
+
+            string LocalIP = Dns.GetHostName();
+            Console.WriteLine("HostName:" + LocalIP);
+            LocalIP = Dns.GetHostByName(LocalIP).AddressList[0].ToString();
+            Console.WriteLine("HostIP:" + LocalIP);
+            httplistener.Prefixes.Add("http://" + LocalIP + ":" + Port + "/");
+            try
+            {
+
+                httplistener.Start();
+            }
+            catch { System.Windows.Forms.MessageBox.Show("Failed to start HTTPListener at port " + Port.ToString()); }
+
+            httplistenerthread = new Thread(new ThreadStart(httplistenermain));
+            httplistenerthread.Start();
+        }
+
+        public static void Stop()
+        {
+            if (httplistener != null)
+                httplistener.Stop();
+            
+            if (httplistenerthread != null)
+                httplistenerthread.Abort();
+
+            scenes.Clear();
+            httplistener = null;
+            httplistenerthread = null;
         }
 
         public static void httplistenermain()
@@ -64,7 +113,7 @@ namespace WebInterface
                         HttpListenerBasicIdentity identity = (HttpListenerBasicIdentity)context.User.Identity;
                         if (identity.Name != "Roeny" && identity.Password != "Baloony") continue;
                     }
-                     */
+                    */
 
                     byte[] buffer = System.Text.Encoding.ASCII.GetBytes("invalid request!");//response
 
@@ -122,6 +171,7 @@ namespace WebInterface
                                     bgsrc.Parameters.Add("res", "scene1/background.jpg");
                                     //bgsrc.Parameters.Add("boreme", boreme());
                                     rs = rs.Replace("__BGSRC__", bgsrc.ToString());
+                                    rs = rs.Replace("__SCENE__", scene.ToString());
 
                                     if (width == 0 || height == 0)
                                     {

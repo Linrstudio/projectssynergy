@@ -1,36 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Solution>
-  <ProgrammableDevice Name="My Main-Station" Type="MainStation">
+  <ProgrammableDevice Type="Computer" Name="Server" IPAddress="127.0.0.1" Port="1000">
     <Sequence>
-      <Block X="110" Y="398" Type="MainStationCodeBlocks.BlockEventSchedule">
+      <Block X="776" Y="392" Type="WebInterface.BlockSwitchSetState">
+        <Data>myswitch1</Data>
+      </Block>
+      <Block X="906" Y="211" Type="WebInterface.BlockSwitchGetState">
+        <Data>myswitch1</Data>
+      </Block>
+      <Block X="559" Y="408" Type="WebInterface.BlockEventSwitchToggle">
+        <Data>myswitch1</Data>
+      </Block>
+      <Block X="836" Y="315" Type="DesktopCodeBlocks.BlockBoolInvert">
         <Data />
       </Block>
-      <Block X="299" Y="111" Type="MainStationCodeBlocks.BlockBoolConstant">
-        <Data>False</Data>
+      <Block X="870" Y="452" Type="K8055.BlockDigitalOutputSetState">
+        <Data>1</Data>
       </Block>
-      <Block X="300" Y="259" Type="MainStationCodeBlocks.BlockBoolInvert">
-        <Data />
+      <Block X="958" Y="551" Type="K8055.BlockDigitalOutputSetState">
+        <Data>2</Data>
       </Block>
-      <ConnectData Input="0" InputOwner="2" Output="0" OutputOwner="1" />
+      <ConnectData Input="0" InputOwner="0" Output="0" OutputOwner="3" />
+      <ConnectTrigger Input="0" InputOwner="0" Output="0" OutputOwner="2" />
+      <ConnectTrigger Input="0" InputOwner="4" Output="0" OutputOwner="2" />
+      <ConnectTrigger Input="0" InputOwner="5" Output="0" OutputOwner="2" />
+      <ConnectData Input="0" InputOwner="3" Output="0" OutputOwner="1" />
+      <ConnectData Input="0" InputOwner="4" Output="0" OutputOwner="3" />
+      <ConnectData Input="0" InputOwner="5" Output="0" OutputOwner="1" />
     </Sequence>
-  </ProgrammableDevice>
-  <ProgrammableDevice Name="My Computer" Type="Computer">
-    <Sequence>
-      <Block X="396" Y="644" Type="WebInterface.BlockEventSwitchToggle">
-        <Data>myswitch2</Data>
-      </Block>
-      <Block X="592" Y="644" Type="WebInterface.BlockSwitchSetState">
-        <Data>myswitch2</Data>
-      </Block>
-      <Block X="583" Y="479" Type="WebInterface.BlockSwitchGetState">
-        <Data>myswitch2</Data>
-      </Block>
-      <Block X="631" Y="564" Type="DesktopCodeBlocks.BlockBoolInvert">
-        <Data />
-      </Block>
-      <ConnectTrigger Input="0" InputOwner="1" Output="0" OutputOwner="0" />
-      <ConnectData Input="0" InputOwner="1" Output="0" OutputOwner="3" />
-      <ConnectData Input="0" InputOwner="3" Output="0" OutputOwner="2" />
-    </Sequence>
+    <MainStation>
+      <Sequence>
+        <Block X="834" Y="198" Type="MainStationCodeBlocks.BlockBoolConstant">
+          <Data>False</Data>
+        </Block>
+      </Sequence>
+    </MainStation>
   </ProgrammableDevice>
 </Solution>

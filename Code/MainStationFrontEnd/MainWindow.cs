@@ -45,9 +45,7 @@ namespace MainStationFrontEnd
             t_contents.Nodes.Add(Root);
             foreach (ProgrammableDevice pd in Solution.ProgrammableDevices)
             {
-                TreeNode node = new TreeNode(string.Format("{0}", pd.Name));
-                node.Tag = pd;
-                Root.Nodes.Add(node);
+                Root.Nodes.Add(pd.GetTreeNode());
             }
             t_contents.ExpandAll();
         }
@@ -74,7 +72,7 @@ namespace MainStationFrontEnd
             Solution.Save("Solution.xml");
             UpdateTree();
        
-            ((Computer)Solution.ProgrammableDevices[1]).Compile();
+            ((Computer)Solution.ProgrammableDevices[0]).Compile();
         }
 
         public void ShowDialog(Form _Form)
