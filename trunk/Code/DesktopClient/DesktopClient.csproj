@@ -83,6 +83,14 @@
       <Project>{88F52436-24FE-48C4-8E14-2F8E8E8B5476}</Project>
       <Name>DesktopCodeBlocks</Name>
     </ProjectReference>
+    <ProjectReference Include="..\K8055\K8055.csproj">
+      <Project>{06502D43-9D05-4AA1-8D22-B7AB29095DF9}</Project>
+      <Name>K8055</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LazyNetworking\LazyNetworking.csproj">
+      <Project>{21DED97D-08C2-402B-A143-8913F285F01F}</Project>
+      <Name>LazyNetworking</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SynergySequence\SynergySequence.csproj">
       <Project>{80813922-BFA7-41DC-9DC0-2E86A0AB59F9}</Project>
       <Name>SynergySequence</Name>
