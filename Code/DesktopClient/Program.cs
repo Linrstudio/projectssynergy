@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using SynergySequence;
 using DesktopCodeBlocks;
 using WebInterface;
+using LazyNetworking;
 
 namespace DesktopClient
 {
@@ -30,32 +31,36 @@ namespace DesktopClient
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            SynergySequence.SequenceManager sequencemanager = new ComputerSequenceManager();
-            DesktopCodeBlocks.DesktopCodeBlock.AddAllPrototypes(sequencemanager);
-            WebInterface.WebInterfaceCodeBlocks.AddAllPrototypes(sequencemanager);
-            sequencemanager.AddDataType(new SequenceManager.DataType("int", System.Drawing.Color.Blue));
-            sequencemanager.AddDataType(new SequenceManager.DataType("bool", System.Drawing.Color.Green));
+            TCPListener listener = new TCPListener("127.0.0.1", 1000);
 
-            sequence = new Sequence();
-            sequence.Manager = sequencemanager;
-            sequence.Load(XElement.Load("c:/sequence.xml"));
-
-            WebInterface.Scene scene1 = new WebInterface.Scene("scene1");
-            scene1.Controls.Add(new WebInterface.Switch("MySwitch1", 0.1f, 0.1f, 0.2f, 0.2f));
-            scene1.Controls.Add(new WebInterface.Switch("MySwitch2", 0.5f, 0.5f, 0.3f, 0.3f));
-
-            WebInterface.Scene scene2 = new WebInterface.Scene("scene2");
-            scene2.Controls.Add(new WebInterface.Switch("MySwitch1", 0.4f, 0.7f, 0.2f, 0.2f));
-            scene2.Controls.Add(new WebInterface.Switch("MySwitch2", 0.2f, 0.3f, 0.3f, 0.3f));
-
-            WebInterface.WebInterface.scenes.Add(scene1);
-            WebInterface.WebInterface.scenes.Add(scene2);
-            WebInterface.WebInterface.Init();
+            Reload();
 
             Application.Idle += new EventHandler(Application_Idle);
             Form window = new Form1();
             window.Show();
             Application.Run(window);
+        }
+
+        static void Reload()
+        {
+            XElement project = XElement.Load("project.xml");
+            SynergySequence.SequenceManager sequencemanager = new ComputerSequenceManager();
+            
+            DesktopCodeBlocks.DesktopCodeBlock.AddAllPrototypes(sequencemanager);
+            WebInterface.WebInterfaceCodeBlocks.AddAllPrototypes(sequencemanager);
+            K8055.K8055CodeBlocks.AddAllPrototypes(sequencemanager);
+
+            sequencemanager.AddDataType(new SequenceManager.DataType("int", System.Drawing.Color.Blue));
+            sequencemanager.AddDataType(new SequenceManager.DataType("bool", System.Drawing.Color.Green));
+
+            sequence = new Sequence();
+            sequence.Manager = sequencemanager;
+            sequence.Load(project.Element("Sequence"));
+
+            XElement element = project.Element("WebInterface");
+            if (element != null)
+                WebInterface.WebInterface.Init(element);
+            else WebInterface.WebInterface.Stop();
         }
 
         static void Application_Idle(object sender, EventArgs e)
@@ -75,6 +80,24 @@ namespace DesktopClient
                                 if (b is BlockEventSwitchToggle && ((BlockEventSwitchToggle)b).SwitchName.ToLower() == c.Name.ToLower())
                                     ((DesktopCodeBlock)b).Trigger(b.TriggerOutputs[0]);
                             }
+                        }
+                    }
+                }
+            }
+            foreach (TCPListener listener in TCPListener.Listeners)
+            {
+                foreach (TCPConnection c in listener.Connections)
+                {
+                    string read = c.Read();
+                    if (read != null)//do something with packet
+                    {
+                        switch (read.Split(' ')[0])
+                        {
+                            case "project":
+                                System.IO.File.WriteAllText("project.xml", read.Remove(0, 8));//remove the word project
+                                Reload();
+                                break;
+
                         }
                     }
                 }
