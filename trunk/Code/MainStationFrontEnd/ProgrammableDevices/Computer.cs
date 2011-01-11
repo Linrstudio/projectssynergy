@@ -68,8 +68,6 @@ namespace MainStationFrontEnd
                 ms.Load(element);
                 mainstations.Add(ms);
             }
-
-            Connection=new LazyNetworking.TCPConnection(new System.Net.Sockets.TcpClient(IPAddress.ToString(),Port));
         }
 
         public override void Save(System.Xml.Linq.XElement _Data)
@@ -95,23 +93,58 @@ namespace MainStationFrontEnd
             XElement file = new XElement("project");
             file.Add(Sequence.Save());
 
-            XElement webinterface =new XElement("WebInterface");
+            XElement webinterface = new XElement("WebInterface");
             webinterface.SetAttributeValue("Port", "8080");
             XElement scene = new XElement("Scene");
             scene.SetAttributeValue("Name", "MyScene");
-            XElement control = new XElement("Control");
-            control.SetAttributeValue("Type", "Switch");
-            control.SetAttributeValue("Name", "MySwitch1");
-            control.SetAttributeValue("X", "0.5");
-            control.SetAttributeValue("Y", "0.5");
-            control.SetAttributeValue("Width", "0.1");
-            control.SetAttributeValue("Height", "0.1");
-
-            scene.Add(control);
+            {
+                XElement control = new XElement("Control");
+                control.SetAttributeValue("Type", "Switch");
+                control.SetAttributeValue("Name", "lampkamer");
+                control.SetAttributeValue("X", "0.5");
+                control.SetAttributeValue("Y", "0.7");
+                control.SetAttributeValue("Width", "0.2");
+                control.SetAttributeValue("Height", "0.2");
+                scene.Add(control);
+            }
+            {
+                XElement control = new XElement("Control");
+                control.SetAttributeValue("Type", "Switch");
+                control.SetAttributeValue("Name", "lampgang");
+                control.SetAttributeValue("X", "0.5");
+                control.SetAttributeValue("Y", "0.2");
+                control.SetAttributeValue("Width", "0.2");
+                control.SetAttributeValue("Height", "0.2");
+                scene.Add(control);
+            }
+            {
+                XElement control = new XElement("Control");
+                control.SetAttributeValue("Type", "Switch");
+                control.SetAttributeValue("Name", "wcd1");
+                control.SetAttributeValue("X", "0.9");
+                control.SetAttributeValue("Y", "0.25");
+                control.SetAttributeValue("Width", "0.1");
+                control.SetAttributeValue("Height", "0.1");
+                scene.Add(control);
+            }
+            {
+                XElement control = new XElement("Control");
+                control.SetAttributeValue("Type", "Switch");
+                control.SetAttributeValue("Name", "wcd2");
+                control.SetAttributeValue("X", "0.9");
+                control.SetAttributeValue("Y", "0.75");
+                control.SetAttributeValue("Width", "0.1");
+                control.SetAttributeValue("Height", "0.1");
+                scene.Add(control);
+            }
             webinterface.Add(scene);
             file.Add(webinterface);
-
-            Connection.Write("project " + file.ToString());
+            try
+            {
+                if (Connection == null) Connection = new LazyNetworking.TCPConnection(new System.Net.Sockets.TcpClient("127.0.0.1", 1000));
+                Connection.Write("project " + file.ToString());
+            }
+            catch { MessageBox.Show("Failed to connect to desktopclient"); }
             file.Save("c:/sequence.xml");
         }
     }

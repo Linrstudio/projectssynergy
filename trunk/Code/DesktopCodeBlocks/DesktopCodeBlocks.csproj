@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeBlocks.cs" />
-    <Compile Include="DesktopCodeBlock.cs" />
+    <Compile Include="DesktopSequence.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

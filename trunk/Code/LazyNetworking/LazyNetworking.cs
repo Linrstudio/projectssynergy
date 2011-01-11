@@ -155,7 +155,7 @@ namespace LazyNetworking
                         byte[] data = System.Text.Encoding.ASCII.GetBytes(buffer);
                         socket.GetStream().Write(data, 0, data.Length);
                     }
-                    else Thread.Sleep(100);
+                    else Thread.Sleep(10);
 
                     alivetimer = Environment.TickCount;
                 }

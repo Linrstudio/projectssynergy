@@ -1,34 +1,55 @@
 <project>
   <Sequence>
-    <Block X="776" Y="392" Type="WebInterface.BlockSwitchSetState">
-      <Data>myswitch1</Data>
+    <Block X="467" Y="301" Type="WebInterface.BlockEventSwitchToggle">
+      <Data>lampkamer</Data>
     </Block>
-    <Block X="906" Y="211" Type="WebInterface.BlockSwitchGetState">
-      <Data>myswitch1</Data>
-    </Block>
-    <Block X="559" Y="408" Type="WebInterface.BlockEventSwitchToggle">
-      <Data>myswitch1</Data>
-    </Block>
-    <Block X="836" Y="315" Type="DesktopCodeBlocks.BlockBoolInvert">
-      <Data />
-    </Block>
-    <Block X="870" Y="452" Type="K8055.BlockDigitalOutputSetState">
+    <Block X="800" Y="146" Type="K8055.BlockDigitalOutputToggleState">
       <Data>1</Data>
     </Block>
-    <Block X="958" Y="551" Type="K8055.BlockDigitalOutputSetState">
-      <Data>2</Data>
+    <Block X="658" Y="241" Type="K8055.BlockDigitalInputGetState">
+      <Data>1</Data>
     </Block>
-    <ConnectData Input="0" InputOwner="0" Output="0" OutputOwner="3" />
-    <ConnectTrigger Input="0" InputOwner="0" Output="0" OutputOwner="2" />
-    <ConnectTrigger Input="0" InputOwner="4" Output="0" OutputOwner="2" />
-    <ConnectTrigger Input="0" InputOwner="5" Output="0" OutputOwner="2" />
-    <ConnectData Input="0" InputOwner="3" Output="0" OutputOwner="1" />
-    <ConnectData Input="0" InputOwner="4" Output="0" OutputOwner="3" />
-    <ConnectData Input="0" InputOwner="5" Output="0" OutputOwner="1" />
+    <Block X="657" Y="387" Type="WebInterface.BlockSwitchSetState">
+      <Data>lampkamer</Data>
+    </Block>
+    <Block X="657" Y="315" Type="DesktopCodeBlocks.BlockBoolInvert">
+      <Data />
+    </Block>
+    <Block X="621" Y="146" Type="DesktopCodeBlocks.BlockEventDelay">
+      <Data>0</Data>
+    </Block>
+    <Block X="445" Y="672" Type="WebInterface.BlockEventSwitchToggle">
+      <Data>wcd1</Data>
+    </Block>
+    <Block X="750" Y="559" Type="WebInterface.BlockSwitchGetState">
+      <Data>wcd1</Data>
+    </Block>
+    <Block X="680" Y="620" Type="DesktopCodeBlocks.BlockBoolInvert">
+      <Data />
+    </Block>
+    <Block X="735" Y="738" Type="K8055.BlockDigitalOutputSetState">
+      <Data>4</Data>
+    </Block>
+    <Block X="662" Y="689" Type="WebInterface.BlockSwitchSetState">
+      <Data>wcd1</Data>
+    </Block>
+    <ConnectTrigger Input="0" InputOwner="3" Output="0" OutputOwner="0" />
+    <ConnectTrigger Input="0" InputOwner="5" Output="0" OutputOwner="0" />
+    <ConnectData Input="0" InputOwner="3" Output="0" OutputOwner="4" />
+    <ConnectData Input="0" InputOwner="4" Output="0" OutputOwner="2" />
+    <ConnectTrigger Input="0" InputOwner="1" Output="0" OutputOwner="5" />
+    <ConnectTrigger Input="0" InputOwner="9" Output="0" OutputOwner="6" />
+    <ConnectTrigger Input="0" InputOwner="10" Output="0" OutputOwner="6" />
+    <ConnectData Input="0" InputOwner="8" Output="0" OutputOwner="7" />
+    <ConnectData Input="0" InputOwner="9" Output="0" OutputOwner="7" />
+    <ConnectData Input="0" InputOwner="10" Output="0" OutputOwner="8" />
   </Sequence>
   <WebInterface Port="8080">
     <Scene Name="MyScene">
-      <Control Type="Switch" Name="MySwitch1" X="0.5" Y="0.5" Width="0.1" Height="0.1" />
+      <Control Type="Switch" Name="lampkamer" X="0.5" Y="0.7" Width="0.2" Height="0.2" />
+      <Control Type="Switch" Name="lampgang" X="0.5" Y="0.2" Width="0.2" Height="0.2" />
+      <Control Type="Switch" Name="wcd1" X="0.9" Y="0.25" Width="0.1" Height="0.1" />
+      <Control Type="Switch" Name="wcd2" X="0.9" Y="0.75" Width="0.1" Height="0.1" />
     </Scene>
   </WebInterface>
 </project>

@@ -90,7 +90,7 @@ namespace WebInterface
         {
             if (httplistener != null)
                 httplistener.Stop();
-            
+
             if (httplistenerthread != null)
                 httplistenerthread.Abort();
 
@@ -103,7 +103,7 @@ namespace WebInterface
         {
             while (true)
             {
-                //try
+                try
                 {
                     HttpListenerContext context = httplistener.GetContext();
                     //check username/password
@@ -150,8 +150,9 @@ namespace WebInterface
                                         switch (command)
                                         {
                                             case "ToggleState":
+                                                swit.Loading = true;
                                                 swit.EnqueueCommand(Switch.Command.Toggle);
-                                                while (swit.CommandsPending()) Thread.Sleep(10);
+                                                while (swit.Loading) Thread.Sleep(10);
                                                 buffer = System.Text.Encoding.ASCII.GetBytes(swit.State ? "1" : "0");
                                                 break;
                                             case "GetState":
@@ -226,9 +227,8 @@ namespace WebInterface
                     System.IO.Stream output = response.OutputStream;
                     output.Write(buffer, 0, buffer.Length);
                     output.Close();
-
                 }
-                //catch (Exception ex) { Console.WriteLine(ex.Message); }
+                catch (Exception ex) { Console.WriteLine(ex.Message); }
             }
         }
     }

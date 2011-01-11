@@ -65,9 +65,9 @@
 
 </head>
 
-<body onload="__PAGEONLOAD__" marginwidth="0" marginheight="0 leftmargin="0" topmargin="0" background="__BGSRC__" style="background-repeat: no-repeat; background-size: 100% 100%;">
-
+<body width=50% onload="__PAGEONLOAD__" marginwidth="0" marginheight="0 leftmargin="0" topmargin="0" background="__BGSRC__" style="background-repeat: no-repeat; background-size: 100% 100%;">
+<div style="position: absolute; left: 610px; top: 80px; height: 400px; width: 100px; padding: 1em;">
 __CONTROLS__
-
+</div>
 </body>
 </html>
