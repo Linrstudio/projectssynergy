@@ -133,7 +133,7 @@ namespace WebInterface
 
                     if (res != "")
                     {
-                        buffer = System.IO.File.ReadAllBytes(res);
+                        buffer = System.IO.File.ReadAllBytes(res);//FIXME HUGE security issue
                     }
                     else
                     {

@@ -20,7 +20,7 @@
 
     function ToggleSwitch(id)
 	{
-        $('control_' + id).src = "?res=SwitchLoading.gif";
+        $('control_' + id).src = "?res=SwitchLoading.png";
         var obj = newAjaxObject();
         obj.onreadystatechange = function()
 		{
@@ -42,7 +42,7 @@
 	
 	function GetImage(id)
 	{
-        $('control_' + id).src = "?res=SwitchLoading.gif";
+        $('control_' + id).src = "?res=SwitchLoading.png";
 		var obj = newAjaxObject();
         obj.onreadystatechange = function()
 		{
