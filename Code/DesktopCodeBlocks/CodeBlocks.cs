@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Xml;
 using System.Xml.Linq;
 using SynergySequence;
@@ -113,8 +114,6 @@ namespace DesktopCodeBlocks
                 new PointF(width / 2, -height / 2));
             base.DrawShadow(_Graphics);
         }
-        public override void Load(XElement _Data) { }
-        public override void Save(XElement _Data) { }
 
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
         public override void HandleTrigger(TriggerInput _Output) { System.Diagnostics.Debug.WriteLine(GetInput(DataInputs[0])); }
@@ -156,9 +155,6 @@ namespace DesktopCodeBlocks
             base.DrawShadow(_Graphics);
         }
 
-        public override void Load(XElement _Data) { }
-        public override void Save(XElement _Data) { }
-
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
         public override void HandleTrigger(TriggerInput _Output) { System.Diagnostics.Debug.WriteLine(GetInput(DataInputs[0])); }
         public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
@@ -180,9 +176,6 @@ namespace DesktopCodeBlocks
             UpdateConnectors();
         }
 
-        public override void Load(XElement _Data) { }
-        public override void Save(XElement _Data) { }
-
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
         public override void HandleTrigger(TriggerInput _Output) { if (GetInput(DataInputs[0]) == GetInput(DataInputs[1]))Trigger(TriggerOutputs[0]); else Trigger(TriggerOutputs[1]); }
         public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
@@ -202,9 +195,6 @@ namespace DesktopCodeBlocks
             UpdateConnectors();
         }
 
-        public override void Load(XElement _Data) { }
-        public override void Save(XElement _Data) { }
-
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
         public override void HandleTrigger(TriggerInput _Output) { throw new NotImplementedException(); }
         public override object HandleOutput(DataOutput _Output)
@@ -212,6 +202,78 @@ namespace DesktopCodeBlocks
             float a = (float)GetInput(DataInputs[0]);
             float b = (float)GetInput(DataInputs[1]);
             return a * b;
+        }
+    }
+
+    public class BlockMathAdd : BaseBlockInstruction
+    {
+        public BlockMathAdd()
+        {
+            width = 100;
+            height = 50;
+            Name = "Add";
+            DataInputs.Add(new DataInput(this, "A", "int"));
+            DataInputs.Add(new DataInput(this, "B", "int"));
+            DataOutputs.Add(new DataOutput(this, "C", "int"));
+
+            UpdateConnectors();
+        }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
+        public override void HandleTrigger(TriggerInput _Output) { throw new NotImplementedException(); }
+        public override object HandleOutput(DataOutput _Output)
+        {
+            float a = (float)GetInput(DataInputs[0]);
+            float b = (float)GetInput(DataInputs[1]);
+            return a + b;
+        }
+    }
+
+    public class BlockMathSubstract : BaseBlockInstruction
+    {
+        public BlockMathSubstract()
+        {
+            width = 100;
+            height = 50;
+            Name = "Substract";
+            DataInputs.Add(new DataInput(this, "A", "int"));
+            DataInputs.Add(new DataInput(this, "B", "int"));
+            DataOutputs.Add(new DataOutput(this, "C", "int"));
+
+            UpdateConnectors();
+        }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
+        public override void HandleTrigger(TriggerInput _Output) { throw new NotImplementedException(); }
+        public override object HandleOutput(DataOutput _Output)
+        {
+            float a = (float)GetInput(DataInputs[0]);
+            float b = (float)GetInput(DataInputs[1]);
+            return a - b;
+        }
+    }
+
+    public class BlockMathDivide : BaseBlockInstruction
+    {
+        public BlockMathDivide()
+        {
+            width = 100;
+            height = 50;
+            Name = "Divide";
+            DataInputs.Add(new DataInput(this, "A", "int"));
+            DataInputs.Add(new DataInput(this, "B", "int"));
+            DataOutputs.Add(new DataOutput(this, "C", "int"));
+
+            UpdateConnectors();
+        }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
+        public override void HandleTrigger(TriggerInput _Output) { throw new NotImplementedException(); }
+        public override object HandleOutput(DataOutput _Output)
+        {
+            float a = (float)GetInput(DataInputs[0]);
+            float b = (float)GetInput(DataInputs[1]);
+            return a / b;
         }
     }
 
@@ -239,6 +301,14 @@ namespace DesktopCodeBlocks
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
         public override void HandleTrigger(TriggerInput _Output) { throw new NotImplementedException(); }
         public override object HandleOutput(DataOutput _Output) { return val; }
+
+        public override void DrawText(Graphics _Graphics)
+        {
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString(Value.ToString(), new Font("Arial", 15, FontStyle.Bold), Brushes.Black, X, Y, sf);
+        }
     }
 
     public class BlockBoolConstant : BaseBlockData
@@ -265,6 +335,14 @@ namespace DesktopCodeBlocks
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
         public override void HandleTrigger(TriggerInput _Output) { throw new NotImplementedException(); }
         public override object HandleOutput(DataOutput _Output) { return val; }
+
+        public override void DrawText(Graphics _Graphics)
+        {
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString(Value.ToString(), new Font("Arial", 15, FontStyle.Bold), Brushes.Black, X, Y, sf);
+        }
     }
 
     public class BlockBoolInvert : BaseBlockInstruction
@@ -278,9 +356,6 @@ namespace DesktopCodeBlocks
             UpdateConnectors();
             Name = "Invert";
         }
-
-        public override void Load(XElement _Data) { }
-        public override void Save(XElement _Data) { }
 
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { }
         public override void HandleTrigger(TriggerInput _Input) { throw new NotImplementedException(); }
@@ -303,14 +378,11 @@ namespace DesktopCodeBlocks
             Name = "Invert";
         }
 
-        public override void Load(XElement _Data) { }
-        public override void Save(XElement _Data) { }
-
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { }
         public override void HandleTrigger(TriggerInput _Input) { throw new NotImplementedException(); }
         public override object HandleOutput(DataOutput _Output)
         {
-            return ((bool)GetInput(DataInputs[0])==(bool)GetInput(DataInputs[1]));
+            return ((bool)GetInput(DataInputs[0]) == (bool)GetInput(DataInputs[1]));
         }
     }
 
@@ -365,11 +437,107 @@ namespace DesktopCodeBlocks
             IsEvent = true;
         }
 
-        public override void Load(XElement _Data) { }
-        public override void Save(XElement _Data) { }
-
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
         public override void HandleTrigger(TriggerInput _Input) { Trigger(TriggerOutputs[0]); }
         public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+    }
+
+    public class BlockEventDelay : BaseBlockEvent
+    {
+        float val;
+        [Browsable(true), CategoryAttribute("Delay")]
+        public float Value
+        {
+            get { return val; }
+            set { val = value; }
+        }
+
+        public bool Enabled = false;
+        public DateTime invokedate;
+
+        public BlockEventDelay()
+        {
+            width = 100;
+            height = 50;
+            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            TriggerInputs.Add(new TriggerInput(this, "Start"));
+            TriggerInputs.Add(new TriggerInput(this, "Abort"));
+            UpdateConnectors();
+            IsEvent = true;
+        }
+        public override void Save(XElement _Data) { _Data.Value = val.ToString(); }
+        public override void Load(XElement _Data) { val = float.Parse(_Data.Value); }
+
+        public override void Update()
+        {
+            if (Enabled && DateTime.Now > invokedate)
+            {
+                ((DesktopSequence)Sequence).AddEvent(new DesktopSequence.Event(this));
+                Enabled = false;
+            }
+        }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
+        public override void HandleTrigger(TriggerInput _Input)
+        {
+            if (_Input == TriggerInputs[0])
+            {
+                invokedate = DateTime.Now.AddSeconds(val);
+                Enabled = true;
+            }
+            if (_Input == TriggerInputs[1])
+                Enabled = false;
+        }
+        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+
+        public override void DrawText(Graphics _Graphics)
+        {
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Delay " + Value.ToString() + "s", new Font("Arial", 15, FontStyle.Bold), Brushes.Black, X, Y, sf);
+        }
+    }
+
+    public abstract class DesktopCodeBlock : CodeBlock
+    {
+        public virtual void HandleInput(CodeBlock.DataInput _Input, object _Data) { }
+        public abstract object HandleOutput(CodeBlock.DataOutput _Output);
+        public abstract void HandleTrigger(CodeBlock.TriggerInput _Input);
+        public void Trigger(CodeBlock.TriggerOutput _Output)
+        {
+            foreach (CodeBlock.TriggerInput i in _Output.Connected)
+            {
+                ((DesktopCodeBlock)i.Owner).HandleTrigger(i);
+            }
+        }
+
+        public object GetInput(CodeBlock.DataInput _Input)
+        {
+            return ((DesktopCodeBlock)_Input.Connected.Owner).HandleOutput(_Input.Connected);
+        }
+
+        /// <summary>
+        /// gives the codeblock a chance to for example invoke a event himself ( a schedule event ? )
+        /// </summary>
+        public virtual void Update() { }
+
+        public static void AddAllPrototypes(SynergySequence.SequenceManager _Manager)
+        {
+            _Manager.AddPrototype(new SequenceManager.Prototype("Delay", "Generic Events", "im in like with u", typeof(DesktopCodeBlocks.BlockEventDelay)));
+
+            _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Boolean", "im in like with u", typeof(DesktopCodeBlocks.BlockBoolConstant)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Invert", "Boolean", "im in like with u", typeof(DesktopCodeBlocks.BlockBoolInvert)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Equals", "Boolean", "im in like with u", typeof(DesktopCodeBlocks.BlockBoolEquals)));
+
+            _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Math", "i like u", typeof(DesktopCodeBlocks.BlockMathConstant)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Multiply", "Math", "i like u", typeof(DesktopCodeBlocks.BlockMathMultiply)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Divide", "Math", "i like u", typeof(DesktopCodeBlocks.BlockMathMultiply)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Add", "Math", "i like u", typeof(DesktopCodeBlocks.BlockMathMultiply)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Substract", "Math", "i like u", typeof(DesktopCodeBlocks.BlockMathMultiply)));
+
+            _Manager.AddPrototype(new SequenceManager.Prototype("Set debug LED", "mygroup", "i like u", typeof(DesktopCodeBlocks.BlockSetDebugLed1)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Print", "mygroup", "i like u", typeof(DesktopCodeBlocks.BlockMathPrint)));
+        }
     }
 }

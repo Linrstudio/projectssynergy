@@ -112,7 +112,7 @@ namespace SynergySequence
             {
                 B.X -= 15;
                 PointF c = new PointF((A.X + B.X) / 2, (A.Y + B.Y) / 2);
-                g.DrawBezier(new Pen(new SolidBrush(_Color), _Width), A.X, A.Y, A.X, c.Y, B.X, c.Y, B.X, B.Y);
+                g.DrawBezier(new Pen(new SolidBrush(_Color), _Width), A.X, A.Y, c.X, A.Y, c.X, B.Y, B.X, B.Y);
                 g.FillPolygon(new SolidBrush(_Color), new PointF[]{
                     new PointF(B.X+15, B.Y),
                     new PointF(B.X, B.Y+5),
@@ -177,7 +177,6 @@ namespace SynergySequence
 
                     foreach (CodeBlock.DataOutput i in b.DataOutputs)
                     {
-
                         PointF pos = i.GetPosition();
                         if (!dependencies.Contains(i.Owner))
                             e.Graphics.FillRectangle(new SolidBrush(Sequence.Manager.GetDataType(i.datatype).Color), new RectangleF(pos.X - 5, pos.Y, 10, 5));

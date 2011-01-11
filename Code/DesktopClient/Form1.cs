@@ -22,7 +22,7 @@ namespace DesktopClient
         private void Form1_Load(object sender, EventArgs e)
         {
             UpdateIcon();
-            notifyIcon1.ShowBalloonTip(1000, "", "test",ToolTipIcon.Info);
+            notifyIcon1.ShowBalloonTip(1000, "", "test", ToolTipIcon.Info);
         }
 
         float iconpos = 0;
@@ -47,7 +47,12 @@ namespace DesktopClient
 
         private void t_UpdateIcon_Tick(object sender, EventArgs e)
         {
-            UpdateIcon();
+            //UpdateIcon();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
     }
 }

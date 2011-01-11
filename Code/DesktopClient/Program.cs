@@ -21,7 +21,8 @@ namespace DesktopClient
 
     static class Program
     {
-        static Sequence sequence;
+        static DesktopSequence sequence;
+        static NotifyIcon tray;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -36,8 +37,9 @@ namespace DesktopClient
             Reload();
 
             Application.Idle += new EventHandler(Application_Idle);
-            Form window = new Form1();
+            Form1 window = new Form1();
             window.Show();
+            tray = window.notifyIcon1;
             Application.Run(window);
         }
 
@@ -45,7 +47,7 @@ namespace DesktopClient
         {
             XElement project = XElement.Load("project.xml");
             SynergySequence.SequenceManager sequencemanager = new ComputerSequenceManager();
-            
+
             DesktopCodeBlocks.DesktopCodeBlock.AddAllPrototypes(sequencemanager);
             WebInterface.WebInterfaceCodeBlocks.AddAllPrototypes(sequencemanager);
             K8055.K8055CodeBlocks.AddAllPrototypes(sequencemanager);
@@ -53,7 +55,7 @@ namespace DesktopClient
             sequencemanager.AddDataType(new SequenceManager.DataType("int", System.Drawing.Color.Blue));
             sequencemanager.AddDataType(new SequenceManager.DataType("bool", System.Drawing.Color.Green));
 
-            sequence = new Sequence();
+            sequence = new DesktopSequence();
             sequence.Manager = sequencemanager;
             sequence.Load(project.Element("Sequence"));
 
@@ -65,6 +67,14 @@ namespace DesktopClient
 
         static void Application_Idle(object sender, EventArgs e)
         {
+            foreach (CodeBlock c in sequence.CodeBlocks) ((DesktopCodeBlock)c).Update();
+
+            //take one event and execute it
+            if (sequence.EventsPending() > 0)
+            {
+                sequence.InvokeFirstEvent();
+            }
+
             foreach (WebInterface.Scene scene in WebInterface.WebInterface.scenes)
             {
                 foreach (WebInterface.Control c in scene.Controls)
@@ -78,9 +88,13 @@ namespace DesktopClient
                             foreach (CodeBlock b in sequence.CodeBlocks)
                             {
                                 if (b is BlockEventSwitchToggle && ((BlockEventSwitchToggle)b).SwitchName.ToLower() == c.Name.ToLower())
-                                    ((DesktopCodeBlock)b).Trigger(b.TriggerOutputs[0]);
+                                {
+                                    new DesktopSequence.Event((DesktopCodeBlock)b).Invoke();
+                                }
                             }
+                            //FIXME no event found for pressed button
                         }
+                        sw.Loading = false;
                     }
                 }
             }
