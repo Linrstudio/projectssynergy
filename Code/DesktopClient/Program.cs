@@ -29,10 +29,11 @@ namespace DesktopClient
         [STAThread]
         static void Main()
         {
+            Application.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");//IMPORTANT
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            TCPListener listener = new TCPListener("127.0.0.1", 1000);
+            TCPListener listener = new TCPListener(1000);
 
             Reload();
 

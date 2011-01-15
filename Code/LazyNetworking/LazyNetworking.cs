@@ -13,12 +13,10 @@ namespace LazyNetworking
         TcpListener listener = null;
         List<TCPConnection> connections = new List<TCPConnection>();
         public TCPConnection[] Connections { get { lock (connections) { return connections.ToArray(); } } }
-        string IP;
         ushort Port;
         Thread thread;
-        public TCPListener(string _IP, ushort _Port)
+        public TCPListener(ushort _Port)
         {
-            IP = _IP;
             Port = _Port;
             if (!Listeners.Contains(this)) Listeners.Add(this);
 
@@ -37,7 +35,7 @@ namespace LazyNetworking
 
         public void main()
         {
-            listener = new TcpListener(IPAddress.Parse(IP), Port);
+            listener = new TcpListener(IPAddress.Any, Port);
             listener.Start();
             while (true)
             {
@@ -95,7 +93,7 @@ namespace LazyNetworking
                 SendBuffer.Enqueue(_Message);
             }
         }
-#if false
+#if true
         public bool Alive { get { return (Environment.TickCount - alivetimer) < 60000; } }//1 minute
         public bool TimedOut { get { return (Environment.TickCount - timeouttimer) > 600000; } }//1 hour
 #else
@@ -116,7 +114,7 @@ namespace LazyNetworking
             try { thread.Abort(); }
             catch { }
         }
-
+        bool pinged = false;
         void main()
         {
             try
@@ -134,14 +132,18 @@ namespace LazyNetworking
                         }
                         else
                         {
-                            lock (ReceiveBuffer)
+                            if (readbuffer.Length != 0)
                             {
-                                ReceiveBuffer.Enqueue(readbuffer);
+                                lock (ReceiveBuffer)
+                                {
+                                    ReceiveBuffer.Enqueue(readbuffer);
+                                }
+                                Console.WriteLine("< " + readbuffer);
+                                readbuffer = "";
                             }
-                            Console.WriteLine("< " + readbuffer);
-                            readbuffer = "";
                         }
                         timeouttimer = Environment.TickCount;//reset timeout timer
+                        pinged = false;
                     }
                     else if (SendBuffer.Count > 0)
                     {
@@ -157,9 +159,16 @@ namespace LazyNetworking
                     }
                     else Thread.Sleep(10);
 
+                    if (Environment.TickCount - timeouttimer > 1000 && !pinged)
+                    {
+                        socket.GetStream().Write(new byte[] { 0 }, 0, 1);
+                        pinged = true;
+                    }
+
                     alivetimer = Environment.TickCount;
                 }
                 Console.WriteLine("Connection lost");
+                Kill();
             }
             catch (Exception ex) { Console.WriteLine("error in connection"); Console.WriteLine(ex.Message); }
         }

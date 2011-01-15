@@ -13,6 +13,7 @@ namespace MainStationFrontEnd
         [STAThread]
         static void Main()
         {
+            Application.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainWindow());
