@@ -4,10 +4,10 @@
       <Data>lampkamer</Data>
     </Block>
     <Block X="800" Y="146" Type="K8055.BlockDigitalOutputToggleState">
-      <Data>1</Data>
+      <Data>2</Data>
     </Block>
     <Block X="658" Y="241" Type="K8055.BlockDigitalInputGetState">
-      <Data>1</Data>
+      <Data>2</Data>
     </Block>
     <Block X="657" Y="387" Type="WebInterface.BlockSwitchSetState">
       <Data>lampkamer</Data>

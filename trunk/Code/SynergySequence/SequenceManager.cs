@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace SynergySequence
 {
@@ -18,7 +19,10 @@ namespace SynergySequence
 
         public SequenceManager()
         {
-
+            if (Application.CurrentCulture != System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+            {
+                MessageBox.Show("Your system is not running in the \"en-US\" culture!\nloading files from a different culture might not work!");
+            }
         }
 
         public DataType GetDataType(string _DataTypeName)
