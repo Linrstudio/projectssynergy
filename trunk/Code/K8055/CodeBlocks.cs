@@ -11,27 +11,40 @@ using DesktopCodeBlocks;
 
 namespace K8055
 {
-    public class BlockEventSwitchToggle : BaseBlockEvent
+    public class BlockEventInputToggle : BaseBlockEvent
     {
         [Browsable(true)]
-        public string SwitchName
+        public int InputID
         {
-            get { return switchname; }
-            set { switchname = value.ToLower(); }
+            get { return inputid; }
+            set { inputid = Math.Max(1, Math.Min(5, value)); }
         }
-        string switchname = "";
+        int inputid = 1;
 
-        public BlockEventSwitchToggle()
+        bool laststate = false;
+
+        public BlockEventInputToggle()
         {
             width = 100;
             height = 50;
             TriggerOutputs.Add(new TriggerOutput(this, ""));
             UpdateConnectors();
             IsEvent = true;
+            Name = "Input Toggle";
         }
 
-        public override void Load(XElement _Data) { SwitchName = _Data.Value; }
-        public override void Save(XElement _Data) { _Data.Value = SwitchName; }
+        public override void Load(XElement _Data) { inputid = int.Parse(_Data.Value); }
+        public override void Save(XElement _Data) { _Data.Value = inputid.ToString(); }
+
+        public override void Update()
+        {
+            bool curstate = K8055.GetInput(inputid);
+            if (laststate != curstate)
+            {
+                ((DesktopSequence)Sequence).AddEvent(new DesktopSequence.Event(this));
+                laststate = curstate;
+            }
+        }
 
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
         public override void HandleTrigger(TriggerInput _Input) { Trigger(TriggerOutputs[0]); }
