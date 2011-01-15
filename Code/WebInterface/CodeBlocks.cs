@@ -28,6 +28,7 @@ namespace WebInterface
             TriggerOutputs.Add(new TriggerOutput(this, ""));
             UpdateConnectors();
             IsEvent = true;
+            Name = "Switch toggle";
         }
 
         public override void Load(XElement _Data) { SwitchName = _Data.Value; }
