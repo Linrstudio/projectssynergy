@@ -10,7 +10,7 @@ int8 OperationEnabled=255;
 #define LED			PORTBbits.RB4
 #define LED_TRIS 	TRISBbits.TRISB4
 
-#define DEVICEID 6
+#define DEVICEID 7
 
 int8 lastheader=0;
 

@@ -14,46 +14,13 @@ int8 ReportState[8];
 //Init method for the program
 void EPInit()
 {
-#ifdef DEVICE_DIGITALOUT8
-	TRISC=0x00;
-	PrevState[0]=PORTC0;
-	PrevState[1]=PORTC1;
-	PrevState[2]=PORTC2;
-	PrevState[3]=PORTC3;
-	PrevState[4]=PORTC4;
-	PrevState[5]=PORTC5;
-	PrevState[6]=PORTC6;
-	PrevState[7]=PORTC7;
-#endif
-#ifdef DEVICE_RELAY8
-	TRISC=0xFF;
-#endif
+
 }
 
 //main Update method for the program
 void EPUpdate()
 {
-#ifdef DEVICE_DIGITALIN8
-	int8 state[8];
-	state[0]=PORTC0;
-	state[1]=PORTC1;
-	state[2]=PORTC2;
-	state[3]=PORTC3;
-	state[4]=PORTC4;
-	state[5]=PORTC5;
-	state[6]=PORTC6;
-	state[7]=PORTC7;
-	
-	if(state[0]!=PrevState[0])ReportState[0]=1;
 
-	PrevState[1]=state[1];
-	PrevState[2]=state[2];
-	PrevState[3]=state[3];
-	PrevState[4]=state[4];
-	PrevState[5]=state[5];
-	PrevState[6]=state[6];
-	PrevState[7]=state[7];	
-#endif	
 }
 
 //when polled by the main station
@@ -66,10 +33,10 @@ void EPPolled()
 		if(ReportState[i])
 		{
 			
-			PrevState[i]=state[i];
+			//PrevState[i]=state[i];
 		}
 	}
-DONE:
+
 
 #endif
 }

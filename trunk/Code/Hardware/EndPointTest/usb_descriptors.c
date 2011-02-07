@@ -154,10 +154,7 @@ state according to the definition in the USB specification.
 #define __USB_DESCRIPTORS_C
 
 /** INCLUDES *******************************************************/
-#include "GenericTypeDefs.h"
-#include "Compiler.h"
 #include "./USB/usb.h"
-
 #include "./USB/usb_function_hid.h"
 
 /** CONSTANTS ******************************************************/
@@ -176,7 +173,7 @@ ROM USB_DEVICE_DESCRIPTOR device_dsc=
     0x00,                   // Protocol code
     USB_EP0_BUFF_SIZE,          // Max packet size for EP0, see usb_config.h
     0x04D8,                 // Vendor ID
-    0x003F,                 // Product ID: Mouse in a circle fw demo
+    0x003F,                 // Product ID: Custom HID demo
     0x0002,                 // Device release number in BCD format
     0x01,                   // Manufacturer string index
     0x02,                   // Product string index
@@ -233,7 +230,6 @@ ROM BYTE configDescriptor1[]={
     0x01                        //Interval
 };
 
-
 //Language code string descriptor
 ROM struct{BYTE bLength;BYTE bDscType;WORD string[1];}sd000={
 sizeof(sd000),USB_DESCRIPTOR_STRING,{0x0409
@@ -261,8 +257,8 @@ ROM struct{BYTE report[HID_RPT01_SIZE];}hid_rpt01={
     0xA1, 0x01,             // Collection (Application)
     0x19, 0x01,             //      Usage Minimum 
     0x29, 0x40,             //      Usage Maximum 	//64 input usages total (0x01 to 0x40)
-    0x15, 0x00,             //      Logical Minimum (data bytes in the report may have minimum value = 0x00)
-    0x26, 0xFF, 0x00, 	  	//      Logical Maximum (data bytes in the report may have maximum value = 0x00FF = unsigned 255)
+    0x15, 0x01,             //      Logical Minimum (data bytes in the report may have minimum value = 0x00)
+    0x25, 0x40,      	  	//      Logical Maximum (data bytes in the report may have maximum value = 0x00FF = unsigned 255)
     0x75, 0x08,             //      Report Size: 8-bit field size
     0x95, 0x40,             //      Report Count: Make sixty-four 8-bit fields (the next time the parser hits an "Input", "Output", or "Feature" item)
     0x81, 0x00,             //      Input (Data, Array, Abs): Instantiates input packet fields based on the above report size, count, logical min/max, and usage.
