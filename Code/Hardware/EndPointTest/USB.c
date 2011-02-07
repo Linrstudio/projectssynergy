@@ -1,10 +1,6 @@
 
 #include "Default.h"
 
-#include "GenericTypeDefs.h"
-#include "Compiler.h"
-#include "usb_config.h"
-#include "./USB/usb_device.h"
 #include "./USB/usb.h"
 #include "HardwareProfile.h"
 #include "./USB/usb_function_hid.h"
@@ -28,12 +24,12 @@
     #pragma udata
 #endif
 
-unsigned char ReceivedDataBuffer[64];
-unsigned char ToSendDataBuffer[64];
+extern unsigned char ReceivedDataBuffer[64];
+extern unsigned char ToSendDataBuffer[64];
 #pragma udata
 
-USB_HANDLE USBOutHandle = 0;
-USB_HANDLE USBInHandle = 0;
+extern USB_HANDLE USBOutHandle;
+extern USB_HANDLE USBInHandle;
 
 extern int8 OperationEnabled;
 
