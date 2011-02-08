@@ -21,6 +21,7 @@ namespace MainStationFrontEnd
         }
 
         public abstract TreeNode GetTreeNode();
+        public abstract ContextMenu GetContextMenu();
 
         public abstract void Save(XElement _Data);
         public abstract void Load(XElement _Data);

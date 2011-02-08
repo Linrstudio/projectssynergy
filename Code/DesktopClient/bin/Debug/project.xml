@@ -1,48 +1,16 @@
 <project>
   <Sequence>
-    <Block X="467" Y="301" Type="WebInterface.BlockEventSwitchToggle">
+    <Block X="282" Y="240" Type="K8055.BlockEventInputToggle">
+      <Data>1</Data>
+    </Block>
+    <Block X="448" Y="229" Type="WebInterface.BlockSwitchSetState">
       <Data>lampkamer</Data>
     </Block>
-    <Block X="800" Y="146" Type="K8055.BlockDigitalOutputToggleState">
-      <Data>2</Data>
+    <Block X="400" Y="78" Type="K8055.BlockDigitalInputGetState">
+      <Data>1</Data>
     </Block>
-    <Block X="658" Y="241" Type="K8055.BlockDigitalInputGetState">
-      <Data>2</Data>
-    </Block>
-    <Block X="657" Y="387" Type="WebInterface.BlockSwitchSetState">
-      <Data>lampkamer</Data>
-    </Block>
-    <Block X="657" Y="315" Type="DesktopCodeBlocks.BlockBoolInvert">
-      <Data />
-    </Block>
-    <Block X="621" Y="146" Type="DesktopCodeBlocks.BlockEventDelay">
-      <Data>0</Data>
-    </Block>
-    <Block X="445" Y="672" Type="WebInterface.BlockEventSwitchToggle">
-      <Data>wcd1</Data>
-    </Block>
-    <Block X="750" Y="559" Type="WebInterface.BlockSwitchGetState">
-      <Data>wcd1</Data>
-    </Block>
-    <Block X="680" Y="620" Type="DesktopCodeBlocks.BlockBoolInvert">
-      <Data />
-    </Block>
-    <Block X="735" Y="738" Type="K8055.BlockDigitalOutputSetState">
-      <Data>4</Data>
-    </Block>
-    <Block X="662" Y="689" Type="WebInterface.BlockSwitchSetState">
-      <Data>wcd1</Data>
-    </Block>
-    <ConnectTrigger Input="0" InputOwner="3" Output="0" OutputOwner="0" />
-    <ConnectTrigger Input="0" InputOwner="5" Output="0" OutputOwner="0" />
-    <ConnectData Input="0" InputOwner="3" Output="0" OutputOwner="4" />
-    <ConnectData Input="0" InputOwner="4" Output="0" OutputOwner="2" />
-    <ConnectTrigger Input="0" InputOwner="1" Output="0" OutputOwner="5" />
-    <ConnectTrigger Input="0" InputOwner="9" Output="0" OutputOwner="6" />
-    <ConnectTrigger Input="0" InputOwner="10" Output="0" OutputOwner="6" />
-    <ConnectData Input="0" InputOwner="8" Output="0" OutputOwner="7" />
-    <ConnectData Input="0" InputOwner="9" Output="0" OutputOwner="7" />
-    <ConnectData Input="0" InputOwner="10" Output="0" OutputOwner="8" />
+    <ConnectTrigger Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+    <ConnectData Input="0" InputOwner="1" Output="0" OutputOwner="2" />
   </Sequence>
   <WebInterface Port="8080">
     <Scene Name="MyScene">

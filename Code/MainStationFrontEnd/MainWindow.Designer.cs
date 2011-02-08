@@ -47,20 +47,18 @@
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.t_time = new System.Windows.Forms.ToolStripLabel();
             this.i_contents = new System.Windows.Forms.ImageList(this.components);
-            this.c_TreeEvent = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.b_Invoke = new System.Windows.Forms.ToolStripMenuItem();
-            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.t_ConnectionCheck = new System.Windows.Forms.Timer(this.components);
             this.splitter2 = new System.Windows.Forms.Splitter();
             this.t_Log = new System.Windows.Forms.TextBox();
-            this.c_treedevice = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.t_contents = new System.Windows.Forms.TreeView();
+            this.c_Root = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addComputerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addMainStationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
-            this.c_TreeEvent.SuspendLayout();
-            this.c_treedevice.SuspendLayout();
+            this.c_Root.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -209,27 +207,9 @@
             this.i_contents.Images.SetKeyName(4, "EventRemote.png");
             this.i_contents.Images.SetKeyName(5, "EventRemoteSelected.png");
             this.i_contents.Images.SetKeyName(6, "DeviceError.png");
-            // 
-            // c_TreeEvent
-            // 
-            this.c_TreeEvent.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.b_Invoke,
-            this.renameToolStripMenuItem});
-            this.c_TreeEvent.Name = "c_TreeEvent";
-            this.c_TreeEvent.Size = new System.Drawing.Size(118, 48);
-            // 
-            // b_Invoke
-            // 
-            this.b_Invoke.Name = "b_Invoke";
-            this.b_Invoke.Size = new System.Drawing.Size(117, 22);
-            this.b_Invoke.Text = "Invoke";
-            // 
-            // renameToolStripMenuItem
-            // 
-            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
-            this.renameToolStripMenuItem.Text = "Rename";
-            this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
+            this.i_contents.Images.SetKeyName(7, "computer.png");
+            this.i_contents.Images.SetKeyName(8, "computerOnline.png");
+            this.i_contents.Images.SetKeyName(9, "computerOffline.png");
             // 
             // splitter1
             // 
@@ -266,20 +246,6 @@
             this.t_Log.TabIndex = 13;
             this.t_Log.Text = "> Hi there, Im surprised you found this";
             // 
-            // c_treedevice
-            // 
-            this.c_treedevice.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1});
-            this.c_treedevice.Name = "c_TreeEvent";
-            this.c_treedevice.Size = new System.Drawing.Size(118, 26);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(117, 22);
-            this.toolStripMenuItem1.Text = "Remove";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
-            // 
             // t_contents
             // 
             this.t_contents.Dock = System.Windows.Forms.DockStyle.Left;
@@ -295,6 +261,32 @@
             this.t_contents.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.t_contents_MouseDoubleClick);
             this.t_contents.MouseUp += new System.Windows.Forms.MouseEventHandler(this.t_contents_MouseUp);
             this.t_contents.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.t_contents_ItemDrag);
+            // 
+            // c_Root
+            // 
+            this.c_Root.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addComputerToolStripMenuItem,
+            this.addMainStationToolStripMenuItem});
+            this.c_Root.Name = "c_Root";
+            this.c_Root.Size = new System.Drawing.Size(164, 48);
+            // 
+            // addComputerToolStripMenuItem
+            // 
+            this.addComputerToolStripMenuItem.Name = "addComputerToolStripMenuItem";
+            this.addComputerToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.addComputerToolStripMenuItem.Text = "Add Computer";
+            this.addComputerToolStripMenuItem.Click += new System.EventHandler(this.addComputerToolStripMenuItem_Click);
+            // 
+            // addMainStationToolStripMenuItem
+            // 
+            this.addMainStationToolStripMenuItem.Name = "addMainStationToolStripMenuItem";
+            this.addMainStationToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.addMainStationToolStripMenuItem.Text = "Add MainStation";
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // MainWindow
             // 
@@ -312,12 +304,12 @@
             this.Text = "FrontEnd";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this.c_TreeEvent.ResumeLayout(false);
-            this.c_treedevice.ResumeLayout(false);
+            this.c_Root.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -337,8 +329,6 @@
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
         private System.Windows.Forms.ImageList i_contents;
-        private System.Windows.Forms.ContextMenuStrip c_TreeEvent;
-        private System.Windows.Forms.ToolStripMenuItem b_Invoke;
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripProgressBar p_progress;
@@ -346,12 +336,13 @@
         private System.Windows.Forms.Timer t_ConnectionCheck;
         private System.Windows.Forms.ToolStripStatusLabel t_Connected;
         private System.Windows.Forms.ToolStripLabel t_time;
-        private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
         private System.Windows.Forms.Splitter splitter2;
         private System.Windows.Forms.TextBox t_Log;
-        private System.Windows.Forms.ContextMenuStrip c_treedevice;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.TreeView t_contents;
+        private System.Windows.Forms.ContextMenuStrip c_Root;
+        private System.Windows.Forms.ToolStripMenuItem addComputerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addMainStationToolStripMenuItem;
+        private System.Windows.Forms.Timer timer1;
       
 
     }

@@ -12,7 +12,6 @@ namespace MainStationFrontEnd
     public partial class MainWindow : Form
     {
         public static MainWindow mainwindow;
-        TreeNode t_contentsContextMenuNode = null;
 
         public MainWindow()
         {
@@ -25,6 +24,20 @@ namespace MainStationFrontEnd
             UpdateTree();
         }
 
+        public enum Icons
+        {
+            Device,
+            MainStation,
+            EventLocal,
+            EventSelected,
+            EventRemote,
+            EventRemoteSelected,
+            DeviceError,
+            Computer,
+            ComputerOnline,
+            ComputerOffline
+        };
+
         private void Form1_Load(object sender, EventArgs e)
         {
             //EEPROM.OnAssamble += new EEPROM.OnAssambleHandler(EEPROM_OnAssamble);
@@ -36,6 +49,13 @@ namespace MainStationFrontEnd
             AddDevice win = new AddDevice();
             win.ShowDialog();
             UpdateTree();
+        }
+
+        bool TreeDirty=true;
+        //if one wants to update the tree from a different thread
+        public void ScheduleUpdateTree()
+        {
+            TreeDirty = true;
         }
 
         public void UpdateTree()
@@ -71,7 +91,7 @@ namespace MainStationFrontEnd
         {
             Solution.Save("Solution.xml");
             UpdateTree();
-       
+
             ((Computer)Solution.ProgrammableDevices[0]).Compile();
         }
 
@@ -121,16 +141,16 @@ namespace MainStationFrontEnd
             {
                 Point p = e.Location;
                 TreeNode node = t_contents.GetNodeAt(p);
-                if (node != null && node.Tag is MainStation.Device)
+                if (node == null) return;
+                if (node.Tag is ProgrammableDevice)
                 {
-                    t_contentsContextMenuNode = node;
-                    c_treedevice.Show(t_contents, e.X, e.Y);
+                    ((ProgrammableDevice)node.Tag).GetContextMenu().Show(t_contents, new Point(e.X, e.Y));
                 }
-                else if (node != null && node.Tag != null)
+                if (node.Parent == null)//if root
                 {
-                    t_contentsContextMenuNode = node;
-                    c_TreeEvent.Show(t_contents, e.X, e.Y);
+                    c_Root.Show(t_contents, e.X, e.Y);
                 }
+                //add more menu's
             }
         }
 
@@ -241,6 +261,28 @@ namespace MainStationFrontEnd
         {
 
             UpdateTree();
+        }
+
+        private void addComputerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Computer newcomputer = new Computer();
+            new EditComputerDialog(newcomputer).ShowDialog();
+            Solution.AddComputer(newcomputer);
+            UpdateTree();
+        }
+
+        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (TreeDirty)
+            {
+                UpdateTree();
+                TreeDirty = false;
+            }
         }
     }
 }

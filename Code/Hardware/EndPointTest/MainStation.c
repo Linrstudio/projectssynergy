@@ -46,18 +46,18 @@ void MSInit()
 	//startup glow
 	for(dim1=0;dim1<255;dim1++)
 		for(dim2=0;dim2<255;dim2++)
-			LED=dim1<dim2;
+			LED=dim1>dim2;
 	for(dim1=0;dim1<255;dim1++)
 		for(dim2=0;dim2<255;dim2++)
-			LED=dim1>dim2;
+			LED=dim1<dim2;
 	LED=1;
 }
 
 void MSUpdate()
 {
-	int8 i;
-	int8 header;
-	int16  DeviceID;
+	int8  i;
+	int8  header;
+	int16 DeviceID;
 	int8  Length;
 	
 	USBUpdate();

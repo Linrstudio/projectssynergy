@@ -38,7 +38,8 @@ namespace K8055
 
         public override void Update()
         {
-            bool curstate = K8055.GetInput(inputid);
+            K8055.Initialize();//FIXME might not be smart to initialize this often
+            bool curstate = K8055.GetInput(inputid-1);
             if (laststate != curstate)
             {
                 ((DesktopSequence)Sequence).AddEvent(new DesktopSequence.Event(this));
@@ -226,6 +227,7 @@ namespace K8055
             _Manager.AddPrototype(new SequenceManager.Prototype("DigitalOutput get", "K8055", "i like u", typeof(BlockDigitalOutputGetState)));
             _Manager.AddPrototype(new SequenceManager.Prototype("DigitalOutput toggle", "K8055", "i like u", typeof(BlockDigitalOutputToggleState)));
             _Manager.AddPrototype(new SequenceManager.Prototype("DigitalInput get state", "K8055", "i like u", typeof(BlockDigitalInputGetState)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("DigitalInputToggled", "K8055", "i like u", typeof(BlockEventInputToggle)));
         }
     }
 }

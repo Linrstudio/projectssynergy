@@ -10,19 +10,31 @@ namespace WebInterface
 {
     public class WebInterface
     {
-        static ushort Port = 8080;
+        public static List<WebInterface> WebInterfaces = new List<WebInterface>();
 
-        static HttpListener httplistener;
-        static Thread httplistenerthread;
+        public ushort Port = 8080;
 
-        public static List<Scene> scenes = new List<Scene>();
+        HttpListener httplistener;
+        Thread httplistenerthread;
 
-        public static string boreme()
+        public List<Scene> scenes = new List<Scene>();
+
+        public string boreme()
         {
             return Guid.NewGuid().ToString();
         }
 
-        public static Control GetControl(string _Name)
+        public static Control FindControl(string _Name)
+        {
+            foreach (WebInterface i in WebInterfaces)
+            {
+                Control c = i.GetControl(_Name);
+                if (c != null) return c;
+            }
+            return null;
+        }
+
+        public Control GetControl(string _Name)
         {
             foreach (Scene s in scenes)
             {
@@ -34,7 +46,7 @@ namespace WebInterface
             return null;
         }
 
-        public static void Init(XElement _Data)
+        public WebInterface(XElement _Data)
         {
             Stop();
             Port = ushort.Parse(_Data.Attribute("Port").Value);
@@ -53,6 +65,7 @@ namespace WebInterface
             LocalIP = Dns.GetHostByName(LocalIP).AddressList[0].ToString();
             Console.WriteLine("HostIP:" + LocalIP);
             httplistener.Prefixes.Add("http://" + LocalIP + ":" + Port + "/");
+            httplistener.Prefixes.Add("http://localhost:" + Port + "/");
             try
             {
 
@@ -64,7 +77,7 @@ namespace WebInterface
             httplistenerthread.Start();
         }
 
-        public static void Init()
+        public WebInterface()
         {
             Stop();
             if (!HttpListener.IsSupported) Console.WriteLine("HTTPListener class is not supported on your machine.");
@@ -75,6 +88,7 @@ namespace WebInterface
             LocalIP = Dns.GetHostByName(LocalIP).AddressList[0].ToString();
             Console.WriteLine("HostIP:" + LocalIP);
             httplistener.Prefixes.Add("http://" + LocalIP + ":" + Port + "/");
+            httplistener.Prefixes.Add("http://localhost:" + Port + "/");
             try
             {
 
@@ -86,7 +100,7 @@ namespace WebInterface
             httplistenerthread.Start();
         }
 
-        public static void Stop()
+        public void Stop()
         {
             if (httplistener != null)
                 httplistener.Stop();
@@ -99,7 +113,7 @@ namespace WebInterface
             httplistenerthread = null;
         }
 
-        public static void httplistenermain()
+        public void httplistenermain()
         {
             while (true)
             {

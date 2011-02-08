@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{718AE9EA-1C8C-4643-93D9-80680DB5B96E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -50,6 +50,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EditComputerDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditComputerDialog.Designer.cs">
+      <DependentUpon>EditComputerDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainStationCodeBlock.cs" />
     <Compile Include="MainStationCodeBlocks.cs" />
     <Compile Include="ProgrammableDevices\Computer.cs" />
@@ -78,6 +84,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AddDevice.resx">
       <DependentUpon>AddDevice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditComputerDialog.resx">
+      <DependentUpon>EditComputerDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RenameDialog.resx">
       <DependentUpon>RenameDialog.cs</DependentUpon>
