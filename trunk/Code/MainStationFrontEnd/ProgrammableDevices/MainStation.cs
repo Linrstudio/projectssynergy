@@ -44,6 +44,13 @@ namespace MainStationFrontEnd
             return node;
         }
 
+        public override System.Windows.Forms.ContextMenu GetContextMenu()
+        {
+            var menu = new System.Windows.Forms.ContextMenu();
+            menu.MenuItems.Add("Hi There!");
+            return menu;
+        }
+
         public override void Load(System.Xml.Linq.XElement _Data)
         {
             Sequence.Load(_Data.Element("Sequence"));
@@ -296,7 +303,7 @@ namespace MainStationFrontEnd
             public TimeSpan DayTime { get { return daytime; } set { daytime = value; } }
             ushort day;
             [Browsable(true)]
-            public ushort Day{ get { return day; } set { day = value; } }
+            public ushort Day { get { return day; } set { day = value; } }
 
             public override string ToString()
             {

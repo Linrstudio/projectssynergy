@@ -14,6 +14,14 @@ namespace MainStationFrontEnd
         static List<ProgrammableDevice> programmabledevices = new List<ProgrammableDevice>();
         public static ProgrammableDevice[] ProgrammableDevices { get { return programmabledevices.ToArray(); } }
 
+        public static void AddComputer(Computer _Computer)
+        {
+            if (!programmabledevices.Contains(_Computer))
+            {
+                programmabledevices.Add(_Computer);
+            }
+        }
+
         public static void Load(string _File)
         {
             programmabledevices.Clear();

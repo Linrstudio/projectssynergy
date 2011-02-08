@@ -30,6 +30,7 @@ namespace DesktopClient
         static void Main()
         {
             Application.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");//IMPORTANT
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -60,10 +61,36 @@ namespace DesktopClient
             sequence.Manager = sequencemanager;
             sequence.Load(project.Element("Sequence"));
 
-            XElement element = project.Element("WebInterface");
-            if (element != null)
-                WebInterface.WebInterface.Init(element);
-            else WebInterface.WebInterface.Stop();
+            foreach (WebInterface.WebInterface i in WebInterface.WebInterface.WebInterfaces)
+            {
+                i.Stop();
+            }
+            WebInterface.WebInterface.WebInterfaces.Clear();
+            foreach (XElement element in project.Elements("WebInterface"))
+            {
+                WebInterface.WebInterface.WebInterfaces.Add(new WebInterface.WebInterface(element));
+            }
+        }
+
+        static void UpdateControl(WebInterface.Control _Control)
+        {
+            if (_Control is WebInterface.Switch)
+            {
+                WebInterface.Switch sw = (WebInterface.Switch)_Control;
+                while (sw.CommandsPending())
+                {
+                    WebInterface.Switch.Command command = sw.DequeueCommand();
+                    foreach (CodeBlock b in sequence.CodeBlocks)
+                    {
+                        if (b is BlockEventSwitchToggle && ((BlockEventSwitchToggle)b).SwitchName.ToLower() == _Control.Name.ToLower())
+                        {
+                            new DesktopSequence.Event((DesktopCodeBlock)b).Invoke();
+                        }
+                    }
+                    //FIXME no event found for pressed button
+                }
+                sw.Loading = false;
+            }
         }
 
         static void Application_Idle(object sender, EventArgs e)
@@ -75,27 +102,13 @@ namespace DesktopClient
             {
                 sequence.InvokeFirstEvent();
             }
-
-            foreach (WebInterface.Scene scene in WebInterface.WebInterface.scenes)
+            foreach (WebInterface.WebInterface iface in WebInterface.WebInterface.WebInterfaces)
             {
-                foreach (WebInterface.Control c in scene.Controls)
+                foreach (WebInterface.Scene scene in iface.scenes)
                 {
-                    if (c is WebInterface.Switch)
+                    foreach (WebInterface.Control c in scene.Controls)
                     {
-                        WebInterface.Switch sw = (WebInterface.Switch)c;
-                        while (sw.CommandsPending())
-                        {
-                            WebInterface.Switch.Command command = sw.DequeueCommand();
-                            foreach (CodeBlock b in sequence.CodeBlocks)
-                            {
-                                if (b is BlockEventSwitchToggle && ((BlockEventSwitchToggle)b).SwitchName.ToLower() == c.Name.ToLower())
-                                {
-                                    new DesktopSequence.Event((DesktopCodeBlock)b).Invoke();
-                                }
-                            }
-                            //FIXME no event found for pressed button
-                        }
-                        sw.Loading = false;
+                        UpdateControl(c);
                     }
                 }
             }

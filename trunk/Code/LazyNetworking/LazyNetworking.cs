@@ -75,6 +75,20 @@ namespace LazyNetworking
         int timeouttimer = Environment.TickCount;
         Queue<string> ReceiveBuffer = new Queue<string>();
         Queue<string> SendBuffer = new Queue<string>();
+        IPAddress IP;
+        ushort Port;
+
+        public delegate void StateChange(bool _Connected);
+        public event StateChange OnStateChange = null;
+        bool laststateconnected = false;
+        void ChangeState(bool _Connected)
+        {
+            if (laststateconnected != _Connected)
+            {
+                laststateconnected = _Connected;
+                if (OnStateChange != null) OnStateChange(_Connected);
+            }
+        }
 
         public string Read()
         {
@@ -94,7 +108,7 @@ namespace LazyNetworking
             }
         }
 #if true
-        public bool Alive { get { return (Environment.TickCount - alivetimer) < 60000; } }//1 minute
+        public bool Alive { get { return (Environment.TickCount - alivetimer) < 60000 && socket != null && socket.Connected; } }//1 minute
         public bool TimedOut { get { return (Environment.TickCount - timeouttimer) > 600000; } }//1 hour
 #else
         public bool Alive { get { return true; } }//1 minute
@@ -103,6 +117,14 @@ namespace LazyNetworking
         public TCPConnection(TcpClient _Socket)
         {
             socket = _Socket;
+            thread = new Thread(new ThreadStart(main));
+            thread.Start();
+        }
+
+        public TCPConnection(IPAddress _IP, ushort _Port)
+        {
+            IP = _IP;
+            Port = _Port;
             thread = new Thread(new ThreadStart(main));
             thread.Start();
         }
@@ -117,60 +139,79 @@ namespace LazyNetworking
         bool pinged = false;
         void main()
         {
-            try
+            while (true)
             {
-                string readbuffer = "";
-                while (socket.Connected)
+                try
                 {
-                    int available = (int)socket.Available;
-                    if (available > 0)
+                    if (socket == null || !socket.Connected)
                     {
-                        char chr = (char)socket.GetStream().ReadByte();
-                        if ((byte)chr != 0)
+                        try
                         {
-                            readbuffer += chr;
+                            socket = new TcpClient(IP.ToString(), Port);
+                            ChangeState(true);
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            if (readbuffer.Length != 0)
+                            ChangeState(false);
+                            Console.WriteLine("Failed To Connect");
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                    string readbuffer = "";
+                    while (socket.Connected && Alive)
+                    {
+                        int available = (int)socket.Available;
+                        if (available > 0)
+                        {
+                            char chr = (char)socket.GetStream().ReadByte();
+                            if ((byte)chr != 0)
                             {
-                                lock (ReceiveBuffer)
-                                {
-                                    ReceiveBuffer.Enqueue(readbuffer);
-                                }
-                                Console.WriteLine("< " + readbuffer);
-                                readbuffer = "";
+                                readbuffer += chr;
                             }
+                            else
+                            {
+                                if (readbuffer.Length != 0)
+                                {
+                                    lock (ReceiveBuffer)
+                                    {
+                                        ReceiveBuffer.Enqueue(readbuffer);
+                                    }
+                                    Console.WriteLine("< " + readbuffer);
+                                    readbuffer = "";
+                                }
+                            }
+                            timeouttimer = Environment.TickCount;//reset timeout timer
+                            pinged = false;
                         }
-                        timeouttimer = Environment.TickCount;//reset timeout timer
-                        pinged = false;
-                    }
-                    else if (SendBuffer.Count > 0)
-                    {
-                        string buffer;
-                        lock (SendBuffer)
+                        else if (SendBuffer.Count > 0)
                         {
-                            buffer = SendBuffer.Dequeue();
-                            buffer += (char)(byte)0;
+                            string buffer;
+                            lock (SendBuffer)
+                            {
+                                buffer = SendBuffer.Dequeue();
+                                buffer += (char)(byte)0;
+                            }
+                            Console.WriteLine("> " + buffer);
+                            byte[] data = System.Text.Encoding.ASCII.GetBytes(buffer);
+                            socket.GetStream().Write(data, 0, data.Length);
                         }
-                        Console.WriteLine("> " + buffer);
-                        byte[] data = System.Text.Encoding.ASCII.GetBytes(buffer);
-                        socket.GetStream().Write(data, 0, data.Length);
-                    }
-                    else Thread.Sleep(10);
+                        else Thread.Sleep(10);
 
-                    if (Environment.TickCount - timeouttimer > 1000 && !pinged)
-                    {
-                        socket.GetStream().Write(new byte[] { 0 }, 0, 1);
-                        pinged = true;
-                    }
+                        if (Environment.TickCount - timeouttimer > 1000 && !pinged)
+                        {
+                            socket.GetStream().Write(new byte[] { 0 }, 0, 1);
+                            pinged = true;
+                        }
 
-                    alivetimer = Environment.TickCount;
+                        alivetimer = Environment.TickCount;
+                    }
+                    Console.WriteLine("Connection lost");
+                    ChangeState(false);
+                    //Kill();
                 }
-                Console.WriteLine("Connection lost");
-                Kill();
+                catch (Exception ex) { Console.WriteLine("error in connection"); Console.WriteLine(ex.Message); }
+                ChangeState(false);
             }
-            catch (Exception ex) { Console.WriteLine("error in connection"); Console.WriteLine(ex.Message); }
         }
     }
 }

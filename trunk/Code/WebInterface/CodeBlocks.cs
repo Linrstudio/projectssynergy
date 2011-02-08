@@ -66,7 +66,7 @@ namespace WebInterface
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
         public override void HandleTrigger(TriggerInput _Input)
         {
-            Control c = WebInterface.GetControl(switchname);
+            Control c = WebInterface.FindControl(switchname);
             if (c != null && c is Switch)
             {
                 ((Switch)c).State = (bool)GetInput(DataInputs[0]);
@@ -102,7 +102,7 @@ namespace WebInterface
         public override void HandleTrigger(TriggerInput _Input) { throw new NotImplementedException(); }
         public override object HandleOutput(DataOutput _Output)
         {
-            Control c = WebInterface.GetControl(switchname);
+            Control c = WebInterface.FindControl(switchname);
             if (c != null && c is Switch)
                 return ((Switch)c).State;
             return false;

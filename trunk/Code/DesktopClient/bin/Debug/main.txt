@@ -42,7 +42,7 @@
 	
 	function GetImage(id)
 	{
-        $('control_' + id).src = "?res=SwitchLoading.png";
+        //$('control_' + id).src = "?res=SwitchLoading.png";
 		var obj = newAjaxObject();
         obj.onreadystatechange = function()
 		{
@@ -61,11 +61,16 @@
         obj.open('POST', '?command=GetState&scene=__SCENE__&control=' + id + '&boreme=' + Math.random(), true);
         obj.send(null);
     }
+	
+	function GetImages()
+	{
+		__PAGEONLOAD__
+	}
 </script>
 
 </head>
 
-<body width=50% onload="__PAGEONLOAD__" marginwidth="0" marginheight="0 leftmargin="0" topmargin="0" background="__BGSRC__" style="background-repeat: no-repeat; background-size: 100% 100%;">
+<body width=50% onload="GetImages();setInterval('GetImages()',1000);" marginwidth="0" marginheight="0 leftmargin="0" topmargin="0" background="__BGSRC__" style="background-repeat: no-repeat; background-size: 100% 100%;">
 <div style="position: absolute; left: 610px; top: 80px; height: 400px; width: 100px; padding: 1em;">
 __CONTROLS__
 </div>

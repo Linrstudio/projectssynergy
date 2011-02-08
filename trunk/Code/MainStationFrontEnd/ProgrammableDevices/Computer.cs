@@ -40,15 +40,52 @@ namespace MainStationFrontEnd
             Sequence = new Sequence(Manager);
         }
 
+        public void Reconnect()
+        {
+            if (Connection != null) Connection.Kill();
+            Connection = new LazyNetworking.TCPConnection(IPAddress, Port);
+            Connection.OnStateChange += new LazyNetworking.TCPConnection.StateChange(Connection_OnStateChange);
+        }
+
+        void Connection_OnStateChange(bool _Connected)
+        {
+            MainWindow.mainwindow.ScheduleUpdateTree();
+        }
+
         public override TreeNode GetTreeNode()
         {
-            TreeNode node = new TreeNode(Name);
+            int icon = (int)(Connected() ? MainWindow.Icons.ComputerOnline : MainWindow.Icons.ComputerOffline);
+            TreeNode node = new TreeNode(Name, icon, icon);
             node.Tag = this;
             foreach (MainStation m in MainStations)
             {
                 node.Nodes.Add(m.GetTreeNode());
             }
             return node;
+        }
+
+        public bool Connected()
+        {
+            return Connection != null && Connection.Alive;
+        }
+
+        public override ContextMenu GetContextMenu()
+        {
+            ContextMenu menu = new ContextMenu();
+            menu.MenuItems.Add("Edit", new EventHandler(ContextMenuEdit));
+            menu.MenuItems.Add("Add MainStation", new EventHandler(ContextMenuAddMainStation));
+            return menu;
+        }
+
+        public void ContextMenuEdit(object sender, EventArgs e)
+        {
+            new EditComputerDialog(this).ShowDialog();
+            Reconnect();
+        }
+
+        public void ContextMenuAddMainStation(object sender, EventArgs e)
+        {
+            mainstations.Add(new MainStation());
         }
 
         public override void Load(System.Xml.Linq.XElement _Data)
@@ -59,6 +96,7 @@ namespace MainStationFrontEnd
             {
                 IPAddress = IPAddress.Parse(_Data.Attribute("IPAddress").Value);
                 Port = ushort.Parse(_Data.Attribute("Port").Value);
+                Reconnect();
             }
             catch { }
 
@@ -76,6 +114,7 @@ namespace MainStationFrontEnd
             _Data.SetAttributeValue("IPAddress", IPAddress);
             _Data.SetAttributeValue("Port", Port);
             _Data.Add(Sequence.Save());
+
             foreach (MainStation mainstation in mainstations)
             {
                 XElement element = new XElement("MainStation");
