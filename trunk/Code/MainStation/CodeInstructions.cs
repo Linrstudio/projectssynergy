@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MainStationFrontEnd
+namespace MainStation
 {
     public class CodeInstructions
     {
         public static byte[] Load(byte _Reg, ushort _Value)
         {
-            byte[] value = Utilities.FromShort(_Value);
+            byte[] value = Utilities.Utilities.FromShort(_Value);
             return new byte[] { 0x01, _Reg, value[0], value[1] };//4
         }
         public static byte[] Load8(byte _Reg, byte _Value)
         {
-            return new byte[] { 0x02, _Reg, _Value};//4
+            return new byte[] { 0x02, _Reg, _Value };//4
         }
         public static byte[] Equals(byte _RegA, byte _RegB, byte _RegAnswer)
         {
@@ -34,7 +34,7 @@ namespace MainStationFrontEnd
         }
         public static byte[] Xor(byte _RegA, byte _RegB, byte _RegAnswer)
         {
-            return new byte[] { 0x0e, _RegA, _RegB, _RegAnswer };//4
+            return new byte[] { 0x0f, _RegA, _RegB, _RegAnswer };//4
         }
         public static byte[] Add(byte _RegA, byte _RegB, byte _RegAnswer)
         {
@@ -70,6 +70,10 @@ namespace MainStationFrontEnd
         {
             return new byte[] { 0x0a, _Reg };//2
         }
+        public static byte[] If(byte _Reg, byte _Target)
+        {
+            return new byte[] { 0x80, _Reg, _Target };
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -84,7 +88,7 @@ namespace MainStationFrontEnd
 
         public static byte[] EPSend(ushort _DeviceID, byte _EPBufferSize)
         {
-            byte[] value = Utilities.FromShort(_DeviceID);
+            byte[] value = Utilities.Utilities.FromShort(_DeviceID);
             return new byte[] { 0x71, value[0], value[1], _EPBufferSize };
         }
     }

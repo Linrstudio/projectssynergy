@@ -27,7 +27,6 @@ namespace WebInterface
             height = 50;
             TriggerOutputs.Add(new TriggerOutput(this, ""));
             UpdateConnectors();
-            IsEvent = true;
             Name = "Switch toggle";
         }
 
@@ -85,7 +84,7 @@ namespace WebInterface
             set { switchname = value.ToLower(); }
         }
         string switchname = "";
-        
+
         public BlockSwitchGetState()
         {
             width = 100;

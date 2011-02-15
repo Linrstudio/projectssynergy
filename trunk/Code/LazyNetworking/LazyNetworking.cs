@@ -136,7 +136,6 @@ namespace LazyNetworking
             try { thread.Abort(); }
             catch { }
         }
-        bool pinged = false;
         void main()
         {
             while (true)
@@ -152,9 +151,11 @@ namespace LazyNetworking
                         }
                         catch (Exception ex)
                         {
+                            socket = null;
                             ChangeState(false);
                             Console.WriteLine("Failed To Connect");
                             Console.WriteLine(ex.Message);
+                            Thread.Sleep(1000);
                         }
                     }
                     string readbuffer = "";
@@ -179,9 +180,12 @@ namespace LazyNetworking
                                     Console.WriteLine("< " + readbuffer);
                                     readbuffer = "";
                                 }
+                                else 
+                                {
+                                    //receive ping
+                                }
                             }
                             timeouttimer = Environment.TickCount;//reset timeout timer
-                            pinged = false;
                         }
                         else if (SendBuffer.Count > 0)
                         {
@@ -197,19 +201,20 @@ namespace LazyNetworking
                         }
                         else Thread.Sleep(10);
 
-                        if (Environment.TickCount - timeouttimer > 1000 && !pinged)
+                        if (Environment.TickCount - timeouttimer > 10000)
                         {
                             socket.GetStream().Write(new byte[] { 0 }, 0, 1);
-                            pinged = true;
                         }
 
                         alivetimer = Environment.TickCount;
                     }
                     Console.WriteLine("Connection lost");
+                    socket = null;
                     ChangeState(false);
                     //Kill();
                 }
                 catch (Exception ex) { Console.WriteLine("error in connection"); Console.WriteLine(ex.Message); }
+                socket = null;
                 ChangeState(false);
             }
         }

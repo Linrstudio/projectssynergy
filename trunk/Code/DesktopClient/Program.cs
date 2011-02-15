@@ -125,7 +125,10 @@ namespace DesktopClient
                                 System.IO.File.WriteAllText("project.xml", read.Remove(0, 8));//remove the word project
                                 Reload();
                                 break;
-
+                            case "upload"://uploads firmware to mainstation
+                                //int mainstationindex = int.Parse(read.Split[1]);
+                                //FIXME
+                                break;
                         }
                     }
                 }
