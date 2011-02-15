@@ -22,6 +22,15 @@ namespace MainStationFrontEnd
 
     public class Computer : ProgrammableDevice
     {
+        string name;
+        public string Name { get { return name; } set { name = value; } }
+
+        Sequence sequence;
+        public Sequence Sequence { get { return sequence; } set { sequence = value; } }
+
+        SequenceManager manager;
+        public SequenceManager Manager { get { return manager; } set { manager = value; } }
+
         public IPAddress IPAddress;
         public ushort Port;
         LazyNetworking.TCPConnection Connection;
@@ -52,12 +61,12 @@ namespace MainStationFrontEnd
             MainWindow.mainwindow.ScheduleUpdateTree();
         }
 
-        public override TreeNode GetTreeNode()
+        public TreeNode GetTreeNode()
         {
             int icon = (int)(Connected() ? MainWindow.Icons.ComputerOnline : MainWindow.Icons.ComputerOffline);
             TreeNode node = new TreeNode(Name, icon, icon);
             node.Tag = this;
-            foreach (MainStation m in MainStations)
+            foreach (FrontEndMainStation m in MainStations)
             {
                 node.Nodes.Add(m.GetTreeNode());
             }
@@ -69,7 +78,7 @@ namespace MainStationFrontEnd
             return Connection != null && Connection.Alive;
         }
 
-        public override ContextMenu GetContextMenu()
+        public ContextMenu GetContextMenu()
         {
             ContextMenu menu = new ContextMenu();
             menu.MenuItems.Add("Edit", new EventHandler(ContextMenuEdit));
@@ -85,10 +94,10 @@ namespace MainStationFrontEnd
 
         public void ContextMenuAddMainStation(object sender, EventArgs e)
         {
-            mainstations.Add(new MainStation());
+            mainstations.Add(new FrontEndMainStation());
         }
 
-        public override void Load(System.Xml.Linq.XElement _Data)
+        public void Load(System.Xml.Linq.XElement _Data)
         {
             Sequence.Load(_Data.Element("Sequence"));
             Name = _Data.Attribute("Name").Value;
@@ -102,20 +111,20 @@ namespace MainStationFrontEnd
 
             foreach (XElement element in _Data.Elements("MainStation"))
             {
-                MainStation ms = new MainStation();
+                FrontEndMainStation ms = new FrontEndMainStation();
                 ms.Load(element);
                 mainstations.Add(ms);
             }
         }
 
-        public override void Save(System.Xml.Linq.XElement _Data)
+        public void Save(System.Xml.Linq.XElement _Data)
         {
             _Data.SetAttributeValue("Name", Name);
             _Data.SetAttributeValue("IPAddress", IPAddress);
             _Data.SetAttributeValue("Port", Port);
             _Data.Add(Sequence.Save());
 
-            foreach (MainStation mainstation in mainstations)
+            foreach (MainStation.MainStation mainstation in mainstations)
             {
                 XElement element = new XElement("MainStation");
                 mainstation.Save(element);
@@ -124,8 +133,8 @@ namespace MainStationFrontEnd
 
         }
 
-        List<MainStation> mainstations = new List<MainStation>();
-        public MainStation[] MainStations { get { return mainstations.ToArray(); } }
+        List<MainStation.MainStation> mainstations = new List<MainStation.MainStation>();
+        public MainStation.MainStation[] MainStations { get { return mainstations.ToArray(); } }
 
         public void Compile()
         {

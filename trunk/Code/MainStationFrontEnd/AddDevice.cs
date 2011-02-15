@@ -6,13 +6,16 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using MainStation;
 
 namespace MainStationFrontEnd
 {
     public partial class AddDevice : Form
     {
-        public AddDevice()
+        FrontEndMainStation mainstation;
+        public AddDevice(FrontEndMainStation _MainStation)
         {
+            mainstation = _MainStation;
             InitializeComponent();
         }
 
@@ -50,15 +53,14 @@ namespace MainStationFrontEnd
 
         public bool CanAdd()
         {
-            /*
             if (t_Devices.SelectedNode == null) return false;
-            foreach (EEPROM.Device d in EEPROM.Devices.Values)
+            foreach (MainStation.MainStationDevice d in mainstation.Devices)
             {
                 if (d.ID == n_ID.Value) return false;
                 if (d.Name == t_Name.Text) return false;
             }
             if (t_Name.Text != System.Text.RegularExpressions.Regex.Match(t_Name.Text, "[-_a-zA-Z0-9\\s]*").Value) return false;
-            */
+            
             return true;
         }
 
@@ -66,20 +68,19 @@ namespace MainStationFrontEnd
         {
             if (!CanAdd()) return;
 
-            //EEPROM.RegisterDevice(t_Name.Text, (ProductDataBase.Device)(t_Devices.SelectedNode.Tag), (ushort)n_ID.Value);
+            mainstation.RegisterDevice(t_Name.Text, (ProductDataBase.Device)(t_Devices.SelectedNode.Tag), (ushort)n_ID.Value);
             Close();
         }
 
         void InputChanged()
         {
-            /*
             bool found = false;
-            foreach (EEPROM.Device d in EEPROM.Devices.Values)
+            foreach (MainStation.MainStationDevice d in mainstation.Devices)
             {
                 if (d.ID == n_ID.Value) found = true;
             }
             n_ID.BackColor = found ? Color.Red : SystemColors.Window;
-            */
+
             if (t_Name.Text == System.Text.RegularExpressions.Regex.Match(t_Name.Text, "[-_a-zA-Z0-9\\s]*").Value)
                 t_Name.BackColor = SystemColors.Window;
             else t_Name.BackColor = Color.Red;

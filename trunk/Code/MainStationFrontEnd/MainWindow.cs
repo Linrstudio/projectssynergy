@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Utilities;
 
 namespace MainStationFrontEnd
 {
@@ -17,8 +18,8 @@ namespace MainStationFrontEnd
         {
             mainwindow = this;
             InitializeComponent();
-            ProductDataBase.Load("products.xml");
-            MainStation.Connect();
+            MainStation.ProductDataBase.Load("products.xml");
+            MainStation.MainStation.Connect();
             Solution.Load("Solution.xml");
 
             UpdateTree();
@@ -27,7 +28,8 @@ namespace MainStationFrontEnd
         public enum Icons
         {
             Device,
-            MainStation,
+            MainStationOnline,
+            MainStationOffline,
             EventLocal,
             EventSelected,
             EventRemote,
@@ -44,14 +46,7 @@ namespace MainStationFrontEnd
             //new SheduleWindow().ShowDialog();
         }
 
-        private void toolStripButton6_Click(object sender, EventArgs e)
-        {
-            AddDevice win = new AddDevice();
-            win.ShowDialog();
-            UpdateTree();
-        }
-
-        bool TreeDirty=true;
+        bool TreeDirty = true;
         //if one wants to update the tree from a different thread
         public void ScheduleUpdateTree()
         {
@@ -154,53 +149,99 @@ namespace MainStationFrontEnd
             }
         }
 
-        void PollDevice(MainStation.Device _Device)
+        void PollDevice(MainStation.MainStationDevice _Device)
         {
-            bool found = !MainStation.Poll(_Device.ID);
+            bool found = !MainStation.MainStation.Poll(_Device.ID);
             if (_Device.Found != found)
             {
                 _Device.Found = found;
                 UpdateTree();
-                Utilities.Log("Device {0} {1}", _Device.ID, found ? "located" : "is missing");
+                //Utilities.Utilities.Log("Device {0} {1}", _Device.ID, found ? "located" : "is missing");
             }
         }
-
+        int lastpolled = 0;
+        bool connected = false;
+        bool lastconnected = false;
         private void t_ConnectionCheck_Tick(object sender, EventArgs e)
         {
-
-            foreach (ProgrammableDevice d in Solution.ProgrammableDevices)
+            if (MainStation.MainStation.Connected())
             {
-                if (d is MainStation)
+                foreach (ProgrammableDevice pd in Solution.ProgrammableDevices)
                 {
-                    // POLL device
+                    if (pd is MainStation.MainStation)
+                    {
+                        MainStation.MainStation ms = (MainStation.MainStation)pd;
+                        MainStation.MainStationDevice d = ms.Devices[lastpolled % ms.Devices.Length];
+                        PollDevice(d);
+                        lastpolled++;
+                    }
                 }
-
             }
-            /*
+            if (!connected)
+            {
+                MainStation.MainStation.Connect();
+            }
+            connected = MainStation.MainStation.Connected();
             t_Connected.Text = connected ? "Connected" : "Disconnected";
             if (connected && !lastconnected)
             {
-                MainStation.TimeWrite();
+                MainStation.MainStation.TimeWrite();
                 readtime();
+                foreach (ProgrammableDevice pd in Solution.ProgrammableDevices)
+                {
+                    if (pd is MainStation.MainStation)
+                    {
+                        ((MainStation.MainStation)pd).Found = true;
+                        foreach (MainStation.MainStationDevice d in ((MainStation.MainStation)pd).Devices)
+                        {
+                            PollDevice(d);
+                        }
+                    }
+                }
+                UpdateTree();
+            }
+            if (!connected && lastconnected)
+            {
+                foreach (ProgrammableDevice pd in Solution.ProgrammableDevices)
+                {
+                    if (pd is MainStation.MainStation)
+                    {
+                        ((MainStation.MainStation)pd).Found = false;
+                        foreach (MainStation.MainStationDevice d in ((MainStation.MainStation)pd).Devices)
+                        {
+                            d.Found = false;
+                        }
+                    }
+                }
+                UpdateTree();
             }
             lastconnected = connected;
-            */
         }
 
         void readtime()
         {
-            MainStation.Time bla = MainStation.TimeRead();
+            MainStation.MainStation.Time bla = MainStation.MainStation.TimeRead();
             t_time.Text = bla.DayTime.ToString() + "-" + bla.Day.ToString();
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             //if (!MainStation.EEPROMWriteVerify(EEPROM.Assamble())) MessageBox.Show("Verify incorrect");
+            foreach (ProgrammableDevice pd in Solution.ProgrammableDevices)
+            {
+                if (pd is MainStation.MainStation)
+                {
+                    MainStation.MainStation ms = (MainStation.MainStation)pd;
+                    byte[] EEPROM=MainStation.MainStationCompiler.Compile(ms);
+                    MainStation.MainStation.EEPROMWriteVerify(EEPROM);
+                    System.IO.File.WriteAllBytes("c:/newcompiler.bin", EEPROM);
+                }
+            }
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            MainStation.TimeWrite();
+            MainStation.MainStation.TimeWrite();
         }
 
         private void toolStripButton3_Click(object sender, EventArgs e)

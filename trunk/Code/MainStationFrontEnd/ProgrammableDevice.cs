@@ -9,21 +9,16 @@ using SynergySequence;
 
 namespace MainStationFrontEnd
 {
-    public abstract class ProgrammableDevice
+    public interface ProgrammableDevice
     {
-        public string Name;
-        public Sequence Sequence = null;
-        public SequenceManager Manager = null;
+        string Name { get; set; }
+        Sequence Sequence { get; set; }
+        SequenceManager Manager { get; set; }
 
-        public ProgrammableDevice()
-        {
-            Sequence = new Sequence();
-        }
+        TreeNode GetTreeNode();
+        ContextMenu GetContextMenu();
 
-        public abstract TreeNode GetTreeNode();
-        public abstract ContextMenu GetContextMenu();
-
-        public abstract void Save(XElement _Data);
-        public abstract void Load(XElement _Data);
+        void Save(XElement _Data);
+        void Load(XElement _Data);
     }
 }

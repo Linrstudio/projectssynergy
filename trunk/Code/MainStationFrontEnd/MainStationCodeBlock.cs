@@ -1,18 +1,15 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Xml;
+using System.Xml.Linq;
 using SynergySequence;
 
 namespace MainStationCodeBlocks
 {
-    public abstract class MainStationCodeBlock : CodeBlock
-    {
-        public static void AddAllPrototypes(SynergySequence.SequenceManager _Manager)
-        {
-            _Manager.AddPrototype(new SequenceManager.Prototype("Schedule", "Generic Events", "i like u", typeof(BlockEventSchedule)));
-            _Manager.AddPrototype(new SequenceManager.Prototype("Invert", "Bool", "", typeof(BlockBoolInvert)));
-            _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Bool", "", typeof(BlockBoolConstant)));
-        }
-    }
+
 }
