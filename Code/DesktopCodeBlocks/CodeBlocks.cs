@@ -347,6 +347,54 @@ namespace DesktopCodeBlocks
         }
     }
 
+    public class BlockIf : BaseBlockInstruction
+    {
+        public BlockIf()
+        {
+            width = 100;
+            height = 25;
+            DataInputs.Add(new DataInput(this, "Condition", "bool"));
+            TriggerInputs.Add(new TriggerInput(this, ""));
+            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            UpdateConnectors();
+            Name = "If";
+        }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { }
+        public override void HandleTrigger(TriggerInput _Input)
+        {
+            if ((bool)GetInput(DataInputs[0]))
+            {
+                Trigger(TriggerOutputs[0]);
+            }
+        }
+        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+    }
+
+    public class BlockIfNot : BaseBlockInstruction
+    {
+        public BlockIfNot()
+        {
+            width = 100;
+            height = 25;
+            DataInputs.Add(new DataInput(this, "Condition", "bool"));
+            TriggerInputs.Add(new TriggerInput(this, ""));
+            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            UpdateConnectors();
+            Name = "If not";
+        }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { }
+        public override void HandleTrigger(TriggerInput _Input)
+        {
+            if (!(bool)GetInput(DataInputs[0]))
+            {
+                Trigger(TriggerOutputs[0]);
+            }
+        }
+        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+    }
+
     public class BlockInvokeRemote : BaseBlockInstruction
     {
         ushort deviceid;
@@ -526,6 +574,8 @@ namespace DesktopCodeBlocks
             _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Boolean", "im in like with u", typeof(DesktopCodeBlocks.BlockBoolConstant)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Invert", "Boolean", "im in like with u", typeof(DesktopCodeBlocks.BlockBoolInvert)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Equals", "Boolean", "im in like with u", typeof(DesktopCodeBlocks.BlockBoolEquals)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("If", "Boolean", "im in like with u", typeof(DesktopCodeBlocks.BlockIf)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("IfNot", "Boolean", "im in like with u", typeof(DesktopCodeBlocks.BlockIfNot)));
 
             _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Math", "i like u", typeof(DesktopCodeBlocks.BlockMathConstant)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Multiply", "Math", "i like u", typeof(DesktopCodeBlocks.BlockMathMultiply)));
