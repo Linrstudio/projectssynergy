@@ -85,9 +85,6 @@ namespace MainStationFrontEnd
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
             Solution.Save("Solution.xml");
-            UpdateTree();
-
-            ((Computer)Solution.ProgrammableDevices[0]).Compile();
         }
 
         public void ShowDialog(Form _Form)
@@ -164,17 +161,35 @@ namespace MainStationFrontEnd
         bool lastconnected = false;
         private void t_ConnectionCheck_Tick(object sender, EventArgs e)
         {
+            foreach (ProgrammableDevice pd in Solution.ProgrammableDevices)
+            {
+                if (pd is Computer)
+                {
+                    ((Computer)pd).Update();
+                }
+            }
+
             if (MainStation.MainStation.Connected())
             {
+                bool anymainstationfound = false;
                 foreach (ProgrammableDevice pd in Solution.ProgrammableDevices)
                 {
                     if (pd is MainStation.MainStation)
                     {
                         MainStation.MainStation ms = (MainStation.MainStation)pd;
-                        MainStation.MainStationDevice d = ms.Devices[lastpolled % ms.Devices.Length];
-                        PollDevice(d);
-                        lastpolled++;
+                        if (ms.Devices.Length > 0)
+                        {
+                            MainStation.MainStationDevice d = ms.Devices[lastpolled % ms.Devices.Length];
+                            PollDevice(d);
+                            lastpolled++;
+                        }
+                        anymainstationfound = true;
                     }
+                }
+                if (!anymainstationfound)
+                {
+                    Solution.AddMainStation(new FrontEndMainStation());
+                    MainWindow.mainwindow.UpdateTree();
                 }
             }
             if (!connected)
@@ -232,9 +247,19 @@ namespace MainStationFrontEnd
                 if (pd is MainStation.MainStation)
                 {
                     MainStation.MainStation ms = (MainStation.MainStation)pd;
-                    byte[] EEPROM=MainStation.MainStationCompiler.Compile(ms);
+                    byte[] EEPROM = MainStation.MainStationCompiler.Compile(ms);
                     MainStation.MainStation.EEPROMWriteVerify(EEPROM);
                     System.IO.File.WriteAllBytes("c:/newcompiler.bin", EEPROM);
+                    for (int i = 0; i < 100; i++)
+                    {
+                        MainStation.MainStation.InvokeLocalEvent(7, 6, 0);
+                        MainStation.MainStation.InvokeLocalEvent(7, 5, 0);
+                    }
+                }
+                if (pd is Computer)
+                {
+                    ((Computer)pd).Compile();
+                    
                 }
             }
         }
@@ -324,6 +349,11 @@ namespace MainStationFrontEnd
                 UpdateTree();
                 TreeDirty = false;
             }
+        }
+
+        private void addMainStationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Solution.AddMainStation(new FrontEndMainStation());
         }
     }
 }

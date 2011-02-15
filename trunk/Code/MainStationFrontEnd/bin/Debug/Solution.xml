@@ -1,59 +1,81 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Solution>
-  <ProgrammableDevice Type="Computer" Name="Server" IPAddress="192.168.137.45" Port="1000">
+  <ProgrammableDevice Type="Computer" Name="Server" IPAddress="192.168.137.220" Port="1000">
+    <Sequence>
+      <Block X="250" Y="211" Type="DesktopCodeBlocks.BlockEventDelay">
+        <Data>0</Data>
+      </Block>
+    </Sequence>
+    <MainStation>
+      <Sequence>
+        <Block X="293" Y="304" Type="MainStationCodeBlocks.MainStationCodeBlockRemoteEvent">
+          <Data DeviceID="7" EventID="5" />
+        </Block>
+        <Block X="486" Y="288" Type="MainStationCodeBlocks.BlockSetDebugLed">
+          <Data />
+        </Block>
+        <Block X="488" Y="156" Type="MainStationCodeBlocks.BlockBoolConstant">
+          <Data>False</Data>
+        </Block>
+        <Block X="282" Y="423" Type="MainStationCodeBlocks.MainStationCodeBlockRemoteEvent">
+          <Data DeviceID="7" EventID="6" />
+        </Block>
+        <Block X="731" Y="205" Type="MainStationCodeBlocks.BlockBoolConstant">
+          <Data>True</Data>
+        </Block>
+        <Block X="631" Y="446" Type="MainStationCodeBlocks.BlockSetDebugLed">
+          <Data />
+        </Block>
+        <ConnectTrigger Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+        <ConnectData Input="0" InputOwner="1" Output="0" OutputOwner="2" />
+        <ConnectTrigger Input="0" InputOwner="5" Output="0" OutputOwner="3" />
+        <ConnectData Input="0" InputOwner="5" Output="0" OutputOwner="4" />
+      </Sequence>
+    </MainStation>
+  </ProgrammableDevice>
+  <ProgrammableDevice Type="Computer" Name="TV" IPAddress="127.0.0.1" Port="1000">
     <Sequence />
+    <MainStation>
+      <Sequence>
+        <Block X="375" Y="486" Type="MainStationCodeBlocks.MainStationCodeBlockRemoteEvent">
+          <Data DeviceID="0" EventID="0" />
+        </Block>
+        <Block X="751" Y="216" Type="MainStationCodeBlocks.BlockSetDebugLed">
+          <Data />
+        </Block>
+        <Block X="732" Y="113" Type="MainStationCodeBlocks.BlockBoolConstant">
+          <Data>False</Data>
+        </Block>
+        <ConnectTrigger Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+        <ConnectData Input="0" InputOwner="1" Output="0" OutputOwner="2" />
+      </Sequence>
+    </MainStation>
   </ProgrammableDevice>
   <ProgrammableDevice Type="FrontEndMainStation">
     <Sequence>
-      <Block X="420" Y="325" Type="MainStationCodeBlocks.MainStationCodeBlockRemoteEvent">
+      <Block X="391" Y="229" Type="MainStationCodeBlocks.MainStationCodeBlockRemoteEvent">
         <Data DeviceID="7" EventID="5" />
       </Block>
-      <Block X="649" Y="118" Type="MainStationCodeBlocks.BlockBoolConstant">
-        <Data>True</Data>
-      </Block>
-      <Block X="650" Y="324" Type="MainStationCodeBlocks.BlockSetDebugLed">
-        <Data />
-      </Block>
-      <Block X="422" Y="419" Type="MainStationCodeBlocks.MainStationCodeBlockRemoteEvent">
+      <Block X="393" Y="535" Type="MainStationCodeBlocks.MainStationCodeBlockRemoteEvent">
         <Data DeviceID="7" EventID="6" />
       </Block>
-      <Block X="768" Y="418" Type="MainStationCodeBlocks.BlockSetDebugLed">
-        <Data />
+      <Block X="535" Y="407" Type="MainStationCodeBlocks.BlockBoolConstant">
+        <Data>True</Data>
       </Block>
-      <Block X="767" Y="118" Type="MainStationCodeBlocks.BlockBoolConstant">
+      <Block X="551" Y="82" Type="MainStationCodeBlocks.BlockBoolConstant">
         <Data>False</Data>
       </Block>
-      <Block X="872" Y="249" Type="MainStationCodeBlocks.BlockBoolInvert">
+      <Block X="552" Y="229" Type="MainStationCodeBlocks.BlockSetDebugLed">
         <Data />
       </Block>
-      <Block X="697" Y="218" Type="MainStationCodeBlocks.BlockBoolInvert">
+      <Block X="534" Y="537" Type="MainStationCodeBlocks.BlockSetDebugLed">
         <Data />
       </Block>
-      <Block X="399" Y="621" Type="MainStationCodeBlocks.MainStationCodeBlockRemoteEvent">
-        <Data DeviceID="7" EventID="4" />
-      </Block>
-      <Block X="590" Y="625" Type="MainStationCodeBlocks.BlockSetDebugLed">
-        <Data />
-      </Block>
-      <Block X="576" Y="481" Type="MainStationCodeBlocks.BlockBoolConstant">
-        <Data>False</Data>
-      </Block>
-      <ConnectTrigger Input="0" InputOwner="2" Output="0" OutputOwner="0" />
-      <ConnectData Input="0" InputOwner="2" Output="0" OutputOwner="7" />
-      <ConnectTrigger Input="0" InputOwner="4" Output="0" OutputOwner="3" />
-      <ConnectData Input="0" InputOwner="4" Output="0" OutputOwner="6" />
-      <ConnectData Input="0" InputOwner="6" Output="0" OutputOwner="5" />
-      <ConnectData Input="0" InputOwner="7" Output="0" OutputOwner="1" />
-      <ConnectTrigger Input="0" InputOwner="9" Output="0" OutputOwner="8" />
-      <ConnectData Input="0" InputOwner="9" Output="0" OutputOwner="10" />
+      <ConnectTrigger Input="0" InputOwner="4" Output="0" OutputOwner="0" />
+      <ConnectTrigger Input="0" InputOwner="5" Output="0" OutputOwner="1" />
+      <ConnectData Input="0" InputOwner="4" Output="0" OutputOwner="3" />
+      <ConnectData Input="0" InputOwner="5" Output="0" OutputOwner="2" />
     </Sequence>
-    <Device Name="Input" ID="7" Device="1" />
-  </ProgrammableDevice>
-  <ProgrammableDevice Type="Computer" Name="TV" IPAddress="127.0.0.1" Port="1000">
-    <Sequence>
-      <Block X="773" Y="283" Type="DesktopCodeBlocks.BlockBoolConstant">
-        <Data>False</Data>
-      </Block>
-    </Sequence>
+    <Device Name="Input Card" ID="7" Device="1" />
   </ProgrammableDevice>
 </Solution>

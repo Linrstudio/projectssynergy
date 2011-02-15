@@ -128,7 +128,7 @@ namespace MainStationCodeBlocks
             DataInputs.Add(new DataInput(this, "", "bool"));
             DataOutputs.Add(new DataOutput(this, "", "bool"));
             UpdateConnectors();
-            Name = "Invert";
+            Name = "If";
         }
     }
 
@@ -173,6 +173,8 @@ namespace MainStationCodeBlocks
             DataInputs.Add(new DataInput(this, "State", "bool"));
             TriggerInputs.Add(new TriggerInput(this, ""));
             UpdateConnectors();
+
+            Name = "Set Debug LED";
         }
 
         public override byte[] Compile(TriggerInput _Input)
@@ -265,7 +267,6 @@ namespace MainStationCodeBlocks
                 stream.Write(blob, 0, blob.Length);
             }
             return stream.ToArray();
-            //we dont need to add a zero instruction here, the compiler will add one for us
         }
 
         public override void Load(XElement _Data) { deviceid = ushort.Parse(_Data.Attribute("DeviceID").Value); eventid = byte.Parse(_Data.Attribute("EventID").Value); }
@@ -282,7 +283,7 @@ namespace MainStationCodeBlocks
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Debug Led 1", new Font("Arial", 10), Brushes.Black, X, Y, sf);
+            _Graphics.DrawString("Device " + DeviceID + " Event " + EventID, new Font("Arial", 10), Brushes.Black, X, Y, sf);
         }
     }
 

@@ -250,7 +250,7 @@
             this.addComputerToolStripMenuItem,
             this.addMainStationToolStripMenuItem});
             this.c_Root.Name = "c_Root";
-            this.c_Root.Size = new System.Drawing.Size(164, 48);
+            this.c_Root.Size = new System.Drawing.Size(164, 70);
             // 
             // addComputerToolStripMenuItem
             // 
@@ -264,6 +264,7 @@
             this.addMainStationToolStripMenuItem.Name = "addMainStationToolStripMenuItem";
             this.addMainStationToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.addMainStationToolStripMenuItem.Text = "Add MainStation";
+            this.addMainStationToolStripMenuItem.Click += new System.EventHandler(this.addMainStationToolStripMenuItem_Click);
             // 
             // timer1
             // 

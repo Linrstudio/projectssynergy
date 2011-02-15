@@ -59,6 +59,7 @@ namespace MainStationFrontEnd
         public System.Windows.Forms.ContextMenu GetContextMenu()
         {
             var menu = new System.Windows.Forms.ContextMenu();
+            menu.MenuItems.Add("Remove", new EventHandler(ContextMenuRemove));
             menu.MenuItems.Add("Register Device", new EventHandler(ContextMenuAddDevice));
             return menu;
         }
@@ -67,6 +68,11 @@ namespace MainStationFrontEnd
         {
             new AddDevice(this).ShowDialog();
             MainWindow.mainwindow.UpdateTree();
+        }
+
+        void ContextMenuRemove(object sender, EventArgs e)
+        {
+            Solution.RemoveSystem(this);
         }
     }
 }

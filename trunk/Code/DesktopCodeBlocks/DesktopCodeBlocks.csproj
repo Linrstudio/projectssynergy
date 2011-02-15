@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{88F52436-24FE-48C4-8E14-2F8E8E8B5476}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -51,6 +51,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MainStation\MainStation.csproj">
+      <Project>{1559E9F3-8F17-4AF8-AF6A-D2202537A35C}</Project>
+      <Name>MainStation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SynergySequence\SynergySequence.csproj">
       <Project>{80813922-BFA7-41DC-9DC0-2E86A0AB59F9}</Project>
       <Name>SynergySequence</Name>

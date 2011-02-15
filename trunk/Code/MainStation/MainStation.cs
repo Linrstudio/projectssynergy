@@ -240,8 +240,10 @@ namespace MainStation
             buffer[2] = shrt[1];
             buffer[3] = _Event;
             Write(buffer);
-            System.Threading.Thread.Sleep(1000);
+#if false
+            System.Threading.Thread.Sleep(10);
             byte[] result = Read();//wait for answer
+#endif
         }
 
         public static void InvokeRemoteEvent(ushort _DeviceID, byte _Event, ushort _Arguments)
@@ -387,6 +389,19 @@ namespace MainStation
             }
         }
 
+        public static void KismetInvoke(ushort _DeviceID,byte _Event)
+        {
+            byte[] devid = Utilities.Utilities.FromShort(_DeviceID);
+            byte[] buffer = new byte[65];
+            buffer[0] = 0x10;
+            buffer[1] = devid[0];
+            buffer[2] = devid[1];
+            buffer[3] = _Event;
+            Write(buffer);
+            System.Threading.Thread.Sleep(10);
+            buffer = Read();
+        }
+        
         public static Time TimeRead()
         {
             byte[] buffer = new byte[65];
