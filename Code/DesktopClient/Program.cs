@@ -21,6 +21,7 @@ namespace DesktopClient
 
     static class Program
     {
+        static MainStation.MainStation mainstation = null;
         static DesktopSequence sequence;
         static NotifyIcon tray;
         /// <summary>
@@ -61,10 +62,18 @@ namespace DesktopClient
             sequence.Manager = sequencemanager;
             sequence.Load(project.Element("Sequence"));
 
+            if (project.Element("MainStation") != null)
+            {
+                mainstation = new MainStation.MainStation();
+                mainstation.Load(project.Element("MainStation"));
+                tray.ShowBalloonTip(1000, "", "MainStation Found", ToolTipIcon.None);
+            }
+
             foreach (WebInterface.WebInterface i in WebInterface.WebInterface.WebInterfaces)
             {
                 i.Stop();
             }
+
             WebInterface.WebInterface.WebInterfaces.Clear();
             foreach (XElement element in project.Elements("WebInterface"))
             {
@@ -112,6 +121,27 @@ namespace DesktopClient
                     }
                 }
             }
+            //do mainstation stuff
+            if (mainstation != null)
+            {
+                bool found = MainStation.MainStation.Connected();
+                if (found != mainstation.Found)
+                {
+                    mainstation.Found = found;
+                    foreach (TCPListener listener in TCPListener.Listeners)
+                    {
+                        foreach (TCPConnection c in listener.Connections)
+                        {
+                            if (mainstation.Found)
+                                c.Write("mainstation found");
+                            else
+                                c.Write("mainstation notfound");
+                        }
+                    }
+                }
+            }
+
+            //do network stuff
             foreach (TCPListener listener in TCPListener.Listeners)
             {
                 foreach (TCPConnection c in listener.Connections)
