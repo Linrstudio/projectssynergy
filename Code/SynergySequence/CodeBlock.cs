@@ -44,13 +44,11 @@ namespace SynergySequence
         [Browsable(false)]
         public float Height { get { return height; } }
 
-        public bool IsEvent = false;
-
         public string Name;
 
         //for save and load purposes
-        public virtual void Save(XElement _Data){}
-        public virtual void Load(XElement _Data){}
+        public virtual void Save(XElement _Data) { }
+        public virtual void Load(XElement _Data) { }
 
         public virtual bool Intersect(Point _Point)
         {

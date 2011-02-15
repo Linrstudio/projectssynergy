@@ -29,7 +29,6 @@ namespace K8055
             height = 50;
             TriggerOutputs.Add(new TriggerOutput(this, ""));
             UpdateConnectors();
-            IsEvent = true;
             Name = "Input Toggle";
         }
 
@@ -39,7 +38,7 @@ namespace K8055
         public override void Update()
         {
             K8055.Initialize();//FIXME might not be smart to initialize this often
-            bool curstate = K8055.GetInput(inputid-1);
+            bool curstate = K8055.GetInput(inputid - 1);
             if (laststate != curstate)
             {
                 ((DesktopSequence)Sequence).AddEvent(new DesktopSequence.Event(this));

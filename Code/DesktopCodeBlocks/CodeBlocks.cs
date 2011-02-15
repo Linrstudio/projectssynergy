@@ -434,7 +434,6 @@ namespace DesktopCodeBlocks
             height = 50;
             TriggerOutputs.Add(new TriggerOutput(this, ""));
             UpdateConnectors();
-            IsEvent = true;
         }
 
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
@@ -463,7 +462,6 @@ namespace DesktopCodeBlocks
             TriggerInputs.Add(new TriggerInput(this, "Start"));
             TriggerInputs.Add(new TriggerInput(this, "Abort"));
             UpdateConnectors();
-            IsEvent = true;
         }
         public override void Save(XElement _Data) { _Data.Value = val.ToString(); }
         public override void Load(XElement _Data) { val = float.Parse(_Data.Value); }
