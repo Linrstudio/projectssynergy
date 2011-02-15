@@ -49,6 +49,38 @@ namespace MainStationFrontEnd
             Sequence = new Sequence(Manager);
         }
 
+        public void Update()
+        {
+            string read = Connection.Read();
+            if (read != null)
+            {
+                try
+                {
+                    string[] split = read.Split(' ');
+                    if (split[0] == "mainstation")
+                    {
+                        if (split[1] == "found")
+                        {
+                            foreach (FrontEndMainStation m in mainstations)
+                            {
+                                m.Found = true;
+                            }
+                            MainWindow.mainwindow.UpdateTree();
+                        }
+                        if (split[1] == "notfound")
+                        {
+                            foreach (FrontEndMainStation m in mainstations)
+                            {
+                                m.Found = false;
+                            }
+                            MainWindow.mainwindow.UpdateTree();
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
+
         public void Reconnect()
         {
             if (Connection != null) Connection.Kill();
@@ -95,6 +127,7 @@ namespace MainStationFrontEnd
         public void ContextMenuAddMainStation(object sender, EventArgs e)
         {
             mainstations.Add(new FrontEndMainStation());
+            MainWindow.mainwindow.UpdateTree();
         }
 
         public void Load(System.Xml.Linq.XElement _Data)
@@ -140,6 +173,13 @@ namespace MainStationFrontEnd
         {
             XElement file = new XElement("project");
             file.Add(Sequence.Save());
+
+            foreach (FrontEndMainStation ms in mainstations)
+            {
+                XElement mainstation = new XElement("MainStation");
+                ms.Save(mainstation);
+                file.Add(mainstation);
+            }
 
             XElement webinterface = new XElement("WebInterface");
             webinterface.SetAttributeValue("Port", "8080");

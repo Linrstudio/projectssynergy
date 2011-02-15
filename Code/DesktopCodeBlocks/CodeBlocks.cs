@@ -7,6 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Xml;
 using System.Xml.Linq;
 using SynergySequence;
+using MainStation;
 
 namespace DesktopCodeBlocks
 {
@@ -88,46 +89,6 @@ namespace DesktopCodeBlocks
             height = 25;
             TriggerInputs.Add(new TriggerInput(this, "Invoke"));
             DataInputs.Add(new DataInput(this, "Value", "int"));
-            UpdateConnectors();
-        }
-
-        public override void Draw(Graphics _Graphics)
-        {
-            base.Draw(_Graphics);
-            DrawShape(_Graphics,
-                new PointF(-width / 2, -height / 2),
-                new PointF(-width / 2, height / 2),
-                new PointF(width / 2, height / 2),
-                new PointF(width / 2, -height / 2));
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center;
-            sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Debug Led 1", new Font("Arial", 10), Brushes.Black, X, Y, sf);
-        }
-
-        public override void DrawShadow(Graphics _Graphics)
-        {
-            DrawShapeShadow(_Graphics,
-                new PointF(-width / 2, -height / 2),
-                new PointF(-width / 2, height / 2),
-                new PointF(width / 2, height / 2),
-                new PointF(width / 2, -height / 2));
-            base.DrawShadow(_Graphics);
-        }
-
-        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
-        public override void HandleTrigger(TriggerInput _Output) { System.Diagnostics.Debug.WriteLine(GetInput(DataInputs[0])); }
-        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
-    }
-
-    public class BlockSetDebugLed1 : BaseBlockOther
-    {
-        public BlockSetDebugLed1()
-        {
-            width = 100;
-            height = 25;
-            TriggerInputs.Add(new TriggerInput(this, "Invoke"));
-            DataInputs.Add(new DataInput(this, "On?", "bool"));
             UpdateConnectors();
         }
 
@@ -386,6 +347,44 @@ namespace DesktopCodeBlocks
         }
     }
 
+    public class BlockInvokeRemote : BaseBlockInstruction
+    {
+        ushort deviceid;
+        [Browsable(true)]
+        public ushort DeviceID
+        {
+            get { return deviceid; }
+            set { deviceid = value; }
+        }
+
+        byte eventid;
+        [Browsable(true)]
+        public byte EventID
+        {
+            get { return eventid; }
+            set { eventid = value; }
+        }
+
+        public BlockInvokeRemote()
+        {
+            width = 100;
+            height = 25;
+            TriggerInputs.Add(new TriggerInput(this, ""));
+            UpdateConnectors();
+            Name = "Invoke Remote Event";
+        }
+
+        public override void Load(XElement _Data) { deviceid = ushort.Parse(_Data.Attribute("DeviceID").Value); eventid = byte.Parse(_Data.Attribute("EventID").Value); }
+        public override void Save(XElement _Data) { _Data.SetAttributeValue("DeviceID", deviceid); _Data.SetAttributeValue("EventID", eventid); }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { }
+        public override void HandleTrigger(TriggerInput _Input)
+        {
+            MainStation.MainStation.InvokeLocalEvent(deviceid, eventid, 0);
+        }
+        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+    }
+
     public class BlockMathVariable : BaseBlockData
     {
         static Dictionary<string, float> variables = new Dictionary<string, float>();
@@ -522,7 +521,7 @@ namespace DesktopCodeBlocks
 
         public static void AddAllPrototypes(SynergySequence.SequenceManager _Manager)
         {
-            _Manager.AddPrototype(new SequenceManager.Prototype("Delay", "Generic Events", "im in like with u", typeof(DesktopCodeBlocks.BlockEventDelay)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Delay", "Generic", "im in like with u", typeof(DesktopCodeBlocks.BlockEventDelay)));
 
             _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Boolean", "im in like with u", typeof(DesktopCodeBlocks.BlockBoolConstant)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Invert", "Boolean", "im in like with u", typeof(DesktopCodeBlocks.BlockBoolInvert)));
@@ -534,8 +533,9 @@ namespace DesktopCodeBlocks
             _Manager.AddPrototype(new SequenceManager.Prototype("Add", "Math", "i like u", typeof(DesktopCodeBlocks.BlockMathMultiply)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Substract", "Math", "i like u", typeof(DesktopCodeBlocks.BlockMathMultiply)));
 
-            _Manager.AddPrototype(new SequenceManager.Prototype("Set debug LED", "mygroup", "i like u", typeof(DesktopCodeBlocks.BlockSetDebugLed1)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Print", "mygroup", "i like u", typeof(DesktopCodeBlocks.BlockMathPrint)));
+
+            _Manager.AddPrototype(new SequenceManager.Prototype("Invoke Remote", "Generic", "i like u", typeof(DesktopCodeBlocks.BlockInvokeRemote)));
         }
     }
 }

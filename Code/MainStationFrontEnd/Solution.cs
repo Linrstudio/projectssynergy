@@ -17,8 +17,21 @@ namespace MainStationFrontEnd
         public static void AddComputer(Computer _Computer)
         {
             if (!programmabledevices.Contains(_Computer))
-            {
                 programmabledevices.Add(_Computer);
+        }
+
+        public static void AddMainStation(FrontEndMainStation _FrontEndMainStation)
+        {
+            if (!programmabledevices.Contains(_FrontEndMainStation))
+                programmabledevices.Add(_FrontEndMainStation);
+        }
+
+        public static void RemoveSystem(ProgrammableDevice _Device)
+        {
+            if (programmabledevices.Contains(_Device))
+            {
+                programmabledevices.Remove(_Device);
+                MainWindow.mainwindow.UpdateTree();
             }
         }
 
