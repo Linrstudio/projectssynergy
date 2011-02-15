@@ -39,8 +39,6 @@
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
@@ -102,8 +100,6 @@
             this.toolStripButton4,
             this.toolStripButton5,
             this.toolStripSeparator2,
-            this.toolStripButton6,
-            this.toolStripSeparator1,
             this.toolStripButton1,
             this.toolStripSeparator3,
             this.toolStripButton2,
@@ -139,21 +135,6 @@
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripButton6
-            // 
-            this.toolStripButton6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton6.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton6.Image")));
-            this.toolStripButton6.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton6.Name = "toolStripButton6";
-            this.toolStripButton6.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton6.Text = "Register Device";
-            this.toolStripButton6.Click += new System.EventHandler(this.toolStripButton6_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripButton1
             // 
@@ -201,15 +182,16 @@
             this.i_contents.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("i_contents.ImageStream")));
             this.i_contents.TransparentColor = System.Drawing.Color.Transparent;
             this.i_contents.Images.SetKeyName(0, "Device.png");
-            this.i_contents.Images.SetKeyName(1, "mainstation.png");
-            this.i_contents.Images.SetKeyName(2, "EventLocal.png");
-            this.i_contents.Images.SetKeyName(3, "EventLocalSelected.png");
-            this.i_contents.Images.SetKeyName(4, "EventRemote.png");
-            this.i_contents.Images.SetKeyName(5, "EventRemoteSelected.png");
-            this.i_contents.Images.SetKeyName(6, "DeviceError.png");
-            this.i_contents.Images.SetKeyName(7, "computer.png");
-            this.i_contents.Images.SetKeyName(8, "computerOnline.png");
-            this.i_contents.Images.SetKeyName(9, "computerOffline.png");
+            this.i_contents.Images.SetKeyName(1, "mainstationOnline.png");
+            this.i_contents.Images.SetKeyName(2, "mainstationOffline.png");
+            this.i_contents.Images.SetKeyName(3, "EventLocal.png");
+            this.i_contents.Images.SetKeyName(4, "EventLocalSelected.png");
+            this.i_contents.Images.SetKeyName(5, "EventRemote.png");
+            this.i_contents.Images.SetKeyName(6, "EventRemoteSelected.png");
+            this.i_contents.Images.SetKeyName(7, "DeviceError.png");
+            this.i_contents.Images.SetKeyName(8, "computer.png");
+            this.i_contents.Images.SetKeyName(9, "computerOnline.png");
+            this.i_contents.Images.SetKeyName(10, "computerOffline.png");
             // 
             // splitter1
             // 
@@ -322,8 +304,6 @@
         private System.Windows.Forms.ToolStripButton toolStripButton4;
         private System.Windows.Forms.ToolStripButton toolStripButton5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripButton toolStripButton6;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton toolStripButton2;

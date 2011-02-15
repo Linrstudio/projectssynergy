@@ -32,7 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HID class, Version=1.0.3376.23070, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -79,7 +78,6 @@
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="ProgrammableDevices\MainStation.cs" />
-    <Compile Include="ProductDataBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AddDevice.resx">
@@ -114,8 +112,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Solution.cs" />
-    <Compile Include="Utilities.cs" />
-    <Compile Include="VPL\CodeInstructions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DesktopCodeBlocks\DesktopCodeBlocks.csproj">
@@ -130,9 +126,17 @@
       <Project>{21DED97D-08C2-402B-A143-8913F285F01F}</Project>
       <Name>LazyNetworking</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MainStation\MainStation.csproj">
+      <Project>{1559E9F3-8F17-4AF8-AF6A-D2202537A35C}</Project>
+      <Name>MainStation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SynergySequence\SynergySequence.csproj">
       <Project>{80813922-BFA7-41DC-9DC0-2E86A0AB59F9}</Project>
       <Name>SynergySequence</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utilities\Utilities.csproj">
+      <Project>{734BFF20-584F-49A5-BCCB-0788F126896F}</Project>
+      <Name>Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\WebInterface\WebInterface.csproj">
       <Project>{2813D323-8B45-4AF3-8FC8-FBB5F0467748}</Project>
