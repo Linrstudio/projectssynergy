@@ -35,14 +35,13 @@ namespace DesktopClient
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            TCPListener listener = new TCPListener(1000);
-
-            Reload();
-
             Application.Idle += new EventHandler(Application_Idle);
             Form1 window = new Form1();
             window.Show();
             tray = window.notifyIcon1;
+
+            TCPListener listener = new TCPListener(1000);
+            Reload();
             Application.Run(window);
         }
 
