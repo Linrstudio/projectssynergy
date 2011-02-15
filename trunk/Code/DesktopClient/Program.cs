@@ -66,7 +66,10 @@ namespace DesktopClient
             {
                 mainstation = new MainStation.MainStation();
                 mainstation.Load(project.Element("MainStation"));
-                tray.ShowBalloonTip(1000, "", "MainStation Found", ToolTipIcon.None);
+                MainStation.MainStation.Connect();
+                byte[] data = MainStation.MainStationCompiler.Compile(mainstation);
+                tray.ShowBalloonTip(1000, "", "Writing to mainstation...", ToolTipIcon.None);
+                MainStation.MainStation.EEPROMWriteVerify(data);
             }
 
             foreach (WebInterface.WebInterface i in WebInterface.WebInterface.WebInterfaces)
