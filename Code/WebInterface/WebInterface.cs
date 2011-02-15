@@ -102,8 +102,12 @@ namespace WebInterface
 
         public void Stop()
         {
-            if (httplistener != null)
-                httplistener.Stop();
+            try
+            {
+                if (httplistener != null && httplistener.IsListening)
+                    httplistener.Stop();
+            }
+            catch { }
 
             if (httplistenerthread != null)
                 httplistenerthread.Abort();

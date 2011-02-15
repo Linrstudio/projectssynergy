@@ -125,6 +125,7 @@ namespace DesktopClient
             if (mainstation != null)
             {
                 bool found = MainStation.MainStation.Connected();
+                if (!found) MainStation.MainStation.Connect();
                 if (found != mainstation.Found)
                 {
                     mainstation.Found = found;
