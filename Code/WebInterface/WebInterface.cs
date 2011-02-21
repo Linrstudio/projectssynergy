@@ -5,6 +5,7 @@ using System.Text;
 using System.Net;
 using System.Threading;
 using System.Xml.Linq;
+using System.Windows.Forms;
 
 namespace WebInterface
 {
@@ -123,6 +124,8 @@ namespace WebInterface
             {
                 try
                 {
+                    Application.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");//IMPORTANT
+
                     HttpListenerContext context = httplistener.GetContext();
                     //check username/password
                     /*
