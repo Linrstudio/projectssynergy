@@ -18,11 +18,8 @@ namespace SynergySequence
             InitializeComponent();
         }
 
-        SequenceEditWindow window;
         private void EventEditor_Load(object sender, EventArgs e)
         {
-            window = new SequenceEditWindow();
-            p_workspace.Controls.Add(window);
             if (Sequence != null) window.Sequence = Sequence;
             window.OnBlockSelect += new SequenceEditWindow.OnBlockSelectHandler(window_OnBlockSelect);
             

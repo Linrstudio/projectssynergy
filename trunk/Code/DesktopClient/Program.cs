@@ -79,7 +79,9 @@ namespace DesktopClient
             WebInterface.WebInterface.WebInterfaces.Clear();
             foreach (XElement element in project.Elements("WebInterface"))
             {
-                WebInterface.WebInterface.WebInterfaces.Add(new WebInterface.WebInterface(element));
+                WebInterface.WebInterface wi = new WebInterface.WebInterface(element);
+                wi.Start();
+                WebInterface.WebInterface.WebInterfaces.Add(wi);
             }
         }
 

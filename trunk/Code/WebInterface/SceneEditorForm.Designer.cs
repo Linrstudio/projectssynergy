@@ -42,7 +42,7 @@
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.Location = new System.Drawing.Point(0, 0);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(188, 317);
+            this.listView1.Size = new System.Drawing.Size(188, 331);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             // 
@@ -52,15 +52,15 @@
             this.panel1.Controls.Add(this.splitter1);
             this.panel1.Controls.Add(this.propertyGrid1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(570, 0);
+            this.panel1.Location = new System.Drawing.Point(554, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(188, 496);
+            this.panel1.Size = new System.Drawing.Size(188, 510);
             this.panel1.TabIndex = 1;
             // 
             // splitter1
             // 
             this.splitter1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.splitter1.Location = new System.Drawing.Point(0, 317);
+            this.splitter1.Location = new System.Drawing.Point(0, 331);
             this.splitter1.Name = "splitter1";
             this.splitter1.Size = new System.Drawing.Size(188, 3);
             this.splitter1.TabIndex = 2;
@@ -69,7 +69,7 @@
             // propertyGrid1
             // 
             this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.propertyGrid1.Location = new System.Drawing.Point(0, 320);
+            this.propertyGrid1.Location = new System.Drawing.Point(0, 334);
             this.propertyGrid1.Name = "propertyGrid1";
             this.propertyGrid1.Size = new System.Drawing.Size(188, 176);
             this.propertyGrid1.TabIndex = 1;
@@ -77,9 +77,9 @@
             // splitter2
             // 
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.splitter2.Location = new System.Drawing.Point(567, 0);
+            this.splitter2.Location = new System.Drawing.Point(551, 0);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(3, 496);
+            this.splitter2.Size = new System.Drawing.Size(3, 510);
             this.splitter2.TabIndex = 2;
             this.splitter2.TabStop = false;
             // 
@@ -88,14 +88,14 @@
             this.sceneEditor1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sceneEditor1.Location = new System.Drawing.Point(0, 0);
             this.sceneEditor1.Name = "sceneEditor1";
-            this.sceneEditor1.Size = new System.Drawing.Size(567, 496);
+            this.sceneEditor1.Size = new System.Drawing.Size(551, 510);
             this.sceneEditor1.TabIndex = 3;
             // 
             // SceneEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(758, 496);
+            this.ClientSize = new System.Drawing.Size(742, 510);
             this.Controls.Add(this.sceneEditor1);
             this.Controls.Add(this.splitter2);
             this.Controls.Add(this.panel1);

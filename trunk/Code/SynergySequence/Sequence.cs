@@ -107,6 +107,28 @@ namespace SynergySequence
                 }
             }
             //catch { /* FIXME */ }
+
+            //center sequence to middle of 'scene'
+
+            float minX = 10000;
+            float maxX = -10000;
+            float minY = 10000;
+            float maxY = -10000;
+            foreach (CodeBlock b in codeblocks)
+            {
+                if (b.X < minX) minX = b.X;
+                if (b.Y < minY) minY = b.Y;
+                if (b.X > maxX) maxX = b.X;
+                if (b.Y > maxY) maxY = b.Y;
+            }
+
+            foreach (CodeBlock b in codeblocks)
+            {
+                b.X -= minX;
+                b.Y -= minY;
+                b.X -= (maxX - minX) / 2;
+                b.Y -= (maxY - minY) / 2;
+            }
         }
 
         public XElement Save()

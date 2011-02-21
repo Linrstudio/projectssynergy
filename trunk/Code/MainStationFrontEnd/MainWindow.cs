@@ -37,7 +37,8 @@ namespace MainStationFrontEnd
             DeviceError,
             Computer,
             ComputerOnline,
-            ComputerOffline
+            ComputerOffline,
+            WebInterface
         };
 
         private void Form1_Load(object sender, EventArgs e)
@@ -122,10 +123,17 @@ namespace MainStationFrontEnd
                 form.Tag = p;
                 ShowDialog(form);
             }
+            if (t_contents.SelectedNode.Tag is WebInterface.Scene)
+            {
+                WebInterface.Scene p = (WebInterface.Scene)t_contents.SelectedNode.Tag;
+                Form form = new WebInterface.SceneEditorForm(p);
+                form.Tag = p;
+                ShowDialog(form);
+            }
         }
 
         /// <summary>
-        /// showing a context menu the shitty way
+        /// shows a context menu the shitty way
         /// </summary>
         private void t_contents_MouseUp(object sender, MouseEventArgs e)
         {
@@ -137,6 +145,10 @@ namespace MainStationFrontEnd
                 if (node.Tag is ProgrammableDevice)
                 {
                     ((ProgrammableDevice)node.Tag).GetContextMenu().Show(t_contents, new Point(e.X, e.Y));
+                }
+                if (node.Tag is FrontEndWebInterface)
+                {
+                    ((FrontEndWebInterface)node.Tag).GetContextMenu().Show(t_contents, new Point(e.X, e.Y));
                 }
                 if (node.Parent == null)//if root
                 {
@@ -259,7 +271,7 @@ namespace MainStationFrontEnd
                 if (pd is Computer)
                 {
                     ((Computer)pd).Compile();
-                    
+
                 }
             }
         }

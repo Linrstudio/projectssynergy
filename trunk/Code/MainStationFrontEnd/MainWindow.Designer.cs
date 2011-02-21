@@ -192,6 +192,7 @@
             this.i_contents.Images.SetKeyName(8, "computer.png");
             this.i_contents.Images.SetKeyName(9, "computerOnline.png");
             this.i_contents.Images.SetKeyName(10, "computerOffline.png");
+            this.i_contents.Images.SetKeyName(11, "WebInterface.png");
             // 
             // splitter1
             // 
@@ -250,7 +251,7 @@
             this.addComputerToolStripMenuItem,
             this.addMainStationToolStripMenuItem});
             this.c_Root.Name = "c_Root";
-            this.c_Root.Size = new System.Drawing.Size(164, 70);
+            this.c_Root.Size = new System.Drawing.Size(164, 48);
             // 
             // addComputerToolStripMenuItem
             // 

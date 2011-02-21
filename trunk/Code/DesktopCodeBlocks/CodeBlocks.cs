@@ -488,8 +488,39 @@ namespace DesktopCodeBlocks
         public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
     }
 
+    public class BlockSpeak : BaseBlockInstruction
+    {
+        string text = "";
+        [Browsable(true), CategoryAttribute("Constant")]
+        public string Text
+        {
+            get { return text; }
+            set { text = value; }
+        }
+
+        public BlockSpeak()
+        {
+            width = 100;
+            height = 50;
+            TriggerInputs.Add(new TriggerInput(this, ""));
+            UpdateConnectors();
+        }
+
+        public override void Save(XElement _Data) { _Data.Value = text; }
+        public override void Load(XElement _Data) { text = _Data.Value; }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
+        public override void HandleTrigger(TriggerInput _Input)
+        {
+            var sam = new System.Speech.Synthesis.SpeechSynthesizer();
+            sam.SpeakAsync(text);
+        }
+        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+    }
+
     public class BlockEventDelay : BaseBlockEvent
     {
+        bool Running = false;
         float val;
         [Browsable(true), CategoryAttribute("Delay")]
         public float Value
@@ -498,13 +529,12 @@ namespace DesktopCodeBlocks
             set { val = value; }
         }
 
-        public bool Enabled = false;
         public DateTime invokedate;
-
         public BlockEventDelay()
         {
             width = 100;
             height = 50;
+            DataOutputs.Add(new DataOutput(this, "Running ?", "bool"));
             TriggerOutputs.Add(new TriggerOutput(this, ""));
             TriggerInputs.Add(new TriggerInput(this, "Start"));
             TriggerInputs.Add(new TriggerInput(this, "Abort"));
@@ -513,12 +543,17 @@ namespace DesktopCodeBlocks
         public override void Save(XElement _Data) { _Data.Value = val.ToString(); }
         public override void Load(XElement _Data) { val = float.Parse(_Data.Value); }
 
+        public override void Trigger(TriggerOutput _Output)
+        {
+            Running = false;
+            base.Trigger(_Output);
+        }
+
         public override void Update()
         {
-            if (Enabled && DateTime.Now > invokedate)
+            if (Running && DateTime.Now > invokedate)
             {
                 ((DesktopSequence)Sequence).AddEvent(new DesktopSequence.Event(this));
-                Enabled = false;
             }
         }
 
@@ -528,12 +563,18 @@ namespace DesktopCodeBlocks
             if (_Input == TriggerInputs[0])
             {
                 invokedate = DateTime.Now.AddSeconds(val);
-                Enabled = true;
+                Running = true;
             }
             if (_Input == TriggerInputs[1])
-                Enabled = false;
+            {
+                Running = false;
+            }
         }
-        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+
+        public override object HandleOutput(DataOutput _Output)
+        {
+            return Running;
+        }
 
         public override void DrawText(Graphics _Graphics)
         {
@@ -549,7 +590,7 @@ namespace DesktopCodeBlocks
         public virtual void HandleInput(CodeBlock.DataInput _Input, object _Data) { }
         public abstract object HandleOutput(CodeBlock.DataOutput _Output);
         public abstract void HandleTrigger(CodeBlock.TriggerInput _Input);
-        public void Trigger(CodeBlock.TriggerOutput _Output)
+        public virtual void Trigger(CodeBlock.TriggerOutput _Output)
         {
             foreach (CodeBlock.TriggerInput i in _Output.Connected)
             {
@@ -561,6 +602,8 @@ namespace DesktopCodeBlocks
         {
             return ((DesktopCodeBlock)_Input.Connected.Owner).HandleOutput(_Input.Connected);
         }
+
+        public virtual void Finalize() { }
 
         /// <summary>
         /// gives the codeblock a chance to for example invoke a event himself ( a schedule event ? )
@@ -586,6 +629,8 @@ namespace DesktopCodeBlocks
             _Manager.AddPrototype(new SequenceManager.Prototype("Print", "mygroup", "i like u", typeof(DesktopCodeBlocks.BlockMathPrint)));
 
             _Manager.AddPrototype(new SequenceManager.Prototype("Invoke Remote", "Generic", "i like u", typeof(DesktopCodeBlocks.BlockInvokeRemote)));
+
+            _Manager.AddPrototype(new SequenceManager.Prototype("Speak", "Generic", "i like u", typeof(DesktopCodeBlocks.BlockSpeak)));
         }
     }
 }

@@ -51,6 +51,7 @@
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.SequenceEditWindow_DragDrop);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SequenceEditWindow_MouseDown);
             this.DragLeave += new System.EventHandler(this.SequenceEditWindow_DragLeave);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.SequenceEditWindow_MouseUp);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.SequenceEditWindow_DragEnter);
             this.ResumeLayout(false);
 

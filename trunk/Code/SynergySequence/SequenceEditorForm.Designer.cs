@@ -30,10 +30,10 @@
         private void InitializeComponent()
         {
             this.splitter1 = new System.Windows.Forms.Splitter();
-            this.p_workspace = new System.Windows.Forms.Panel();
             this.p_Properties = new System.Windows.Forms.PropertyGrid();
             this.l_CodeBlocks = new System.Windows.Forms.ListView();
             this.splitter2 = new System.Windows.Forms.Splitter();
+            this.window = new SynergySequence.SequenceEditWindow();
             this.SuspendLayout();
             // 
             // splitter1
@@ -44,15 +44,6 @@
             this.splitter1.Size = new System.Drawing.Size(676, 4);
             this.splitter1.TabIndex = 1;
             this.splitter1.TabStop = false;
-            // 
-            // p_workspace
-            // 
-            this.p_workspace.AutoScroll = true;
-            this.p_workspace.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.p_workspace.Location = new System.Drawing.Point(0, 0);
-            this.p_workspace.Name = "p_workspace";
-            this.p_workspace.Size = new System.Drawing.Size(676, 355);
-            this.p_workspace.TabIndex = 2;
             // 
             // p_Properties
             // 
@@ -83,12 +74,22 @@
             this.splitter2.TabIndex = 3;
             this.splitter2.TabStop = false;
             // 
+            // window
+            // 
+            this.window.AllowDrop = true;
+            this.window.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(211)))), ((int)(((byte)(233)))), ((int)(((byte)(245)))));
+            this.window.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.window.Location = new System.Drawing.Point(0, 0);
+            this.window.Name = "window";
+            this.window.Size = new System.Drawing.Size(676, 355);
+            this.window.TabIndex = 4;
+            // 
             // SequenceEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(819, 485);
-            this.Controls.Add(this.p_workspace);
+            this.Controls.Add(this.window);
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.p_Properties);
             this.Controls.Add(this.splitter2);
@@ -104,9 +105,9 @@
         #endregion
 
         private System.Windows.Forms.Splitter splitter1;
-        private System.Windows.Forms.Panel p_workspace;
         private System.Windows.Forms.PropertyGrid p_Properties;
         private System.Windows.Forms.ListView l_CodeBlocks;
         private System.Windows.Forms.Splitter splitter2;
+        private SequenceEditWindow window;
     }
 }
