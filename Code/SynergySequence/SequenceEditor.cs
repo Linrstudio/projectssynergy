@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -26,14 +27,21 @@ namespace SynergySequence
         public delegate void OnBlockSelectHandler(CodeBlock _SelectedBlock);
         public event OnBlockSelectHandler OnBlockSelect = null;
 
+        System.Drawing.Drawing2D.Matrix View;
+        bool ViewStraving = false;
+        Point LastMousePos;
+        PointF MousePos;
+
         public SequenceEditWindow()
         {
             InitializeComponent();
+            View = new System.Drawing.Drawing2D.Matrix(1, 0, 0, 1, 0,0);
             AllowDrop = true;
         }
 
         private void SequenceEditWindow_Load(object sender, EventArgs e)
         {
+            MouseWheel += new MouseEventHandler(SequenceEditWindow_MouseWheel);
             AllowDrop = true;
             DoubleBuffered = true;
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.EnableNotifyMessage | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
@@ -123,6 +131,10 @@ namespace SynergySequence
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            Matrix view = View.Clone();
+            e.Graphics.Transform = view;
+            e.Graphics.TranslateTransform(Width / 2, Height / 2, MatrixOrder.Append);
+
             //if (Resources.Background != null)//to keep visual studio from crashing on us
             {
                 //e.Graphics.DrawImage(Resources.Background, new Rectangle(0, 0, Width, Height));
@@ -222,7 +234,7 @@ namespace SynergySequence
                     if (SelectedOutput != null)
                     {
                         if (SelectedOutput is CodeBlock.DataOutput)
-                            DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new PointF(MouseX, MouseY), 2, Sequence.Manager.GetDataType( ((CodeBlock.DataOutput)SelectedOutput).datatype).Color, true);
+                            DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new PointF(MouseX, MouseY), 2, Sequence.Manager.GetDataType(((CodeBlock.DataOutput)SelectedOutput).datatype).Color, true);
                         else
                             DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new PointF(MouseX, MouseY), 2, Color.Black, false);
                     }
@@ -230,7 +242,7 @@ namespace SynergySequence
                     if (SelectedInput != null)
                     {
                         if (SelectedInput is CodeBlock.DataInput)
-                            DrawPwettyLine(e.Graphics, new PointF(MouseX, MouseY), SelectedInput.GetPosition(), 2, Sequence.Manager.GetDataType( ((CodeBlock.DataInput)SelectedInput).datatype).Color, true);
+                            DrawPwettyLine(e.Graphics, new PointF(MouseX, MouseY), SelectedInput.GetPosition(), 2, Sequence.Manager.GetDataType(((CodeBlock.DataInput)SelectedInput).datatype).Color, true);
                         else
                             DrawPwettyLine(e.Graphics, new PointF(MouseX, MouseY), SelectedInput.GetPosition(), 2, Color.Black, false);
                     }
@@ -297,21 +309,25 @@ namespace SynergySequence
                 floatx += 150;
             }
 */
-            Refresh();
+            Invalidate();
         }
         int doublerightclicktimer = 0;
         bool doublerightclicktimervar = false;
         public void MouseEvent(MouseEventArgs e, bool _LClick)
         {
-            MouseX = e.X;
-            MouseY = e.Y;
+            MouseX = (int)MousePos.X;
+            MouseY = (int)MousePos.Y;
 
             if (!doublerightclicktimervar && e.Button == MouseButtons.Right)
             {
                 if (doublerightclicktimer > Environment.TickCount)
                 {
                     CodeBlock b = GetCodeBlock(new Point(MouseX, MouseY));
-                    if (b != null) Sequence.RemoveCodeBlock(b);
+                    if (b != null)
+                    {
+                        Sequence.RemoveCodeBlock(b);
+                        Invalidate();
+                    }
                 }
                 doublerightclicktimer = Environment.TickCount + 500;
             }
@@ -325,7 +341,7 @@ namespace SynergySequence
                 CodeBlock.Output nearestout = GetNearestOutput(new Point(MouseX, MouseY));
                 CodeBlock.Input nearestin = GetNearestInput(new Point(MouseX, MouseY));
 
-                if (nearestout != null)
+                if (Dragging == null && nearestout != null)
                 {
                     if (SelectedOutput == null)
                     {
@@ -335,7 +351,7 @@ namespace SynergySequence
                 }
                 else if (SelectedStartedAt == 2) SelectedOutput = null;
 
-                if (nearestin != null)
+                if (Dragging == null && nearestin != null)
                 {
                     if (SelectedInput == null)
                     {
@@ -345,6 +361,19 @@ namespace SynergySequence
                 }
                 else if (SelectedStartedAt == 1) SelectedInput = null;
 
+                if (SelectedInput == null && SelectedOutput == null)
+                {
+                    if (Dragging == null)
+                    {
+                        Dragging = GetCodeBlock(new Point(MouseX, MouseY));
+                    }
+                    else
+                    {
+                        Dragging.X = MouseX;
+                        Dragging.Y = MouseY;
+                        Invalidate();
+                    }
+                }
 
                 //select nearest codeblock
                 if (_LClick)
@@ -356,19 +385,6 @@ namespace SynergySequence
                 else { SelectedBlock = null; }
 
 
-            }
-
-            if (e.Button == MouseButtons.Right)
-            {
-                if (Dragging == null)
-                {
-                    Dragging = GetCodeBlock(new Point(MouseX, MouseY));
-                }
-                else
-                {
-                    Dragging.X = MouseX;
-                    Dragging.Y = MouseY;
-                }
             }
 
             if (e.Button == MouseButtons.None)
@@ -409,7 +425,7 @@ namespace SynergySequence
                         CodeBlock block = (CodeBlock)p.Create();
                         Sequence.AddCodeBlock(block);
                         NeedsRecompile = true;
-                        Format();
+                        //Format();
                     }
                 }
             }
@@ -444,12 +460,34 @@ namespace SynergySequence
 
         private void SequenceEditWindow_MouseMove(object sender, MouseEventArgs e)
         {
+            Point pos = new Point(e.X, e.Y);
+            MousePos.X = pos.X - Width / 2;
+            MousePos.Y = pos.Y - Height / 2;
+            PointF[] points = new PointF[] { MousePos };
+            Matrix m = View.Clone();
+            m.Invert();
+            m.TransformPoints(points);
+            MousePos = points[0];
+            if (ViewStraving)
+            {
+                View.Translate((float)(pos.X - LastMousePos.X), (float)(pos.Y - LastMousePos.Y), MatrixOrder.Append);
+                Invalidate();
+            }
+
+            if (SelectedInput != null || SelectedOutput != null) Invalidate();
+
             if (Sequence == null) return;
             MouseEvent(e, false);
+
+            LastMousePos = pos;
         }
 
         private void SequenceEditWindow_MouseDown(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Middle)
+            {
+                ViewStraving = true;
+            }
             if (Sequence == null) return;
             MouseEvent(e, true);
 
@@ -500,7 +538,7 @@ namespace SynergySequence
         {
             if (Sequence == null) return;
             foreach (CodeBlock c in Sequence.CodeBlocks) c.Update();
-            Format();
+            //Format();
         }
         CodeBlock Dragging = null;
         private void SequenceEditWindow_DragDrop(object sender, DragEventArgs e)
@@ -521,7 +559,7 @@ namespace SynergySequence
                     Sequence.AddCodeBlock(b);
 
                     NeedsRecompile = true;
-                    Format();
+                    //Format();
 
                     Dragging = b;
 
@@ -543,11 +581,48 @@ namespace SynergySequence
 
         private void SequenceEditWindow_DragOver(object sender, DragEventArgs e)
         {
+            Point pos = new Point(e.X - PointToScreen(new Point(0, 0)).X, e.Y - PointToScreen(new Point(0, 0)).Y);
+            MousePos.X = pos.X - Width / 2;
+            MousePos.Y = pos.Y - Height / 2;
+            PointF[] points = new PointF[] { MousePos };
+            Matrix m = View.Clone();
+            m.Invert();
+            m.TransformPoints(points);
+            MousePos = points[0];
+
             if (Dragging != null)
             {
-                Dragging.X = e.X - PointToScreen(new Point(0, 0)).X;
-                Dragging.Y = e.Y - PointToScreen(new Point(0, 0)).Y;
+                Dragging.X = MousePos.X;
+                Dragging.Y = MousePos.Y;
+
+                Invalidate();
             }
+        }
+
+        private void SequenceEditWindow_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                ViewStraving = false;
+            }
+        }
+
+        void SequenceEditWindow_MouseWheel(object sender, MouseEventArgs e)
+        {
+            float s = 1 + ((float)e.Delta / 1000.0f);
+
+            float tx = -(e.X - (Width / 2));
+            float ty = -(e.Y - (Height / 2));
+
+            View.Translate(tx, ty, MatrixOrder.Append);
+
+            Matrix scale = new Matrix(s, 0, 0, s, 0, 0);
+            scale.Multiply(View);
+            View = scale;
+
+            View.Translate(-tx, -ty, MatrixOrder.Append);
+
+            Invalidate();
         }
     }
 }

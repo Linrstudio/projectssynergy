@@ -36,13 +36,18 @@ namespace DesktopCodeBlocks
             DesktopCodeBlock target;
             public bool Invoke()
             {
-                //try
+#if !DEBUG
+                try
+#endif
                 {
                     target.Trigger(target.TriggerOutputs[0]);
+                    foreach (CodeBlock c in target.Sequence.CodeBlocks) ((DesktopCodeBlock)c).Finalize();
                     return true;
                 }
-                //catch { }
+#if !DEBUG
+                catch { }
                 return false;
+#endif
             }
         }
     }

@@ -49,37 +49,37 @@ namespace WebInterface
         public WebInterface(XElement _Data)
         {
             Stop();
-            Port = ushort.Parse(_Data.Attribute("Port").Value);
+            try
+            {
+                Port = ushort.Parse(_Data.Attribute("Port").Value);
+            }
+            catch { }
 
             foreach (XElement element in _Data.Elements("Scene"))
             {
                 Scene scene = new Scene(element);
                 scenes.Add(scene);
             }
+        }
 
-            if (!HttpListener.IsSupported) Console.WriteLine("HTTPListener class is not supported on your machine.");
-            httplistener = new HttpListener();
-
-            string LocalIP = Dns.GetHostName();
-            Console.WriteLine("HostName:" + LocalIP);
-            LocalIP = Dns.GetHostByName(LocalIP).AddressList[0].ToString();
-            Console.WriteLine("HostIP:" + LocalIP);
-            httplistener.Prefixes.Add("http://" + LocalIP + ":" + Port + "/");
-            httplistener.Prefixes.Add("http://localhost:" + Port + "/");
-            try
+        public void Save(XElement _Data)
+        {
+            _Data.SetAttributeValue("Port", Port);
+            foreach (Scene scene in scenes)
             {
-
-                httplistener.Start();
+                XElement element = new XElement("Scene");
+                scene.Save(element);
+                _Data.Add(element);
             }
-            catch { System.Windows.Forms.MessageBox.Show("Failed to start HTTPListener at port " + Port.ToString()); }
-
-            httplistenerthread = new Thread(new ThreadStart(httplistenermain));
-            httplistenerthread.Start();
         }
 
         public WebInterface()
         {
-            Stop();
+
+        }
+
+        public void Start()
+        {
             if (!HttpListener.IsSupported) Console.WriteLine("HTTPListener class is not supported on your machine.");
             httplistener = new HttpListener();
 

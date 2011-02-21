@@ -37,6 +37,10 @@
             this.Name = "SceneEditor";
             this.Size = new System.Drawing.Size(559, 418);
             this.Load += new System.EventHandler(this.SceneEditor_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.SceneEditor_Paint);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.SceneEditor_MouseMove);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SceneEditor_MouseDown);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.SceneEditor_MouseUp);
             this.ResumeLayout(false);
 
         }

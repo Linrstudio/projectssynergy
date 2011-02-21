@@ -38,14 +38,39 @@ namespace WebInterface
                 c.Width = float.Parse(element.Attribute("Width").Value);
                 c.Height = float.Parse(element.Attribute("Height").Value);
                 c.Load(element.Element("Data"));
-                Controls.Add(c);
+                AddControl(c);
+            }
+        }
+
+        public void Save(XElement _Data)
+        {
+            _Data.SetAttributeValue("Name", name);
+            foreach (Control c in Controls)
+            {
+                XElement element = new XElement("Control");
+                element.SetAttributeValue("Name", c.Name);
+                element.SetAttributeValue("Type", c.GetType().Name);
+                element.SetAttributeValue("X", c.X);
+                element.SetAttributeValue("Y", c.Y);
+                element.SetAttributeValue("Width", c.Width);
+                element.SetAttributeValue("Height", c.Height);
+                XElement save = new XElement("Data");
+                c.Save(save);
+                element.Add(save);
+                _Data.Add(element);
             }
         }
 
         bool LoginEnabled = false;//do users need to login ?
         List<Credentials> Credentials = new List<Credentials>();
 
-        public List<Control> Controls = new List<Control>();
+        List<Control> controls = new List<Control>();
+        public Control[] Controls { get { return controls.ToArray(); } }
+        public void AddControl(Control _Control)
+        {
+            _Control.scene = this;
+            controls.Add(_Control);
+        }
         public Control GetControl(string _Name)
         {
             foreach (Control c in Controls)

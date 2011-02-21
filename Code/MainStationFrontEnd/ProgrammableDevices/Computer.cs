@@ -31,6 +31,12 @@ namespace MainStationFrontEnd
         SequenceManager manager;
         public SequenceManager Manager { get { return manager; } set { manager = value; } }
 
+        List<MainStation.MainStation> mainstations = new List<MainStation.MainStation>();
+        public MainStation.MainStation[] MainStations { get { return mainstations.ToArray(); } }
+
+        List<FrontEndWebInterface> webinterfaces = new List<FrontEndWebInterface>();
+        public FrontEndWebInterface[] WebInterfaces { get { return webinterfaces.ToArray(); } }
+
         public IPAddress IPAddress;
         public ushort Port;
         LazyNetworking.TCPConnection Connection;
@@ -102,6 +108,31 @@ namespace MainStationFrontEnd
             {
                 node.Nodes.Add(m.GetTreeNode());
             }
+            foreach (WebInterface.WebInterface i in webinterfaces)
+            {
+                node.Nodes.Add(GetTreeNode(i));
+            }
+            return node;
+        }
+
+        public TreeNode GetTreeNode(WebInterface.WebInterface _WebInterface)
+        {
+            int icon = (int)MainWindow.Icons.WebInterface;
+            TreeNode node = new TreeNode("Web interface", icon, icon);
+            node.Tag = _WebInterface;
+            foreach (Scene s in _WebInterface.scenes)
+            {
+                node.Nodes.Add(GetTreeNode(s));
+            }
+            return node;
+        }
+
+        public TreeNode GetTreeNode(WebInterface.Scene _Scene)
+        {
+            int icon = (int)MainWindow.Icons.WebInterface;
+            TreeNode node = new TreeNode(_Scene.Name, icon, icon);
+            node.Tag = _Scene;
+
             return node;
         }
 
@@ -148,6 +179,12 @@ namespace MainStationFrontEnd
                 ms.Load(element);
                 mainstations.Add(ms);
             }
+
+            foreach (XElement element in _Data.Elements("WebInterface"))
+            {
+                FrontEndWebInterface wi = new FrontEndWebInterface(element);
+                webinterfaces.Add(wi);
+            }
         }
 
         public void Save(System.Xml.Linq.XElement _Data)
@@ -164,10 +201,13 @@ namespace MainStationFrontEnd
                 _Data.Add(element);
             }
 
+            foreach (WebInterface.WebInterface wi in webinterfaces)
+            {
+                XElement element = new XElement("WebInterface");
+                wi.Save(element);
+                _Data.Add(element);
+            }
         }
-
-        List<MainStation.MainStation> mainstations = new List<MainStation.MainStation>();
-        public MainStation.MainStation[] MainStations { get { return mainstations.ToArray(); } }
 
         public void Compile()
         {
@@ -181,6 +221,13 @@ namespace MainStationFrontEnd
                 file.Add(mainstation);
             }
 
+            foreach (WebInterface.WebInterface wi in webinterfaces)
+            {
+                XElement element = new XElement("WebInterface");
+                wi.Save(element);
+                file.Add(element);
+            }
+            /*
             XElement webinterface = new XElement("WebInterface");
             webinterface.SetAttributeValue("Port", "8080");
             XElement scene = new XElement("Scene");
@@ -197,6 +244,7 @@ namespace MainStationFrontEnd
             }
             {
                 XElement control = new XElement("Control");
+             * 
                 control.SetAttributeValue("Type", "Switch");
                 control.SetAttributeValue("Name", "lampgang");
                 control.SetAttributeValue("X", "0.5");
@@ -226,7 +274,7 @@ namespace MainStationFrontEnd
                 scene.Add(control);
             }
             webinterface.Add(scene);
-            file.Add(webinterface);
+            file.Add(webinterface);*/
             try
             {
                 if (Connection == null) Connection = new LazyNetworking.TCPConnection(new System.Net.Sockets.TcpClient(IPAddress.ToString(), Port));
@@ -234,6 +282,24 @@ namespace MainStationFrontEnd
             }
             catch { MessageBox.Show("Failed to connect to desktopclient"); }
             file.Save("c:/sequence.xml");
+        }
+    }
+
+    public class FrontEndWebInterface : WebInterface.WebInterface
+    {
+        public FrontEndWebInterface(XElement _Data) : base(_Data) { }
+
+        public ContextMenu GetContextMenu()
+        {
+            ContextMenu menu = new ContextMenu();
+            menu.MenuItems.Add("Add Scene", new EventHandler(ContextMenuAddScene));
+            return menu;
+        }
+
+        public void ContextMenuAddScene(object sender, EventArgs e)
+        {
+            scenes.Add(new Scene("New scene"));
+            MainWindow.mainwindow.UpdateTree();
         }
     }
 }
