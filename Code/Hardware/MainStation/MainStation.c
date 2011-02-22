@@ -30,17 +30,10 @@ void MSInit()
 	USBInit();
 	I2CInit();
 
-	LED1A_LATCH=0;
-	LED1B_LATCH=0;
-	LED2A_LATCH=0;
-	LED2B_LATCH=0;
+	LED_LATCH=0;
+	LED_TRIS=0;
 
-	LED1A_TRIS=0;
-	LED1B_TRIS=0;
-	LED2A_TRIS=0;
-	LED2B_TRIS=0;
-
-	SetLED1(0);
+	SetLED(0);
 }
 
 void MSUpdate()
@@ -50,12 +43,12 @@ void MSUpdate()
 	USBUpdate();
 }
 
-void SetLED1(int8 _State)
+void SetLED(int8 _State)
 {
-	LED1B=(_State&1)!=0?0:1;
+	LED=((_State&1))!=0?1:0;
 }
 
-int8 GetLED1()
+int8 GetLED()
 {
-	return (LED1A?1:0);
+	return (LED?1:0);
 }

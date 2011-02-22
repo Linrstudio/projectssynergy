@@ -436,6 +436,7 @@ namespace SynergySequence
             {
                 //if (SelectedBlock != null)//not sure if this is a good idea
                 {
+                    CodeBlock block = GetCodeBlock(MousePos);
                     CodeBlock.Output output = GetNearestOutput(new PointF(MousePos.X, MousePos.Y));
                     CodeBlock.Input input = GetNearestInput(new PointF(MousePos.X, MousePos.Y));
 
@@ -453,9 +454,7 @@ namespace SynergySequence
                             o.Connected.Clear();
                         }
                         Invalidate();
-                    }
-
-                    if (input != null)
+                    }else if (input != null)
                     {
                         if (input is CodeBlock.DataInput)
                         {
@@ -471,6 +470,11 @@ namespace SynergySequence
                             foreach (CodeBlock.TriggerOutput o in i.Connected) o.Connected.Clear();
                             i.Connected.Clear();
                         }
+                        Invalidate();
+                    }
+                    else if (block != null)
+                    {
+                        Sequence.RemoveCodeBlock(block);
                         Invalidate();
                     }
                 }

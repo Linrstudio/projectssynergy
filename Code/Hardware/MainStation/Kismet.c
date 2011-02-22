@@ -188,7 +188,7 @@ int8 KismetExecuteEvent(int16 _DeviceID,int8 _EventID)
 			case 0x0A:
 			{
 				int8 reg	=MemoryReadInt8();
-				SetLED1(Reg16(reg));
+				SetLED(Reg16(reg));
 			}break;
 			case 0x80:// $if goto $here?
 			{

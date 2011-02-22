@@ -29,6 +29,13 @@ namespace MainStationFrontEnd
                 System.Threading.Thread.Sleep(1000);
             }
             */
+            /*
+            while (true)
+            {
+                MainStation.MainStation.InvokeRemoteEvent(9, 13, 0);
+                System.Threading.Thread.Sleep(1000);
+            }
+            */
             Solution.Load("Solution.xml");
 
             UpdateTree();
@@ -240,10 +247,10 @@ namespace MainStationFrontEnd
             {
                 foreach (ProgrammableDevice pd in Solution.ProgrammableDevices)
                 {
-                    if (pd is MainStation.MainStation)
+                    if (pd is FrontEndMainStation)
                     {
-                        ((MainStation.MainStation)pd).Found = false;
-                        foreach (MainStation.MainStationDevice d in ((MainStation.MainStation)pd).Devices)
+                        ((FrontEndMainStation)pd).Found = false;
+                        foreach (MainStation.MainStationDevice d in ((FrontEndMainStation)pd).Devices)
                         {
                             d.Found = false;
                         }
@@ -265,22 +272,16 @@ namespace MainStationFrontEnd
             //if (!MainStation.EEPROMWriteVerify(EEPROM.Assamble())) MessageBox.Show("Verify incorrect");
             foreach (ProgrammableDevice pd in Solution.ProgrammableDevices)
             {
-                if (pd is MainStation.MainStation)
+                if (pd is FrontEndMainStation)
                 {
-                    MainStation.MainStation ms = (MainStation.MainStation)pd;
+                    FrontEndMainStation ms = (FrontEndMainStation)pd;
                     byte[] EEPROM = MainStation.MainStationCompiler.Compile(ms);
                     MainStation.MainStation.EEPROMWriteVerify(EEPROM);
                     System.IO.File.WriteAllBytes("c:/newcompiler.bin", EEPROM);
-                    for (int i = 0; i < 100; i++)
-                    {
-                        MainStation.MainStation.InvokeLocalEvent(7, 6, 0);
-                        MainStation.MainStation.InvokeLocalEvent(7, 5, 0);
-                    }
                 }
                 if (pd is Computer)
                 {
                     ((Computer)pd).Compile();
-
                 }
             }
         }
