@@ -124,6 +124,7 @@ namespace WebInterface
             {
                 try
                 {
+                    //FIXME i shouldnt be here!
                     Application.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");//IMPORTANT
 
                     HttpListenerContext context = httplistener.GetContext();

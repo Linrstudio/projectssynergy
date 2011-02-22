@@ -232,6 +232,59 @@ namespace MainStationCodeBlocks
 
     }
 
+    public class MainStationCodeBlockInvokeRemoteEvent : BaseBlockInstruction
+    {
+        ushort deviceid;
+        [Browsable(true)]
+        public ushort DeviceID
+        {
+            get { return deviceid; }
+            set { deviceid = value; }
+        }
+
+        byte eventid;
+        [Browsable(true)]
+        public byte EventID
+        {
+            get { return eventid; }
+            set { eventid = value; }
+        }
+
+        public MainStationCodeBlockInvokeRemoteEvent()
+        {
+            width = 100;
+            height = 50;
+            TriggerInputs.Add(new TriggerInput(this, "Hellyea!"));
+
+            UpdateConnectors();
+        }
+
+        public override byte[] Compile(TriggerInput _Input)
+        {
+            MemoryStream stream = new MemoryStream();
+            CodeInstructions.Load8(0, eventid);
+            CodeInstructions.EPSend(deviceid, 1);
+            return stream.ToArray();
+        }
+
+        public override void Load(XElement _Data) { deviceid = ushort.Parse(_Data.Attribute("DeviceID").Value); eventid = byte.Parse(_Data.Attribute("EventID").Value); }
+        public override void Save(XElement _Data) { _Data.SetAttributeValue("DeviceID", deviceid); _Data.SetAttributeValue("EventID", eventid); }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            base.Draw(_Graphics);
+            DrawShape(_Graphics,
+                new PointF(-width / 2, -height / 2),
+                new PointF(-width / 2, height / 2),
+                new PointF(width / 2, height / 2),
+                new PointF(width / 2, -height / 2));
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Device " + DeviceID + " Event " + EventID, new Font("Arial", 10), Brushes.Black, X, Y, sf);
+        }
+    }
+
     public class MainStationCodeBlockRemoteEvent : MainStationCodeBlockEvent
     {
         ushort deviceid;
@@ -263,7 +316,7 @@ namespace MainStationCodeBlocks
             MemoryStream stream = new MemoryStream();
             foreach (TriggerInput ti in TriggerOutputs[0].Connected)
             {
-                byte[] blob = ((MainStationCodeBlock)(ti.Owner)).Compile(ti);
+                byte[] blob = ((MainStationCodeBlock)ti.Owner).Compile(ti);
                 stream.Write(blob, 0, blob.Length);
             }
             return stream.ToArray();
@@ -292,6 +345,7 @@ namespace MainStationCodeBlocks
         public static void AddAllPrototypes(SynergySequence.SequenceManager _Manager)
         {
             _Manager.AddPrototype(new SequenceManager.Prototype("Remote Event", "Generic Events", "blaat", typeof(MainStationCodeBlockRemoteEvent)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Invoke Remote Event", "Generic Events", "i like u", typeof(MainStationCodeBlockInvokeRemoteEvent)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Boolean", "blaat", typeof(MainStationCodeBlocks.BlockBoolConstant)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Invert", "Boolean", "blaat", typeof(MainStationCodeBlocks.BlockBoolInvert)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Set LED", "Debug", "i like u", typeof(MainStationCodeBlocks.BlockSetDebugLed)));

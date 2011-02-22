@@ -44,6 +44,8 @@ namespace WebInterface
             e.Graphics.Transform = view;
             e.Graphics.TranslateTransform(Width / 2, Height / 2, MatrixOrder.Append);
 
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
             Pen outline = new Pen(Brushes.Black, 0.005f);
             Pen outlineselected = new Pen(Brushes.Red, 0.01f);
             e.Graphics.Clear(Color.CornflowerBlue);
@@ -133,6 +135,7 @@ namespace WebInterface
             m.Invert();
             m.TransformPoints(points);
             MousePos = points[0];
+
             if (ViewStraving)
             {
                 View.Translate((float)(pos.X - LastMousePos.X), (float)(pos.Y - LastMousePos.Y), MatrixOrder.Append);
