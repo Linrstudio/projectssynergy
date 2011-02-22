@@ -1,10 +1,6 @@
 
 #include "Default.h"
 
-#include "GenericTypeDefs.h"
-#include "Compiler.h"
-#include "usb_config.h"
-#include "./USB/usb_device.h"
 #include "./USB/usb.h"
 #include "HardwareProfile.h"
 #include "./USB/usb_function_hid.h"
@@ -30,12 +26,12 @@
     #pragma udata
 #endif
 
-unsigned char ReceivedDataBuffer[64];
-unsigned char ToSendDataBuffer[64];
+extern unsigned char ReceivedDataBuffer[64];
+extern unsigned char ToSendDataBuffer[64];
 #pragma udata
 
-USB_HANDLE USBOutHandle = 0;
-USB_HANDLE USBInHandle = 0;
+extern USB_HANDLE USBOutHandle;
+extern USB_HANDLE USBInHandle;
 
 extern int8 RTCSecond;
 extern int8 RTCMinute;
@@ -85,7 +81,7 @@ void USBUpdate()
         {
 			case 0x01:
 				a=EPPoll(*(int16*)&ReceivedDataBuffer[1]);
-				if(USBBusy()==0)
+				if(!USBBusy())
                 {
 					ToSendDataBuffer[0]=0x03;
 					if(a!=0)
@@ -99,7 +95,7 @@ void USBUpdate()
 				EPBufferSize=ReceivedDataBuffer[3];
 				for(a=0;a<EPBufferSize;a++)SharedMemory[a]=ReceivedDataBuffer[a+4];
 				EPSend(*(int16*)&ReceivedDataBuffer[1]);
-				if(USBBusy()==0)
+				if(!USBBusy())
                 {
 					ToSendDataBuffer[0]=0x02;
                     USBWrite();
@@ -107,7 +103,7 @@ void USBUpdate()
 				break;
 			case 0x06:
 				ToSendDataBuffer[1]=KismetExecuteEvent(((int16*)&ReceivedDataBuffer[1])[0],ReceivedDataBuffer[3]);
-				if(USBBusy()==0)
+				if(!USBBusy())
                 {
 					ToSendDataBuffer[0]=0x06;
                     USBWrite();

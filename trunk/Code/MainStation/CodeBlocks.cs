@@ -189,6 +189,38 @@ namespace MainStationCodeBlocks
         }
     }
 
+    public class BlockIntConstant : BaseBlockData
+    {
+        public override GetOutputResult GetOutput(DataOutput _Output)
+        {
+            var reg = MainStationCompiler.GetRegister(2);
+            return new GetOutputResult(CodeInstructions.Load(reg.index, val ), reg);
+        }
+        ushort val;
+        [Browsable(true), CategoryAttribute("Constant")]
+        public ushort Value { get { return val; } set { val = value; } }
+
+        public BlockIntConstant()
+        {
+            width = 50;
+            height = 50;
+            DataOutputs.Add(new DataOutput(this, "", "int"));
+            UpdateConnectors();
+            Name = "Constant";
+        }
+
+        public override void Load(XElement _Data) { val = ushort.Parse(_Data.Value); }
+        public override void Save(XElement _Data) { _Data.Value = val.ToString(); }
+
+        public override void DrawText(Graphics _Graphics)
+        {
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString(val.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y, sf);
+        }
+    }
+
     public class BlockEventSchedule : BaseBlockEvent
     {
         DateTime moment;
@@ -255,15 +287,30 @@ namespace MainStationCodeBlocks
             width = 100;
             height = 50;
             TriggerInputs.Add(new TriggerInput(this, "Hellyea!"));
-
+            DataInputs.Add(new DataInput(this, "Arguments", "int"));
             UpdateConnectors();
         }
 
         public override byte[] Compile(TriggerInput _Input)
         {
             MemoryStream stream = new MemoryStream();
-            CodeInstructions.Load8(0, eventid);
-            CodeInstructions.EPSend(deviceid, 1);
+            byte[] code;
+            code = CodeInstructions.Load8(0, eventid);
+            stream.Write(code, 0, code.Length);
+            if (DataInputs[0].Connected!=null)
+            {
+                var ans = ((MainStationCodeBlock)DataInputs[0].Connected.Owner).GetOutput(DataInputs[0].Connected);
+                stream.Write(ans.Code, 0, ans.Code.Length);
+                code = CodeInstructions.Mov(ans.Register.index, 1, 2);
+                stream.Write(code, 0, code.Length);
+                code = CodeInstructions.EPSend(deviceid, 3);
+                stream.Write(code, 0, code.Length);
+            }
+            else
+            {
+                code = CodeInstructions.EPSend(deviceid, 1);
+                stream.Write(code, 0, code.Length);
+            }
             return stream.ToArray();
         }
 
@@ -349,6 +396,8 @@ namespace MainStationCodeBlocks
             _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Boolean", "blaat", typeof(MainStationCodeBlocks.BlockBoolConstant)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Invert", "Boolean", "blaat", typeof(MainStationCodeBlocks.BlockBoolInvert)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Set LED", "Debug", "i like u", typeof(MainStationCodeBlocks.BlockSetDebugLed)));
+
+            _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Integer", "blaat", typeof(MainStationCodeBlocks.BlockIntConstant)));
         }
 
 

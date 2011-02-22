@@ -10,7 +10,7 @@ int8 OperationEnabled=255;
 #define LED			PORTBbits.RB4
 #define LED_TRIS 	TRISBbits.TRISB4
 
-#define DEVICEID 7
+#define DEVICEID 6
 
 int8 lastheader=0;
 
@@ -23,7 +23,8 @@ void MSInit()
 	CM1CON0bits.C1ON=0;
 	CM1CON0=0;
 	CM2CON0=0;
-	SRCON0bits.SRLEN=0;
+	//SRCON0bits.SRLEN=0;
+	SRCON0=0;
 	//disable analog
 	ANSEL=0;
 	ANSELH=0;
@@ -38,10 +39,6 @@ void MSInit()
 	UARTInit();
 	UARTRead();
 	EPInit();
-
-
-	TRISC=0;
-	PORTC=0x00;
 	
 	//startup glow
 	for(dim1=0;dim1<255;dim1++)
