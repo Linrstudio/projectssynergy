@@ -20,6 +20,15 @@ namespace MainStationFrontEnd
             InitializeComponent();
             MainStation.ProductDataBase.Load("products.xml");
             MainStation.MainStation.Connect();
+            /*
+            while (true)
+            {
+                MainStation.MainStation.InvokeRemoteEvent(9, 5, 0);
+                System.Threading.Thread.Sleep(1000);
+                MainStation.MainStation.InvokeRemoteEvent(9, 5, 0xffff);
+                System.Threading.Thread.Sleep(1000);
+            }
+            */
             Solution.Load("Solution.xml");
 
             UpdateTree();

@@ -31,11 +31,18 @@ namespace SynergySequence
         public void Select(params CodeBlock[] _CodeBlocks)
         {
             foreach (CodeBlock b in codeblocks) b.Selected = false;
-            foreach (CodeBlock b in _CodeBlocks) b.Selected = true;
+            if (_CodeBlocks != null)
+                foreach (CodeBlock b in _CodeBlocks) if (b != null) b.Selected = true;
         }
 
-        public void Connect(CodeBlock.Output _Out, CodeBlock.Input _In)
+        public void Connect(CodeBlock.Connector _A, CodeBlock.Connector _B)
         {
+            CodeBlock.Connector _In = null;
+            CodeBlock.Connector _Out = null;
+            if (_A is CodeBlock.Input) _In = _A;
+            if (_B is CodeBlock.Input) _In = _B;
+            if (_A is CodeBlock.Output) _Out = _A;
+            if (_B is CodeBlock.Output) _Out = _B;
             if (_Out is CodeBlock.TriggerOutput && _In is CodeBlock.TriggerInput)
             {
                 CodeBlock.TriggerOutput Out = (CodeBlock.TriggerOutput)_Out;

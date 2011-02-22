@@ -15,14 +15,10 @@ namespace SynergySequence
         public Sequence Sequence = null;
         public List<CodeBlock> FloatingBlocks = new List<CodeBlock>();
         public int SelectedStartedAt = 0;
-        public CodeBlock.Output SelectedOutput = null;
-        public CodeBlock.Input SelectedInput = null;
+        public CodeBlock.Connector ConnectFrom = null;
+        public CodeBlock.Connector ConnectTo = null;
         public CodeBlock SelectedBlock = null;
-
-        public int MouseX;
-        public int MouseY;
-
-        public bool NeedsRecompile = true;
+        bool MoveSelectedBlock = false;
 
         public delegate void OnBlockSelectHandler(CodeBlock _SelectedBlock);
         public event OnBlockSelectHandler OnBlockSelect = null;
@@ -35,7 +31,7 @@ namespace SynergySequence
         public SequenceEditWindow()
         {
             InitializeComponent();
-            View = new System.Drawing.Drawing2D.Matrix(1, 0, 0, 1, 0,0);
+            View = new System.Drawing.Drawing2D.Matrix(1, 0, 0, 1, 0, 0);
             AllowDrop = true;
         }
 
@@ -85,7 +81,7 @@ namespace SynergySequence
             return best;
         }
 
-        CodeBlock GetCodeBlock(Point _Pos)
+        CodeBlock GetCodeBlock(PointF _Pos)
         {
             if (Sequence == null) return null;
             foreach (CodeBlock c in Sequence.CodeBlocks)
@@ -159,20 +155,22 @@ namespace SynergySequence
                         }
                     }
                 }
+
+                CodeBlock.Input input = GetNearestInput(new PointF(MousePos.X, MousePos.Y));
+                CodeBlock.Output output = GetNearestOutput(new PointF(MousePos.X, MousePos.Y));
+                CodeBlock.Connector connector = null;
+                if (ConnectFrom is CodeBlock.Input) connector = input;
+                if (ConnectFrom is CodeBlock.Output) connector = output;
                 foreach (CodeBlock b in Sequence.CodeBlocks)
                 {
                     List<CodeBlock> dependencies = new List<CodeBlock>();
-                    if (SelectedOutput != null) dependencies.AddRange(SelectedOutput.Owner.GetDependencies());
 
-                    CodeBlock.Input input = GetNearestInput(new Point(MouseX, MouseY));
-                    CodeBlock.Output output = GetNearestOutput(new Point(MouseX, MouseY));
+                    if (ConnectFrom != null) dependencies.AddRange(ConnectFrom.Owner.GetDependencies());
 
-                    //e.Graphics.DrawRectangle(Pens.Red, b.x, b.y, 100, 50);
                     foreach (CodeBlock.DataInput i in b.DataInputs)
                     {
                         PointF pos = i.GetPosition();
-                        if (!dependencies.Contains(i.Owner))
-                            e.Graphics.FillRectangle(new SolidBrush(Sequence.Manager.GetDataType(i.datatype).Color), new RectangleF(pos.X - 5, pos.Y - 5, 10, 5));
+                        if (!dependencies.Contains(i.Owner)) e.Graphics.FillRectangle(new SolidBrush(Sequence.Manager.GetDataType(i.datatype).Color), new RectangleF(pos.X - 5, pos.Y - 5, 10, 5));
 
                         if (i.Connected != null)
                         {
@@ -180,23 +178,12 @@ namespace SynergySequence
                             PointF y = i.Connected.GetPosition();
                             DrawPwettyLine(e.Graphics, y, x, 1.5f, Sequence.Manager.GetDataType(i.datatype).Color, true);
                         }
-
-                        if (i == input)
-                        {
-                            i.tooptip.Show(i.Text, this, new Point((int)pos.X, (int)pos.Y), 1000);
-                        }
                     }
 
                     foreach (CodeBlock.DataOutput i in b.DataOutputs)
                     {
                         PointF pos = i.GetPosition();
-                        if (!dependencies.Contains(i.Owner))
-                            e.Graphics.FillRectangle(new SolidBrush(Sequence.Manager.GetDataType(i.datatype).Color), new RectangleF(pos.X - 5, pos.Y, 10, 5));
-
-                        if (i == output)
-                        {
-                            i.tooptip.Show(i.Text, this, new Point((int)pos.X, (int)pos.Y), 1000);
-                        }
+                        if (!dependencies.Contains(i.Owner)) e.Graphics.FillRectangle(new SolidBrush(Sequence.Manager.GetDataType(i.datatype).Color), new RectangleF(pos.X - 5, pos.Y, 10, 5));
                     }
 
                     foreach (CodeBlock.TriggerInput i in b.TriggerInputs)
@@ -217,112 +204,66 @@ namespace SynergySequence
 
                         e.Graphics.FillRectangle(new SolidBrush(Color.Black), new RectangleF(pos.X, pos.Y - 5, 5, 10));
                     }
+                }
+
+                if (ConnectFrom != null)
+                {
+                    if (ConnectTo != null)
+                    {
+                        if (ConnectFrom is CodeBlock.Output)
+                        {
+                            if (ConnectFrom is CodeBlock.DataOutput)
+                                DrawPwettyLine(e.Graphics, ConnectFrom.GetPosition(), ConnectTo.GetPosition(), 2, Sequence.Manager.GetDataType(((CodeBlock.DataOutput)ConnectFrom).datatype).Color, true);
+                            else
+                                DrawPwettyLine(e.Graphics, ConnectFrom.GetPosition(), ConnectTo.GetPosition(), 2, Color.Black, false);
+                        }
+                        else
+                        {
+                            if (ConnectFrom is CodeBlock.DataInput)
+                                DrawPwettyLine(e.Graphics, ConnectTo.GetPosition(), ConnectFrom.GetPosition(), 2, Sequence.Manager.GetDataType(((CodeBlock.DataInput)ConnectFrom).datatype).Color, true);
+                            else
+                                DrawPwettyLine(e.Graphics, ConnectTo.GetPosition(), ConnectFrom.GetPosition(), 2, Color.Black, false);
+                        }
+                    }
+                    else
+                    {
+                        if (ConnectFrom is CodeBlock.Output)
+                        {
+                            if (ConnectFrom is CodeBlock.DataOutput)
+                                DrawPwettyLine(e.Graphics, ConnectFrom.GetPosition(), new PointF(MousePos.X, MousePos.Y), 2, Sequence.Manager.GetDataType(((CodeBlock.DataOutput)ConnectFrom).datatype).Color, true);
+                            else
+                                DrawPwettyLine(e.Graphics, ConnectFrom.GetPosition(), new PointF(MousePos.X, MousePos.Y), 2, Color.Black, false);
+                        }
+                        else
+                        {
+                            if (ConnectFrom is CodeBlock.DataInput)
+                                DrawPwettyLine(e.Graphics, new PointF(MousePos.X, MousePos.Y), ConnectFrom.GetPosition(), 2, Sequence.Manager.GetDataType(((CodeBlock.DataInput)ConnectFrom).datatype).Color, true);
+                            else
+                                DrawPwettyLine(e.Graphics, new PointF(MousePos.X, MousePos.Y), ConnectFrom.GetPosition(), 2, Color.Black, false);
+                        }
+                    }
+                }
+
+                //draw blocks 
+                foreach (CodeBlock b in Sequence.CodeBlocks)
+                {
                     b.Draw(e.Graphics);
                     b.DrawText(e.Graphics);
                 }
-                if (SelectedOutput != null && SelectedInput != null)
-                {
-                    if (SelectedOutput is CodeBlock.DataOutput && SelectedInput is CodeBlock.DataInput)
-                    {
-                        DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), SelectedInput.GetPosition(), 2, Sequence.Manager.GetDataType(((CodeBlock.DataInput)SelectedInput).datatype).Color, true);
-                    }
-                    else
-                        DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), SelectedInput.GetPosition(), 2, Color.Black, false);
-                }
-                else
-                {
-                    if (SelectedOutput != null)
-                    {
-                        if (SelectedOutput is CodeBlock.DataOutput)
-                            DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new PointF(MouseX, MouseY), 2, Sequence.Manager.GetDataType(((CodeBlock.DataOutput)SelectedOutput).datatype).Color, true);
-                        else
-                            DrawPwettyLine(e.Graphics, SelectedOutput.GetPosition(), new PointF(MouseX, MouseY), 2, Color.Black, false);
-                    }
 
-                    if (SelectedInput != null)
-                    {
-                        if (SelectedInput is CodeBlock.DataInput)
-                            DrawPwettyLine(e.Graphics, new PointF(MouseX, MouseY), SelectedInput.GetPosition(), 2, Sequence.Manager.GetDataType(((CodeBlock.DataInput)SelectedInput).datatype).Color, true);
-                        else
-                            DrawPwettyLine(e.Graphics, new PointF(MouseX, MouseY), SelectedInput.GetPosition(), 2, Color.Black, false);
-                    }
-                }
             }
             base.OnPaint(e);
         }
 
-        public void UpdateFloatingBlocks()
-        {
-            FloatingBlocks.Clear();
-            foreach (CodeBlock b in Sequence.CodeBlocks)
-            {
-                bool found = true;
-                foreach (CodeBlock.Input i in b.Inputs)
-                {
-                    if (i.AnyConnected) found = false;
-                }
-                foreach (CodeBlock.Output o in b.Outputs)
-                {
-                    if (o.AnyConnected) found = false;
-                }
-                if (found) FloatingBlocks.Add(b);
-            }
-        }
-
-        public void Format()
-        {
-            if (Sequence == null) return;
-
-
-            //if (NeedsRecompile) eeprom.Assamble();
-            NeedsRecompile = false;
-
-            float minX = 0;
-            float minY = 0;
-            float maxX = 0;
-            float maxY = 0;
-
-            foreach (CodeBlock b in Sequence.CodeBlocks)
-            {
-                minX = Math.Min(minX, b.X);
-                minY = Math.Min(minY, b.Y);
-            }
-
-            foreach (CodeBlock b in Sequence.CodeBlocks)
-            {
-                b.X -= minX;
-                b.Y -= minY;
-
-                maxX = Math.Max(maxX, b.X + b.Width);
-                maxY = Math.Max(maxY, b.Y + b.Height);
-            }
-
-            Width = (int)Math.Max(Parent.Bounds.Width, maxX + 20);
-            Height = (int)Math.Max(Parent.Bounds.Height, maxY + 20);
-            /*
-            UpdateFloatingBlocks();
-            int floatx = 100;
-            foreach (CodeBlock b in FloatingBlocks)
-            {
-                b.X = floatx;
-                b.Y = 100;
-                floatx += 150;
-            }
-*/
-            Invalidate();
-        }
         int doublerightclicktimer = 0;
         bool doublerightclicktimervar = false;
         public void MouseEvent(MouseEventArgs e, bool _LClick)
         {
-            MouseX = (int)MousePos.X;
-            MouseY = (int)MousePos.Y;
-
             if (!doublerightclicktimervar && e.Button == MouseButtons.Right)
             {
                 if (doublerightclicktimer > Environment.TickCount)
                 {
-                    CodeBlock b = GetCodeBlock(new Point(MouseX, MouseY));
+                    CodeBlock b = GetCodeBlock(new PointF(MousePos.X, MousePos.Y));
                     if (b != null)
                     {
                         Sequence.RemoveCodeBlock(b);
@@ -338,71 +279,9 @@ namespace SynergySequence
 
             if (e.Button == MouseButtons.Left)
             {
-                CodeBlock.Output nearestout = GetNearestOutput(new Point(MouseX, MouseY));
-                CodeBlock.Input nearestin = GetNearestInput(new Point(MouseX, MouseY));
-
-                if (Dragging == null && nearestout != null)
-                {
-                    if (SelectedOutput == null)
-                    {
-                        SelectedOutput = nearestout;
-                        if (SelectedInput == null) SelectedStartedAt = 1;
-                    }
-                }
-                else if (SelectedStartedAt == 2) SelectedOutput = null;
-
-                if (Dragging == null && nearestin != null)
-                {
-                    if (SelectedInput == null)
-                    {
-                        SelectedInput = nearestin;
-                        if (SelectedOutput == null) SelectedStartedAt = 2;
-                    }
-                }
-                else if (SelectedStartedAt == 1) SelectedInput = null;
-
-                if (SelectedInput == null && SelectedOutput == null)
-                {
-                    if (Dragging == null)
-                    {
-                        Dragging = GetCodeBlock(new Point(MouseX, MouseY));
-                    }
-                    else
-                    {
-                        Dragging.X = MouseX;
-                        Dragging.Y = MouseY;
-                        Invalidate();
-                    }
-                }
-
-                //select nearest codeblock
-                if (_LClick)
-                {
-                    SelectedBlock = GetCodeBlock(new Point(MouseX, MouseY));
-                    OnBlockSelect(SelectedBlock);
-                    if (SelectedBlock != null) Sequence.Select(SelectedBlock);
-                }
-                else { SelectedBlock = null; }
-
 
             }
 
-            if (e.Button == MouseButtons.None)
-            {
-                if (SelectedOutput != null && SelectedInput != null)
-                {
-                    List<CodeBlock> dependencies = new List<CodeBlock>();
-                    if (SelectedOutput != null) dependencies.AddRange(SelectedOutput.Owner.GetDependencies());
-                    if (!dependencies.Contains(SelectedInput.Owner))
-                    {
-                        Sequence.Connect(SelectedOutput, SelectedInput);
-                        NeedsRecompile = true;
-                    }
-                }
-                SelectedOutput = null; SelectedInput = null;
-
-                Dragging = null;
-            }
             //Format();
         }
 
@@ -424,7 +303,6 @@ namespace SynergySequence
                     {
                         CodeBlock block = (CodeBlock)p.Create();
                         Sequence.AddCodeBlock(block);
-                        NeedsRecompile = true;
                         //Format();
                     }
                 }
@@ -468,52 +346,115 @@ namespace SynergySequence
             m.Invert();
             m.TransformPoints(points);
             MousePos = points[0];
+
             if (ViewStraving)
             {
                 View.Translate((float)(pos.X - LastMousePos.X), (float)(pos.Y - LastMousePos.Y), MatrixOrder.Append);
                 Invalidate();
             }
 
-            if (SelectedInput != null || SelectedOutput != null) Invalidate();
+
+            if (SelectedBlock != null)
+            {
+                if (MoveSelectedBlock)
+                {
+                    SelectedBlock.X = MousePos.X;
+                    SelectedBlock.Y = MousePos.Y;
+                    Invalidate();
+                }
+            }
+
+            if (ConnectFrom != null)
+            {
+                if (ConnectFrom is CodeBlock.Input)
+                {
+                    ConnectTo = GetNearestOutput(MousePos);
+
+                }
+                else
+                {
+                    ConnectTo = GetNearestInput(MousePos);
+
+                }
+                if (ConnectTo != null && ConnectTo is CodeBlock.TriggerInput && ConnectFrom is CodeBlock.DataOutput) ConnectTo = null;
+                if (ConnectTo != null && ConnectTo is CodeBlock.DataInput && ConnectFrom is CodeBlock.TriggerOutput) ConnectTo = null;
+                if (ConnectTo != null && ConnectTo is CodeBlock.TriggerOutput && ConnectFrom is CodeBlock.DataInput) ConnectTo = null;
+                if (ConnectTo != null && ConnectTo is CodeBlock.DataOutput && ConnectFrom is CodeBlock.TriggerInput) ConnectTo = null;
+
+                Invalidate();
+            }
 
             if (Sequence == null) return;
-            MouseEvent(e, false);
+            //MouseEvent(e, false);
 
             LastMousePos = pos;
         }
 
         private void SequenceEditWindow_MouseDown(object sender, MouseEventArgs e)
         {
+
+            //select nearest codeblock
+            if (e.Button == MouseButtons.Left)
+            {
+                if (!MoveSelectedBlock)//only allow to connect lines when not moving blocks
+                {
+                    CodeBlock.Output nearestout = GetNearestOutput(new PointF(MousePos.X, MousePos.Y));
+                    CodeBlock.Input nearestin = GetNearestInput(new PointF(MousePos.X, MousePos.Y));
+
+                    if (nearestout != null) ConnectFrom = nearestout;
+                    if (nearestin != null) ConnectFrom = nearestin;
+                }
+
+                CodeBlock selected = GetCodeBlock(new PointF(MousePos.X, MousePos.Y));
+                if (selected != SelectedBlock)
+                {
+                    SelectedBlock = selected;
+                    OnBlockSelect(SelectedBlock);
+                    Sequence.Select(SelectedBlock);
+
+                    Invalidate();
+                }
+                else
+                {
+                    if (SelectedBlock != null && ConnectFrom == null)
+                    {
+                        MoveSelectedBlock = true;
+                    }
+                }
+
+            }
+
+
             if (e.Button == MouseButtons.Middle)
             {
                 ViewStraving = true;
             }
             if (Sequence == null) return;
-            MouseEvent(e, true);
+            //MouseEvent(e, true);
 
             if (e.Button == MouseButtons.Right)
             {
+                //if (SelectedBlock != null)//not sure if this is a good idea
+                {
+                    CodeBlock.Output output = GetNearestOutput(new PointF(MousePos.X, MousePos.Y));
+                    CodeBlock.Input input = GetNearestInput(new PointF(MousePos.X, MousePos.Y));
 
-                CodeBlock.Output output = GetNearestOutput(new Point(MouseX, MouseY));
-                if (output != null)
-                {
-                    if (output is CodeBlock.DataOutput)
+                    if (output != null)
                     {
-                        foreach (CodeBlock.DataInput i in ((CodeBlock.DataOutput)output).Connected) i.Connected = null;
-                        ((CodeBlock.DataOutput)output).Connected.Clear();
-                        NeedsRecompile = true;
+                        if (output is CodeBlock.DataOutput)
+                        {
+                            foreach (CodeBlock.DataInput i in ((CodeBlock.DataOutput)output).Connected) i.Connected = null;
+                            ((CodeBlock.DataOutput)output).Connected.Clear();
+                        }
+                        if (output is CodeBlock.TriggerOutput)
+                        {
+                            CodeBlock.TriggerOutput o = (CodeBlock.TriggerOutput)output;
+                            foreach (CodeBlock.TriggerInput i in o.Connected) i.Connected.Remove(o);
+                            o.Connected.Clear();
+                        }
+                        Invalidate();
                     }
-                    if (output is CodeBlock.TriggerOutput)
-                    {
-                        CodeBlock.TriggerOutput o = (CodeBlock.TriggerOutput)output;
-                        foreach (CodeBlock.TriggerInput i in o.Connected) i.Connected.Remove(o);
-                        o.Connected.Clear();
-                        NeedsRecompile = true;
-                    }
-                }
-                else
-                {
-                    CodeBlock.Input input = GetNearestInput(new Point(MouseX, MouseY));
+
                     if (input != null)
                     {
                         if (input is CodeBlock.DataInput)
@@ -522,13 +463,15 @@ namespace SynergySequence
                             {
                                 ((CodeBlock.DataInput)input).Connected.Connected.Remove(((CodeBlock.DataInput)input));
                                 ((CodeBlock.DataInput)input).Connected = null;
-                                NeedsRecompile = true;
                             }
                         }
-                    }
-                    else
-                    {
-                        //ShowContextMenu(MouseX, MouseY);
+                        if (input is CodeBlock.TriggerInput)
+                        {
+                            CodeBlock.TriggerInput i = (CodeBlock.TriggerInput)input;
+                            foreach (CodeBlock.TriggerOutput o in i.Connected) o.Connected.Clear();
+                            i.Connected.Clear();
+                        }
+                        Invalidate();
                     }
                 }
             }
@@ -557,8 +500,6 @@ namespace SynergySequence
                     SequenceManager.Prototype p = (SequenceManager.Prototype)data[0];
                     CodeBlock b = Sequence.Manager.CreateCodeBlock(p);
                     Sequence.AddCodeBlock(b);
-
-                    NeedsRecompile = true;
                     //Format();
 
                     Dragging = b;
@@ -604,6 +545,26 @@ namespace SynergySequence
             if (e.Button == MouseButtons.Middle)
             {
                 ViewStraving = false;
+            }
+            if (e.Button == MouseButtons.Left)
+            {
+                MoveSelectedBlock = false;
+                //if (OnSelectedItemChanged != null) OnSelectedItemChanged(SelectedControl);
+
+
+                if (ConnectFrom != null && ConnectTo != null)
+                {
+                    //FIXME
+                    //List<CodeBlock> dependencies = new List<CodeBlock>();
+                    //if (SelectedOutput != null) dependencies.AddRange(SelectedOutput.Owner.GetDependencies());
+                    //if (!dependencies.Contains(SelectedInput.Owner))
+                    {
+                        Sequence.Connect(ConnectFrom, ConnectTo);
+                    }
+                }
+                ConnectFrom = null;
+                ConnectTo = null;
+                Invalidate();
             }
         }
 

@@ -50,7 +50,7 @@ namespace SynergySequence
         public virtual void Save(XElement _Data) { }
         public virtual void Load(XElement _Data) { }
 
-        public virtual bool Intersect(Point _Point)
+        public virtual bool Intersect(PointF _Point)
         {
             return _Point.X > X - Width / 2 && _Point.Y > Y - Height / 2 && _Point.X < X + Width / 2 && _Point.Y < Y + Height / 2;
         }
@@ -75,7 +75,10 @@ namespace SynergySequence
                 _Points[i].Y += Y;
             }
             _Graphics.FillPolygon(new SolidBrush(Color.FromArgb(150, 150, 255)), _Points);
-            _Graphics.DrawPolygon(new Pen(Brushes.Black, 2), _Points);
+            if (Selected)
+                _Graphics.DrawPolygon(new Pen(Brushes.Red, 2), _Points);
+            else
+                _Graphics.DrawPolygon(new Pen(Brushes.Black, 1), _Points);
         }
 
         public virtual void DrawText(Graphics _Graphics)
@@ -134,7 +137,10 @@ namespace SynergySequence
         public void DrawConstant(Graphics _Graphics)
         {
             _Graphics.FillEllipse(new SolidBrush(Color.FromArgb(150, 150, 255)), new RectangleF(X - Width / 2, Y - Height / 2, Width, Height));
-            _Graphics.DrawEllipse(new Pen(Brushes.Black, 2), new RectangleF(X - Width / 2, Y - Height / 2, Width, Height));
+            if(Selected)
+                _Graphics.DrawEllipse(new Pen(Brushes.Red, 2), new RectangleF(X - Width / 2, Y - Height / 2, Width, Height));
+            else
+                _Graphics.DrawEllipse(new Pen(Brushes.Black, 1), new RectangleF(X - Width / 2, Y - Height / 2, Width, Height));
         }
 
         public void DrawConstantShadow(Graphics _Graphics)
@@ -359,6 +365,8 @@ namespace SynergySequence
         {
             List<CodeBlock> list = new List<CodeBlock>();
             list.Add(this);
+
+            
 
             return list.ToArray();
         }
