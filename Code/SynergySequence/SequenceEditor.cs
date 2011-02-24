@@ -178,6 +178,10 @@ namespace SynergySequence
                             PointF y = i.Connected.GetPosition();
                             DrawPwettyLine(e.Graphics, y, x, 1.5f, Sequence.Manager.GetDataType(i.datatype).Color, true);
                         }
+                        else
+                        {
+                            e.Graphics.DrawString(i.Text, Font, Brushes.Black, i.GetPosition());
+                        }
                     }
 
                     foreach (CodeBlock.DataOutput i in b.DataOutputs)
@@ -197,9 +201,16 @@ namespace SynergySequence
                     {
                         PointF pos = o.GetPosition();
 
-                        foreach (CodeBlock.TriggerInput i in o.Connected)
+                        if (o.Connected.Count > 0)
                         {
-                            DrawPwettyLine(e.Graphics, pos, i.GetPosition(), 1.5f, Color.Black, false);
+                            foreach (CodeBlock.TriggerInput i in o.Connected)
+                            {
+                                DrawPwettyLine(e.Graphics, pos, i.GetPosition(), 1.5f, Color.Black, false);
+                            }
+                        }
+                        else
+                        {
+                            e.Graphics.DrawString(o.Text, Font, Brushes.Black, o.GetPosition());
                         }
 
                         e.Graphics.FillRectangle(new SolidBrush(Color.Black), new RectangleF(pos.X, pos.Y - 5, 5, 10));
@@ -454,7 +465,8 @@ namespace SynergySequence
                             o.Connected.Clear();
                         }
                         Invalidate();
-                    }else if (input != null)
+                    }
+                    else if (input != null)
                     {
                         if (input is CodeBlock.DataInput)
                         {
@@ -498,19 +510,24 @@ namespace SynergySequence
             if (Dragging == null)
             {
                 object[] data = (object[])(e.Data.GetData(typeof(object[])));
-
-                if (data[0] is SequenceManager.Prototype)
+                if (data.Length > 0)
                 {
-                    SequenceManager.Prototype p = (SequenceManager.Prototype)data[0];
-                    CodeBlock b = Sequence.Manager.CreateCodeBlock(p);
-                    Sequence.AddCodeBlock(b);
-                    //Format();
-
-                    Dragging = b;
-
-                    e.Effect = DragDropEffects.Copy;
+                    if (data[0] is SequenceManager.Prototype)
+                    {
+                        SequenceManager.Prototype p = (SequenceManager.Prototype)data[0];
+                        CodeBlock b = Sequence.Manager.CreateCodeBlock(p);
+                        Sequence.AddCodeBlock(b);
+                        Dragging = b;
+                        e.Effect = DragDropEffects.Copy;
+                    }
+                    else if (data[0] is CodeBlock)
+                    {
+                        Sequence.AddCodeBlock((CodeBlock)data[0]);
+                        Dragging = (CodeBlock)data[0];
+                        e.Effect = DragDropEffects.Copy;
+                    }
+                    else e.Effect = DragDropEffects.None;
                 }
-                else e.Effect = DragDropEffects.None;
             }
         }
 

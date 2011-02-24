@@ -74,11 +74,12 @@ namespace MainStation
                 if (c is MainStationCodeBlock)
                 {
                     MainStationCodeBlock msc = (MainStationCodeBlock)c;
-                    if ((MainStationCodeBlock)msc is BaseBlockEvent)
+                    if (msc is BaseBlockEvent)
                     {
                         foreach (BaseBlockEvent.Event evnt in ((BaseBlockEvent)msc).Events)
                         {
-                            events.Add(evnt);
+                            if (evnt.Output.Connected.Count > 0)//only add the event to the list when there is code attached to it
+                                events.Add(evnt);
                         }
                     }
                 }

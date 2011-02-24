@@ -42,7 +42,59 @@
     <Event ID="16" Name="8 Falling Edge" Description="Input 8 turned low." />
   </Device>
   
-  <Device  ID="4" Name="Relay 8" Description="This device represents the Relay-card with 8 relays.">
+  <Device  ID="5" Name="Relay 8" Description="This device represents the Relay-card with 8 relays.">
+	<RemoteEvent ID="1" Name="SetRelay1" Description="Sets Relay1" >
+		<Input Name="State" Type="bool"/>
+	</RemoteEvent>
+	<RemoteEvent ID="2" Name="SetRelay2" Description="Sets Relay2" >
+		<Input Name="State" Type="bool"/>
+	</RemoteEvent>
+	<RemoteEvent ID="3" Name="SetRelay3" Description="Sets Relay3" >
+		<Input Name="State" Type="bool"/>
+	</RemoteEvent>
+	<RemoteEvent ID="4" Name="SetRelay4" Description="Sets Relay4" >
+		<Input Name="State" Type="bool"/>
+	</RemoteEvent>
+	<RemoteEvent ID="5" Name="SetRelay5" Description="Sets Relay5" >
+		<Input Name="State" Type="bool"/>
+	</RemoteEvent>
+	<RemoteEvent ID="6" Name="SetRelay6" Description="Sets Relay6" >
+		<Input Name="State" Type="bool"/>
+	</RemoteEvent>
+	<RemoteEvent ID="7" Name="SetRelay7" Description="Sets Relay7" >
+		<Input Name="State" Type="bool"/>
+	</RemoteEvent>
+	<RemoteEvent ID="8" Name="SetRelay8" Description="Sets Relay8" >
+		<Input Name="State" Type="bool"/>
+	</RemoteEvent>
+	
+	<RemoteEvent ID="9" Name="ToggleRelay1" Description="Toggles Relay1" >
+		<Input Name="" Type="void"/>
+	</RemoteEvent>
+	<RemoteEvent ID="10" Name="ToggleRelay2" Description="Toggles Relay2" >
+		<Input Name="" Type="void"/>
+	</RemoteEvent>
+	<RemoteEvent ID="11" Name="ToggleRelay3" Description="Toggles Relay3" >
+		<Input Name="" Type="void"/>
+	</RemoteEvent>
+	<RemoteEvent ID="12" Name="ToggleRelay4" Description="Toggles Relay4" >
+		<Input Name="" Type="void"/>
+	</RemoteEvent>
+	<RemoteEvent ID="13" Name="ToggleRelay5" Description="Toggles Relay5" >
+		<Input Name="" Type="void"/>
+	</RemoteEvent>
+	<RemoteEvent ID="14" Name="ToggleRelay6" Description="Toggles Relay6" >
+		<Input Name="" Type="void"/>
+	</RemoteEvent>
+	<RemoteEvent ID="15" Name="ToggleRelay7" Description="Toggles Relay7" >
+		<Input Name="" Type="void"/>
+	</RemoteEvent>
+	<RemoteEvent ID="16" Name="ToggleRelay8" Description="Toggles Relay8" >
+		<Input Name="" Type="void"/>
+	</RemoteEvent>
+  </Device>
+
+  <Device  ID="4" Name="Output card 8" Description="This device represents the Relay-card with 8 relays.">
 	<RemoteEvent ID="1" Name="SetRelay1" Description="Sets Relay1" >
 		<Input Name="State" Type="bool"/>
 	</RemoteEvent>
