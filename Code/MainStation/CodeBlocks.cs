@@ -305,7 +305,12 @@ namespace MainStationCodeBlocks
 
             foreach (ProductDataBase.Device.Event e in device.events)
             {
-                TriggerOutputs.Add(new TriggerOutput(this, e.Name));
+                TriggerOutput newoutput = new TriggerOutput(this, e.Name);
+                Event newevent = new Event();
+                newevent.DeviceID = deviceid;
+                newevent.EventID = e.ID;
+                newevent.Output = newoutput;
+                TriggerOutputs.Add(newoutput);
                 events++;
             }
 
