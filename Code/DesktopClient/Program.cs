@@ -8,6 +8,7 @@ using SynergySequence;
 using DesktopCodeBlocks;
 using WebInterface;
 using LazyNetworking;
+using MainStation;
 
 namespace DesktopClient
 {
@@ -47,6 +48,7 @@ namespace DesktopClient
 
         static void Reload()
         {
+            ProductDataBase.Load("Products.xml");
             XElement project = XElement.Load("project.xml");
             SynergySequence.SequenceManager sequencemanager = new ComputerSequenceManager();
 
