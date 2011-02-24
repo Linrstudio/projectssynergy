@@ -284,14 +284,16 @@ namespace MainStationCodeBlocks
 
     }
 
-    public class MainStationCodeBlockDevice : BaseBlockEvent
+    public class MainStationCodeBlockDevice : MainStationCodeBlocks.BaseBlockEvent
     {
         ushort deviceid;
         [Browsable(true)]
         public ushort DeviceID
         {
             get { return deviceid; }
-            set { deviceid = value; }
+            set { deviceid = value; 
+                foreach (Event e in Events)e.DeviceID = deviceid; //update device id's in events
+            }
         }
 
         public ushort type;
@@ -311,6 +313,7 @@ namespace MainStationCodeBlocks
                 newevent.EventID = e.ID;
                 newevent.Output = newoutput;
                 TriggerOutputs.Add(newoutput);
+                Events.Add(newevent);
                 events++;
             }
 

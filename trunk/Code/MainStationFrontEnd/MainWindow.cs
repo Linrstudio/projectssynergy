@@ -300,7 +300,18 @@ namespace MainStationFrontEnd
         {
             TreeNode node = (TreeNode)e.Item;
             if (node.Tag == null) return;
-            t_contents.DoDragDrop(node.Tag, DragDropEffects.Copy);
+            if (node.Tag is MainStation.MainStationDevice)
+            {
+                MainStation.MainStationDevice device = (MainStation.MainStationDevice)node.Tag;
+                //construct apropriate codeblock
+                var block = new MainStationCodeBlocks.MainStationCodeBlockDevice();
+                block.type = device.device.ID;
+                block.DeviceID = device.ID;
+                block.Create();
+                t_contents.DoDragDrop(new object[] { block }, DragDropEffects.Copy);
+            }
+            else
+                t_contents.DoDragDrop(node.Tag, DragDropEffects.Copy);
         }
 
         private void renameToolStripMenuItem_Click(object sender, EventArgs e)
