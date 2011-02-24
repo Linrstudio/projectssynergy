@@ -52,6 +52,26 @@ namespace MainStationCodeBlocks
 
     public abstract class BaseBlockEvent : MainStationCodeBlock
     {
+        public class Event
+        {
+            public byte EventID;
+            public TriggerOutput Output;
+            public ushort DeviceID;
+        }
+        //maps from event ID to triggeroutput ID
+        public List<Event> Events = new List<Event>();
+
+        public virtual byte[] CompileEvent(Event _Event) 
+        {
+            MemoryStream stream=new MemoryStream();
+            foreach (TriggerInput i in _Event.Output.Connected)
+            {
+                byte[] code = ((MainStationCodeBlock)i.Owner).Compile(i);
+                stream.Write(code,0,code.Length);
+            }
+            return stream.ToArray();
+        }
+
         public override void Draw(Graphics _Graphics)
         {
             DrawShape(_Graphics,
@@ -194,7 +214,7 @@ namespace MainStationCodeBlocks
         public override GetOutputResult GetOutput(DataOutput _Output)
         {
             var reg = MainStationCompiler.GetRegister(2);
-            return new GetOutputResult(CodeInstructions.Load(reg.index, val ), reg);
+            return new GetOutputResult(CodeInstructions.Load(reg.index, val), reg);
         }
         ushort val;
         [Browsable(true), CategoryAttribute("Constant")]
@@ -264,6 +284,42 @@ namespace MainStationCodeBlocks
 
     }
 
+    public class MainStationCodeBlockDevice : BaseBlockEvent
+    {
+        ushort deviceid;
+        [Browsable(true)]
+        public ushort DeviceID
+        {
+            get { return deviceid; }
+            set { deviceid = value; }
+        }
+
+        public ushort type;
+
+        public void Create()
+        {
+            ProductDataBase.Device device = ProductDataBase.GetDeviceByID(type);
+            int events = 0;
+            width = 100;
+            height = 200;
+
+            foreach (ProductDataBase.Device.Event e in device.events)
+            {
+                TriggerOutputs.Add(new TriggerOutput(this, e.Name));
+                events++;
+            }
+
+            height = events * 30;
+
+            UpdateConnectors();
+        }
+
+        public override void Load(XElement _Data) { deviceid = ushort.Parse(_Data.Attribute("DeviceID").Value); type = ushort.Parse(_Data.Attribute("TypeID").Value); Create(); }
+        public override void Save(XElement _Data) { _Data.SetAttributeValue("DeviceID", deviceid); _Data.SetAttributeValue("TypeID", type); }
+
+
+    }
+
     public class MainStationCodeBlockInvokeRemoteEvent : BaseBlockInstruction
     {
         ushort deviceid;
@@ -297,7 +353,7 @@ namespace MainStationCodeBlocks
             byte[] code;
             code = CodeInstructions.Load8(0, eventid);
             stream.Write(code, 0, code.Length);
-            if (DataInputs[0].Connected!=null)
+            if (DataInputs[0].Connected != null)
             {
                 var ans = ((MainStationCodeBlock)DataInputs[0].Connected.Owner).GetOutput(DataInputs[0].Connected);
                 stream.Write(ans.Code, 0, ans.Code.Length);
@@ -398,8 +454,9 @@ namespace MainStationCodeBlocks
             _Manager.AddPrototype(new SequenceManager.Prototype("Set LED", "Debug", "i like u", typeof(MainStationCodeBlocks.BlockSetDebugLed)));
 
             _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Integer", "blaat", typeof(MainStationCodeBlocks.BlockIntConstant)));
-        }
 
+            _Manager.AddPrototype(new SequenceManager.Prototype("", "", "", typeof(MainStationCodeBlocks.MainStationCodeBlockDevice), false));
+        }
 
         public virtual byte[] Compile(TriggerInput _Input) { throw new NotImplementedException(); }
         public virtual GetOutputResult GetOutput(DataOutput _Output) { throw new NotImplementedException(); }

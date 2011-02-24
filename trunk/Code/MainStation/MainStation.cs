@@ -68,15 +68,18 @@ namespace MainStation
             byte[] Buffer = new byte[0xffff];//2^16
 
             //Event header
-            List<MainStationCodeBlockRemoteEvent> events = new List<MainStationCodeBlockRemoteEvent>();
+            List<BaseBlockEvent.Event> events = new List<BaseBlockEvent.Event>();
             foreach (CodeBlock c in _MainStation.Sequence.CodeBlocks)
             {
                 if (c is MainStationCodeBlock)
                 {
                     MainStationCodeBlock msc = (MainStationCodeBlock)c;
-                    if ((MainStationCodeBlock)msc is MainStationCodeBlockRemoteEvent)
+                    if ((MainStationCodeBlock)msc is BaseBlockEvent)
                     {
-                        events.Add((MainStationCodeBlockRemoteEvent)msc);
+                        foreach (BaseBlockEvent.Event evnt in ((BaseBlockEvent)msc).Events)
+                        {
+                            events.Add(evnt);
+                        }
                     }
                 }
                 else throw new Exception("normal codeblock in sequence for mainstation found, whut !?");
@@ -95,7 +98,7 @@ namespace MainStation
                 Buffer[didx * 4 + 1] = did[1];
                 Buffer[didx * 4 + 2] = eaddr[0];
                 Buffer[didx * 4 + 3] = eaddr[1];
-                foreach (MainStationCodeBlockRemoteEvent e in events)
+                foreach (BaseBlockEvent.Event e in events)
                 {
                     if (e.DeviceID != d.ID) continue;
                     int addr = deviceheadersize + eidx * 3;
@@ -105,7 +108,21 @@ namespace MainStation
                     Buffer[addr + 2] = eaddr[1];
                     //clear the compiler before we use it
                     UsedRegisters.Clear();
-                    byte[] blob = e.Compile(null);
+                    BaseBlockEvent block = null;
+                    foreach (CodeBlock c in _MainStation.Sequence.CodeBlocks)
+                    {
+                        if ((MainStationCodeBlock)c is BaseBlockEvent)
+                        {
+                            foreach (BaseBlockEvent.Event evnt in ((BaseBlockEvent)c).Events)
+                            {
+                                if (evnt == e)
+                                {
+                                    block = ((BaseBlockEvent)c);
+                                }
+                            }
+                        }
+                    }
+                    byte[] blob = block.CompileEvent(e);
                     for (int i = 0; i < blob.Length; i++)
                     {
                         Buffer[currenteventaddr++] = blob[i];
@@ -389,7 +406,7 @@ namespace MainStation
             }
         }
 
-        public static void KismetInvoke(ushort _DeviceID,byte _Event)
+        public static void KismetInvoke(ushort _DeviceID, byte _Event)
         {
             byte[] devid = Utilities.Utilities.FromShort(_DeviceID);
             byte[] buffer = new byte[65];
@@ -401,7 +418,7 @@ namespace MainStation
             System.Threading.Thread.Sleep(10);
             buffer = Read();
         }
-        
+
         public static Time TimeRead()
         {
             byte[] buffer = new byte[65];
