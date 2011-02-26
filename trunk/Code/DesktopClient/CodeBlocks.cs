@@ -157,20 +157,43 @@ namespace DesktopCodeBlocks
 
     public class BlockGenericEventInvoke : BaseBlockInstruction
     {
+        string name = "";
+        [Browsable(true)]
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
         public BlockGenericEventInvoke()
         {
             width = 100;
             height = 50;
             TriggerInputs.Add(new TriggerInput(this, "Trigger"));
             UpdateConnectors();
-            TriggerInputs[0].X += width / 3;
+            //TriggerInputs[0].X += width / 3;
         }
+        public override void Load(XElement _Data) { name= _Data.Value; }
+        public override void Save(XElement _Data) { _Data.Value = name; }
 
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
         public override void HandleTrigger(TriggerInput _Input)
         {
-            //DesktopClient.DesktopClient.MainStation.
-            //MainStation.MainStation.InvokeLocalEvent(deviceid, eventid, 0);
+            if (DesktopClient.DesktopClient.MainStation == null) return;
+            byte eventid = 0;
+            ushort deviceid = 0;
+            foreach (CodeBlock c in DesktopClient.DesktopClient.MainStation.Sequence.CodeBlocks)
+            {
+                if (c is MainStationCodeBlocks.BlockGenericEvent)
+                {
+                    eventid = ((MainStationCodeBlocks.BlockGenericEvent)c).GetEventID();
+
+                }
+            }
+            if (eventid != 0)
+            {
+                MainStation.MainStation.InvokeLocalEvent(deviceid, eventid, 0);
+            }
         }
         public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
         public override void Draw(Graphics _Graphics)
@@ -1056,6 +1079,7 @@ namespace DesktopCodeBlocks
 
         public static void AddAllPrototypes(SynergySequence.SequenceManager _Manager)
         {
+            _Manager.AddPrototype(new SequenceManager.Prototype("Invoke Event", "Generic", "im in like with u", typeof(BlockGenericEventInvoke)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Delay", "Generic", "im in like with u", typeof(DesktopCodeBlocks.BlockEventDelay)));
 
             _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Boolean", "im in like with u", typeof(DesktopCodeBlocks.BlockBoolConstant)));
@@ -1087,7 +1111,7 @@ namespace DesktopCodeBlocks
             _Manager.AddPrototype(new SequenceManager.Prototype("DigitalOutput toggle", "K8055", "i like u", typeof(BlockDigitalOutputToggleState)));
             _Manager.AddPrototype(new SequenceManager.Prototype("DigitalInput get state", "K8055", "i like u", typeof(BlockDigitalInputGetState)));
             _Manager.AddPrototype(new SequenceManager.Prototype("DigitalInputToggled", "K8055", "i like u", typeof(BlockEventInputToggle)));
-     
+
         }
     }
 }

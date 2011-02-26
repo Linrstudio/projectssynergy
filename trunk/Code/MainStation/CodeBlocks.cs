@@ -281,9 +281,9 @@ namespace MainStationCodeBlocks
             get { return name; }
             set { name = value; }
         }
-        public int GetEventID()
+        public byte GetEventID()
         {
-            int index = 128;
+            byte index = 128;
             foreach (CodeBlock c in Sequence.CodeBlocks)
             {
                 if (c == this) return index;
