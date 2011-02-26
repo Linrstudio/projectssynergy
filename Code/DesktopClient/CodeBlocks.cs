@@ -8,6 +8,19 @@ using System.Xml;
 using System.Xml.Linq;
 using SynergySequence;
 using MainStation;
+using System.Speech;
+using WebInterface;
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.ComponentModel;
+using System.Drawing;
+using System.Xml;
+using System.Xml.Linq;
+using System.Runtime.InteropServices;
+using SynergySequence;
+using DesktopCodeBlocks;
 
 namespace DesktopCodeBlocks
 {
@@ -156,7 +169,7 @@ namespace DesktopCodeBlocks
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
         public override void HandleTrigger(TriggerInput _Input)
         {
-            desktopClient.
+            //DesktopClient.DesktopClient.MainStation.
             //MainStation.MainStation.InvokeLocalEvent(deviceid, eventid, 0);
         }
         public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
@@ -617,6 +630,404 @@ namespace DesktopCodeBlocks
             _Graphics.DrawString("Delay " + Value.ToString() + "s", new Font("Arial", 15, FontStyle.Bold), Brushes.Black, X, Y, sf);
         }
     }
+    public class BlockEventSwitchToggle : BaseBlockEvent
+    {
+        string switchname = "";
+        [Browsable(true)]
+        public string SwitchName
+        {
+            get { return switchname; }
+            set { switchname = value.ToLower(); }
+        }
+
+        public BlockEventSwitchToggle()
+        {
+            width = 100;
+            height = 50;
+            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            UpdateConnectors();
+            Name = "Switch toggle";
+        }
+
+        public override void Load(XElement _Data) { SwitchName = _Data.Value; }
+        public override void Save(XElement _Data) { _Data.Value = SwitchName; }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
+        public override void HandleTrigger(TriggerInput _Input) { Trigger(TriggerOutputs[0]); }
+        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+    }
+
+    public class BlockSwitchToggle : BaseBlockInstruction
+    {
+        [Browsable(true)]
+        public string SwitchName
+        {
+            get { return switchname; }
+            set { switchname = value.ToLower(); }
+        }
+        string switchname = "";
+
+
+        public BlockSwitchToggle()
+        {
+            width = 100;
+            height = 40;
+            TriggerInputs.Add(new TriggerInput(this, "Toggle"));
+            UpdateConnectors();
+            Name = "Switch";
+        }
+
+        public override void Load(XElement _Data) { SwitchName = _Data.Value; }
+        public override void Save(XElement _Data) { _Data.Value = SwitchName; }
+        bool toggle = false;
+        public override void Finalize()
+        {
+            if (toggle)
+            {
+                Control c = WebInterface.WebInterface.FindControl(switchname);
+                if (c != null && c is Switch)
+                {
+                    ((Switch)c).State = !((Switch)c).State;
+                }
+            }
+            toggle = false;
+        }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
+        public override void HandleTrigger(TriggerInput _Input)
+        {
+            toggle = true;
+        }
+        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+    }
+
+    public class BlockControlSwitch : BaseBlockInstruction
+    {
+        [Browsable(true)]
+        public string SwitchName
+        {
+            get { return switchname; }
+            set { switchname = value.ToLower(); }
+        }
+        string switchname = "";
+
+        public BlockControlSwitch()
+        {
+            width = 100;
+            height = 100;
+            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            TriggerInputs.Add(new TriggerInput(this, "Toggle"));
+            UpdateConnectors();
+            Name = "Switch";
+        }
+
+        public override void Load(XElement _Data) { SwitchName = _Data.Value; }
+        public override void Save(XElement _Data) { _Data.Value = SwitchName; }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
+        public override void HandleTrigger(TriggerInput _Input)
+        {
+            if (_Input == null)
+                Trigger(TriggerOutputs[0]);
+            if (_Input == TriggerInputs[0])
+            {
+                Control c = WebInterface.WebInterface.FindControl(switchname);
+                if (c != null && c is Switch)
+                {
+                    ((Switch)c).State = !((Switch)c).State;
+                }
+            }
+        }
+        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+    }
+
+    public class BlockSwitchSetState : BaseBlockInstruction
+    {
+        [Browsable(true)]
+        public string SwitchName
+        {
+            get { return switchname; }
+            set { switchname = value.ToLower(); }
+        }
+        string switchname = "";
+
+        public BlockSwitchSetState()
+        {
+            width = 100;
+            height = 25;
+            TriggerInputs.Add(new TriggerInput(this, ""));
+            DataInputs.Add(new DataInput(this, "State", "bool"));
+            UpdateConnectors();
+            Name = "Set state";
+        }
+
+        public override void Load(XElement _Data) { SwitchName = _Data.Value; }
+        public override void Save(XElement _Data) { _Data.Value = SwitchName; }
+
+        bool update = false;
+        bool targetstate;
+        public override void Finalize()
+        {
+            if (update)
+            {
+                Control c = WebInterface.WebInterface.FindControl(switchname);
+                if (c != null && c is Switch)
+                {
+                    ((Switch)c).State = targetstate;
+                }
+            }
+            update = false;
+        }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
+        public override void HandleTrigger(TriggerInput _Input)
+        {
+            update = true;
+            targetstate = (bool)GetInput(DataInputs[0]);
+        }
+        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+    }
+
+    public class BlockSwitchGetState : BaseBlockInstruction
+    {
+        string switchname = "";
+        [Browsable(true)]
+        public string SwitchName
+        {
+            get { return switchname; }
+            set { switchname = value.ToLower(); }
+        }
+
+
+        public BlockSwitchGetState()
+        {
+            width = 100;
+            height = 25;
+            DataOutputs.Add(new DataOutput(this, "State", "bool"));
+            UpdateConnectors();
+            Name = "Get state";
+        }
+
+        public override void Load(XElement _Data) { SwitchName = _Data.Value; }
+        public override void Save(XElement _Data) { _Data.Value = SwitchName; }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { }
+        public override void HandleTrigger(TriggerInput _Input) { throw new NotImplementedException(); }
+        public override object HandleOutput(DataOutput _Output)
+        {
+            Control c = WebInterface.WebInterface.FindControl(switchname);
+            if (c != null && c is Switch)
+                return ((Switch)c).State;
+            return false;
+        }
+    }
+    public class BlockEventInputToggle : BaseBlockEvent
+    {
+        [Browsable(true)]
+        public int InputID
+        {
+            get { return inputid; }
+            set { inputid = Math.Max(1, Math.Min(5, value)); }
+        }
+        int inputid = 1;
+
+        bool laststate = false;
+
+        public BlockEventInputToggle()
+        {
+            width = 100;
+            height = 50;
+            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            UpdateConnectors();
+            Name = "Input Toggle";
+        }
+
+        public override void Load(XElement _Data) { inputid = int.Parse(_Data.Value); }
+        public override void Save(XElement _Data) { _Data.Value = inputid.ToString(); }
+
+        public override void Update()
+        {
+            K8055.Initialize();//FIXME might not be smart to initialize this often
+            bool curstate = K8055.GetInput(inputid - 1);
+            if (laststate != curstate)
+            {
+                ((DesktopSequence)Sequence).AddEvent(new DesktopSequence.Event(this));
+                laststate = curstate;
+            }
+        }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
+        public override void HandleTrigger(TriggerInput _Input) { Trigger(TriggerOutputs[0]); }
+        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+    }
+
+    public class BlockDigitalOutputSetState : BaseBlockInstruction
+    {
+        [Browsable(true)]
+        public int OutputID
+        {
+            get { return outputid; }
+            set { outputid = Math.Max(1, Math.Min(8, value)); }
+        }
+        int outputid = 1;
+
+        public BlockDigitalOutputSetState()
+        {
+            width = 100;
+            height = 25;
+            TriggerInputs.Add(new TriggerInput(this, ""));
+            DataInputs.Add(new DataInput(this, "State", "bool"));
+            UpdateConnectors();
+            Name = "K8055 set output";
+        }
+
+        public override void Load(XElement _Data) { outputid = int.Parse(_Data.Value); }
+        public override void Save(XElement _Data) { _Data.Value = outputid.ToString(); }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
+        public override void HandleTrigger(TriggerInput _Input)
+        {
+            K8055.Initialize();
+            K8055.SetOutput(outputid - 1, (bool)GetInput(DataInputs[0]));
+        }
+        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+    }
+
+    public class BlockDigitalOutputGetState : BaseBlockInstruction
+    {
+        [Browsable(true)]
+        public int Channel
+        {
+            get { return channel; }
+            set { channel = Math.Max(1, Math.Min(8, value)); }
+        }
+        int channel = 1;
+
+        public BlockDigitalOutputGetState()
+        {
+            width = 100;
+            height = 25;
+            DataOutputs.Add(new DataOutput(this, "State", "bool"));
+            UpdateConnectors();
+            Name = "k8055 get output";
+        }
+
+        public override void Load(XElement _Data) { channel = int.Parse(_Data.Value); }
+        public override void Save(XElement _Data) { _Data.Value = channel.ToString(); }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
+        public override void HandleTrigger(TriggerInput _Input) { throw new NotImplementedException(); }
+        public override object HandleOutput(DataOutput _Output) { return K8055.GetOutput(channel - 1); }
+    }
+
+    public class BlockDigitalOutputToggleState : BaseBlockInstruction
+    {
+        [Browsable(true)]
+        public int Channel
+        {
+            get { return channel; }
+            set { channel = Math.Max(1, Math.Min(8, value)); }
+        }
+        int channel = 1;
+
+        public BlockDigitalOutputToggleState()
+        {
+            width = 100;
+            height = 25;
+            TriggerInputs.Add(new TriggerInput(this, ""));
+            UpdateConnectors();
+            Name = "k8055 toggle output";
+        }
+
+        public override void Load(XElement _Data) { channel = int.Parse(_Data.Value); }
+        public override void Save(XElement _Data) { _Data.Value = channel.ToString(); }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
+        public override void HandleTrigger(TriggerInput _Input)
+        {
+            K8055.Initialize();
+            K8055.ToggleOutput(channel - 1);
+        }
+        public override object HandleOutput(DataOutput _Output) { throw new NotImplementedException(); }
+    }
+
+    public class BlockDigitalInputGetState : BaseBlockInstruction
+    {
+        [Browsable(true)]
+        public int InputID
+        {
+            get { return inputid; }
+            set { inputid = Math.Max(1, Math.Min(5, value)); }
+        }
+        int inputid = 1;
+
+        public BlockDigitalInputGetState()
+        {
+            width = 100;
+            height = 25;
+            DataOutputs.Add(new DataOutput(this, "State", "bool"));
+            UpdateConnectors();
+            Name = "Get state";
+        }
+
+        public override void Load(XElement _Data) { inputid = int.Parse(_Data.Value); }
+        public override void Save(XElement _Data) { _Data.Value = inputid.ToString(); }
+
+        public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { }
+        public override void HandleTrigger(TriggerInput _Input) { throw new NotImplementedException(); }
+        public override object HandleOutput(DataOutput _Output)
+        {
+            K8055.Initialize();
+            return K8055.GetInput(inputid - 1);
+        }
+    }
+
+    public class K8055
+    {
+        [DllImport("K8055D.dll")]
+        private static extern int OpenDevice(int CardAddress);
+        [DllImport("K8055D.dll")]
+        private static extern void SetDigitalChannel(int Channel);
+        [DllImport("K8055D.dll")]
+        private static extern void ClearDigitalChannel(int Channel);
+        [DllImport("K8055D.dll")]
+        private static extern int ReadDigitalChannel(int Channel);
+
+
+        static bool Initialized = false;
+        static bool[] OutputStates = new bool[8];
+        public static void Initialize()
+        {
+            if (!Initialized)
+            {
+                if (OpenDevice(0) == 0)//success
+                {
+                    Initialized = true;
+                }
+            }
+        }
+        public static void ToggleOutput(int _Idx)
+        {
+            SetOutput(_Idx, !OutputStates[_Idx]);
+        }
+        public static void SetOutput(int _Idx, bool _State)
+        {
+            OutputStates[_Idx] = _State;
+            if (OutputStates[_Idx])
+                SetDigitalChannel(_Idx + 1);
+            else
+                ClearDigitalChannel(_Idx + 1);
+        }
+        public static bool GetInput(int _Idx)
+        {
+            return ReadDigitalChannel(_Idx + 1) != 0;
+        }
+        public static bool GetOutput(int _Idx)
+        {
+            return OutputStates[_Idx];
+        }
+    }
+
 
     public abstract class DesktopCodeBlock : CodeBlock
     {
@@ -664,6 +1075,19 @@ namespace DesktopCodeBlocks
             _Manager.AddPrototype(new SequenceManager.Prototype("Invoke Remote", "Generic", "i like u", typeof(DesktopCodeBlocks.BlockInvokeRemote)));
 
             _Manager.AddPrototype(new SequenceManager.Prototype("Speak", "Generic", "i like u", typeof(DesktopCodeBlocks.BlockSpeak)));
+
+            _Manager.AddPrototype(new SequenceManager.Prototype("Switch toggle", "WebInterface", "i like u", typeof(BlockEventSwitchToggle)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Switch toggle state", "WebInterface", "i like u", typeof(BlockSwitchToggle)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Switch set state", "WebInterface", "i like u", typeof(BlockSwitchSetState)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Switch get state", "WebInterface", "i like u", typeof(BlockSwitchGetState)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Switch", "WebInterface", "i like u", typeof(BlockControlSwitch)));
+
+            _Manager.AddPrototype(new SequenceManager.Prototype("DigitalOutput set", "K8055", "i like u", typeof(BlockDigitalOutputSetState)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("DigitalOutput get", "K8055", "i like u", typeof(BlockDigitalOutputGetState)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("DigitalOutput toggle", "K8055", "i like u", typeof(BlockDigitalOutputToggleState)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("DigitalInput get state", "K8055", "i like u", typeof(BlockDigitalInputGetState)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("DigitalInputToggled", "K8055", "i like u", typeof(BlockEventInputToggle)));
+     
         }
     }
 }

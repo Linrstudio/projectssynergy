@@ -61,13 +61,13 @@ namespace MainStationCodeBlocks
         //maps from event ID to triggeroutput ID
         public List<Event> Events = new List<Event>();
 
-        public virtual byte[] CompileEvent(Event _Event) 
+        public virtual byte[] CompileEvent(Event _Event)
         {
-            MemoryStream stream=new MemoryStream();
+            MemoryStream stream = new MemoryStream();
             foreach (TriggerInput i in _Event.Output.Connected)
             {
                 byte[] code = ((MainStationCodeBlock)i.Owner).Compile(i);
-                stream.Write(code,0,code.Length);
+                stream.Write(code, 0, code.Length);
             }
             return stream.ToArray();
         }
@@ -272,6 +272,59 @@ namespace MainStationCodeBlocks
         public override void Save(XElement _Data) { }
     }
 
+    public class BlockGenericEvent : BaseBlockEvent
+    {
+        string name = "";
+        [Browsable(true)]
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+        public int GetEventID()
+        {
+            int index = 128;
+            foreach (CodeBlock c in Sequence.CodeBlocks)
+            {
+                if (c == this) return index;
+                if (c is BlockGenericEvent) index++;
+            }
+            return 0;
+        }
+        public BlockGenericEvent()
+        {
+            width = 100;
+            height = 50;
+            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            UpdateConnectors();
+        }
+
+        public override void DrawText(Graphics _Graphics)
+        {
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Event\n" + name.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y, sf);
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            DrawShape(_Graphics,
+                new PointF[]{
+                    new PointF(-width/2,height/2),
+                    new PointF(-width/3,0),
+                    new PointF(-width/2,-height/2),
+                    new PointF(width/3,-height/2),
+                    new PointF(width/2,0),
+                    new PointF(width/3,height/2),
+                }
+            );
+        }
+
+        public override void Load(XElement _Data) { name = _Data.Value; }
+        public override void Save(XElement _Data) { _Data.Value = name; }
+    }
+
     public class GetOutputResult
     {
         public GetOutputResult(byte[] _code, MainStation.MainStationCompiler.RegisterEntry _Register) { Code = _code; Register = _Register; }
@@ -291,8 +344,10 @@ namespace MainStationCodeBlocks
         public ushort DeviceID
         {
             get { return deviceid; }
-            set { deviceid = value; 
-                foreach (Event e in Events)e.DeviceID = deviceid; //update device id's in events
+            set
+            {
+                deviceid = value;
+                foreach (Event e in Events) e.DeviceID = deviceid; //update device id's in events
             }
         }
 
@@ -455,6 +510,7 @@ namespace MainStationCodeBlocks
     {
         public static void AddAllPrototypes(SynergySequence.SequenceManager _Manager)
         {
+            _Manager.AddPrototype(new SequenceManager.Prototype("Event", "Generic Events", "blaat", typeof(BlockGenericEvent)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Remote Event", "Generic Events", "blaat", typeof(MainStationCodeBlockRemoteEvent)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Invoke Remote Event", "Generic Events", "i like u", typeof(MainStationCodeBlockInvokeRemoteEvent)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Boolean", "blaat", typeof(MainStationCodeBlocks.BlockBoolConstant)));
