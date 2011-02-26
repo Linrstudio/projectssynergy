@@ -173,7 +173,7 @@ namespace DesktopCodeBlocks
             UpdateConnectors();
             //TriggerInputs[0].X += width / 3;
         }
-        public override void Load(XElement _Data) { name= _Data.Value; }
+        public override void Load(XElement _Data) { name = _Data.Value; }
         public override void Save(XElement _Data) { _Data.Value = name; }
 
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
@@ -186,8 +186,11 @@ namespace DesktopCodeBlocks
             {
                 if (c is MainStationCodeBlocks.BlockGenericEvent)
                 {
-                    eventid = ((MainStationCodeBlocks.BlockGenericEvent)c).GetEventID();
-
+                    MainStationCodeBlocks.BlockGenericEvent evnt = (MainStationCodeBlocks.BlockGenericEvent)c;
+                    if (evnt.Name == Name)
+                    {
+                        eventid = evnt.GetEventID();
+                    }
                 }
             }
             if (eventid != 0)
