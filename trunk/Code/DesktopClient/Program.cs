@@ -22,8 +22,6 @@ namespace DesktopClient
 
     static class Program
     {
-        static MainStation.MainStation mainstation = null;
-        static DesktopSequence sequence;
         static NotifyIcon tray;
         /// <summary>
         /// The main entry point for the application.
@@ -53,22 +51,20 @@ namespace DesktopClient
             SynergySequence.SequenceManager sequencemanager = new ComputerSequenceManager();
 
             DesktopCodeBlocks.DesktopCodeBlock.AddAllPrototypes(sequencemanager);
-            WebInterface.WebInterfaceCodeBlocks.AddAllPrototypes(sequencemanager);
-            K8055.K8055CodeBlocks.AddAllPrototypes(sequencemanager);
 
             sequencemanager.AddDataType(new SequenceManager.DataType("int", System.Drawing.Color.Blue));
             sequencemanager.AddDataType(new SequenceManager.DataType("bool", System.Drawing.Color.Green));
 
-            sequence = new DesktopSequence();
-            sequence.Manager = sequencemanager;
-            sequence.Load(project.Element("Sequence"));
-
+            DesktopClient.sequence = new DesktopSequence();
+            DesktopClient.sequence.Manager = sequencemanager;
+            DesktopClient.sequence.Load(project.Element("Sequence"));
+            DesktopClient.MainStation = null;
             if (project.Element("MainStation") != null)
             {
-                mainstation = new MainStation.MainStation();
-                mainstation.Load(project.Element("MainStation"));
+                DesktopClient.MainStation = new MainStation.MainStation();
+                DesktopClient.MainStation.Load(project.Element("MainStation"));
                 MainStation.MainStation.Connect();
-                byte[] data = MainStation.MainStationCompiler.Compile(mainstation);
+                byte[] data = MainStation.MainStationCompiler.Compile(DesktopClient.MainStation);
                 tray.ShowBalloonTip(1000, "", "Writing to mainstation...", ToolTipIcon.None);
                 MainStation.MainStation.EEPROMWriteVerify(data);
             }
@@ -95,7 +91,7 @@ namespace DesktopClient
                 while (sw.CommandsPending())
                 {
                     WebInterface.Switch.Command command = sw.DequeueCommand();
-                    foreach (CodeBlock b in sequence.CodeBlocks)
+                    foreach (CodeBlock b in DesktopClient.sequence.CodeBlocks)
                     {
                         if (b is BlockEventSwitchToggle && ((BlockEventSwitchToggle)b).SwitchName.ToLower() == _Control.Name.ToLower())
                         {
@@ -110,12 +106,12 @@ namespace DesktopClient
 
         static void Application_Idle(object sender, EventArgs e)
         {
-            foreach (CodeBlock c in sequence.CodeBlocks) ((DesktopCodeBlock)c).Update();
+            foreach (CodeBlock c in DesktopClient.sequence.CodeBlocks) ((DesktopCodeBlock)c).Update();
 
             //take one event and execute it
-            if (sequence.EventsPending() > 0)
+            if (DesktopClient.sequence.EventsPending() > 0)
             {
-                sequence.InvokeFirstEvent();
+                DesktopClient.sequence.InvokeFirstEvent();
             }
             foreach (WebInterface.WebInterface iface in WebInterface.WebInterface.WebInterfaces)
             {
@@ -128,18 +124,18 @@ namespace DesktopClient
                 }
             }
             //do mainstation stuff
-            if (mainstation != null)
+            if (DesktopClient.MainStation != null)
             {
                 bool found = MainStation.MainStation.Connected();
                 if (!found) MainStation.MainStation.Connect();
-                if (found != mainstation.Found)
+                if (found != DesktopClient.MainStation.Found)
                 {
-                    mainstation.Found = found;
+                    DesktopClient.MainStation.Found = found;
                     foreach (TCPListener listener in TCPListener.Listeners)
                     {
                         foreach (TCPConnection c in listener.Connections)
                         {
-                            if (mainstation.Found)
+                            if (DesktopClient.MainStation.Found)
                                 c.Write("mainstation found");
                             else
                                 c.Write("mainstation notfound");

@@ -46,8 +46,6 @@ namespace MainStationFrontEnd
             Manager = new ComputerSequenceManager();
 
             DesktopCodeBlock.AddAllPrototypes(Manager);
-            WebInterfaceCodeBlocks.AddAllPrototypes(Manager);
-            K8055.K8055CodeBlocks.AddAllPrototypes(Manager);
 
             Manager.AddDataType(new SequenceManager.DataType("int", System.Drawing.Color.Blue));
             Manager.AddDataType(new SequenceManager.DataType("bool", System.Drawing.Color.Green));

@@ -35,6 +35,9 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Speech">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -48,6 +51,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeBlocks.cs" />
+    <Compile Include="Control.cs" />
+    <Compile Include="DesktopClient.cs" />
+    <Compile Include="DesktopSequence.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -64,6 +71,12 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="SceneEditor.resx">
+      <DependentUpon>SceneEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SceneEditorForm.resx">
+      <DependentUpon>SceneEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -77,16 +90,23 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Scene.cs" />
+    <Compile Include="SceneEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SceneEditor.Designer.cs">
+      <DependentUpon>SceneEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SceneEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SceneEditorForm.Designer.cs">
+      <DependentUpon>SceneEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="URLParser.cs" />
+    <Compile Include="WebInterface.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DesktopCodeBlocks\DesktopCodeBlocks.csproj">
-      <Project>{88F52436-24FE-48C4-8E14-2F8E8E8B5476}</Project>
-      <Name>DesktopCodeBlocks</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\K8055\K8055.csproj">
-      <Project>{06502D43-9D05-4AA1-8D22-B7AB29095DF9}</Project>
-      <Name>K8055</Name>
-    </ProjectReference>
     <ProjectReference Include="..\LazyNetworking\LazyNetworking.csproj">
       <Project>{21DED97D-08C2-402B-A143-8913F285F01F}</Project>
       <Name>LazyNetworking</Name>
@@ -102,10 +122,6 @@
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{734BFF20-584F-49A5-BCCB-0788F126896F}</Project>
       <Name>Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WebInterface\WebInterface.csproj">
-      <Project>{2813D323-8B45-4AF3-8FC8-FBB5F0467748}</Project>
-      <Name>WebInterface</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
