@@ -84,6 +84,8 @@ namespace WebInterface
             if (!HttpListener.IsSupported) Console.WriteLine("HTTPListener class is not supported on your machine.");
             httplistener = new HttpListener();
 
+            //httplistener.AuthenticationSchemes = AuthenticationSchemes.Basic;
+
             string LocalIP = Dns.GetHostName();
             Console.WriteLine("HostName:" + LocalIP);
             LocalIP = Dns.GetHostByName(LocalIP).AddressList[0].ToString();
@@ -95,7 +97,10 @@ namespace WebInterface
 
                 httplistener.Start();
             }
-            catch { System.Windows.Forms.MessageBox.Show("Failed to start HTTPListener at port " + Port.ToString()); }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Failed to start HTTPListener at port " + Port.ToString());
+            }
 
             httplistenerthread = new Thread(new ThreadStart(httplistenermain));
             httplistenerthread.Start();
@@ -129,13 +134,13 @@ namespace WebInterface
 
                     HttpListenerContext context = httplistener.GetContext();
                     //check username/password
-                    /*
-                    if (context.User != null && context.User.Identity is HttpListenerBasicIdentity)
+                    
+                    if (httplistener.AuthenticationSchemes==AuthenticationSchemes.Basic)
                     {
                         HttpListenerBasicIdentity identity = (HttpListenerBasicIdentity)context.User.Identity;
                         if (identity.Name != "Roeny" && identity.Password != "Baloony") continue;
                     }
-                    */
+                    
 
                     byte[] buffer = System.Text.Encoding.ASCII.GetBytes("invalid request!");//response
 
@@ -174,7 +179,8 @@ namespace WebInterface
                                             case "ToggleState":
                                                 swit.Loading = true;
                                                 swit.EnqueueCommand(Switch.Command.Toggle);
-                                                while (swit.Loading) Thread.Sleep(10);
+                                                int timeout = Environment.TickCount + 1000;
+                                                while (swit.Loading && timeout > Environment.TickCount) Thread.Sleep(10);
                                                 buffer = System.Text.Encoding.ASCII.GetBytes(swit.State ? "1" : "0");
                                                 break;
                                             case "GetState":

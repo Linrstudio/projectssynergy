@@ -68,6 +68,12 @@ namespace MainStation
             byte[] Buffer = new byte[0xffff];//2^16
 
             //Event header
+            List<MainStationDevice> devices = new List<MainStationDevice>();
+            devices.Add(new MainStationDevice("", null, 0));
+            foreach (MainStationDevice d in _MainStation.Devices)
+            {
+                devices.Add(d);
+            }
             List<BaseBlockEvent.Event> events = new List<BaseBlockEvent.Event>();
             foreach (CodeBlock c in _MainStation.Sequence.CodeBlocks)
             {
@@ -85,13 +91,19 @@ namespace MainStation
                 }
                 else throw new Exception("normal codeblock in sequence for mainstation found, whut !?");
             }
+            //add empty events for RTC stuff, will be implemented later
+            events.Add(new BaseBlockEvent.Event(0, 0, null));
+            events.Add(new BaseBlockEvent.Event(0, 1, null));
+            events.Add(new BaseBlockEvent.Event(0, 2, null));
+            events.Add(new BaseBlockEvent.Event(0, 3, null));
+
             //Device Header
-            int deviceheadersize = _MainStation.Devices.Length * 4 + 2; // including the two blanks
+            int deviceheadersize = devices.Count * 4 + 2; // including the two blanks
             int eventheadersize = events.Count * 3 + 2;//2 blanks
             int currenteventaddr = deviceheadersize + eventheadersize;
             int didx = 0;
             int eidx = 0;
-            foreach (MainStationDevice d in _MainStation.Devices)
+            foreach (MainStationDevice d in devices)
             {
                 byte[] did = Utilities.Utilities.FromShort(d.ID);
                 byte[] eaddr = Utilities.Utilities.FromShort((ushort)(deviceheadersize + eidx * 3));
@@ -116,14 +128,15 @@ namespace MainStation
                         {
                             foreach (BaseBlockEvent.Event evnt in ((BaseBlockEvent)c).Events)
                             {
-                                if (evnt == e)
+                                if (evnt.DeviceID == e.DeviceID && evnt.EventID == e.EventID)
                                 {
                                     block = ((BaseBlockEvent)c);
                                 }
                             }
                         }
                     }
-                    byte[] blob = block.CompileEvent(e);
+                    byte[] blob = new byte[] { };
+                    if (e.Output != null) blob=block.CompileEvent(e);
                     for (int i = 0; i < blob.Length; i++)
                     {
                         Buffer[currenteventaddr++] = blob[i];
@@ -258,10 +271,14 @@ namespace MainStation
             buffer[2] = shrt[1];
             buffer[3] = _Event;
             Write(buffer);
-#if false
+//#if false
             System.Threading.Thread.Sleep(10);
             byte[] result = Read();//wait for answer
-#endif
+            if (result[0] != 0x06)
+            {
+                MessageBox.Show("wtf");
+            }
+//#endif
         }
 
         public static void InvokeRemoteEvent(ushort _DeviceID, byte _Event, ushort _Arguments)

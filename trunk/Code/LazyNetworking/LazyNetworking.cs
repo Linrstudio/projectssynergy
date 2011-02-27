@@ -140,9 +140,9 @@ namespace LazyNetworking
         {
             while (true)
             {
-                try
+                //try
                 {
-                    if (socket == null || !socket.Connected)
+                    if (socket == null)
                     {
                         try
                         {
@@ -158,62 +158,65 @@ namespace LazyNetworking
                             Thread.Sleep(1000);
                         }
                     }
-                    string readbuffer = "";
-                    while (socket.Connected && Alive)
+                   if(socket!=null)
                     {
-                        int available = (int)socket.Available;
-                        if (available > 0)
+                        string readbuffer = "";
+                        while (socket.Connected && Alive)
                         {
-                            char chr = (char)socket.GetStream().ReadByte();
-                            if ((byte)chr != 0)
+                            int available = (int)socket.Available;
+                            if (available > 0)
                             {
-                                readbuffer += chr;
-                            }
-                            else
-                            {
-                                if (readbuffer.Length != 0)
+                                char chr = (char)socket.GetStream().ReadByte();
+                                if ((byte)chr != 0)
                                 {
-                                    lock (ReceiveBuffer)
+                                    readbuffer += chr;
+                                }
+                                else
+                                {
+                                    if (readbuffer.Length != 0)
                                     {
-                                        ReceiveBuffer.Enqueue(readbuffer);
+                                        lock (ReceiveBuffer)
+                                        {
+                                            ReceiveBuffer.Enqueue(readbuffer);
+                                        }
+                                        Console.WriteLine("< " + readbuffer);
+                                        readbuffer = "";
                                     }
-                                    Console.WriteLine("< " + readbuffer);
-                                    readbuffer = "";
+                                    else
+                                    {
+                                        //receive ping
+                                    }
                                 }
-                                else 
-                                {
-                                    //receive ping
-                                }
+                                timeouttimer = Environment.TickCount;//reset timeout timer
                             }
-                            timeouttimer = Environment.TickCount;//reset timeout timer
-                        }
-                        else if (SendBuffer.Count > 0)
-                        {
-                            string buffer;
-                            lock (SendBuffer)
+                            else if (SendBuffer.Count > 0)
                             {
-                                buffer = SendBuffer.Dequeue();
-                                buffer += (char)(byte)0;
+                                string buffer;
+                                lock (SendBuffer)
+                                {
+                                    buffer = SendBuffer.Dequeue();
+                                    buffer += (char)(byte)0;
+                                }
+                                Console.WriteLine("> " + buffer);
+                                byte[] data = System.Text.Encoding.ASCII.GetBytes(buffer);
+                                socket.GetStream().Write(data, 0, data.Length);
                             }
-                            Console.WriteLine("> " + buffer);
-                            byte[] data = System.Text.Encoding.ASCII.GetBytes(buffer);
-                            socket.GetStream().Write(data, 0, data.Length);
-                        }
-                        else Thread.Sleep(10);
+                            else Thread.Sleep(10);
 
-                        if (Environment.TickCount - timeouttimer > 10000)
-                        {
-                            socket.GetStream().Write(new byte[] { 0 }, 0, 1);
-                        }
+                            if (Environment.TickCount - timeouttimer > 10000)
+                            {
+                                socket.GetStream().Write(new byte[] { 0 }, 0, 1);
+                            }
 
-                        alivetimer = Environment.TickCount;
+                            alivetimer = Environment.TickCount;
+                        }
+                        Console.WriteLine("Connection lost");
+                        socket = null;
+                        ChangeState(false);
+                        //Kill();
                     }
-                    Console.WriteLine("Connection lost");
-                    socket = null;
-                    ChangeState(false);
-                    //Kill();
                 }
-                catch (Exception ex) { Console.WriteLine("error in connection"); Console.WriteLine(ex.Message); }
+                //catch (Exception ex) { Console.WriteLine("error in connection"); Console.WriteLine(ex.Message); }
                 socket = null;
                 ChangeState(false);
             }

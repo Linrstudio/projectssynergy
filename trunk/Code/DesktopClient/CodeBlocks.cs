@@ -1,26 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Xml;
 using System.Xml.Linq;
 using SynergySequence;
-using MainStation;
-using System.Speech;
 using WebInterface;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
-using System.Drawing;
-using System.Xml;
-using System.Xml.Linq;
 using System.Runtime.InteropServices;
-using SynergySequence;
-using DesktopCodeBlocks;
 
 namespace DesktopCodeBlocks
 {
