@@ -35,6 +35,7 @@ namespace WebInterface
         {
             MouseWheel += new MouseEventHandler(SceneEditor_MouseWheel);
             DoubleBuffered = true;
+            AllowDrop = true;
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.EnableNotifyMessage | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
         }
 

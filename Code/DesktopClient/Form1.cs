@@ -47,6 +47,8 @@ namespace DesktopClient
 
         private void t_UpdateIcon_Tick(object sender, EventArgs e)
         {
+
+            t_UpdateIcon.Enabled = false;
             //UpdateIcon();
         }
 

@@ -54,12 +54,13 @@ namespace MainStationCodeBlocks
     {
         public class Event
         {
+            public Event(ushort _DeviceID, byte _EventID, TriggerOutput _Output) { DeviceID = _DeviceID; EventID = _EventID; Output = _Output; }
             public byte EventID;
             public TriggerOutput Output;
             public ushort DeviceID;
         }
         //maps from event ID to triggeroutput ID
-        public List<Event> Events = new List<Event>();
+        public abstract Event[] Events { get; }
 
         public virtual byte[] CompileEvent(Event _Event)
         {
@@ -240,7 +241,7 @@ namespace MainStationCodeBlocks
             _Graphics.DrawString(val.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y, sf);
         }
     }
-
+    /*
     public class BlockEventSchedule : BaseBlockEvent
     {
         DateTime moment;
@@ -268,10 +269,12 @@ namespace MainStationCodeBlocks
             _Graphics.DrawString("Schedule\n" + moment.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y, sf);
         }
 
+        public Event[] Events { get { return new Event[]{new Event(0,get)}} }
+
         public override void Load(XElement _Data) { }
         public override void Save(XElement _Data) { }
     }
-
+*/
     public class BlockGenericEvent : BaseBlockEvent
     {
         string name = "";
@@ -283,11 +286,14 @@ namespace MainStationCodeBlocks
         }
         public byte GetEventID()
         {
-            byte index = 128;
-            foreach (CodeBlock c in Sequence.CodeBlocks)
+            if (Sequence != null)
             {
-                if (c == this) return index;
-                if (c is BlockGenericEvent) index++;
+                byte index = 128;
+                foreach (CodeBlock c in Sequence.CodeBlocks)
+                {
+                    if (c == this) return index;
+                    if (c is BlockGenericEvent) index++;
+                }
             }
             return 0;
         }
@@ -298,6 +304,8 @@ namespace MainStationCodeBlocks
             TriggerOutputs.Add(new TriggerOutput(this, ""));
             UpdateConnectors();
         }
+
+        public override Event[] Events { get { return new Event[] { new Event(0, GetEventID(), TriggerOutputs[0]) }; } }
 
         public override void DrawText(Graphics _Graphics)
         {
@@ -363,18 +371,30 @@ namespace MainStationCodeBlocks
             foreach (ProductDataBase.Device.Event e in device.events)
             {
                 TriggerOutput newoutput = new TriggerOutput(this, e.Name);
-                Event newevent = new Event();
-                newevent.DeviceID = deviceid;
-                newevent.EventID = e.ID;
-                newevent.Output = newoutput;
                 TriggerOutputs.Add(newoutput);
-                Events.Add(newevent);
                 events++;
             }
 
             height = events * 30;
 
             UpdateConnectors();
+        }
+
+        public override Event[] Events
+        {
+            get
+            {
+                ProductDataBase.Device device = ProductDataBase.GetDeviceByID(type);
+                List<Event> events = new List<Event>();
+                int index = 0;
+                foreach (ProductDataBase.Device.Event e in device.events)
+                {
+                    Event newevent = new Event(deviceid, e.ID, TriggerOutputs[index]);
+                    events.Add(newevent);
+                    index++;
+                }
+                return events.ToArray();
+            }
         }
 
         public override void Load(XElement _Data) { deviceid = ushort.Parse(_Data.Attribute("DeviceID").Value); type = ushort.Parse(_Data.Attribute("TypeID").Value); Create(); }

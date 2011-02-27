@@ -90,7 +90,7 @@ namespace SynergySequence
                         b.Load(block.Element("Data"));
                     }
                     catch { /*FIXME*/ }
-                    codeblocks.Add(b);
+                    AddCodeBlock(b);
                 }
             }
             //catch { /*FIXME*/}

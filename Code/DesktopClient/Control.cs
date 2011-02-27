@@ -73,7 +73,7 @@ namespace WebInterface
         public enum Command { Toggle };
         Queue<Command> commands = new Queue<Command>();
         public Command DequeueCommand() { lock (commands) { return commands.Dequeue(); } }
-        public void EnqueueCommand(Command _Command) { lock (commands) { commands.Enqueue(_Command); } }
+        public void EnqueueCommand(Command _Command) { lock (commands) { commands.Enqueue(_Command);} }
         public bool CommandsPending() { lock (commands) { return commands.Count > 0; } }
         //is this control waiting for its state to change
         public bool Loading;
