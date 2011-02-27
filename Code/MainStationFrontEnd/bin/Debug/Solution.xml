@@ -1,75 +1,126 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Solution>
-  <ProgrammableDevice Type="Computer" Name="Server" IPAddress="192.168.137.1" Port="1000">
+  <ProgrammableDevice Type="Computer" Name="Server" IPAddress="192.168.0.1" Port="7331">
     <Sequence>
-      <Block X="-328.5" Y="-49.5" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
+      <Block X="-209" Y="-95" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
         <Data>myswitch</Data>
       </Block>
-      <Block X="74.5" Y="39.5" Type="DesktopCodeBlocks.BlockIf">
+      <Block X="17" Y="-93" Type="DesktopCodeBlocks.BlockIf">
         <Data />
       </Block>
-      <Block X="-139" Y="-116.5" Type="DesktopCodeBlocks.BlockSwitchToggle">
+      <Block X="17" Y="-190" Type="DesktopCodeBlocks.BlockSwitchToggle">
         <Data>myswitch</Data>
       </Block>
-      <Block X="75.5" Y="-45.5" Type="DesktopCodeBlocks.BlockSwitchGetState">
+      <Block X="17" Y="-155" Type="DesktopCodeBlocks.BlockSwitchGetState">
         <Data>myswitch</Data>
       </Block>
-      <Block X="18.5" Y="112.5" Type="DesktopCodeBlocks.BlockIfNot">
+      <Block X="17" Y="-35" Type="DesktopCodeBlocks.BlockIfNot">
         <Data />
       </Block>
-      <Block X="320.5" Y="39.5" Type="DesktopCodeBlocks.BlockInvokeRemote">
-        <Data DeviceID="8" EventID="6" />
+      <Block X="212" Y="-93" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+        <Data>WebFanOn</Data>
       </Block>
-      <Block X="328.5" Y="116.5" Type="DesktopCodeBlocks.BlockInvokeRemote">
-        <Data DeviceID="8" EventID="5" />
+      <Block X="212" Y="-35" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+        <Data>WebFanOff</Data>
       </Block>
-      <ConnectTrigger Input="0" InputOwner="1" Output="0" OutputOwner="0" />
-      <ConnectTrigger Input="0" InputOwner="4" Output="0" OutputOwner="0" />
+      <Block X="-213" Y="124" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
+        <Data>myswitch2</Data>
+      </Block>
+      <Block X="17" Y="27" Type="DesktopCodeBlocks.BlockSwitchToggle">
+        <Data>myswitch2</Data>
+      </Block>
+      <Block X="17" Y="61" Type="DesktopCodeBlocks.BlockSwitchGetState">
+        <Data>myswitch2</Data>
+      </Block>
+      <Block X="16" Y="125" Type="DesktopCodeBlocks.BlockIf">
+        <Data />
+      </Block>
+      <Block X="14" Y="190" Type="DesktopCodeBlocks.BlockIfNot">
+        <Data />
+      </Block>
+      <Block X="211" Y="125" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+        <Data>WebLampOn</Data>
+      </Block>
+      <Block X="213" Y="190" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+        <Data>WebLampOff</Data>
+      </Block>
       <ConnectTrigger Input="0" InputOwner="2" Output="0" OutputOwner="0" />
+      <ConnectTrigger Input="0" InputOwner="4" Output="0" OutputOwner="0" />
+      <ConnectTrigger Input="0" InputOwner="1" Output="0" OutputOwner="0" />
       <ConnectData Input="0" InputOwner="1" Output="0" OutputOwner="3" />
       <ConnectTrigger Input="0" InputOwner="5" Output="0" OutputOwner="1" />
       <ConnectData Input="0" InputOwner="4" Output="0" OutputOwner="3" />
       <ConnectTrigger Input="0" InputOwner="6" Output="0" OutputOwner="4" />
+      <ConnectTrigger Input="0" InputOwner="8" Output="0" OutputOwner="7" />
+      <ConnectTrigger Input="0" InputOwner="10" Output="0" OutputOwner="7" />
+      <ConnectTrigger Input="0" InputOwner="11" Output="0" OutputOwner="7" />
+      <ConnectData Input="0" InputOwner="10" Output="0" OutputOwner="9" />
+      <ConnectTrigger Input="0" InputOwner="12" Output="0" OutputOwner="10" />
+      <ConnectData Input="0" InputOwner="11" Output="0" OutputOwner="9" />
+      <ConnectTrigger Input="0" InputOwner="13" Output="0" OutputOwner="11" />
     </Sequence>
     <MainStation>
       <Sequence>
-        <Block X="-185.169037" Y="-1.32303953" Type="MainStationCodeBlocks.MainStationCodeBlockDevice">
-          <Data DeviceID="8" TypeID="3" />
-        </Block>
-        <Block X="185.169037" Y="1.32303953" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
-          <Data DeviceID="6" EventID="13" />
-        </Block>
-        <Block X="19" Y="-334" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-51.8125458" Y="-206.772614" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebFanOn</Data>
         </Block>
-        <Block X="172" Y="-334" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
-          <Data DeviceID="6" EventID="5" />
-        </Block>
-        <Block X="18" Y="-499" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-53.8125458" Y="-404.7726" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebFanOff</Data>
         </Block>
-        <Block X="174" Y="-499" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
-          <Data DeviceID="6" EventID="5" />
+        <Block X="122.187454" Y="-404.7726" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+          <Data DeviceID="9" EventID="8" />
         </Block>
-        <Block X="173" Y="-589" Type="MainStationCodeBlocks.BlockIntConstant">
-          <Data>65535</Data>
+        <Block X="118.187454" Y="-206.772614" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+          <Data DeviceID="9" EventID="8" />
         </Block>
-        <Block X="173" Y="-424" Type="MainStationCodeBlocks.BlockIntConstant">
+        <Block X="122.187454" Y="-488.7726" Type="MainStationCodeBlocks.BlockIntConstant">
           <Data>0</Data>
         </Block>
-        <ConnectTrigger Input="0" InputOwner="1" Output="0" OutputOwner="0" />
-        <ConnectTrigger Input="0" InputOwner="1" Output="1" OutputOwner="0" />
-        <ConnectTrigger Input="0" InputOwner="1" Output="3" OutputOwner="0" />
-        <ConnectTrigger Input="0" InputOwner="1" Output="5" OutputOwner="0" />
-        <ConnectTrigger Input="0" InputOwner="1" Output="7" OutputOwner="0" />
-        <ConnectTrigger Input="0" InputOwner="1" Output="9" OutputOwner="0" />
-        <ConnectTrigger Input="0" InputOwner="1" Output="11" OutputOwner="0" />
-        <ConnectTrigger Input="0" InputOwner="1" Output="13" OutputOwner="0" />
-        <ConnectTrigger Input="0" InputOwner="1" Output="15" OutputOwner="0" />
-        <ConnectTrigger Input="0" InputOwner="3" Output="0" OutputOwner="2" />
-        <ConnectData Input="0" InputOwner="3" Output="0" OutputOwner="7" />
-        <ConnectTrigger Input="0" InputOwner="5" Output="0" OutputOwner="4" />
-        <ConnectData Input="0" InputOwner="5" Output="0" OutputOwner="6" />
+        <Block X="118.187454" Y="-290.7726" Type="MainStationCodeBlocks.BlockIntConstant">
+          <Data>65535</Data>
+        </Block>
+        <Block X="246.187454" Y="-344.7726" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+          <Data DeviceID="6" EventID="5" />
+        </Block>
+        <Block X="233.187454" Y="-140.772614" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+          <Data DeviceID="6" EventID="5" />
+        </Block>
+        <Block X="-21.0933228" Y="7.989044" Type="MainStationCodeBlocks.BlockGenericEvent">
+          <Data>WebLampOn</Data>
+        </Block>
+        <Block X="-20.3648529" Y="147.853363" Type="MainStationCodeBlocks.BlockGenericEvent">
+          <Data>WebLampOff</Data>
+        </Block>
+        <Block X="-117.250031" Y="479.302582" Type="MainStationCodeBlocks.BlockGenericEvent">
+          <Data></Data>
+        </Block>
+        <Block X="-246.187454" Y="488.7726" Type="MainStationCodeBlocks.BlockGenericEvent">
+          <Data></Data>
+        </Block>
+        <Block X="114.400223" Y="-86.7107544" Type="MainStationCodeBlocks.BlockIntConstant">
+          <Data>65535</Data>
+        </Block>
+        <Block X="114.400223" Y="69.17966" Type="MainStationCodeBlocks.BlockIntConstant">
+          <Data>0</Data>
+        </Block>
+        <Block X="112.943314" Y="12.3598022" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+          <Data DeviceID="9" EventID="7" />
+        </Block>
+        <Block X="113.671768" Y="147.124847" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+          <Data DeviceID="9" EventID="7" />
+        </Block>
+        <ConnectTrigger Input="0" InputOwner="3" Output="0" OutputOwner="0" />
+        <ConnectTrigger Input="0" InputOwner="7" Output="0" OutputOwner="0" />
+        <ConnectTrigger Input="0" InputOwner="2" Output="0" OutputOwner="1" />
+        <ConnectTrigger Input="0" InputOwner="6" Output="0" OutputOwner="1" />
+        <ConnectData Input="0" InputOwner="2" Output="0" OutputOwner="4" />
+        <ConnectData Input="0" InputOwner="3" Output="0" OutputOwner="5" />
+        <ConnectData Input="0" InputOwner="6" Output="0" OutputOwner="4" />
+        <ConnectData Input="0" InputOwner="7" Output="0" OutputOwner="5" />
+        <ConnectTrigger Input="0" InputOwner="14" Output="0" OutputOwner="8" />
+        <ConnectTrigger Input="0" InputOwner="15" Output="0" OutputOwner="9" />
+        <ConnectData Input="0" InputOwner="14" Output="0" OutputOwner="12" />
+        <ConnectData Input="0" InputOwner="15" Output="0" OutputOwner="13" />
       </Sequence>
       <Device Name="Input" ID="7" Device="3" />
       <Device Name="Relay" ID="9" Device="4" />
@@ -78,10 +129,10 @@
     </MainStation>
     <WebInterface Port="80">
       <Scene Name="myscene">
-        <Control Name="myswitch" Type="Switch" X="0.250531375" Y="0.201523736" Width="0.0931206346" Height="0.06184542">
+        <Control Name="myswitch" Type="Switch" X="0.9" Y="0.1" Width="0.1" Height="0.1">
           <Data />
         </Control>
-        <Control Name="myswitch2" Type="Switch" X="0.500307858" Y="0.887051642" Width="0.974671364" Height="0.2036221">
+        <Control Name="myswitch2" Type="Switch" X="0.1" Y="0.1" Width="0.1" Height="0.1">
           <Data />
         </Control>
       </Scene>
@@ -164,51 +215,5 @@
         <ConnectData Input="0" InputOwner="1" Output="0" OutputOwner="2" />
       </Sequence>
     </MainStation>
-  </ProgrammableDevice>
-  <ProgrammableDevice Type="FrontEndMainStation">
-    <Sequence>
-      <Block X="104.1467" Y="215.429749" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
-        <Data DeviceID="6" EventID="5" />
-      </Block>
-      <Block X="214.5" Y="-230.522766" Type="MainStationCodeBlocks.BlockSetDebugLed">
-        <Data />
-      </Block>
-      <Block X="214.5" Y="-335.522766" Type="MainStationCodeBlocks.BlockBoolConstant">
-        <Data>False</Data>
-      </Block>
-      <Block X="207.452484" Y="335.522766" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
-        <Data DeviceID="6" EventID="5" />
-      </Block>
-      <Block X="221.5" Y="-21.5227661" Type="MainStationCodeBlocks.BlockSetDebugLed">
-        <Data />
-      </Block>
-      <Block X="221.5" Y="-115.522766" Type="MainStationCodeBlocks.BlockBoolConstant">
-        <Data>True</Data>
-      </Block>
-      <Block X="203.578522" Y="246.421509" Type="MainStationCodeBlocks.BlockIntConstant">
-        <Data>65535</Data>
-      </Block>
-      <Block X="102.855377" Y="123.74588" Type="MainStationCodeBlocks.BlockIntConstant">
-        <Data>0</Data>
-      </Block>
-      <Block X="-220.5" Y="-184.022766" Type="MainStationCodeBlocks.MainStationCodeBlockDevice">
-        <Data DeviceID="7" TypeID="3" />
-      </Block>
-      <Block X="-221.5" Y="324.977234" Type="MainStationCodeBlocks.MainStationCodeBlockDevice">
-        <Data DeviceID="8" TypeID="3" />
-      </Block>
-      <ConnectData Input="0" InputOwner="0" Output="0" OutputOwner="7" />
-      <ConnectData Input="0" InputOwner="1" Output="0" OutputOwner="2" />
-      <ConnectData Input="0" InputOwner="3" Output="0" OutputOwner="6" />
-      <ConnectData Input="0" InputOwner="4" Output="0" OutputOwner="5" />
-      <ConnectTrigger Input="0" InputOwner="1" Output="4" OutputOwner="8" />
-      <ConnectTrigger Input="0" InputOwner="4" Output="5" OutputOwner="8" />
-      <ConnectTrigger Input="0" InputOwner="0" Output="4" OutputOwner="9" />
-      <ConnectTrigger Input="0" InputOwner="3" Output="5" OutputOwner="9" />
-    </Sequence>
-    <Device Name="Input" ID="7" Device="3" />
-    <Device Name="Relay" ID="9" Device="4" />
-    <Device Name="Input2" ID="8" Device="3" />
-    <Device Name="Relay2" ID="6" Device="4" />
   </ProgrammableDevice>
 </Solution>
