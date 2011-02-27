@@ -275,7 +275,6 @@ namespace MainStationFrontEnd
             file.Add(webinterface);*/
             try
             {
-                if (Connection == null) Connection = new LazyNetworking.TCPConnection(new System.Net.Sockets.TcpClient(IPAddress.ToString(), Port));
                 Connection.Write("project " + file.ToString());
             }
             catch { MessageBox.Show("Failed to connect to desktopclient"); }
