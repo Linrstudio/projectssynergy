@@ -85,11 +85,11 @@ namespace SynergySequence
                     //CodeBlock b =(CodeBlock) Activator.CreateInstance(null, blocktype).Unwrap();//will not work if codeblock isnt in this assambly
                     b.X = float.Parse(block.Attribute("X").Value);
                     b.Y = float.Parse(block.Attribute("Y").Value);
-                    try
+                    //try
                     {
                         b.Load(block.Element("Data"));
                     }
-                    catch { /*FIXME*/ }
+                    //catch { /*FIXME*/ }
                     AddCodeBlock(b);
                 }
             }
