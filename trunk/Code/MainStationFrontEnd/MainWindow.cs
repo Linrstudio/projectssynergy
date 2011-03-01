@@ -220,6 +220,12 @@ namespace MainStationFrontEnd
                     MainWindow.mainwindow.UpdateTree();
                 }
             }
+            /*
+            MainStation.MainStation.InvokeLocalEvent(0, 128, 0);
+            System.Threading.Thread.Sleep(1000);
+            MainStation.MainStation.InvokeLocalEvent(0, 129, 0);
+            System.Threading.Thread.Sleep(1000);
+            */
             if (!connected)
             {
                 MainStation.MainStation.Connect();

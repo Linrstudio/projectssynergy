@@ -31,11 +31,10 @@ namespace MainStation
         }
 
         //note that the first 16 registers will be used for UART transmission
-        const int REGISTERCOUNT = 64;
         static List<RegisterEntry> UsedRegisters = new List<RegisterEntry>();
         public static bool[] GetRegisterMask()
         {
-            bool[] mask = new bool[REGISTERCOUNT];
+            bool[] mask = new bool[256];
             foreach (RegisterEntry e in UsedRegisters)
             {
                 for (int i = 0; i < e.size; i++) mask[e.index + i] = true;
@@ -45,9 +44,12 @@ namespace MainStation
         public static RegisterEntry GetRegister(int _Size)
         {
             bool[] mask = GetRegisterMask();
-            for (int i = 16; i < REGISTERCOUNT; i++)
+            for (int i = 16; i < 256; i++)//first 16 registers are for UART communication
             {
                 bool ok = true;
+
+                if (i < 128 && i + _Size >= 128) ok = false;//if the register is hanging over the edge between memory block a and b, dont create it
+
                 for (int j = 0; j < _Size; j++)
                 {
                     if (mask[i + j]) ok = false;
@@ -136,7 +138,7 @@ namespace MainStation
                         }
                     }
                     byte[] blob = new byte[] { };
-                    if (e.Output != null) blob=block.CompileEvent(e);
+                    if (e.Output != null) blob = block.CompileEvent(e);
                     for (int i = 0; i < blob.Length; i++)
                     {
                         Buffer[currenteventaddr++] = blob[i];
@@ -271,14 +273,14 @@ namespace MainStation
             buffer[2] = shrt[1];
             buffer[3] = _Event;
             Write(buffer);
-//#if false
+            //#if false
             System.Threading.Thread.Sleep(10);
             byte[] result = Read();//wait for answer
             if (result[0] != 0x06)
             {
                 MessageBox.Show("wtf");
             }
-//#endif
+            //#endif
         }
 
         public static void InvokeRemoteEvent(ushort _DeviceID, byte _Event, ushort _Arguments)

@@ -361,13 +361,19 @@ namespace MainStationCodeBlocks
 
         public ushort type;
 
+        public MainStationCodeBlockDevice()
+        {
+
+        }
+
         public void Create()
         {
             ProductDataBase.Device device = ProductDataBase.GetDeviceByID(type);
-            int events = 0;
+            int events = 1;
             width = 100;
             height = 200;
 
+            TriggerOutputs.Clear();
             foreach (ProductDataBase.Device.Event e in device.events)
             {
                 TriggerOutput newoutput = new TriggerOutput(this, e.Name);
@@ -385,6 +391,7 @@ namespace MainStationCodeBlocks
             get
             {
                 ProductDataBase.Device device = ProductDataBase.GetDeviceByID(type);
+                if (TriggerOutputs.Count != device.events.Count) Create();
                 List<Event> events = new List<Event>();
                 int index = 0;
                 foreach (ProductDataBase.Device.Event e in device.events)
@@ -399,8 +406,6 @@ namespace MainStationCodeBlocks
 
         public override void Load(XElement _Data) { deviceid = ushort.Parse(_Data.Attribute("DeviceID").Value); type = ushort.Parse(_Data.Attribute("TypeID").Value); Create(); }
         public override void Save(XElement _Data) { _Data.SetAttributeValue("DeviceID", deviceid); _Data.SetAttributeValue("TypeID", type); }
-
-
     }
 
     public class MainStationCodeBlockInvokeRemoteEvent : BaseBlockInstruction
