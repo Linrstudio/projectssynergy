@@ -38,8 +38,6 @@ extern int8 RTCMinute;
 extern int8 RTCHour;
 extern int16 RTCDay;
 
-extern int8 SharedMemory[EPBUFFERSIZE+(KISMETBUFFERSIZE*2)];
-
 extern int16 EPBufferSize;
 
 extern int8 OperationEnabled;
@@ -93,7 +91,7 @@ void USBUpdate()
 				break;
 			case 0x02:
 				EPBufferSize=ReceivedDataBuffer[3];
-				for(a=0;a<EPBufferSize;a++)SharedMemory[a]=ReceivedDataBuffer[a+4];
+				for(a=0;a<EPBufferSize;a++)Set8(a,ReceivedDataBuffer[a+4]);
 				EPSend(*(int16*)&ReceivedDataBuffer[1]);
 				if(!USBBusy())
                 {

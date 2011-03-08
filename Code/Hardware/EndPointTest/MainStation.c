@@ -10,8 +10,7 @@ int8 OperationEnabled=255;
 #define LED			PORTBbits.RB4
 #define LED_TRIS 	TRISBbits.TRISB4
 
-#define DEVICEID 6
-
+int16 DeviceID=0xffff;
 int8 lastheader=0;
 
 void MSInit()
@@ -38,6 +37,8 @@ void MSInit()
 	USBInit();
 	UARTInit();
 	UARTRead();
+	SettingsInit();
+	DeviceID=SettingsReadInt16(0);
 	EPInit();
 	
 	//startup glow
@@ -54,9 +55,8 @@ void MSUpdate()
 {
 	int8  i;
 	int8  header;
-	int16 DeviceID;
+	int16 deviceid;
 	int8  Length;
-	
 	USBUpdate();
 	EPUpdate();
 	//find header
@@ -64,9 +64,9 @@ void MSUpdate()
 	header=UARTReadInt8();
 	if(lastheader==0&&header==255)
 	{
-		DeviceID=UARTReadInt16();
+		deviceid=UARTReadInt16();
 		Length  =UARTReadInt8();
-		if(DeviceID==DEVICEID)
+		if(deviceid==DeviceID)
 		{
 			for(i=0;i<Length&15;i++)EPBuffer[i]=UARTReadInt8();
 			EPBufferSize=0;

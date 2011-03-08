@@ -3,6 +3,7 @@
 
 #include "Default.h"
 
+#define EEPROMHEADERSIZE 32
 #define EPBUFFERSIZE 16
 
 void EPInit();

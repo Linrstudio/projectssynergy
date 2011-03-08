@@ -33,6 +33,8 @@ extern USB_HANDLE USBInHandle;
 
 extern int8 OperationEnabled;
 
+extern int16 DeviceID;
+
 void USBInit()
 {
     //initialize the variable holding the handle for the last transmission
@@ -68,13 +70,32 @@ void USBUpdate()
     {   
         switch(ReceivedDataBuffer[0])				//Look at the data the host sent, to see what kind of application specific command it sent.
         {
-			case 0x01:
-
+			case 0x01://GET Device Type
 				if(USBBusy()==0)
                 {
 					ToSendDataBuffer[0]=0x01;
+					ToSendDataBuffer[1]=EPGetType();
 					USBWrite();
                 }
+				break;
+			case 0x02:
+				if(USBBusy()==0)
+				{
+					ToSendDataBuffer[0]=0x02;
+					ToSendDataBuffer[1]=SettingsReadInt8(0);
+					ToSendDataBuffer[2]=SettingsReadInt8(1);
+					USBWrite();
+				}
+				break;
+			case 0x03:
+				if(USBBusy()==0)
+				{
+					ToSendDataBuffer[0]=0x03;
+					SettingsWriteInt8(0,ReceivedDataBuffer[1]);
+					SettingsWriteInt8(1,ReceivedDataBuffer[2]);
+					DeviceID=SettingsReadInt16(0);
+					USBWrite();
+				}
 				break;
         }
 

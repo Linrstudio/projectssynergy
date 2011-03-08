@@ -140,7 +140,9 @@ namespace LazyNetworking
         {
             while (true)
             {
-                //try
+#if !DEBUG
+                try
+#endif
                 {
                     if (socket == null)
                     {
@@ -216,7 +218,9 @@ namespace LazyNetworking
                         //Kill();
                     }
                 }
-                //catch (Exception ex) { Console.WriteLine("error in connection"); Console.WriteLine(ex.Message); }
+#if !DEBUG
+                catch (Exception ex) { Console.WriteLine("error in connection"); Console.WriteLine(ex.Message); }
+#endif
                 socket = null;
                 ChangeState(false);
             }
