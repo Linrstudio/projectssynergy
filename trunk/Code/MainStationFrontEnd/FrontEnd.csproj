@@ -56,6 +56,12 @@
     <Compile Include="EditComputerDialog.Designer.cs">
       <DependentUpon>EditComputerDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="EditMainStationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditMainStationDialog.Designer.cs">
+      <DependentUpon>EditMainStationDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainStationCodeBlock.cs" />
     <Compile Include="MainStationCodeBlocks.cs" />
     <Compile Include="ProgrammableDevices\Computer.cs" />
@@ -86,6 +92,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditComputerDialog.resx">
       <DependentUpon>EditComputerDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditMainStationDialog.resx">
+      <DependentUpon>EditMainStationDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RenameDialog.resx">

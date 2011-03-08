@@ -6,10 +6,6 @@
 #include "Default.h"
 #include "Kismet.h"
 
-//shared memory layout:
-//0-32 = kismet registers
-int8 SharedMemory[EPBUFFERSIZE+(KISMETBUFFERSIZE*2)];
-
 int8 OperationEnabled=255;
 
 void MSInit()

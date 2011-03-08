@@ -1,6 +1,6 @@
-#include"Default.h"
-#include"UART.h"
-#include"EP.h"
+#include "Default.h"
+#include "UART.h"
+#include "EP.h"
 #include "Kismet.h"
 #include "Compiler.h"
 #include "EEPROM.h"
@@ -8,10 +8,10 @@
 
 #include "MainStation.h"
 
+int8 DevicesNotFound=0;
 int8  PacketID=0;
-int16 DeviceAddress=0;//EEPROM Address
+int16 DeviceAddress=EEPROMHEADERSIZE;//EEPROM Address
 
-extern int8 SharedMemory[EPBUFFERSIZE+(KISMETBUFFERSIZE*2)];
 int8 EPBufferSize;
 
 extern int8 OperationEnabled;
@@ -31,21 +31,27 @@ void EPUpdate()
 		dev=MemoryReadInt16();
 		MemoryEndRead();
 			
-		if(dev==0xffff)
+		if(dev==0xffff)//if last device read from EEPROM 
 		{
-			DeviceAddress=0;
+			DeviceAddress=EEPROMHEADERSIZE;//poll the first one
+			if(DevicesNotFound!=0)
+				SetLED(1);
+			else
+				SetLED(0);
+			DevicesNotFound=0;
 		}
 		else
 		{
-			if(dev!=0)//polling the mainstation whould be stupid
+			if(dev!=0)//polling the mainstation would be stupid
 			{
 				if(EPPoll(dev))
 				{
-					//SetLED1(0);
+					//yay
 				}
 				else
 				{
-					//SetLED(1);
+					DevicesNotFound++;
+					
 				}
 			}
 		}
@@ -60,7 +66,7 @@ int8 EPSend(int16 _DeviceID)
 	UARTWriteInt8(255);
 	UARTWriteInt16(_DeviceID);
 	UARTWriteInt8(EPBufferSize);
-	for(i=0;i<EPBufferSize;i++)UARTWriteInt8(SharedMemory[i]);
+	for(i=0;i<EPBufferSize;i++)UARTWriteInt8(Get8(i));
 	UARTRead();
 	
 	for(i=0;i<2;i++)
@@ -80,7 +86,7 @@ int8 EPSend(int16 _DeviceID)
 		EPBufferSize=UARTReadInt8();
 		for(i=0;i<EPBufferSize&15;i++)
 		{
-			SharedMemory[i]=UARTReadInt8();
+			Set8(i,UARTReadInt8());
 		}
 		
 		if(DeviceID==0)//if this is for me ( should always be true )
@@ -105,11 +111,11 @@ int8 EPPoll(int16 _DeviceID)
 	EPBufferSize=0;
 	result = EPSend(_DeviceID);
 	if(EPBufferSize==0)return result;
-	event=SharedMemory[0];//wait, there is more!
+	event=Get8(0);//wait, there is more!
 	if(event!=0)
 	{
 		for(a=0;a<EPBUFFERSIZE;a++)
-			SharedMemory[a+1]=SharedMemory[EPBUFFERSIZE];//move the parameters to the right place
+			Set8(a,Get8(a+1));//move the parameters to the right place
 		KismetExecuteEvent(_DeviceID,event);
 	}
 	return result;

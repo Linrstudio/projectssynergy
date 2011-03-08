@@ -41,5 +41,12 @@ namespace MainStationFrontEnd
             catch { return; }
             Close();
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Form form = new SynergySequence.SequenceEditorForm(computer.Sequence);
+            form.Tag = computer.Sequence;
+            MainWindow.mainwindow. ShowDialog(form);
+        }
     }
 }

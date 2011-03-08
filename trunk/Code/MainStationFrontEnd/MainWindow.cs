@@ -132,10 +132,17 @@ namespace MainStationFrontEnd
         private void t_contents_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (t_contents.SelectedNode == null) return;
-            if (t_contents.SelectedNode.Tag is ProgrammableDevice)
+            if (t_contents.SelectedNode.Tag is Computer)
             {
-                ProgrammableDevice p = (ProgrammableDevice)t_contents.SelectedNode.Tag;
-                Form form = new SynergySequence.SequenceEditorForm(p.Sequence);
+                Computer p = (Computer)t_contents.SelectedNode.Tag;
+                Form form = new EditComputerDialog(p);
+                form.Tag = p;
+                ShowDialog(form);
+            }
+            if (t_contents.SelectedNode.Tag is FrontEndMainStation)
+            {
+                FrontEndMainStation p = (FrontEndMainStation)t_contents.SelectedNode.Tag;
+                Form form = new EditMainStationDialog(p);
                 form.Tag = p;
                 ShowDialog(form);
             }
@@ -316,8 +323,7 @@ namespace MainStationFrontEnd
                 block.Create();
                 t_contents.DoDragDrop(new object[] { block }, DragDropEffects.Copy);
             }
-            else
-                t_contents.DoDragDrop(node.Tag, DragDropEffects.Copy);
+            else t_contents.DoDragDrop(node.Tag, DragDropEffects.Copy);
         }
 
         private void renameToolStripMenuItem_Click(object sender, EventArgs e)

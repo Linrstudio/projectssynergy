@@ -23,6 +23,7 @@ namespace MainStation
 
     public static class MainStationCompiler
     {
+        public const int HEADERSIZE = 32;
         public class RegisterEntry
         {
             public byte index;
@@ -68,6 +69,9 @@ namespace MainStation
         public static byte[] Compile(MainStation _MainStation)
         {
             byte[] Buffer = new byte[0xffff];//2^16
+            //global header
+            //first 8 bits indicate the amount of timers
+            Buffer[0] = 1;
 
             //Event header
             List<MainStationDevice> devices = new List<MainStationDevice>();
@@ -102,23 +106,23 @@ namespace MainStation
             //Device Header
             int deviceheadersize = devices.Count * 4 + 2; // including the two blanks
             int eventheadersize = events.Count * 3 + 2;//2 blanks
-            int currenteventaddr = deviceheadersize + eventheadersize;
+            int currenteventaddr = HEADERSIZE + deviceheadersize + eventheadersize;
             int didx = 0;
             int eidx = 0;
             foreach (MainStationDevice d in devices)
             {
                 byte[] did = Utilities.Utilities.FromShort(d.ID);
-                byte[] eaddr = Utilities.Utilities.FromShort((ushort)(deviceheadersize + eidx * 3));
-                Buffer[didx * 4 + 0] = did[0];
-                Buffer[didx * 4 + 1] = did[1];
-                Buffer[didx * 4 + 2] = eaddr[0];
-                Buffer[didx * 4 + 3] = eaddr[1];
+                byte[] eaddr = Utilities.Utilities.FromShort((ushort)(HEADERSIZE + deviceheadersize + eidx * 3));
+                Buffer[HEADERSIZE + didx * 4 + 0] = did[0];
+                Buffer[HEADERSIZE + didx * 4 + 1] = did[1];
+                Buffer[HEADERSIZE + didx * 4 + 2] = eaddr[0];
+                Buffer[HEADERSIZE + didx * 4 + 3] = eaddr[1];
                 foreach (BaseBlockEvent.Event e in events)
                 {
                     if (e.DeviceID != d.ID) continue;
-                    int addr = deviceheadersize + eidx * 3;
+                    int addr = HEADERSIZE + deviceheadersize + eidx * 3;
                     eaddr = Utilities.Utilities.FromShort((ushort)currenteventaddr);
-                    Buffer[addr] = e.EventID;
+                    Buffer[addr + 0] = e.EventID;
                     Buffer[addr + 1] = eaddr[0];
                     Buffer[addr + 2] = eaddr[1];
                     //clear the compiler before we use it
@@ -150,10 +154,10 @@ namespace MainStation
             }
 
             //fill in the blanks
-            Buffer[deviceheadersize - 1] = 0xff;//tag the end each header with 0xffff
-            Buffer[deviceheadersize - 2] = 0xff;
-            Buffer[deviceheadersize + eventheadersize - 1] = 0xff;//tag the end each header with 0xffff
-            Buffer[deviceheadersize + eventheadersize - 2] = 0xff;
+            Buffer[HEADERSIZE + deviceheadersize - 1] = 0xff;//tag the end each header with 0xffff
+            Buffer[HEADERSIZE + deviceheadersize - 2] = 0xff;
+            Buffer[HEADERSIZE + deviceheadersize + eventheadersize - 1] = 0xff;//tag the end each header with 0xffff
+            Buffer[HEADERSIZE + deviceheadersize + eventheadersize - 2] = 0xff;
             //mark end of file ( doesnt do anything )
             Buffer[currenteventaddr + 0] = (byte)'E';
             Buffer[currenteventaddr + 1] = (byte)'O';

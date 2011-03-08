@@ -1,152 +1,152 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Solution>
-  <ProgrammableDevice Type="Computer" Name="Server" IPAddress="192.168.0.1" Port="7331">
+  <ProgrammableDevice Type="Computer" Name="Server" IPAddress="192.168.1.3" Port="7332">
     <Sequence>
-      <Block X="-209" Y="-95" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
+      <Block X="-208" Y="-735" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
         <Data>fan</Data>
       </Block>
-      <Block X="17" Y="-93" Type="DesktopCodeBlocks.BlockIf">
+      <Block X="10" Y="-735" Type="DesktopCodeBlocks.BlockIf">
         <Data />
       </Block>
-      <Block X="17" Y="-190" Type="DesktopCodeBlocks.BlockSwitchToggle">
+      <Block X="10" Y="-832" Type="DesktopCodeBlocks.BlockSwitchToggle">
         <Data>fan</Data>
       </Block>
-      <Block X="17" Y="-155" Type="DesktopCodeBlocks.BlockSwitchGetState">
+      <Block X="10" Y="-797" Type="DesktopCodeBlocks.BlockSwitchGetState">
         <Data>fan</Data>
       </Block>
-      <Block X="17" Y="-35" Type="DesktopCodeBlocks.BlockIfNot">
+      <Block X="10" Y="-677" Type="DesktopCodeBlocks.BlockIfNot">
         <Data />
       </Block>
-      <Block X="212" Y="-93" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="205" Y="-735" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data>WebFanOn</Data>
       </Block>
-      <Block X="212" Y="-35" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="205" Y="-677" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data>WebFanOff</Data>
       </Block>
-      <Block X="-213" Y="124" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
+      <Block X="-208" Y="-517" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
         <Data>lamp</Data>
       </Block>
-      <Block X="17" Y="27" Type="DesktopCodeBlocks.BlockSwitchToggle">
+      <Block X="10" Y="-615" Type="DesktopCodeBlocks.BlockSwitchToggle">
         <Data>lamp</Data>
       </Block>
-      <Block X="17" Y="61" Type="DesktopCodeBlocks.BlockSwitchGetState">
+      <Block X="10" Y="-581" Type="DesktopCodeBlocks.BlockSwitchGetState">
         <Data>lamp</Data>
       </Block>
-      <Block X="16" Y="125" Type="DesktopCodeBlocks.BlockIf">
+      <Block X="9" Y="-517" Type="DesktopCodeBlocks.BlockIf">
         <Data />
       </Block>
-      <Block X="14" Y="183" Type="DesktopCodeBlocks.BlockIfNot">
+      <Block X="7" Y="-459" Type="DesktopCodeBlocks.BlockIfNot">
         <Data />
       </Block>
-      <Block X="211" Y="125" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="204" Y="-517" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data>WebLampOn</Data>
       </Block>
-      <Block X="212" Y="183" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="205" Y="-459" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data>WebLampOff</Data>
       </Block>
-      <Block X="-206" Y="342" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
+      <Block X="-212" Y="-297" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
         <Data>bed</Data>
       </Block>
-      <Block X="-204" Y="599" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
+      <Block X="-211" Y="-43" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
         <Data></Data>
       </Block>
-      <Block X="15" Y="245" Type="DesktopCodeBlocks.BlockSwitchToggle">
+      <Block X="8" Y="-397" Type="DesktopCodeBlocks.BlockSwitchToggle">
         <Data>bed</Data>
       </Block>
-      <Block X="11" Y="500" Type="DesktopCodeBlocks.BlockSwitchToggle">
+      <Block X="4" Y="-142" Type="DesktopCodeBlocks.BlockSwitchToggle">
         <Data></Data>
       </Block>
-      <Block X="16" Y="285" Type="DesktopCodeBlocks.BlockSwitchGetState">
+      <Block X="9" Y="-357" Type="DesktopCodeBlocks.BlockSwitchGetState">
         <Data>bed</Data>
       </Block>
-      <Block X="12" Y="540" Type="DesktopCodeBlocks.BlockSwitchGetState">
+      <Block X="5" Y="-102" Type="DesktopCodeBlocks.BlockSwitchGetState">
         <Data></Data>
       </Block>
-      <Block X="15" Y="345" Type="DesktopCodeBlocks.BlockIf">
+      <Block X="8" Y="-297" Type="DesktopCodeBlocks.BlockIf">
         <Data />
       </Block>
-      <Block X="10" Y="400" Type="DesktopCodeBlocks.BlockIfNot">
+      <Block X="3" Y="-242" Type="DesktopCodeBlocks.BlockIfNot">
         <Data />
       </Block>
-      <Block X="13" Y="658" Type="DesktopCodeBlocks.BlockIfNot">
+      <Block X="6" Y="16" Type="DesktopCodeBlocks.BlockIfNot">
         <Data />
       </Block>
-      <Block X="13" Y="599" Type="DesktopCodeBlocks.BlockIf">
+      <Block X="6" Y="-43" Type="DesktopCodeBlocks.BlockIf">
         <Data />
       </Block>
-      <Block X="215" Y="599" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="208" Y="-43" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data></Data>
       </Block>
-      <Block X="216" Y="658" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="209" Y="16" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data></Data>
       </Block>
-      <Block X="213" Y="345" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="206" Y="-297" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data>WebBedOn</Data>
       </Block>
-      <Block X="214" Y="400" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="207" Y="-242" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data>WebBedOff</Data>
       </Block>
-      <Block X="-192" Y="895" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
+      <Block X="-196" Y="252" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
         <Data>stairs</Data>
       </Block>
-      <Block X="4" Y="805" Type="DesktopCodeBlocks.BlockSwitchToggle">
+      <Block X="-3" Y="163" Type="DesktopCodeBlocks.BlockSwitchToggle">
         <Data>stairs</Data>
       </Block>
-      <Block X="4" Y="840" Type="DesktopCodeBlocks.BlockSwitchGetState">
+      <Block X="-3" Y="198" Type="DesktopCodeBlocks.BlockSwitchGetState">
         <Data>stairs</Data>
       </Block>
-      <Block X="4" Y="894" Type="DesktopCodeBlocks.BlockIf">
+      <Block X="-3" Y="252" Type="DesktopCodeBlocks.BlockIf">
         <Data />
       </Block>
-      <Block X="5" Y="946" Type="DesktopCodeBlocks.BlockIfNot">
+      <Block X="-2" Y="304" Type="DesktopCodeBlocks.BlockIfNot">
         <Data />
       </Block>
-      <Block X="212" Y="894" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="205" Y="252" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data>WebStairsOn</Data>
       </Block>
-      <Block X="212" Y="946" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="205" Y="304" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data>WebStairsOff</Data>
       </Block>
-      <Block X="-186" Y="1153" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
+      <Block X="-196" Y="512" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
         <Data>solder</Data>
       </Block>
-      <Block X="-184" Y="1426" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
+      <Block X="-191" Y="784" Type="DesktopCodeBlocks.BlockEventSwitchToggle">
         <Data>kitchen</Data>
       </Block>
-      <Block X="5" Y="1053" Type="DesktopCodeBlocks.BlockSwitchToggle">
+      <Block X="-2" Y="411" Type="DesktopCodeBlocks.BlockSwitchToggle">
         <Data>solder</Data>
       </Block>
-      <Block X="15" Y="1338" Type="DesktopCodeBlocks.BlockSwitchToggle">
+      <Block X="8" Y="696" Type="DesktopCodeBlocks.BlockSwitchToggle">
         <Data>kitchen</Data>
       </Block>
-      <Block X="2" Y="1154" Type="DesktopCodeBlocks.BlockIf">
+      <Block X="-5" Y="512" Type="DesktopCodeBlocks.BlockIf">
         <Data />
       </Block>
-      <Block X="14" Y="1426" Type="DesktopCodeBlocks.BlockIf">
+      <Block X="7" Y="784" Type="DesktopCodeBlocks.BlockIf">
         <Data />
       </Block>
-      <Block X="14" Y="1470" Type="DesktopCodeBlocks.BlockIfNot">
+      <Block X="7" Y="828" Type="DesktopCodeBlocks.BlockIfNot">
         <Data />
       </Block>
-      <Block X="2" Y="1207" Type="DesktopCodeBlocks.BlockIfNot">
+      <Block X="-5" Y="565" Type="DesktopCodeBlocks.BlockIfNot">
         <Data />
       </Block>
-      <Block X="4" Y="1105" Type="DesktopCodeBlocks.BlockSwitchGetState">
+      <Block X="-3" Y="463" Type="DesktopCodeBlocks.BlockSwitchGetState">
         <Data>solder</Data>
       </Block>
-      <Block X="13" Y="1379" Type="DesktopCodeBlocks.BlockSwitchGetState">
+      <Block X="6" Y="737" Type="DesktopCodeBlocks.BlockSwitchGetState">
         <Data>kitchen</Data>
       </Block>
-      <Block X="212" Y="1154" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="205" Y="512" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data>WebSolderOn</Data>
       </Block>
-      <Block X="211" Y="1208" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="204" Y="566" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data>WebSolderOff</Data>
       </Block>
-      <Block X="218" Y="1425" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="211" Y="783" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data>WebKitchenOn</Data>
       </Block>
-      <Block X="219" Y="1474" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
+      <Block X="212" Y="832" Type="DesktopCodeBlocks.BlockGenericEventInvoke">
         <Data>WebKitchenOff</Data>
       </Block>
       <ConnectTrigger Input="0" InputOwner="2" Output="0" OutputOwner="0" />
@@ -201,112 +201,112 @@
     </Sequence>
     <MainStation>
       <Sequence>
-        <Block X="-51" Y="-334" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-76.5" Y="-895" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebFanOn</Data>
         </Block>
-        <Block X="-47" Y="-171" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-72.5" Y="-732" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebFanOff</Data>
         </Block>
-        <Block X="119" Y="-171" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Block X="93.5" Y="-732" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
           <Data DeviceID="9" EventID="6" />
         </Block>
-        <Block X="118" Y="-334" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Block X="92.5" Y="-895" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
           <Data DeviceID="9" EventID="6" />
         </Block>
-        <Block X="120" Y="-260" Type="MainStationCodeBlocks.BlockIntConstant">
+        <Block X="94.5" Y="-821" Type="MainStationCodeBlocks.BlockIntConstant">
           <Data>0</Data>
         </Block>
-        <Block X="118" Y="-424" Type="MainStationCodeBlocks.BlockIntConstant">
+        <Block X="92.5" Y="-985" Type="MainStationCodeBlocks.BlockIntConstant">
           <Data>65535</Data>
         </Block>
-        <Block X="-40" Y="3" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-65.5" Y="-558" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebLampOn</Data>
         </Block>
-        <Block X="-49" Y="146" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-74.5" Y="-415" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebLampOff</Data>
         </Block>
-        <Block X="-51" Y="338" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-76.5" Y="-223" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebBedOn</Data>
         </Block>
-        <Block X="-52" Y="487" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-74.5" Y="-75" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebBedOff</Data>
         </Block>
-        <Block X="111" Y="-83" Type="MainStationCodeBlocks.BlockIntConstant">
+        <Block X="85.5" Y="-644" Type="MainStationCodeBlocks.BlockIntConstant">
           <Data>65535</Data>
         </Block>
-        <Block X="114.400223" Y="69.17966" Type="MainStationCodeBlocks.BlockIntConstant">
+        <Block X="88.90021" Y="-491.820343" Type="MainStationCodeBlocks.BlockIntConstant">
           <Data>0</Data>
         </Block>
-        <Block X="112" Y="3" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Block X="86.5" Y="-558" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
           <Data DeviceID="9" EventID="7" />
         </Block>
-        <Block X="113.671768" Y="147.124847" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Block X="88.17175" Y="-413.875122" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
           <Data DeviceID="9" EventID="7" />
         </Block>
-        <Block X="112" Y="253" Type="MainStationCodeBlocks.BlockIntConstant">
+        <Block X="86.5" Y="-308" Type="MainStationCodeBlocks.BlockIntConstant">
           <Data>65535</Data>
         </Block>
-        <Block X="114" Y="399" Type="MainStationCodeBlocks.BlockIntConstant">
+        <Block X="88.5" Y="-162" Type="MainStationCodeBlocks.BlockIntConstant">
           <Data>0</Data>
         </Block>
-        <Block X="113" Y="338" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Block X="87.5" Y="-223" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
           <Data DeviceID="9" EventID="1" />
         </Block>
-        <Block X="114" Y="486" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Block X="88.5" Y="-75" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
           <Data DeviceID="9" EventID="1" />
         </Block>
-        <Block X="-71" Y="698" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-78.5" Y="135" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebStairsOn</Data>
         </Block>
-        <Block X="110" Y="612" Type="MainStationCodeBlocks.BlockIntConstant">
+        <Block X="84.5" Y="51" Type="MainStationCodeBlocks.BlockIntConstant">
           <Data>65535</Data>
         </Block>
-        <Block X="103" Y="780" Type="MainStationCodeBlocks.BlockIntConstant">
+        <Block X="77.5" Y="219" Type="MainStationCodeBlocks.BlockIntConstant">
           <Data>0</Data>
         </Block>
-        <Block X="-61" Y="847" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-75.5" Y="285" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebStairsOff</Data>
         </Block>
-        <Block X="102" Y="846" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Block X="76.5" Y="285" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
           <Data DeviceID="9" EventID="3" />
         </Block>
-        <Block X="109" Y="696" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Block X="83.5" Y="135" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
           <Data DeviceID="9" EventID="3" />
         </Block>
-        <Block X="-66" Y="1073" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-91.5" Y="512" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebSolderOn</Data>
         </Block>
-        <Block X="-69" Y="1213" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-94.5" Y="652" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebSolderOff</Data>
         </Block>
-        <Block X="94" Y="995" Type="MainStationCodeBlocks.BlockIntConstant">
+        <Block X="68.5" Y="434" Type="MainStationCodeBlocks.BlockIntConstant">
           <Data>65535</Data>
         </Block>
-        <Block X="95" Y="1138" Type="MainStationCodeBlocks.BlockIntConstant">
+        <Block X="69.5" Y="577" Type="MainStationCodeBlocks.BlockIntConstant">
           <Data>0</Data>
         </Block>
-        <Block X="96" Y="1213" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Block X="70.5" Y="652" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
           <Data DeviceID="9" EventID="8" />
         </Block>
-        <Block X="94" Y="1073" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Block X="68.5" Y="512" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
           <Data DeviceID="9" EventID="8" />
         </Block>
-        <Block X="-68" Y="1404" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-85.5" Y="844" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebKitchenOn</Data>
         </Block>
-        <Block X="-76" Y="1546" Type="MainStationCodeBlocks.BlockGenericEvent">
+        <Block X="-81.5" Y="985" Type="MainStationCodeBlocks.BlockGenericEvent">
           <Data>WebKitchenOff</Data>
         </Block>
-        <Block X="106" Y="1546" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Block X="80.5" Y="985" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
           <Data DeviceID="9" EventID="2" />
         </Block>
-        <Block X="105" Y="1405" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Block X="79.5" Y="844" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
           <Data DeviceID="9" EventID="2" />
         </Block>
-        <Block X="105" Y="1323" Type="MainStationCodeBlocks.BlockIntConstant">
+        <Block X="79.5" Y="762" Type="MainStationCodeBlocks.BlockIntConstant">
           <Data>65535</Data>
         </Block>
-        <Block X="106" Y="1465" Type="MainStationCodeBlocks.BlockIntConstant">
+        <Block X="80.5" Y="904" Type="MainStationCodeBlocks.BlockIntConstant">
           <Data>0</Data>
         </Block>
         <ConnectTrigger Input="0" InputOwner="3" Output="0" OutputOwner="0" />
@@ -361,5 +361,54 @@
         </Control>
       </Scene>
     </WebInterface>
+  </ProgrammableDevice>
+  <ProgrammableDevice Type="FrontEndMainStation">
+    <Sequence>
+      <Block X="-188.125" Y="48" Type="MainStationCodeBlocks.MainStationCodeBlockDevice">
+        <Data DeviceID="8" TypeID="3" />
+      </Block>
+      <Block X="175" Y="287" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Data DeviceID="6" EventID="16" />
+      </Block>
+      <Block X="175" Y="223" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Data DeviceID="6" EventID="15" />
+      </Block>
+      <Block X="174" Y="159" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Data DeviceID="6" EventID="14" />
+      </Block>
+      <Block X="174" Y="95" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Data DeviceID="6" EventID="13" />
+      </Block>
+      <Block X="174" Y="33" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Data DeviceID="6" EventID="12" />
+      </Block>
+      <Block X="174" Y="-31" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Data DeviceID="6" EventID="11" />
+      </Block>
+      <Block X="297" Y="-96" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Data DeviceID="6" EventID="1" />
+      </Block>
+      <Block X="174" Y="-159" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
+        <Data DeviceID="6" EventID="1" />
+      </Block>
+      <Block X="294" Y="-225" Type="MainStationCodeBlocks.BlockBoolConstant">
+        <Data>False</Data>
+      </Block>
+      <Block X="174" Y="-255" Type="MainStationCodeBlocks.BlockBoolConstant">
+        <Data>True</Data>
+      </Block>
+      <ConnectTrigger Input="0" InputOwner="8" Output="0" OutputOwner="0" />
+      <ConnectTrigger Input="0" InputOwner="7" Output="1" OutputOwner="0" />
+      <ConnectTrigger Input="0" InputOwner="6" Output="5" OutputOwner="0" />
+      <ConnectTrigger Input="0" InputOwner="5" Output="7" OutputOwner="0" />
+      <ConnectTrigger Input="0" InputOwner="4" Output="9" OutputOwner="0" />
+      <ConnectTrigger Input="0" InputOwner="3" Output="11" OutputOwner="0" />
+      <ConnectTrigger Input="0" InputOwner="2" Output="13" OutputOwner="0" />
+      <ConnectTrigger Input="0" InputOwner="1" Output="15" OutputOwner="0" />
+      <ConnectData Input="0" InputOwner="7" Output="0" OutputOwner="9" />
+      <ConnectData Input="0" InputOwner="8" Output="0" OutputOwner="10" />
+    </Sequence>
+    <Device Name="" ID="8" Device="3" />
+    <Device Name="led" ID="6" Device="5" />
   </ProgrammableDevice>
 </Solution>

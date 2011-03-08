@@ -2,11 +2,21 @@
 #include "Kismet.h"
 #include "Default.h"
 
-int8 RTCSecond;
-int8 RTCMinute;
-int8 RTCHour;
-int16 RTCDay;
-int8 RTCEdge;//possibly a better way of reading TMR1
+int8	RTCSecond;
+int8	RTCMinute;
+int8	RTCHour;
+int16	RTCDay;
+int8	RTCEdge;//possibly a better way of reading TMR1
+
+void SetTimer(const int _TimerIndex,int16 _Time,int8 _Event)
+{
+	int idx;
+	_Index<<=2;
+	idx=255;
+	idx-=_Index;
+	Set16(idx,_Timer.Time);
+	Set8(idx+2,_Timer.Event);
+}
 
 void RTCInit()
 {
@@ -53,17 +63,12 @@ void RTCUpdate()
 				{
 					RTCHour=0;
 					RTCDay++;
-				
-					KismetSetRegister(0,(int16)RTCDay);
 					KismetExecuteEvent(0,4);
 				}
-				KismetSetRegister(0,(int16)RTCHour);
 				KismetExecuteEvent(0,3);
 			}
-			KismetSetRegister(0,(int16)RTCMinute);
 			KismetExecuteEvent(0,2);
 		}
-		KismetSetRegister(0,(int16)RTCSecond);
 		KismetExecuteEvent(0,1);
 	}
 }
