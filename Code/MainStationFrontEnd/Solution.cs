@@ -38,14 +38,17 @@ namespace MainStationFrontEnd
         public static void Load(string _File)
         {
             programmabledevices.Clear();
-            XElement file = XElement.Load(_File);
-            foreach (XElement element in file.Elements("ProgrammableDevice"))
+            if (System.IO.File.Exists(_File))
             {
-                string typename = element.Attribute("Type").Value;
-                ProgrammableDevice d;
-                d = (ProgrammableDevice)Activator.CreateInstance(null, "MainStationFrontEnd." + typename).Unwrap();
-                d.Load(element);
-                programmabledevices.Add(d);
+                XElement file = XElement.Load(_File);
+                foreach (XElement element in file.Elements("ProgrammableDevice"))
+                {
+                    string typename = element.Attribute("Type").Value;
+                    ProgrammableDevice d;
+                    d = (ProgrammableDevice)Activator.CreateInstance(null, "MainStationFrontEnd." + typename).Unwrap();
+                    d.Load(element);
+                    programmabledevices.Add(d);
+                }
             }
         }
 
