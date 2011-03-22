@@ -241,49 +241,9 @@ namespace MainStationCodeBlocks
             _Graphics.DrawString(val.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y, sf);
         }
     }
-    /*
-    public class BlockEventSchedule : BaseBlockEvent
+
+    public abstract class BaseBlockLocalEvent : BaseBlockEvent
     {
-        DateTime moment;
-
-        [Browsable(true)]
-        public DateTime Moment
-        {
-            get { return moment; }
-            set { moment = value; }
-        }
-
-        public BlockEventSchedule()
-        {
-            width = 100;
-            height = 50;
-            TriggerOutputs.Add(new TriggerOutput(this, ""));
-            UpdateConnectors();
-        }
-
-        public override void DrawText(Graphics _Graphics)
-        {
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center;
-            sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Schedule\n" + moment.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y, sf);
-        }
-
-        public Event[] Events { get { return new Event[]{new Event(0,get)}} }
-
-        public override void Load(XElement _Data) { }
-        public override void Save(XElement _Data) { }
-    }
-*/
-    public class BlockGenericEvent : BaseBlockEvent
-    {
-        string name = "";
-        [Browsable(true)]
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
         public byte GetEventID()
         {
             if (Sequence != null)
@@ -292,11 +252,24 @@ namespace MainStationCodeBlocks
                 foreach (CodeBlock c in Sequence.CodeBlocks)
                 {
                     if (c == this) return index;
-                    if (c is BlockGenericEvent) index++;
+                    if (c is BaseBlockLocalEvent) index++;
                 }
             }
+            Console.WriteLine("GetEventID() Sequence was null!");
             return 0;
         }
+    }
+
+    public class BlockGenericEvent : BaseBlockLocalEvent
+    {
+        string name = "";
+        [Browsable(true)]
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
         public BlockGenericEvent()
         {
             width = 100;
@@ -331,6 +304,71 @@ namespace MainStationCodeBlocks
 
         public override void Load(XElement _Data) { name = _Data.Value; }
         public override void Save(XElement _Data) { _Data.Value = name; }
+    }
+
+    public class BlockDelay : BaseBlockLocalEvent
+    {
+        public BlockDelay()
+        {
+            width = 100;
+            height = 50;
+            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            TriggerInputs.Add(new TriggerInput(this, "Reset"));
+            DataInputs.Add(new DataInput(this, "Delay", "int"));
+            UpdateConnectors();
+        }
+
+        public byte GetTimerID()
+        {
+            if (Sequence != null)
+            {
+                byte index = 0;
+                foreach (CodeBlock c in Sequence.CodeBlocks)
+                {
+                    if (c == this) return index;
+                    if (c is BlockDelay) index++;
+                }
+            }
+            Console.WriteLine("GetTimerID() Sequence was null!");
+            return 0;
+        }
+
+        public override Event[] Events { get { return new Event[] { new Event(0, GetEventID(), TriggerOutputs[0]) }; } }
+
+        public override void DrawText(Graphics _Graphics)
+        {
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            sf.LineAlignment = StringAlignment.Center;
+            _Graphics.DrawString("Delay", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, X, Y, sf);
+        }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            DrawShape(_Graphics,
+                new PointF[]{
+                    new PointF(-width/2,height/2),
+                    new PointF(-width/3,0),
+                    new PointF(-width/2,-height/2),
+                    new PointF(width/3,-height/2),
+                    new PointF(width/2,0),
+                    new PointF(width/3,height/2),
+                }
+            );
+        }
+
+        public override byte[] Compile(CodeBlock.TriggerInput _Input)
+        {
+            var v = ((MainStationCodeBlock)DataInputs[0].Connected.Owner).GetOutput(DataInputs[0].Connected);
+            MemoryStream stream = new MemoryStream();
+            stream.Write(v.Code, 0, v.Code.Length);
+            byte[] code = CodeInstructions.SetTimer(GetTimerID(), GetEventID(), v.Register.index);
+            stream.Write(code, 0, code.Length);
+            return stream.ToArray();
+        }
+
+        public override void Load(XElement _Data) { }
+        public override void Save(XElement _Data) { }
     }
 
     public class GetOutputResult
@@ -443,7 +481,7 @@ namespace MainStationCodeBlocks
             stream.Write(code, 0, code.Length);
             if (DataInputs[0].Connected != null)
             {
-                var ans = ((MainStationCodeBlock)DataInputs[0].Connected.Owner).GetOutput(DataInputs[0].Connected);
+                GetOutputResult ans = ((MainStationCodeBlock)DataInputs[0].Connected.Owner).GetOutput(DataInputs[0].Connected);
                 stream.Write(ans.Code, 0, ans.Code.Length);
                 code = CodeInstructions.Mov(ans.Register.index, 1, 2);
                 stream.Write(code, 0, code.Length);
@@ -535,6 +573,7 @@ namespace MainStationCodeBlocks
     {
         public static void AddAllPrototypes(SynergySequence.SequenceManager _Manager)
         {
+            _Manager.AddPrototype(new SequenceManager.Prototype("Delay", "Generic Events", "blaat", typeof(BlockDelay)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Event", "Generic Events", "blaat", typeof(BlockGenericEvent)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Remote Event", "Generic Events", "blaat", typeof(MainStationCodeBlockRemoteEvent)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Invoke Remote Event", "Generic Events", "i like u", typeof(MainStationCodeBlockInvokeRemoteEvent)));

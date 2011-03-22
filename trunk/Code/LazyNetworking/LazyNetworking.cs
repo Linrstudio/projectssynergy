@@ -155,8 +155,8 @@ namespace LazyNetworking
                         {
                             socket = null;
                             ChangeState(false);
-                            Console.WriteLine("Failed To Connect");
-                            Console.WriteLine(ex.Message);
+                            //Console.WriteLine("Failed To Connect");
+                            //Console.WriteLine(ex.Message);
                             Thread.Sleep(5000);
                         }
                     }

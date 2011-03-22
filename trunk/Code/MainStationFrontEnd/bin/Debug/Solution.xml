@@ -364,51 +364,18 @@
   </ProgrammableDevice>
   <ProgrammableDevice Type="FrontEndMainStation">
     <Sequence>
-      <Block X="-188.125" Y="48" Type="MainStationCodeBlocks.MainStationCodeBlockDevice">
-        <Data DeviceID="8" TypeID="3" />
+      <Block X="-156" Y="32.5" Type="MainStationCodeBlocks.MainStationCodeBlockRemoteEvent">
+        <Data DeviceID="0" EventID="1" />
       </Block>
-      <Block X="175" Y="287" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
-        <Data DeviceID="6" EventID="16" />
+      <Block X="143" Y="51.5" Type="MainStationCodeBlocks.BlockSetDebugLed">
+        <Data />
       </Block>
-      <Block X="175" Y="223" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
-        <Data DeviceID="6" EventID="15" />
-      </Block>
-      <Block X="174" Y="159" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
-        <Data DeviceID="6" EventID="14" />
-      </Block>
-      <Block X="174" Y="95" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
-        <Data DeviceID="6" EventID="13" />
-      </Block>
-      <Block X="174" Y="33" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
-        <Data DeviceID="6" EventID="12" />
-      </Block>
-      <Block X="174" Y="-31" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
-        <Data DeviceID="6" EventID="11" />
-      </Block>
-      <Block X="297" Y="-96" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
-        <Data DeviceID="6" EventID="1" />
-      </Block>
-      <Block X="174" Y="-159" Type="MainStationCodeBlocks.MainStationCodeBlockInvokeRemoteEvent">
-        <Data DeviceID="6" EventID="1" />
-      </Block>
-      <Block X="294" Y="-225" Type="MainStationCodeBlocks.BlockBoolConstant">
-        <Data>False</Data>
-      </Block>
-      <Block X="174" Y="-255" Type="MainStationCodeBlocks.BlockBoolConstant">
+      <Block X="156" Y="-51.5" Type="MainStationCodeBlocks.BlockBoolConstant">
         <Data>True</Data>
       </Block>
-      <ConnectTrigger Input="0" InputOwner="8" Output="0" OutputOwner="0" />
-      <ConnectTrigger Input="0" InputOwner="7" Output="1" OutputOwner="0" />
-      <ConnectTrigger Input="0" InputOwner="6" Output="5" OutputOwner="0" />
-      <ConnectTrigger Input="0" InputOwner="5" Output="7" OutputOwner="0" />
-      <ConnectTrigger Input="0" InputOwner="4" Output="9" OutputOwner="0" />
-      <ConnectTrigger Input="0" InputOwner="3" Output="11" OutputOwner="0" />
-      <ConnectTrigger Input="0" InputOwner="2" Output="13" OutputOwner="0" />
-      <ConnectTrigger Input="0" InputOwner="1" Output="15" OutputOwner="0" />
-      <ConnectData Input="0" InputOwner="7" Output="0" OutputOwner="9" />
-      <ConnectData Input="0" InputOwner="8" Output="0" OutputOwner="10" />
+      <ConnectTrigger Input="0" InputOwner="1" Output="0" OutputOwner="0" />
+      <ConnectData Input="0" InputOwner="1" Output="0" OutputOwner="2" />
     </Sequence>
     <Device Name="" ID="8" Device="3" />
-    <Device Name="led" ID="6" Device="5" />
   </ProgrammableDevice>
 </Solution>
