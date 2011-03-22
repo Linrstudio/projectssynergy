@@ -91,5 +91,17 @@ namespace MainStation
             byte[] value = Utilities.Utilities.FromShort(_DeviceID);
             return new byte[] { 0x71, value[0], value[1], _EPBufferSize };
         }
+
+        /// <summary>
+        /// Set a Timer
+        /// </summary>
+        /// <param name="_Timer"></param>
+        /// <param name="_Event"></param>
+        /// <param name="_Time"></param>
+        /// <returns></returns>
+        public static byte[] SetTimer(byte _Timer, byte _Event, byte _Reg)
+        {
+            return new byte[] { 0x90, _Timer, _Event, _Reg };
+        }
     }
 }

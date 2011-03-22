@@ -23,7 +23,8 @@ namespace MainStation
 
     public static class MainStationCompiler
     {
-        public const int HEADERSIZE = 32;
+        public const int HEADERSIZE = 1;
+        static int TimerCount = 0;
         public class RegisterEntry
         {
             public byte index;
@@ -48,7 +49,7 @@ namespace MainStation
             for (int i = 16; i < 256; i++)//first 16 registers are for UART communication
             {
                 bool ok = true;
-
+                if (i >= 255 - TimerCount * 4) ok = false;
                 if (i < 128 && i + _Size >= 128) ok = false;//if the register is hanging over the edge between memory block a and b, dont create it
 
                 for (int j = 0; j < _Size; j++)
@@ -68,14 +69,15 @@ namespace MainStation
         }
         public static byte[] Compile(MainStation _MainStation)
         {
+            TimerCount = 0;
             byte[] Buffer = new byte[0xffff];//2^16
+
             //global header
             //first 8 bits indicate the amount of timers
-            Buffer[0] = 1;
 
             //Event header
             List<MainStationDevice> devices = new List<MainStationDevice>();
-            devices.Add(new MainStationDevice("", null, 0));
+            devices.Add(new MainStationDevice(_MainStation, "", null, 0));
             foreach (MainStationDevice d in _MainStation.Devices)
             {
                 devices.Add(d);
@@ -91,17 +93,21 @@ namespace MainStation
                         foreach (BaseBlockEvent.Event evnt in ((BaseBlockEvent)msc).Events)
                         {
                             if (evnt.Output.Connected.Count > 0)//only add the event to the list when there is code attached to it
+                            {
+                                if (msc is BlockDelay)
+                                    TimerCount++;
                                 events.Add(evnt);
+                            }
                         }
                     }
                 }
                 else throw new Exception("normal codeblock in sequence for mainstation found, whut !?");
             }
             //add empty events for RTC stuff, will be implemented later
-            events.Add(new BaseBlockEvent.Event(0, 0, null));
-            events.Add(new BaseBlockEvent.Event(0, 1, null));
             events.Add(new BaseBlockEvent.Event(0, 2, null));
             events.Add(new BaseBlockEvent.Event(0, 3, null));
+            events.Add(new BaseBlockEvent.Event(0, 4, null));
+            events.Add(new BaseBlockEvent.Event(0, 5, null));
 
             //Device Header
             int deviceheadersize = devices.Count * 4 + 2; // including the two blanks
@@ -152,6 +158,10 @@ namespace MainStation
                 }
                 didx++;
             }
+            //fill in header
+            // for (int i = 0; i < 32; i++) Buffer[i] = (byte)i;
+            Buffer[0] = (byte)TimerCount;
+
 
             //fill in the blanks
             Buffer[HEADERSIZE + deviceheadersize - 1] = 0xff;//tag the end each header with 0xffff
@@ -192,6 +202,11 @@ namespace MainStation
         List<MainStationDevice> devices = new List<MainStationDevice>();
         public MainStationDevice[] Devices { get { return devices.ToArray(); } }
 
+        public void RemoveDevice(MainStationDevice _Device)
+        {
+            if (devices.Contains(_Device)) devices.Remove(_Device);
+        }
+
         public void Load(System.Xml.Linq.XElement _Data)
         {
             Sequence.Load(_Data.Element("Sequence"));
@@ -199,6 +214,7 @@ namespace MainStation
             {
                 devices.Add(new MainStationDevice(element));
             }
+            foreach (MainStationDevice d in devices) d.mainstation = this;
         }
 
         public void Save(System.Xml.Linq.XElement _Data)
@@ -214,7 +230,7 @@ namespace MainStation
 
         public MainStationDevice RegisterDevice(string _Name, ProductDataBase.Device _Device, ushort _DeviceID)
         {
-            MainStationDevice d = new MainStationDevice(_Name, _Device, _DeviceID);
+            MainStationDevice d = new MainStationDevice(this, _Name, _Device, _DeviceID);
             foreach (ProductDataBase.Device.Event e in _Device.events)
             {
                 d.Events.Add(e.ID, new MainStationDevice.Event(d, e));
@@ -254,6 +270,20 @@ namespace MainStation
                 fixed (byte* ptr = buffer) HIDClass.MCHPHIDClass.USBHIDReadReport(ptr);
             }
             return buffer;
+        }
+
+        public static bool SetTimer(byte _Timer, byte _Event, ushort _Time)
+        {
+            byte[] buffer = new byte[65];
+            buffer[0] = 0x50;//Set Timer
+            byte[] shrt = BitConverter.GetBytes((ushort)_Time);
+            buffer[1] = _Timer;
+            buffer[2] = _Event;
+            buffer[3] = shrt[0];
+            buffer[4] = shrt[1];
+            Write(buffer);
+            buffer = Read();
+            return buffer[1] == 255;
         }
 
         public static bool Poll(ushort _DeviceID)
@@ -320,8 +350,10 @@ namespace MainStation
 
         public static bool EEPROMWriteVerify(byte[] _Data)
         {
+            int begin = Environment.TickCount;
             OperationDisable();
             EEPROMWrite(_Data);
+#if true
             byte[] read = new byte[_Data.Length];
             for (int i = 0; i < read.Length; i++)
             {
@@ -329,23 +361,31 @@ namespace MainStation
             }
             for (int i = 0; i < read.Length; i++)
             {
-                if (EEPROMRead((ushort)i) != _Data[i])
+                if (read[i] != _Data[i])
+                {
+                    Console.WriteLine("verify failed");
                     return false;
+                }
             }
+#endif
             OperationEnable();
+            int time = Environment.TickCount - begin;
+            Console.WriteLine("Time: {0}", time);
             return true;
         }
 
         public static void EEPROMWrite(byte[] _Data)
         {
-            System.IO.File.WriteAllBytes("c:\\eeprom.bin", _Data);
-#if false//write page
+
+            System.IO.File.WriteAllBytes(@"c:\eeprom.bin", _Data);
+#if true//write page
             for (int i = 0; i < _Data.Length; i += 32)
             {
                 byte[] buffer = new byte[32];
                 for (int j = 0; j < 32; j++)
                 {
-                    buffer[j] = _Data[i + j];
+                    if (i + j < _Data.Length)
+                        buffer[j] = _Data[i + j];
                 }
                 EEPROMWritePage((ushort)i, buffer);
             }
@@ -475,12 +515,14 @@ namespace MainStation
 
     public class MainStationDevice
     {
-        public MainStationDevice(string _Name, ProductDataBase.Device _Device, ushort _ID)
+        public MainStationDevice(MainStation _MainStation, string _Name, ProductDataBase.Device _Device, ushort _ID)
         {
+            mainstation = _MainStation;
             Name = _Name;
             device = _Device;
             ID = _ID;
         }
+        public MainStation mainstation;
         public MainStationDevice(XElement _Data) { Load(_Data); }
         public string Name;
         public ushort addr = 0;

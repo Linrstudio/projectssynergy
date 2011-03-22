@@ -173,6 +173,11 @@ namespace MainStationFrontEnd
                 {
                     ((FrontEndWebInterface)node.Tag).GetContextMenu().Show(t_contents, new Point(e.X, e.Y));
                 }
+                if (node.Tag is MainStation.MainStationDevice)
+                {
+                    c_Device.Tag = node.Tag;
+                    c_Device.Show(t_contents, new Point(e.X, e.Y));
+                }
                 if (node.Parent == null)//if root
                 {
                     c_Root.Show(t_contents, e.X, e.Y);
@@ -399,6 +404,22 @@ namespace MainStationFrontEnd
         private void addMainStationToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Solution.AddMainStation(new FrontEndMainStation());
+            UpdateTree();
+        }
+
+        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (c_Device.Tag is MainStation.MainStationDevice)
+            {
+                var v=(MainStation.MainStationDevice)c_Device.Tag;
+                v.mainstation.RemoveDevice(v);
+            }
+            UpdateTree();
+        }
+
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+            MainStation.MainStation.SetTimer(0, 128, 10);
         }
     }
 }
