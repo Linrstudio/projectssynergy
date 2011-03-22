@@ -1,149 +1,179 @@
 <Products>
 
   <Device  ID="0" Name="Main station" Description="This is the Main station.">
-    <Event ID="1" Name="Seconds Changed" Description="The current second on the clock changed." >
-		<Output Name="Seconds" Type="int"/>
-	</Event>
-    <Event ID="2" Name="Minutes Changed" Description="The current minute on the clock changed." >
-		<Output Name="Minutes" Type="int"/>
-	</Event>
-	<Event ID="3" Name="Hours Changed" Description="The current hour on the clock changed." >
-			<Output Name="Hours" Type="int"/>
-	</Event>
-	<Event ID="4" Name="Days Changed" Description="The current day on the calendar changed." >
-			<Output Name="Day" Type="int"/>
-	</Event>
+    <Event ID="1" Name="Startup" Description="Mainstation Startup." />
+    <Event ID="2" Name="Seconds Changed" Description="The current second on the clock changed." >
+      <Output Name="Seconds" Type="int"/>
+    </Event>
+    <Event ID="3" Name="Minutes Changed" Description="The current minute on the clock changed." >
+      <Output Name="Minutes" Type="int"/>
+    </Event>
+    <Event ID="4" Name="Hours Changed" Description="The current hour on the clock changed." >
+      <Output Name="Hours" Type="int"/>
+    </Event>
+    <Event ID="5" Name="Days Changed" Description="The current day on the calendar changed." >
+      <Output Name="Day" Type="int"/>
+    </Event>
   </Device>
-  
+
   <Device  ID="1" Name="Dummy Device" Description="This is our test device">
     <Event ID="1" Name="On Push" Description="The button is pressed." />
     <Event ID="2" Name="On Release" Description="The button is released." />
-	<RemoteEvent ID="1" Name="SetLED1" Description="Sets LED1" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
+    <RemoteEvent ID="1" Name="SetLED1" Description="Sets LED1" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
   </Device>
 
-  <Device  ID="3" Name="Input card" Description="This device represents the generic digital input card.">
-    <Event ID="1"  Name="1 Rising Edge" Description="Input 1 turned high." />
-    <Event ID="2"  Name="1 Falling Edge" Description="Input 1 turned low." />
-	<Event ID="3"  Name="2 Rising Edge" Description="Input 2 turned high." />
-    <Event ID="4"  Name="2 Falling Edge" Description="Input 2 turned low." />
-	<Event ID="5"  Name="3 Rising Edge" Description="Input 3 turned high." />
-    <Event ID="6"  Name="3 Falling Edge" Description="Input 3 turned low." />
-	<Event ID="7"  Name="4 Rising Edge" Description="Input 4 turned high." />
-    <Event ID="8"  Name="4 Falling Edge" Description="Input 4 turned low." />
-	<Event ID="9"  Name="5 Rising Edge" Description="Input 5 turned high." />
-    <Event ID="10" Name="5 Falling Edge" Description="Input 5 turned low." />
-	<Event ID="11" Name="6 Rising Edge" Description="Input 6 turned high." />
-    <Event ID="12" Name="6 Falling Edge" Description="Input 6 turned low." />
-	<Event ID="13" Name="7 Rising Edge" Description="Input 7 turned high." />
-    <Event ID="14" Name="7 Falling Edge" Description="Input 7 turned low." />
-	<Event ID="15" Name="8 Rising Edge" Description="Input 8 turned high." />
-    <Event ID="16" Name="8 Falling Edge" Description="Input 8 turned low." />
+  <Device  ID="3"  Name="Input card" Description="This device represents the generic digital input card.">
+    <Event ID="1"  Name="Connected" 	Description="Input card connected."/>
+    <Event ID="8"  Name="1 Rising Edge" Description="Input 1 turned high." />
+    <Event ID="9"  Name="1 Falling Edge" Description="Input 1 turned low." />
+    <Event ID="10"  Name="2 Rising Edge" Description="Input 2 turned high." />
+    <Event ID="11"  Name="2 Falling Edge" Description="Input 2 turned low." />
+    <Event ID="12"  Name="3 Rising Edge" Description="Input 3 turned high." />
+    <Event ID="13"  Name="3 Falling Edge" Description="Input 3 turned low." />
+    <Event ID="14"  Name="4 Rising Edge" Description="Input 4 turned high." />
+    <Event ID="15"  Name="4 Falling Edge" Description="Input 4 turned low." />
+    <Event ID="16"  Name="5 Rising Edge" Description="Input 5 turned high." />
+    <Event ID="17" Name="5 Falling Edge" Description="Input 5 turned low." />
+    <Event ID="18" Name="6 Rising Edge" Description="Input 6 turned high." />
+    <Event ID="19" Name="6 Falling Edge" Description="Input 6 turned low." />
+    <Event ID="20" Name="7 Rising Edge" Description="Input 7 turned high." />
+    <Event ID="21" Name="7 Falling Edge" Description="Input 7 turned low." />
+    <Event ID="22" Name="8 Rising Edge" Description="Input 8 turned high." />
+    <Event ID="23" Name="8 Falling Edge" Description="Input 8 turned low." />
+
+    <RemoteEvent ID="1" Name="GetType">
+      <Output Name="Type" Type="int"/>
+    </RemoteEvent>/>
+    <RemoteEvent ID="8" Name="Get State 1">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="9" Name="Get State 2">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="10" Name="Get State 3">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="11" Name="Get State 4">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="12" Name="Get State 5">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="13" Name="Get State 6">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="14" Name="Get State 7">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="15" Name="Get State 8">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
   </Device>
-  
+
   <Device  ID="5" Name="Relay 8" Description="This device represents the Relay-card with 8 relays.">
-	<RemoteEvent ID="1" Name="SetRelay1" Description="Sets Relay1" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="2" Name="SetRelay2" Description="Sets Relay2" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="3" Name="SetRelay3" Description="Sets Relay3" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="4" Name="SetRelay4" Description="Sets Relay4" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="5" Name="SetRelay5" Description="Sets Relay5" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="6" Name="SetRelay6" Description="Sets Relay6" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="7" Name="SetRelay7" Description="Sets Relay7" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="8" Name="SetRelay8" Description="Sets Relay8" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	
-	<RemoteEvent ID="9" Name="ToggleRelay1" Description="Toggles Relay1" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="10" Name="ToggleRelay2" Description="Toggles Relay2" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="11" Name="ToggleRelay3" Description="Toggles Relay3" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="12" Name="ToggleRelay4" Description="Toggles Relay4" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="13" Name="ToggleRelay5" Description="Toggles Relay5" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="14" Name="ToggleRelay6" Description="Toggles Relay6" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="15" Name="ToggleRelay7" Description="Toggles Relay7" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="16" Name="ToggleRelay8" Description="Toggles Relay8" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
+    <RemoteEvent ID="1" Name="SetRelay1" Description="Sets Relay1" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="2" Name="SetRelay2" Description="Sets Relay2" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="3" Name="SetRelay3" Description="Sets Relay3" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="4" Name="SetRelay4" Description="Sets Relay4" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="5" Name="SetRelay5" Description="Sets Relay5" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="6" Name="SetRelay6" Description="Sets Relay6" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="7" Name="SetRelay7" Description="Sets Relay7" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="8" Name="SetRelay8" Description="Sets Relay8" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+
+    <RemoteEvent ID="9" Name="ToggleRelay1" Description="Toggles Relay1" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="10" Name="ToggleRelay2" Description="Toggles Relay2" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="11" Name="ToggleRelay3" Description="Toggles Relay3" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="12" Name="ToggleRelay4" Description="Toggles Relay4" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="13" Name="ToggleRelay5" Description="Toggles Relay5" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="14" Name="ToggleRelay6" Description="Toggles Relay6" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="15" Name="ToggleRelay7" Description="Toggles Relay7" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="16" Name="ToggleRelay8" Description="Toggles Relay8" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
   </Device>
 
   <Device  ID="4" Name="Output card 8" Description="This device represents the Relay-card with 8 relays.">
-	<RemoteEvent ID="1" Name="SetRelay1" Description="Sets Relay1" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="2" Name="SetRelay2" Description="Sets Relay2" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="3" Name="SetRelay3" Description="Sets Relay3" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="4" Name="SetRelay4" Description="Sets Relay4" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="5" Name="SetRelay5" Description="Sets Relay5" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="6" Name="SetRelay6" Description="Sets Relay6" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="7" Name="SetRelay7" Description="Sets Relay7" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	<RemoteEvent ID="8" Name="SetRelay8" Description="Sets Relay8" >
-		<Input Name="State" Type="bool"/>
-	</RemoteEvent>
-	
-	<RemoteEvent ID="9" Name="ToggleRelay1" Description="Toggles Relay1" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="10" Name="ToggleRelay2" Description="Toggles Relay2" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="11" Name="ToggleRelay3" Description="Toggles Relay3" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="12" Name="ToggleRelay4" Description="Toggles Relay4" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="13" Name="ToggleRelay5" Description="Toggles Relay5" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="14" Name="ToggleRelay6" Description="Toggles Relay6" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="15" Name="ToggleRelay7" Description="Toggles Relay7" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
-	<RemoteEvent ID="16" Name="ToggleRelay8" Description="Toggles Relay8" >
-		<Input Name="" Type="void"/>
-	</RemoteEvent>
+    <RemoteEvent ID="1" Name="SetRelay1" Description="Sets Relay1" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="2" Name="SetRelay2" Description="Sets Relay2" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="3" Name="SetRelay3" Description="Sets Relay3" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="4" Name="SetRelay4" Description="Sets Relay4" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="5" Name="SetRelay5" Description="Sets Relay5" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="6" Name="SetRelay6" Description="Sets Relay6" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="7" Name="SetRelay7" Description="Sets Relay7" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="8" Name="SetRelay8" Description="Sets Relay8" >
+      <Input Name="State" Type="bool"/>
+    </RemoteEvent>
+
+    <RemoteEvent ID="9" Name="ToggleRelay1" Description="Toggles Relay1" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="10" Name="ToggleRelay2" Description="Toggles Relay2" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="11" Name="ToggleRelay3" Description="Toggles Relay3" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="12" Name="ToggleRelay4" Description="Toggles Relay4" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="13" Name="ToggleRelay5" Description="Toggles Relay5" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="14" Name="ToggleRelay6" Description="Toggles Relay6" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="15" Name="ToggleRelay7" Description="Toggles Relay7" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
+    <RemoteEvent ID="16" Name="ToggleRelay8" Description="Toggles Relay8" >
+      <Input Name="" Type="void"/>
+    </RemoteEvent>
   </Device>
 
 </Products>
