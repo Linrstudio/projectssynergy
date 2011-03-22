@@ -45,7 +45,7 @@
 
     <RemoteEvent ID="1" Name="GetType">
       <Output Name="Type" Type="int"/>
-    </RemoteEvent>/>
+    </RemoteEvent>
     <RemoteEvent ID="8" Name="Get State 1">
       <Output Name="State" Type="bool"/>
     </RemoteEvent>
@@ -125,54 +125,80 @@
   </Device>
 
   <Device  ID="4" Name="Output card 8" Description="This device represents the Relay-card with 8 relays.">
-    <RemoteEvent ID="1" Name="SetRelay1" Description="Sets Relay1" >
+    <Event ID="1"  Name="Connected" 	Description="Output card connected."/>
+    <RemoteEvent ID="8" Name="SetRelay1" Description="Sets Relay1" >
       <Input Name="State" Type="bool"/>
     </RemoteEvent>
-    <RemoteEvent ID="2" Name="SetRelay2" Description="Sets Relay2" >
+    <RemoteEvent ID="9" Name="SetRelay2" Description="Sets Relay2" >
       <Input Name="State" Type="bool"/>
     </RemoteEvent>
-    <RemoteEvent ID="3" Name="SetRelay3" Description="Sets Relay3" >
+    <RemoteEvent ID="10" Name="SetRelay3" Description="Sets Relay3" >
       <Input Name="State" Type="bool"/>
     </RemoteEvent>
-    <RemoteEvent ID="4" Name="SetRelay4" Description="Sets Relay4" >
+    <RemoteEvent ID="11" Name="SetRelay4" Description="Sets Relay4" >
       <Input Name="State" Type="bool"/>
     </RemoteEvent>
-    <RemoteEvent ID="5" Name="SetRelay5" Description="Sets Relay5" >
+    <RemoteEvent ID="12" Name="SetRelay5" Description="Sets Relay5" >
       <Input Name="State" Type="bool"/>
     </RemoteEvent>
-    <RemoteEvent ID="6" Name="SetRelay6" Description="Sets Relay6" >
+    <RemoteEvent ID="13" Name="SetRelay6" Description="Sets Relay6" >
       <Input Name="State" Type="bool"/>
     </RemoteEvent>
-    <RemoteEvent ID="7" Name="SetRelay7" Description="Sets Relay7" >
+    <RemoteEvent ID="14" Name="SetRelay7" Description="Sets Relay7" >
       <Input Name="State" Type="bool"/>
     </RemoteEvent>
-    <RemoteEvent ID="8" Name="SetRelay8" Description="Sets Relay8" >
+    <RemoteEvent ID="15" Name="SetRelay8" Description="Sets Relay8" >
       <Input Name="State" Type="bool"/>
     </RemoteEvent>
 
-    <RemoteEvent ID="9" Name="ToggleRelay1" Description="Toggles Relay1" >
+    <RemoteEvent ID="16" Name="ToggleRelay1" Description="Toggles Relay1" >
       <Input Name="" Type="void"/>
     </RemoteEvent>
-    <RemoteEvent ID="10" Name="ToggleRelay2" Description="Toggles Relay2" >
+    <RemoteEvent ID="17" Name="ToggleRelay2" Description="Toggles Relay2" >
       <Input Name="" Type="void"/>
     </RemoteEvent>
-    <RemoteEvent ID="11" Name="ToggleRelay3" Description="Toggles Relay3" >
+    <RemoteEvent ID="18" Name="ToggleRelay3" Description="Toggles Relay3" >
       <Input Name="" Type="void"/>
     </RemoteEvent>
-    <RemoteEvent ID="12" Name="ToggleRelay4" Description="Toggles Relay4" >
+    <RemoteEvent ID="19" Name="ToggleRelay4" Description="Toggles Relay4" >
       <Input Name="" Type="void"/>
     </RemoteEvent>
-    <RemoteEvent ID="13" Name="ToggleRelay5" Description="Toggles Relay5" >
+    <RemoteEvent ID="20" Name="ToggleRelay5" Description="Toggles Relay5" >
       <Input Name="" Type="void"/>
     </RemoteEvent>
-    <RemoteEvent ID="14" Name="ToggleRelay6" Description="Toggles Relay6" >
+    <RemoteEvent ID="21" Name="ToggleRelay6" Description="Toggles Relay6" >
       <Input Name="" Type="void"/>
     </RemoteEvent>
-    <RemoteEvent ID="15" Name="ToggleRelay7" Description="Toggles Relay7" >
+    <RemoteEvent ID="22" Name="ToggleRelay7" Description="Toggles Relay7" >
       <Input Name="" Type="void"/>
     </RemoteEvent>
-    <RemoteEvent ID="16" Name="ToggleRelay8" Description="Toggles Relay8" >
+    <RemoteEvent ID="23" Name="ToggleRelay8" Description="Toggles Relay8" >
       <Input Name="" Type="void"/>
+    </RemoteEvent>
+
+    <RemoteEvent ID="24" Name="Get State 1" Description="Get Relay1">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="25" Name="Get State 2" Description="Get Relay2">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="26" Name="Get State 3" Description="Get Relay3">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="27" Name="Get State 4" Description="Get Relay4">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="28" Name="Get State 5" Description="Get Relay5">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="29" Name="Get State 6" Description="Get Relay6">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="30" Name="Get State 7" Description="Get Relay7">
+      <Output Name="State" Type="bool"/>
+    </RemoteEvent>
+    <RemoteEvent ID="31" Name="Get State 8" Description="Get Relay8">
+      <Output Name="State" Type="bool"/>
     </RemoteEvent>
   </Device>
 
