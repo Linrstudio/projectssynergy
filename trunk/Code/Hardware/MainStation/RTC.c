@@ -1,5 +1,6 @@
 #include "RTC.h"
 #include "Kismet.h"
+#include "EEPROM.h"
 #include "Default.h"
 
 int8	RTCSecond;
@@ -8,14 +9,18 @@ int8	RTCHour;
 int16	RTCDay;
 int8	RTCEdge;//possibly a better way of reading TMR1
 
-void SetTimer(const int _TimerIndex,int16 _Time,int8 _Event)
+extern int8 OperationEnabled;
+
+void SetTimer(int8 _TimerIndex,int8 _Event,int16 _Time)
 {
 	int idx;
-	_Index<<=2;
-	idx=255;
-	idx-=_Index;
-	Set16(idx,_Timer.Time);
-	Set8(idx+2,_Timer.Event);
+	_TimerIndex<<=2;
+	idx=251;// minus four so timer 0 becomes 251
+	idx-=_TimerIndex;
+	//_Time=3;
+	RTCMinute=(int8)_Time;
+	Set16(idx,_Time);
+	Set8(idx+2,_Event);
 }
 
 void RTCInit()
@@ -40,6 +45,29 @@ void RTCInit()
 	RTCHour=0;
 }
 
+void UpdateTimers()
+{
+	int8 timercount;
+	int8 addr=255;
+	int8 a;
+	if(OperationEnabled==0)return;
+
+	MemoryBeginRead(0);
+	timercount = MemoryReadInt8();
+	MemoryEndRead();
+
+	addr-=timercount<<2;
+	while(timercount)
+	{
+		a=Get16(addr);
+		if(a==1)KismetExecuteEvent(0,Get8(addr+2));
+		if(a!=0)Set16(addr,a-1);
+
+		addr+=4;
+		timercount--;
+	}
+}
+
 void RTCUpdate()
 {
 	//RA4=RTCSecond&1;
@@ -49,11 +77,14 @@ void RTCUpdate()
 		RTCEdge=1-RTCEdge;
 		
 		RTCSecond++;
+		
+		UpdateTimers();
+		
 		if(RTCSecond>=60)
 		{
 			RTCSecond=0;
 			RTCMinute++;
-		
+			
 			if(RTCMinute>=60)
 			{
 				RTCMinute=0;
@@ -63,12 +94,12 @@ void RTCUpdate()
 				{
 					RTCHour=0;
 					RTCDay++;
-					KismetExecuteEvent(0,4);
+					KismetExecuteEvent(0,5);
 				}
-				KismetExecuteEvent(0,3);
+				KismetExecuteEvent(0,4);
 			}
-			KismetExecuteEvent(0,2);
+			KismetExecuteEvent(0,3);
 		}
-		KismetExecuteEvent(0,1);
+		KismetExecuteEvent(0,2);
 	}
 }

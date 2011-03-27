@@ -14,4 +14,7 @@ void SetLED(int8 _State);
 
 int8 GetLED();
 
+void DisableOperation();
+void EnableOperation();
+
 #endif

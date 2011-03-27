@@ -148,7 +148,7 @@ void USBUpdate()
 				if(!USBBusy())
                 {
 					MemoryBeginRead(((int16*)&ReceivedDataBuffer[1])[0]);
-					ToSendDataBuffer[0]=0x04;
+					ToSendDataBuffer[0]=0x05;
 					ToSendDataBuffer[1]=MemoryReadInt8();
 					MemoryEndRead();
                     USBWrite();
@@ -173,6 +173,14 @@ void USBUpdate()
 				if(!USBBusy())
                 {
 					ToSendDataBuffer[0]=0x41;
+					USBWrite();
+                }
+				break;
+			case 0x50://SET TIMER
+				SetTimer(ReceivedDataBuffer[1],ReceivedDataBuffer[2],INT16(ReceivedDataBuffer[3]));
+				if(!USBBusy())
+                {
+					ToSendDataBuffer[0]=0x50;
 					USBWrite();
                 }
 				break;

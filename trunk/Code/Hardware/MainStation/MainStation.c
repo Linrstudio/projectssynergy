@@ -6,7 +6,35 @@
 #include "Default.h"
 #include "Kismet.h"
 
-int8 OperationEnabled=255;
+int8 OperationEnabled=0;
+
+void MSUpdate()
+{
+	EPUpdate();
+	RTCUpdate();	
+	USBUpdate();
+}
+
+void SetLED(int8 _State)
+{
+	LED=((_State&1))!=0?1:0;
+}
+
+int8 GetLED()
+{
+	return (LED?1:0);
+}
+
+void DisableOperation()
+{
+	OperationEnabled=0;
+}
+
+void EnableOperation()
+{
+	OperationEnabled=255;
+	KismetExecuteEvent(0,1);
+}
 
 void MSInit()
 {
@@ -30,21 +58,5 @@ void MSInit()
 	LED_TRIS=0;
 
 	SetLED(0);
-}
-
-void MSUpdate()
-{
-	RTCUpdate();
-	EPUpdate();
-	USBUpdate();
-}
-
-void SetLED(int8 _State)
-{
-	LED=((_State&1))!=0?1:0;
-}
-
-int8 GetLED()
-{
-	return (LED?1:0);
+	EnableOperation();
 }

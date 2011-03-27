@@ -16,6 +16,8 @@ int8 EPBufferSize;
 
 extern int8 OperationEnabled;
 
+extern int8 RTCHour;
+
 void EPInit()//initialize Endpoints
 {
 	
@@ -34,10 +36,14 @@ void EPUpdate()
 		if(dev==0xffff)//if last device read from EEPROM 
 		{
 			DeviceAddress=EEPROMHEADERSIZE;//poll the first one
+
+#if 0
 			if(DevicesNotFound!=0)
 				SetLED(1);
 			else
 				SetLED(0);
+#endif
+
 			DevicesNotFound=0;
 		}
 		else
@@ -51,7 +57,6 @@ void EPUpdate()
 				else
 				{
 					DevicesNotFound++;
-					
 				}
 			}
 		}

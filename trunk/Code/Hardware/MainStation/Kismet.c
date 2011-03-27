@@ -70,9 +70,9 @@ int8 KismetExecuteEvent(int16 _DeviceID,int8 _EventID)
 
 	if(!OperationEnabled)return 1;//return if no operating is allowed
 
-	ToSendDataBuffer[2]=((int8*)&_DeviceID)[0];
-	ToSendDataBuffer[3]=((int8*)&_DeviceID)[1];
-	ToSendDataBuffer[4]=_EventID;
+	//ToSendDataBuffer[2]=((int8*)&_DeviceID)[0];
+	//ToSendDataBuffer[3]=((int8*)&_DeviceID)[1];
+	//ToSendDataBuffer[4]=_EventID;
 
 	MemoryBeginRead(EEPROMHEADERSIZE);
 
@@ -94,10 +94,10 @@ int8 KismetExecuteEvent(int16 _DeviceID,int8 _EventID)
 		if(read8==0xff) { MemoryEndRead(); return 3; }
 	}
 	MemoryEndRead();
-	ToSendDataBuffer[12]=((int8*)&eventaddr)[0];
-	ToSendDataBuffer[13]=((int8*)&eventaddr)[1];
-	ToSendDataBuffer[14]=((int8*)&methodaddr)[0];
-	ToSendDataBuffer[15]=((int8*)&methodaddr)[1];
+	//ToSendDataBuffer[12]=((int8*)&eventaddr)[0];
+	//ToSendDataBuffer[13]=((int8*)&eventaddr)[1];
+	//ToSendDataBuffer[14]=((int8*)&methodaddr)[0];
+	//ToSendDataBuffer[15]=((int8*)&methodaddr)[1];
 	
 	BlockAddr=methodaddr;
 	MemoryBeginRead(BlockAddr);
@@ -236,6 +236,14 @@ int8 KismetExecuteEvent(int16 _DeviceID,int8 _EventID)
 				int16 dev	=MemoryReadInt16();
 				EPBufferSize=MemoryReadInt8();
 				EPSend(dev);
+			}break;
+			case 0x90://Set Delay
+			{
+				int8 timer	=MemoryReadInt8();
+				int8 event	=MemoryReadInt8();
+				int8 reg	=MemoryReadInt8();
+				int16 time=Get16(reg);
+				SetTimer(timer,event,time);
 			}break;
 		}
 	}
