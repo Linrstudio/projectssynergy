@@ -9,6 +9,7 @@
 #include "EP.h"
 #include "USB.h"
 #include "UART.h"
+#include "Settings.h"
 
 /** VARIABLES ******************************************************/
 #pragma udata

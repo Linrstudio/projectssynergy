@@ -13,6 +13,8 @@ int8 OperationEnabled=255;
 int16 DeviceID=0xffff;
 int8 lastheader=0;
 
+int8 connected;
+
 void MSInit()
 {
 	int8 dim1;
@@ -39,16 +41,10 @@ void MSInit()
 	UARTRead();
 	SettingsInit();
 	DeviceID=SettingsReadInt16(0);
+	connected=0;
 	EPInit();
-	
-	//startup glow
-	for(dim1=0;dim1<255;dim1++)
-		for(dim2=0;dim2<255;dim2++)
-			LED=dim1>dim2;
-	for(dim1=0;dim1<255;dim1++)
-		for(dim2=0;dim2<255;dim2++)
-			LED=dim1<dim2;
-	LED=1;
+
+	LED=0;
 }
 
 void MSUpdate()
@@ -73,8 +69,15 @@ void MSUpdate()
 			if(Length!=0)
 			{
 				EPInvokeEvent(EPBuffer[0],&(EPBuffer[1]));
-			}else
-				EPPolled();
+			}else{
+				if(!connected)
+				{
+					connected=255;
+					EPBuffer[0]=1;
+					EPBufferSize=1;
+					LED=1;
+				}else EPPolled();
+			}
 			
 			//either way we will answer
 			UARTWrite();
