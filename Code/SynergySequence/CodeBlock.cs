@@ -380,11 +380,6 @@ namespace SynergySequence
 #endif
         }
 
-        public virtual void DrawShadow(System.Drawing.Graphics _Graphics)
-        {
-            //            _Graphics.FillEllipse(Brushes.Black, new RectangleF(X + ScopeDepth * 12, Y + ScopeDepth * 50, width, height));
-        }
-
         public class Prototype
         {
             public string BlockName;

@@ -23,16 +23,6 @@ namespace MainStationCodeBlocks
                 new PointF(width / 2, -height / 2));
             base.Draw(_Graphics);
         }
-
-        public override void DrawShadow(Graphics _Graphics)
-        {
-            DrawShapeShadow(_Graphics,
-                new PointF(-width / 2, -height / 2),
-                new PointF(-width / 2, height / 2),
-                new PointF(width / 2, height / 2),
-                new PointF(width / 2, -height / 2));
-            base.DrawShadow(_Graphics);
-        }
     }
 
     public abstract class BaseBlockData : MainStationCodeBlock
@@ -41,12 +31,6 @@ namespace MainStationCodeBlocks
         {
             DrawConstant(_Graphics);
             base.Draw(_Graphics);
-        }
-
-        public override void DrawShadow(Graphics _Graphics)
-        {
-            DrawConstantShadow(_Graphics);
-            base.DrawShadow(_Graphics);
         }
     }
 
@@ -83,18 +67,6 @@ namespace MainStationCodeBlocks
              new PointF(width / 2, height / 4),
              new PointF(0, height / 2));
             base.Draw(_Graphics);
-        }
-
-        public override void DrawShadow(Graphics _Graphics)
-        {
-            DrawShapeShadow(_Graphics,
-             new PointF(-width / 2, height / 4),
-             new PointF(-width / 2, -height / 4),
-             new PointF(0, -height / 2),
-             new PointF(width / 2, -height / 4),
-             new PointF(width / 2, height / 4),
-             new PointF(0, height / 2));
-            base.DrawShadow(_Graphics);
         }
     }
 

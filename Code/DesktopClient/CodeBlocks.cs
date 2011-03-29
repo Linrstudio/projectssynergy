@@ -22,16 +22,6 @@ namespace DesktopCodeBlocks
                 new PointF(width / 2, -height / 2));
             base.Draw(_Graphics);
         }
-
-        public override void DrawShadow(Graphics _Graphics)
-        {
-            DrawShapeShadow(_Graphics,
-                new PointF(-width / 2, -height / 2),
-                new PointF(-width / 2, height / 2),
-                new PointF(width / 2, height / 2),
-                new PointF(width / 2, -height / 2));
-            base.DrawShadow(_Graphics);
-        }
     }
 
     public abstract class BaseBlockData : DesktopCodeBlock
@@ -40,12 +30,6 @@ namespace DesktopCodeBlocks
         {
             DrawConstant(_Graphics);
             base.Draw(_Graphics);
-        }
-
-        public override void DrawShadow(Graphics _Graphics)
-        {
-            DrawConstantShadow(_Graphics);
-            base.DrawShadow(_Graphics);
         }
     }
 
@@ -65,18 +49,6 @@ namespace DesktopCodeBlocks
              new PointF(width / 2, height / 4),
              new PointF(0, height / 2));
             base.Draw(_Graphics);
-        }
-
-        public override void DrawShadow(Graphics _Graphics)
-        {
-            DrawShapeShadow(_Graphics,
-             new PointF(-width / 2, height / 4),
-             new PointF(-width / 2, -height / 4),
-             new PointF(0, -height / 2),
-             new PointF(width / 2, -height / 4),
-             new PointF(width / 2, height / 4),
-             new PointF(0, height / 2));
-            base.DrawShadow(_Graphics);
         }
     }
 
@@ -103,16 +75,6 @@ namespace DesktopCodeBlocks
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             _Graphics.DrawString("Debug Led 1", new Font("Arial", 10), Brushes.Black, X, Y, sf);
-        }
-
-        public override void DrawShadow(Graphics _Graphics)
-        {
-            DrawShapeShadow(_Graphics,
-                new PointF(-width / 2, -height / 2),
-                new PointF(-width / 2, height / 2),
-                new PointF(width / 2, height / 2),
-                new PointF(width / 2, -height / 2));
-            base.DrawShadow(_Graphics);
         }
 
         public override void HandleInput(CodeBlock.DataInput _Input, object _Data) { throw new NotImplementedException(); }
