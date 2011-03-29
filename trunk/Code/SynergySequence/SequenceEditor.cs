@@ -94,11 +94,6 @@ namespace SynergySequence
             DrawPwettyLine(g, A, B, 1.5f, System.Drawing.Color.Black, true);
         }
 
-        private void DrawPwettyLineShadow(Graphics g, PointF A, PointF B)
-        {
-            DrawPwettyLine(g, A, B, 1.5f, Sequence.ShadowColor, true);
-        }
-
         private void DrawPwettyLine(Graphics g, PointF A, PointF B, float _Width, System.Drawing.Color _Color, bool _IsVertical)
         {
             if (_IsVertical)
@@ -138,24 +133,6 @@ namespace SynergySequence
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             if (Sequence != null)
             {
-                foreach (CodeBlock b in Sequence.CodeBlocks)
-                {
-                    b.DrawShadow(e.Graphics);
-                    foreach (CodeBlock.DataInput i in b.DataInputs)
-                    {
-                        if (i.Connected != null)
-                        {
-                            PointF x = i.GetPosition();
-                            x.X += i.Owner.GetShadowOffset().X;
-                            x.Y += i.Owner.GetShadowOffset().Y;
-                            PointF y = i.Connected.GetPosition();
-                            y.X += i.Connected.Owner.GetShadowOffset().X;
-                            y.Y += i.Connected.Owner.GetShadowOffset().Y;
-                            DrawPwettyLineShadow(e.Graphics, y, x);
-                        }
-                    }
-                }
-
                 CodeBlock.Input input = GetNearestInput(new PointF(MousePos.X, MousePos.Y));
                 CodeBlock.Output output = GetNearestOutput(new PointF(MousePos.X, MousePos.Y));
                 CodeBlock.Connector connector = null;
