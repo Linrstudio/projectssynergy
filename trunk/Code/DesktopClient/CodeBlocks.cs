@@ -58,8 +58,9 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 25;
-            TriggerInputs.Add(new TriggerInput(this, "Invoke"));
-            DataInputs.Add(new DataInput(this, "Value", "int"));
+            Capability capability = new Capability(this);
+            capability.AddTriggerInput("Invoke");
+            capability.AddDataInput("Value", "int");
             UpdateConnectors();
         }
 
@@ -89,11 +90,12 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 50;
-            DataInputs.Add(new DataInput(this, "A", "int"));
-            DataInputs.Add(new DataInput(this, "B", "int"));
-            TriggerInputs.Add(new TriggerInput(this, "Trigger"));
-            TriggerOutputs.Add(new TriggerOutput(this, "True"));
-            TriggerOutputs.Add(new TriggerOutput(this, "False"));
+            Capability capability = new Capability(this);
+            capability.AddDataInput("A", "int");
+            capability.AddDataInput("B", "int");
+            capability.AddTriggerInput("Trigger");
+            capability.AddTriggerOutput("True");
+            capability.AddTriggerOutput("False");
 
             UpdateConnectors();
         }
@@ -117,7 +119,8 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 50;
-            TriggerInputs.Add(new TriggerInput(this, "Trigger"));
+            Capability capability = new Capability(this);
+            capability.AddTriggerInput("Trigger");
             UpdateConnectors();
             //TriggerInputs[0].X += width / 3;
         }
@@ -169,9 +172,10 @@ namespace DesktopCodeBlocks
             width = 100;
             height = 50;
             Name = "Multiply";
-            DataInputs.Add(new DataInput(this, "A", "int"));
-            DataInputs.Add(new DataInput(this, "B", "int"));
-            DataOutputs.Add(new DataOutput(this, "C", "int"));
+            Capability capability = new Capability(this);
+            capability.AddDataInput("A", "int");
+            capability.AddDataInput("B", "int");
+            capability.AddDataOutput("C", "int");
 
             UpdateConnectors();
         }
@@ -193,9 +197,10 @@ namespace DesktopCodeBlocks
             width = 100;
             height = 50;
             Name = "Add";
-            DataInputs.Add(new DataInput(this, "A", "int"));
-            DataInputs.Add(new DataInput(this, "B", "int"));
-            DataOutputs.Add(new DataOutput(this, "C", "int"));
+            Capability capability = new Capability(this);
+            capability.AddDataInput("A", "int");
+            capability.AddDataInput("B", "int");
+            capability.AddDataOutput("C", "int");
 
             UpdateConnectors();
         }
@@ -217,9 +222,10 @@ namespace DesktopCodeBlocks
             width = 100;
             height = 50;
             Name = "Substract";
-            DataInputs.Add(new DataInput(this, "A", "int"));
-            DataInputs.Add(new DataInput(this, "B", "int"));
-            DataOutputs.Add(new DataOutput(this, "C", "int"));
+            Capability capability = new Capability(this);
+            capability.AddDataInput("A", "int");
+            capability.AddDataInput("B", "int");
+            capability.AddDataOutput("C", "int");
 
             UpdateConnectors();
         }
@@ -241,9 +247,10 @@ namespace DesktopCodeBlocks
             width = 100;
             height = 50;
             Name = "Divide";
-            DataInputs.Add(new DataInput(this, "A", "int"));
-            DataInputs.Add(new DataInput(this, "B", "int"));
-            DataOutputs.Add(new DataOutput(this, "C", "int"));
+            Capability capability = new Capability(this);
+            capability.AddDataInput("A", "int");
+            capability.AddDataInput("B", "int");
+            capability.AddDataOutput("C", "int");
 
             UpdateConnectors();
         }
@@ -273,7 +280,8 @@ namespace DesktopCodeBlocks
         {
             width = 50;
             height = 50;
-            DataOutputs.Add(new DataOutput(this, "Constant", "int"));
+            Capability capability = new Capability(this);
+            capability.AddDataOutput("Constant", "int");
             UpdateConnectors();
         }
         public override void Load(XElement _Data) { val = float.Parse(_Data.Value.ToString()); }
@@ -306,7 +314,8 @@ namespace DesktopCodeBlocks
         {
             width = 50;
             height = 50;
-            DataOutputs.Add(new DataOutput(this, "Constant", "bool"));
+            Capability capability = new Capability(this);
+            capability.AddDataOutput("Constant", "bool");
             UpdateConnectors();
         }
 
@@ -332,8 +341,9 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 25;
-            DataInputs.Add(new DataInput(this, "", "bool"));
-            DataOutputs.Add(new DataOutput(this, "", "bool"));
+            Capability capability = new Capability(this);
+            capability.AddDataInput("", "bool");
+            capability.AddDataOutput("", "bool");
             UpdateConnectors();
             Name = "Invert";
         }
@@ -352,9 +362,10 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 25;
-            DataInputs.Add(new DataInput(this, "", "bool"));
-            DataInputs.Add(new DataInput(this, "", "bool"));
-            DataOutputs.Add(new DataOutput(this, "", "bool"));
+            Capability capability = new Capability(this);
+            capability.AddDataInput("", "bool");
+            capability.AddDataInput("", "bool");
+            capability.AddDataOutput("", "bool");
             UpdateConnectors();
             Name = "Invert";
         }
@@ -373,9 +384,10 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 25;
-            DataInputs.Add(new DataInput(this, "Condition", "bool"));
-            TriggerInputs.Add(new TriggerInput(this, ""));
-            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            Capability capability = new Capability(this);
+            capability.AddDataInput("Condition", "bool");
+            capability.AddTriggerInput("");
+            capability.AddTriggerOutput("");
             UpdateConnectors();
             Name = "If";
         }
@@ -397,9 +409,10 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 25;
-            DataInputs.Add(new DataInput(this, "Condition", "bool"));
-            TriggerInputs.Add(new TriggerInput(this, ""));
-            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            Capability capability = new Capability(this);
+            capability.AddDataInput("Condition", "bool");
+            capability.AddTriggerInput("");
+            capability.AddTriggerOutput("");
             UpdateConnectors();
             Name = "If not";
         }
@@ -437,7 +450,8 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 25;
-            TriggerInputs.Add(new TriggerInput(this, ""));
+            Capability capability = new Capability(this);
+            capability.AddTriggerInput("");
             UpdateConnectors();
             Name = "Invoke Remote Event";
         }
@@ -469,8 +483,9 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 50;
-            DataInputs.Add(new DataInput(this, "Value", "int"));
-            DataOutputs.Add(new DataOutput(this, "Value", "int"));
+            Capability capability = new Capability(this);
+            capability.AddDataInput("Value", "int");
+            capability.AddDataOutput("Value", "int");
             UpdateConnectors();
         }
 
@@ -499,7 +514,8 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 50;
-            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            Capability capability = new Capability(this);
+            capability.AddTriggerOutput("");
             UpdateConnectors();
         }
 
@@ -522,7 +538,8 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 50;
-            TriggerInputs.Add(new TriggerInput(this, ""));
+            Capability capability = new Capability(this);
+            capability.AddTriggerInput("");
             UpdateConnectors();
         }
 
@@ -554,10 +571,11 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 50;
-            DataOutputs.Add(new DataOutput(this, "Running ?", "bool"));
-            TriggerOutputs.Add(new TriggerOutput(this, ""));
-            TriggerInputs.Add(new TriggerInput(this, "Start"));
-            TriggerInputs.Add(new TriggerInput(this, "Abort"));
+            Capability capability = new Capability(this);
+            capability.AddDataOutput("Running ?", "bool");
+            capability.AddTriggerOutput("");
+            capability.AddTriggerInput("Start");
+            capability.AddTriggerInput("Abort");
             UpdateConnectors();
         }
         public override void Save(XElement _Data) { _Data.Value = val.ToString(); }
@@ -618,7 +636,8 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 50;
-            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            Capability capability = new Capability(this);
+            capability.AddTriggerOutput("");
             UpdateConnectors();
             Name = "Switch toggle";
         }
@@ -646,7 +665,8 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 40;
-            TriggerInputs.Add(new TriggerInput(this, "Toggle"));
+            Capability capability = new Capability(this);
+            capability.AddTriggerInput("Toggle");
             UpdateConnectors();
             Name = "Switch";
         }
@@ -689,8 +709,9 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 100;
-            TriggerOutputs.Add(new TriggerOutput(this, ""));
-            TriggerInputs.Add(new TriggerInput(this, "Toggle"));
+            Capability capability = new Capability(this);
+            capability.AddTriggerOutput("");
+            capability.AddTriggerInput("Toggle");
             UpdateConnectors();
             Name = "Switch";
         }
@@ -729,8 +750,9 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 25;
-            TriggerInputs.Add(new TriggerInput(this, ""));
-            DataInputs.Add(new DataInput(this, "State", "bool"));
+            Capability capability = new Capability(this);
+            capability.AddTriggerInput("");
+            capability.AddDataInput("State", "bool");
             UpdateConnectors();
             Name = "Set state";
         }
@@ -777,7 +799,8 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 25;
-            DataOutputs.Add(new DataOutput(this, "State", "bool"));
+            Capability capability = new Capability(this);
+            capability.AddDataOutput("State", "bool");
             UpdateConnectors();
             Name = "Get state";
         }
@@ -811,7 +834,8 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 50;
-            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            Capability capability = new Capability(this);
+            capability.AddTriggerOutput("");
             UpdateConnectors();
             Name = "Input Toggle";
         }
@@ -849,8 +873,9 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 25;
-            TriggerInputs.Add(new TriggerInput(this, ""));
-            DataInputs.Add(new DataInput(this, "State", "bool"));
+            Capability capability = new Capability(this);
+            capability.AddTriggerInput("");
+            capability.AddDataInput("State", "bool");
             UpdateConnectors();
             Name = "K8055 set output";
         }
@@ -881,7 +906,8 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 25;
-            DataOutputs.Add(new DataOutput(this, "State", "bool"));
+            Capability capability = new Capability(this);
+            capability.AddDataOutput("State", "bool");
             UpdateConnectors();
             Name = "k8055 get output";
         }
@@ -908,7 +934,8 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 25;
-            TriggerInputs.Add(new TriggerInput(this, ""));
+            Capability capability = new Capability(this);
+            capability.AddTriggerInput("");
             UpdateConnectors();
             Name = "k8055 toggle output";
         }
@@ -939,7 +966,8 @@ namespace DesktopCodeBlocks
         {
             width = 100;
             height = 25;
-            DataOutputs.Add(new DataOutput(this, "State", "bool"));
+            Capability capability = new Capability(this);
+            capability.AddDataOutput("State", "bool");
             UpdateConnectors();
             Name = "Get state";
         }
@@ -1012,13 +1040,13 @@ namespace DesktopCodeBlocks
         {
             foreach (CodeBlock.TriggerInput i in _Output.Connected)
             {
-                ((DesktopCodeBlock)i.Owner).HandleTrigger(i);
+                ((DesktopCodeBlock)i.Owner.Owner).HandleTrigger(i);
             }
         }
 
         public object GetInput(CodeBlock.DataInput _Input)
         {
-            return ((DesktopCodeBlock)_Input.Connected.Owner).HandleOutput(_Input.Connected);
+            return ((DesktopCodeBlock)_Input.Connected.Owner.Owner).HandleOutput(_Input.Connected);
         }
 
         public virtual void Finalize() { }

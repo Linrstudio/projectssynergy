@@ -20,22 +20,6 @@ namespace MainStationFrontEnd
             InitializeComponent();
             MainStation.ProductDataBase.Load("products.xml");
             MainStation.MainStation.Connect();
-            /*
-            while (true)
-            {
-                MainStation.MainStation.InvokeRemoteEvent(9, 5, 0);
-                System.Threading.Thread.Sleep(1000);
-                MainStation.MainStation.InvokeRemoteEvent(9, 5, 0xffff);
-                System.Threading.Thread.Sleep(1000);
-            }
-            */
-            /*
-            while (true)
-            {
-                MainStation.MainStation.InvokeRemoteEvent(9, 13, 0);
-                System.Threading.Thread.Sleep(1000);
-            }
-            */
             Solution.Load("Solution.xml");
 
             UpdateTree();
@@ -79,7 +63,7 @@ namespace MainStationFrontEnd
             {
                 Root.Nodes.Add(pd.GetTreeNode());
             }
-            t_contents.ExpandAll();
+            Root.Expand();
         }
 
         List<Form> OpenedWindows = new List<Form>();
@@ -318,6 +302,7 @@ namespace MainStationFrontEnd
         {
             TreeNode node = (TreeNode)e.Item;
             if (node.Tag == null) return;
+            /*
             if (node.Tag is MainStation.MainStationDevice)
             {
                 MainStation.MainStationDevice device = (MainStation.MainStationDevice)node.Tag;
@@ -327,6 +312,36 @@ namespace MainStationFrontEnd
                 block.DeviceID = device.ID;
                 block.Create();
                 t_contents.DoDragDrop(new object[] { block }, DragDropEffects.Copy);
+            }
+            else
+            */
+            if (node.Tag is MainStation.ProductDataBase.Device.Event)
+            {
+                if (node.Parent.Tag is MainStation.MainStationDevice)
+                {
+                    MainStation.MainStationDevice device = (MainStation.MainStationDevice)node.Parent.Tag;
+                    MainStation.ProductDataBase.Device.Event evnt = (MainStation.ProductDataBase.Device.Event)node.Tag;
+                    var block = new MainStationCodeBlocks.CodeBlockEvent();
+                    block.DeviceType = device.device.ID;
+                    block.EventID = evnt.ID;
+                    block.DeviceID = device.ID;
+                    block.Create();
+                    t_contents.DoDragDrop(new object[] { block }, DragDropEffects.Copy);
+                }
+            }
+            else if (node.Tag is MainStation.ProductDataBase.Device.RemoteEvent)
+            {
+                if (node.Parent.Tag is MainStation.MainStationDevice)
+                {
+                    MainStation.MainStationDevice device = (MainStation.MainStationDevice)node.Parent.Tag;
+                    MainStation.ProductDataBase.Device.RemoteEvent evnt = (MainStation.ProductDataBase.Device.RemoteEvent)node.Tag;
+                    var block = new MainStationCodeBlocks.CodeBlockInvokeRemoteEvent();
+                    block.DeviceType = device.device.ID;
+                    block.EventID = evnt.ID;
+                    block.DeviceID = device.ID;
+                    block.Create();
+                    t_contents.DoDragDrop(new object[] { block }, DragDropEffects.Copy);
+                }
             }
             else t_contents.DoDragDrop(node.Tag, DragDropEffects.Copy);
         }
@@ -411,7 +426,7 @@ namespace MainStationFrontEnd
         {
             if (c_Device.Tag is MainStation.MainStationDevice)
             {
-                var v=(MainStation.MainStationDevice)c_Device.Tag;
+                var v = (MainStation.MainStationDevice)c_Device.Tag;
                 v.mainstation.RemoveDevice(v);
             }
             UpdateTree();

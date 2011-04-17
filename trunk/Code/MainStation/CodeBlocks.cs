@@ -51,7 +51,7 @@ namespace MainStationCodeBlocks
             MemoryStream stream = new MemoryStream();
             foreach (TriggerInput i in _Event.Output.Connected)
             {
-                byte[] code = ((MainStationCodeBlock)i.Owner).Compile(i);
+                byte[] code = ((MainStationCodeBlock)i.Owner.Owner).Compile(i);
                 stream.Write(code, 0, code.Length);
             }
             return stream.ToArray();
@@ -74,7 +74,7 @@ namespace MainStationCodeBlocks
     {
         public override GetOutputResult GetOutput(DataOutput _Output)
         {
-            var v = ((MainStationCodeBlock)DataInputs[0].Connected.Owner).GetOutput(DataInputs[0].Connected);
+            var v = ((MainStationCodeBlock)DataInputs[0].Connected.Owner.Owner).GetOutput(DataInputs[0].Connected);
 
             var reg = MainStationCompiler.GetRegister(2);
             MemoryStream stream = new MemoryStream();
@@ -90,8 +90,9 @@ namespace MainStationCodeBlocks
         {
             width = 100;
             height = 50;
-            DataInputs.Add(new DataInput(this, "", "bool"));
-            DataOutputs.Add(new DataOutput(this, "", "bool"));
+            Capability capability = new Capability(this);
+            capability.AddDataInput("", "bool");
+            capability.AddDataOutput("", "bool");
             UpdateConnectors();
             Name = "Invert";
         }
@@ -104,7 +105,7 @@ namespace MainStationCodeBlocks
             MemoryStream bstream = new MemoryStream();
             foreach (TriggerInput i in TriggerOutputs[0].Connected)
             {
-                byte[] c = ((MainStationCodeBlock)i.Owner).Compile(i);
+                byte[] c = ((MainStationCodeBlock)i.Owner.Owner).Compile(i);
                 bstream.Write(c, 0, c.Length);
             }
 
@@ -118,8 +119,9 @@ namespace MainStationCodeBlocks
         {
             width = 100;
             height = 50;
-            DataInputs.Add(new DataInput(this, "", "bool"));
-            DataOutputs.Add(new DataOutput(this, "", "bool"));
+            Capability capability = new Capability(this);
+            capability.AddDataInput("", "bool");
+            capability.AddDataOutput("", "bool");
             UpdateConnectors();
             Name = "If";
         }
@@ -140,7 +142,8 @@ namespace MainStationCodeBlocks
         {
             width = 50;
             height = 50;
-            DataOutputs.Add(new DataOutput(this, "", "bool"));
+            Capability capability = new Capability(this);
+            capability.AddDataOutput("", "bool");
             UpdateConnectors();
             Name = "Constant";
         }
@@ -163,8 +166,9 @@ namespace MainStationCodeBlocks
         {
             width = 100;
             height = 50;
-            DataInputs.Add(new DataInput(this, "State", "bool"));
-            TriggerInputs.Add(new TriggerInput(this, ""));
+            Capability capability = new Capability(this);
+            capability.AddDataInput("State", "bool");
+            capability.AddTriggerInput("");
             UpdateConnectors();
 
             Name = "Set Debug LED";
@@ -172,7 +176,7 @@ namespace MainStationCodeBlocks
 
         public override byte[] Compile(TriggerInput _Input)
         {
-            var v = ((MainStationCodeBlock)DataInputs[0].Connected.Owner).GetOutput(DataInputs[0].Connected);
+            var v = ((MainStationCodeBlock)DataInputs[0].Connected.Owner.Owner).GetOutput(DataInputs[0].Connected);
             byte[] code = CodeInstructions.SetLED(v.Register.index);
 
             MemoryStream stream = new MemoryStream();
@@ -197,7 +201,8 @@ namespace MainStationCodeBlocks
         {
             width = 50;
             height = 50;
-            DataOutputs.Add(new DataOutput(this, "", "int"));
+            Capability capability = new Capability(this);
+            capability.AddDataOutput("", "int");
             UpdateConnectors();
             Name = "Constant";
         }
@@ -246,7 +251,8 @@ namespace MainStationCodeBlocks
         {
             width = 100;
             height = 50;
-            TriggerOutputs.Add(new TriggerOutput(this, ""));
+            Capability capability = new Capability(this);
+            capability.AddTriggerOutput("");
             UpdateConnectors();
         }
 
@@ -284,9 +290,10 @@ namespace MainStationCodeBlocks
         {
             width = 100;
             height = 50;
-            TriggerOutputs.Add(new TriggerOutput(this, ""));
-            TriggerInputs.Add(new TriggerInput(this, "Reset"));
-            DataInputs.Add(new DataInput(this, "Delay", "int"));
+            Capability capability = new Capability(this);
+            capability.AddTriggerOutput("");
+            capability.AddTriggerInput("Reset");
+            capability.AddDataInput("Delay", "int");
             UpdateConnectors();
         }
 
@@ -331,7 +338,7 @@ namespace MainStationCodeBlocks
 
         public override byte[] Compile(CodeBlock.TriggerInput _Input)
         {
-            var v = ((MainStationCodeBlock)DataInputs[0].Connected.Owner).GetOutput(DataInputs[0].Connected);
+            var v = ((MainStationCodeBlock)DataInputs[0].Connected.Owner.Owner).GetOutput(DataInputs[0].Connected);
             MemoryStream stream = new MemoryStream();
             stream.Write(v.Code, 0, v.Code.Length);
             byte[] code = CodeInstructions.SetTimer(GetTimerID(), GetEventID(), v.Register.index);
@@ -350,165 +357,44 @@ namespace MainStationCodeBlocks
         public MainStation.MainStationCompiler.RegisterEntry Register;
     }
 
-    public abstract class MainStationCodeBlockEvent : MainStationCodeBlock
+    public class CodeBlockEvent : BaseBlockEvent
     {
+        public ushort DeviceID;
+        public ushort DeviceType;
+        public byte EventID;
 
-    }
-
-    public class MainStationCodeBlockDevice : MainStationCodeBlocks.BaseBlockEvent
-    {
-        ushort deviceid;
-        [Browsable(true)]
-        public ushort DeviceID
+        public override BaseBlockEvent.Event[] Events
         {
-            get { return deviceid; }
-            set
-            {
-                deviceid = value;
-                foreach (Event e in Events) e.DeviceID = deviceid; //update device id's in events
-            }
+            get { return new BaseBlockEvent.Event[] { new BaseBlockEvent.Event(DeviceID, EventID, TriggerOutputs[0]) }; }
         }
 
-        public ushort type;
-
-        public MainStationCodeBlockDevice()
+        public CodeBlockEvent()
         {
 
         }
 
         public void Create()
         {
-            ProductDataBase.Device device = ProductDataBase.GetDeviceByID(type);
-            int events = 1;
+            Capabilities.Clear();
             width = 100;
-            height = 200;
-
-            TriggerOutputs.Clear();
-            foreach (ProductDataBase.Device.Event e in device.events)
+            height = 50;
+            ProductDataBase.Device device = ProductDataBase.GetDeviceByID(DeviceType);
+            if (device != null)
             {
-                TriggerOutput newoutput = new TriggerOutput(this, e.Name);
-                TriggerOutputs.Add(newoutput);
-                events++;
-            }
-
-            height = events * 30;
-
-            UpdateConnectors();
-        }
-
-        public override Event[] Events
-        {
-            get
-            {
-                ProductDataBase.Device device = ProductDataBase.GetDeviceByID(type);
-                if (TriggerOutputs.Count != device.events.Count) Create();
-                List<Event> events = new List<Event>();
-                int index = 0;
-                foreach (ProductDataBase.Device.Event e in device.events)
+                ProductDataBase.Device.Event evnt = device.GetEventByID(EventID);
+                if (evnt != null)
                 {
-                    Event newevent = new Event(deviceid, e.ID, TriggerOutputs[index]);
-                    events.Add(newevent);
-                    index++;
+
+                    Capability capability = new Capability(this);
+                    capability.AddTriggerOutput("Trigger");
+
+                    foreach (ProductDataBase.Device.Event.Output o in evnt.Outputs)
+                    {
+                        capability.AddDataOutput(o.Name, o.Type);
+                    }
                 }
-                return events.ToArray();
             }
-        }
 
-        public override void Load(XElement _Data) { deviceid = ushort.Parse(_Data.Attribute("DeviceID").Value); type = ushort.Parse(_Data.Attribute("TypeID").Value); Create(); }
-        public override void Save(XElement _Data) { _Data.SetAttributeValue("DeviceID", deviceid); _Data.SetAttributeValue("TypeID", type); }
-    }
-
-    public class MainStationCodeBlockInvokeRemoteEvent : BaseBlockInstruction
-    {
-        ushort deviceid;
-        [Browsable(true)]
-        public ushort DeviceID
-        {
-            get { return deviceid; }
-            set { deviceid = value; }
-        }
-
-        byte eventid;
-        [Browsable(true)]
-        public byte EventID
-        {
-            get { return eventid; }
-            set { eventid = value; }
-        }
-
-        public MainStationCodeBlockInvokeRemoteEvent()
-        {
-            width = 100;
-            height = 50;
-            TriggerInputs.Add(new TriggerInput(this, "Hellyea!"));
-            DataInputs.Add(new DataInput(this, "Arguments", "int"));
-            UpdateConnectors();
-        }
-
-        public override byte[] Compile(TriggerInput _Input)
-        {
-            MemoryStream stream = new MemoryStream();
-            byte[] code;
-            code = CodeInstructions.Load8(0, eventid);
-            stream.Write(code, 0, code.Length);
-            if (DataInputs[0].Connected != null)
-            {
-                GetOutputResult ans = ((MainStationCodeBlock)DataInputs[0].Connected.Owner).GetOutput(DataInputs[0].Connected);
-                stream.Write(ans.Code, 0, ans.Code.Length);
-                code = CodeInstructions.Mov(ans.Register.index, 1, 2);
-                stream.Write(code, 0, code.Length);
-                code = CodeInstructions.EPSend(deviceid, 3);
-                stream.Write(code, 0, code.Length);
-            }
-            else
-            {
-                code = CodeInstructions.EPSend(deviceid, 1);
-                stream.Write(code, 0, code.Length);
-            }
-            return stream.ToArray();
-        }
-
-        public override void Load(XElement _Data) { deviceid = ushort.Parse(_Data.Attribute("DeviceID").Value); eventid = byte.Parse(_Data.Attribute("EventID").Value); }
-        public override void Save(XElement _Data) { _Data.SetAttributeValue("DeviceID", deviceid); _Data.SetAttributeValue("EventID", eventid); }
-
-        public override void Draw(Graphics _Graphics)
-        {
-            base.Draw(_Graphics);
-            DrawShape(_Graphics,
-                new PointF(-width / 2, -height / 2),
-                new PointF(-width / 2, height / 2),
-                new PointF(width / 2, height / 2),
-                new PointF(width / 2, -height / 2));
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center;
-            sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Device " + DeviceID + " Event " + EventID, new Font("Arial", 10), Brushes.Black, X, Y, sf);
-        }
-    }
-
-    public class MainStationCodeBlockRemoteEvent : MainStationCodeBlockEvent
-    {
-        ushort deviceid;
-        [Browsable(true)]
-        public ushort DeviceID
-        {
-            get { return deviceid; }
-            set { deviceid = value; }
-        }
-
-        byte eventid;
-        [Browsable(true)]
-        public byte EventID
-        {
-            get { return eventid; }
-            set { eventid = value; }
-        }
-
-        public MainStationCodeBlockRemoteEvent()
-        {
-            width = 100;
-            height = 50;
-            TriggerOutputs.Add(new TriggerOutput(this, "Hellyea!"));
             UpdateConnectors();
         }
 
@@ -517,14 +403,113 @@ namespace MainStationCodeBlocks
             MemoryStream stream = new MemoryStream();
             foreach (TriggerInput ti in TriggerOutputs[0].Connected)
             {
-                byte[] blob = ((MainStationCodeBlock)ti.Owner).Compile(ti);
+                byte[] blob = ((MainStationCodeBlock)ti.Owner.Owner).Compile(ti);
                 stream.Write(blob, 0, blob.Length);
             }
             return stream.ToArray();
         }
 
-        public override void Load(XElement _Data) { deviceid = ushort.Parse(_Data.Attribute("DeviceID").Value); eventid = byte.Parse(_Data.Attribute("EventID").Value); }
-        public override void Save(XElement _Data) { _Data.SetAttributeValue("DeviceID", deviceid); _Data.SetAttributeValue("EventID", eventid); }
+        public override void Load(XElement _Data) { DeviceID = ushort.Parse(_Data.Attribute("DeviceID").Value); DeviceType = ushort.Parse(_Data.Attribute("TypeID").Value); EventID = byte.Parse(_Data.Attribute("EventID").Value); Create(); }
+        public override void Save(XElement _Data) { _Data.SetAttributeValue("DeviceID", DeviceID); _Data.SetAttributeValue("TypeID", DeviceType); _Data.SetAttributeValue("EventID", EventID); }
+
+        public override void Draw(Graphics _Graphics)
+        {
+            DrawShape(_Graphics,
+                new PointF[]{
+                    new PointF(-width/2,height/2),
+                    new PointF(-width/3,0),
+                    new PointF(-width/2,-height/2),
+                    new PointF(width/3,-height/2),
+                    new PointF(width/2,0),
+                    new PointF(width/3,height/2),
+                }
+            );
+            ProductDataBase.Device device = ProductDataBase.GetDeviceByID(DeviceType);
+            if (device != null)
+            {
+                ProductDataBase.Device.Event evnt = device.GetEventByID(EventID);
+                if (evnt != null)
+                {
+                    Name = device.Name + "\n" + evnt.Name;
+                    DrawText(_Graphics);
+                }
+            }
+        }
+    }
+
+    public class CodeBlockInvokeRemoteEvent : BaseBlockInstruction
+    {
+        public ushort DeviceID;
+        public ushort DeviceType;
+        public byte EventID;
+
+        public CodeBlockInvokeRemoteEvent()
+        {
+            width = 100;
+            height = 50;
+            UpdateConnectors();
+        }
+
+
+        public void Create()
+        {
+            Capabilities.Clear();
+            width = 100;
+            height = 50;
+            ProductDataBase.Device device = ProductDataBase.GetDeviceByID(DeviceType);
+            if (device != null)
+            {
+                Capability capability = new Capability(this);
+
+                ProductDataBase.Device.RemoteEvent evnt = device.GetRemoteEventByID(EventID);
+                if (evnt != null)
+                {
+                    foreach (ProductDataBase.Device.RemoteEvent.Output o in evnt.Outputs)
+                    {
+                        capability.AddDataOutput(o.Name, o.Type);
+                    }
+
+                    foreach (ProductDataBase.Device.RemoteEvent.Input i in evnt.Inputs)
+                    {
+                        if (i.Type == "void")
+                            capability.AddTriggerInput(i.Name);
+                        else
+                            capability.AddDataInput(i.Name, i.Type);
+                    }
+                    if (capability.TriggerInputs.Count == 0 && (capability.TriggerInputs.Count != 0 || capability.DataOutputs.Count == 0))
+                    {
+                        capability.AddTriggerInput("Trigger");
+                    }
+                }
+            }
+
+            UpdateConnectors();
+        }
+
+        public override byte[] Compile(TriggerInput _Input)
+        {
+            MemoryStream stream = new MemoryStream();
+            byte[] code;
+            code = CodeInstructions.Load8(0, EventID);
+            stream.Write(code, 0, code.Length);
+            byte index = 1;
+
+            foreach (DataInput i in DataInputs)
+            {
+                GetOutputResult ans = ((MainStationCodeBlock)DataInputs[0].Connected.Owner.Owner).GetOutput(DataInputs[0].Connected);
+                stream.Write(ans.Code, 0, ans.Code.Length);
+                code = CodeInstructions.Mov(ans.Register.index, index, (byte)ans.Register.size); index += (byte)ans.Register.size;
+                stream.Write(code, 0, code.Length);
+            }
+
+            code = CodeInstructions.EPSend(DeviceID, index);
+            stream.Write(code, 0, code.Length);
+
+            return stream.ToArray();
+        }
+
+        public override void Load(XElement _Data) { DeviceID = ushort.Parse(_Data.Attribute("DeviceID").Value); DeviceType = ushort.Parse(_Data.Attribute("TypeID").Value); EventID = byte.Parse(_Data.Attribute("EventID").Value); Create(); }
+        public override void Save(XElement _Data) { _Data.SetAttributeValue("DeviceID", DeviceID); _Data.SetAttributeValue("TypeID", DeviceType); _Data.SetAttributeValue("EventID", EventID); }
 
         public override void Draw(Graphics _Graphics)
         {
@@ -534,10 +519,19 @@ namespace MainStationCodeBlocks
                 new PointF(-width / 2, height / 2),
                 new PointF(width / 2, height / 2),
                 new PointF(width / 2, -height / 2));
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center;
-            sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString("Device " + DeviceID + " Event " + EventID, new Font("Arial", 10), Brushes.Black, X, Y, sf);
+
+            ProductDataBase.Device device = ProductDataBase.GetDeviceByID(DeviceType);
+            if (device != null)
+            {
+                ProductDataBase.Device.RemoteEvent evnt = device.GetRemoteEventByID(EventID);
+                if (evnt != null)
+                {
+                    StringFormat sf = new StringFormat();
+                    sf.Alignment = StringAlignment.Center;
+                    sf.LineAlignment = StringAlignment.Center;
+                    _Graphics.DrawString(device.Name + "\n" + evnt.Name, new Font("Arial", 10), Brushes.Black, X, Y, sf);
+                }
+            }
         }
     }
 
@@ -547,15 +541,15 @@ namespace MainStationCodeBlocks
         {
             _Manager.AddPrototype(new SequenceManager.Prototype("Delay", "Generic Events", "blaat", typeof(BlockDelay)));
             _Manager.AddPrototype(new SequenceManager.Prototype("Event", "Generic Events", "blaat", typeof(BlockGenericEvent)));
-            _Manager.AddPrototype(new SequenceManager.Prototype("Remote Event", "Generic Events", "blaat", typeof(MainStationCodeBlockRemoteEvent)));
-            _Manager.AddPrototype(new SequenceManager.Prototype("Invoke Remote Event", "Generic Events", "i like u", typeof(MainStationCodeBlockInvokeRemoteEvent)));
-            _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Boolean", "blaat", typeof(MainStationCodeBlocks.BlockBoolConstant)));
-            _Manager.AddPrototype(new SequenceManager.Prototype("Invert", "Boolean", "blaat", typeof(MainStationCodeBlocks.BlockBoolInvert)));
-            _Manager.AddPrototype(new SequenceManager.Prototype("Set LED", "Debug", "i like u", typeof(MainStationCodeBlocks.BlockSetDebugLed)));
 
-            _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Integer", "blaat", typeof(MainStationCodeBlocks.BlockIntConstant)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Boolean", "blaat", typeof(BlockBoolConstant)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Invert", "Boolean", "blaat", typeof(BlockBoolInvert)));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Set LED", "Debug", "i like u", typeof(BlockSetDebugLed)));
 
-            _Manager.AddPrototype(new SequenceManager.Prototype("", "", "", typeof(MainStationCodeBlocks.MainStationCodeBlockDevice), false));
+            _Manager.AddPrototype(new SequenceManager.Prototype("Constant", "Integer", "blaat", typeof(BlockIntConstant)));
+
+            _Manager.AddPrototype(new SequenceManager.Prototype("", "", "", typeof(CodeBlockEvent), false));
+            _Manager.AddPrototype(new SequenceManager.Prototype("", "", "", typeof(CodeBlockInvokeRemoteEvent), false));
         }
 
         public virtual byte[] Compile(TriggerInput _Input) { throw new NotImplementedException(); }

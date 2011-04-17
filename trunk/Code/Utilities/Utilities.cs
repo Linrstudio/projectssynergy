@@ -17,6 +17,14 @@ namespace Utilities
             return BitConverter.ToUInt16(new byte[] { _Buffer[_Index], _Buffer[_Index + 1] }, 0);
         }
 
+        public static ushort ToShort(byte[] _Buffer, int _Index,bool _Swapped)
+        {
+            if(_Swapped)
+                return BitConverter.ToUInt16(new byte[] { _Buffer[_Index + 1], _Buffer[_Index] }, 0);
+            else
+                return BitConverter.ToUInt16(new byte[] { _Buffer[_Index], _Buffer[_Index + 1] }, 0);
+        }
+
         public static byte[] Cut(byte[] _Buffer, int _Index)
         {
             byte[] buffer = new byte[_Buffer.Length - _Index];

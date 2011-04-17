@@ -54,6 +54,7 @@
             this.p_Properties.Name = "p_Properties";
             this.p_Properties.Size = new System.Drawing.Size(166, 209);
             this.p_Properties.TabIndex = 0;
+            this.p_Properties.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.p_Properties_PropertyValueChanged);
             // 
             // l_CodeBlocks
             // 

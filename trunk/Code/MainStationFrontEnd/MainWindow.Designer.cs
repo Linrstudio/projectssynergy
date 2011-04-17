@@ -44,6 +44,7 @@
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.t_time = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
             this.i_contents = new System.Windows.Forms.ImageList(this.components);
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.t_ConnectionCheck = new System.Windows.Forms.Timer(this.components);
@@ -56,7 +57,6 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.c_Device = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.c_Root.SuspendLayout();
@@ -70,7 +70,7 @@
             this.p_progress,
             this.t_progress,
             this.t_Connected});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 494);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 507);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(850, 22);
             this.statusStrip1.TabIndex = 1;
@@ -182,6 +182,16 @@
             this.t_time.Size = new System.Drawing.Size(12, 22);
             this.t_time.Text = "-";
             // 
+            // toolStripButton6
+            // 
+            this.toolStripButton6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton6.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton6.Image")));
+            this.toolStripButton6.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton6.Name = "toolStripButton6";
+            this.toolStripButton6.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton6.Text = "toolStripButton6";
+            this.toolStripButton6.Click += new System.EventHandler(this.toolStripButton6_Click);
+            // 
             // i_contents
             // 
             this.i_contents.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("i_contents.ImageStream")));
@@ -203,7 +213,7 @@
             // 
             this.splitter1.Location = new System.Drawing.Point(226, 25);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 469);
+            this.splitter1.Size = new System.Drawing.Size(3, 482);
             this.splitter1.TabIndex = 6;
             this.splitter1.TabStop = false;
             // 
@@ -220,7 +230,7 @@
             this.splitter2.MinExtra = 0;
             this.splitter2.MinSize = 0;
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(2, 469);
+            this.splitter2.Size = new System.Drawing.Size(2, 482);
             this.splitter2.TabIndex = 12;
             this.splitter2.TabStop = false;
             // 
@@ -230,7 +240,7 @@
             this.t_Log.Location = new System.Drawing.Point(850, 25);
             this.t_Log.Multiline = true;
             this.t_Log.Name = "t_Log";
-            this.t_Log.Size = new System.Drawing.Size(0, 469);
+            this.t_Log.Size = new System.Drawing.Size(0, 482);
             this.t_Log.TabIndex = 13;
             this.t_Log.Text = "> Hi there, Im surprised you found this";
             // 
@@ -243,7 +253,8 @@
             this.t_contents.Name = "t_contents";
             this.t_contents.SelectedImageIndex = 0;
             this.t_contents.ShowNodeToolTips = true;
-            this.t_contents.Size = new System.Drawing.Size(226, 469);
+            this.t_contents.ShowRootLines = false;
+            this.t_contents.Size = new System.Drawing.Size(226, 482);
             this.t_contents.TabIndex = 5;
             this.t_contents.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.t_contents_NodeMouseDoubleClick);
             this.t_contents.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.t_contents_MouseDoubleClick);
@@ -291,21 +302,11 @@
             this.removeToolStripMenuItem.Text = "Remove";
             this.removeToolStripMenuItem.Click += new System.EventHandler(this.removeToolStripMenuItem_Click);
             // 
-            // toolStripButton6
-            // 
-            this.toolStripButton6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton6.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton6.Image")));
-            this.toolStripButton6.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton6.Name = "toolStripButton6";
-            this.toolStripButton6.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton6.Text = "toolStripButton6";
-            this.toolStripButton6.Click += new System.EventHandler(this.toolStripButton6_Click);
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(850, 516);
+            this.ClientSize = new System.Drawing.Size(850, 529);
             this.Controls.Add(this.splitter2);
             this.Controls.Add(this.t_Log);
             this.Controls.Add(this.splitter1);

@@ -20,7 +20,7 @@ namespace MainStationFrontEnd
         string name;
         public string Name { get { return name; } set { name = value; } }
 
-        public Sequence Sequence { get { return base.Sequence; } set { base.Sequence=value; } }
+        public Sequence Sequence { get { return base.Sequence; } set { base.Sequence = value; } }
         public SequenceManager Manager { get { return base.Manager; } set { base.Manager = value; } }
 
         public FrontEndMainStation()
@@ -44,6 +44,7 @@ namespace MainStationFrontEnd
             foreach (MainStationDevice d in Devices)
             {
                 node.Nodes.Add(GetTreeNode(d));
+                node.Expand();
             }
             return node;
         }
@@ -53,6 +54,23 @@ namespace MainStationFrontEnd
             int icon = (int)(_Device.Found ? MainWindow.Icons.Device : MainWindow.Icons.DeviceError);
             var node = new System.Windows.Forms.TreeNode(_Device.Name + "(" + _Device.ID + ")", icon, icon);
             node.Tag = _Device;
+
+            foreach (ProductDataBase.Device.Event e in _Device.device.events)
+            {
+                int eicon = (int)MainWindow.Icons.EventLocal;
+                TreeNode enode = new TreeNode(e.Name, eicon, eicon);
+                enode.Tag = e;
+                node.Nodes.Add(enode);
+            }
+
+            foreach (ProductDataBase.Device.RemoteEvent e in _Device.device.remoteevents)
+            {
+                int eicon = (int)MainWindow.Icons.EventRemote;
+                TreeNode enode = new TreeNode(e.Name,eicon,eicon);
+                enode.Tag = e;
+                node.Nodes.Add(enode);
+            }
+
             return node;
         }
 
@@ -76,4 +94,3 @@ namespace MainStationFrontEnd
         }
     }
 }
-
