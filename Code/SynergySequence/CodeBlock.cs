@@ -19,20 +19,26 @@ namespace SynergySequence
             Sequence = _Sequence;
         }
 
+        [Browsable(false)]
+        public Input[] Inputs { get { List<Input> l = new List<Input>(); foreach (Capability c in Capabilities) l.AddRange(c.Inputs); return l.ToArray(); } }
+        [Browsable(false)]
+        public Output[] Outputs { get { List<Output> l = new List<Output>(); foreach (Capability c in Capabilities) l.AddRange(c.Outputs); return l.ToArray(); } }
+
+        [Browsable(false)]
+        public DataInput[] DataInputs { get { List<DataInput> l = new List<DataInput>(); foreach (Capability c in Capabilities) l.AddRange(c.DataInputs); return l.ToArray(); } }
+        [Browsable(false)]
+        public DataOutput[] DataOutputs { get { List<DataOutput> l = new List<DataOutput>(); foreach (Capability c in Capabilities) l.AddRange(c.DataOutputs); return l.ToArray(); } }
+
+        [Browsable(false)]
+        public TriggerInput[] TriggerInputs { get { List<TriggerInput> l = new List<TriggerInput>(); foreach (Capability c in Capabilities) l.AddRange(c.TriggerInputs); return l.ToArray(); } }
+        [Browsable(false)]
+        public TriggerOutput[] TriggerOutputs { get { List<TriggerOutput> l = new List<TriggerOutput>(); foreach (Capability c in Capabilities) l.AddRange(c.TriggerOutputs); return l.ToArray(); } }
+
+        public List<Capability> Capabilities = new List<Capability>();
+
         public Sequence Sequence;
 
-        public List<DataInput> DataInputs = new List<DataInput>();
-        public List<DataOutput> DataOutputs = new List<DataOutput>();
-        public List<TriggerInput> TriggerInputs = new List<TriggerInput>();
-        public List<TriggerOutput> TriggerOutputs = new List<TriggerOutput>();
-
-        [Browsable(false)]
-        public Input[] Inputs { get { List<Input> l = new List<Input>(DataInputs.ToArray()); l.AddRange(TriggerInputs.ToArray()); return l.ToArray(); } }
-        [Browsable(false)]
-        public Output[] Outputs { get { List<Output> l = new List<Output>(DataOutputs.ToArray()); l.AddRange(TriggerOutputs.ToArray()); return l.ToArray(); } }
         public bool Selected = false;
-
-        List<int> InputRegisters = new List<int>();
 
         //editor stuff
         public float X;
@@ -83,10 +89,14 @@ namespace SynergySequence
 
         public virtual void DrawText(Graphics _Graphics)
         {
+            if (Name == null || Name == "") return;
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            _Graphics.DrawString(Name, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, X, Y, sf);
+            Font font = new Font("Arial", 12, FontStyle.Bold);
+            SizeF size = _Graphics.MeasureString(Name, font);
+            font = new Font("Arial", font.GetHeight() * (size.Height / (float)height * 0.8f), FontStyle.Bold);
+            _Graphics.DrawString(Name, font, Brushes.Black, new RectangleF(X - Width / 2, Y - Height / 2, Width, Height), sf);
         }
 
         public void DrawShapeShadow(Graphics _Graphics, params PointF[] _Points)
@@ -137,7 +147,7 @@ namespace SynergySequence
         public void DrawConstant(Graphics _Graphics)
         {
             _Graphics.FillEllipse(new SolidBrush(Color.FromArgb(150, 150, 255)), new RectangleF(X - Width / 2, Y - Height / 2, Width, Height));
-            if(Selected)
+            if (Selected)
                 _Graphics.DrawEllipse(new Pen(Brushes.Red, 2), new RectangleF(X - Width / 2, Y - Height / 2, Width, Height));
             else
                 _Graphics.DrawEllipse(new Pen(Brushes.Black, 1), new RectangleF(X - Width / 2, Y - Height / 2, Width, Height));
@@ -148,7 +158,7 @@ namespace SynergySequence
             _Graphics.FillEllipse(new SolidBrush(Sequence.ShadowColor), new RectangleF(GetShadowOffset().X + X - Width / 2, GetShadowOffset().Y + Y - Height / 2, Width, Height));
         }
 
-        public void UpdateConnectors()
+        public virtual void UpdateConnectors()
         {
             foreach (DataInput i in DataInputs) i.UpdatePosition();
             foreach (DataOutput o in DataOutputs) o.UpdatePosition();
@@ -188,31 +198,30 @@ namespace SynergySequence
         /// </summary>
         public abstract class Connector
         {
-            public CodeBlock Owner;
+            public Capability Owner;
             public float X;
             public float Y;
-            public Connector(CodeBlock _Owner) { Owner = _Owner; }
+            public Connector(Capability _Owner) { Owner = _Owner; }
             public System.Drawing.PointF GetPosition()
             {
-                return new System.Drawing.PointF(Owner.X + X, Owner.Y + Y);
+                return new System.Drawing.PointF(Owner.Owner.X + X, Owner.Owner.Y + Y);
             }
             public abstract bool AnyConnected { get; }
         };
 
         public abstract class Input : Connector
         {
-            public Input(CodeBlock _CodeBlock) : base(_CodeBlock) { }
-
+            public Input(Capability _Owner) : base(_Owner) { }
         }
 
         public abstract class Output : Connector
         {
-            public Output(CodeBlock _CodeBlock) : base(_CodeBlock) { }
+            public Output(Capability _Owner) : base(_Owner) { }
         }
 
         public class DataInput : Input
         {
-            public DataInput(CodeBlock _Owner, string _Text, string _DataType)
+            public DataInput(Capability _Owner, string _Text, string _DataType)
                 : base(_Owner)
             {
                 if (_DataType == null) throw new Exception("null DataType");
@@ -229,7 +238,7 @@ namespace SynergySequence
 
             //position in codeblock
             public DataOutput Connected = null;
-            public CodeBlock Owner;
+            //public CodeBlock Owner;
             public string datatype;
 
             public override bool AnyConnected { get { return Connected != null; } }
@@ -238,14 +247,14 @@ namespace SynergySequence
             {
                 float cnt = Owner.DataInputs.Count;
                 float idx = (float)Owner.DataInputs.IndexOf(this) - ((cnt - 1) / 2);
-                Y = -Owner.Height / 2;
-                X = (int)((idx / cnt) * Owner.height);
+                Y = -Owner.Owner.Height / 2;
+                X = (int)((idx / cnt) * Owner.Owner.height);
             }
         }
 
         public class DataOutput : Output
         {
-            public DataOutput(CodeBlock _Owner, string _Text, string _DataType)
+            public DataOutput(Capability _Owner, string _Text, string _DataType)
                 : base(_Owner)
             {
                 if (_DataType == null) throw new Exception("null DataType");
@@ -260,7 +269,7 @@ namespace SynergySequence
 
             //position in codeblock
             public List<DataInput> Connected = new List<DataInput>();
-            public CodeBlock Owner;
+            public Capability Owner;
             public string datatype;
 
             public override bool AnyConnected { get { return Connected.Count != 0; } }
@@ -269,8 +278,8 @@ namespace SynergySequence
             {
                 float cnt = Owner.DataOutputs.Count;
                 float idx = (float)Owner.DataOutputs.IndexOf(this) - ((cnt - 1) / 2);
-                Y = Owner.Height / 2;
-                X = (int)((idx / cnt) * Owner.height);
+                Y = Owner.Owner.Height / 2;
+                X = (int)((idx / cnt) * Owner.Owner.height);
             }
 
             public void DisconnectAll()
@@ -285,7 +294,7 @@ namespace SynergySequence
 
         public class TriggerInput : Input
         {
-            public TriggerInput(CodeBlock _Owner, string _Text)
+            public TriggerInput(Capability _Owner, string _Text)
                 : base(_Owner)
             {
                 Owner = _Owner;
@@ -298,7 +307,7 @@ namespace SynergySequence
 
             //position in codeblock
             public List<TriggerOutput> Connected = new List<TriggerOutput>();
-            public CodeBlock Owner;
+            //public Capability Owner;
 
             public override bool AnyConnected { get { return Connected.Count != 0; } }
 
@@ -306,8 +315,8 @@ namespace SynergySequence
             {
                 float cnt = Owner.TriggerInputs.Count;
                 float idx = (float)Owner.TriggerInputs.IndexOf(this) - ((cnt - 1) / 2);
-                X = -Owner.Width / 2;
-                Y = (int)((idx / cnt) * Owner.height);
+                X = -Owner.Owner.Width / 2;
+                Y = (int)((idx / cnt) * Owner.Owner.height);
             }
 
             public void DisconnectAll()
@@ -322,7 +331,7 @@ namespace SynergySequence
 
         public class TriggerOutput : Output
         {
-            public TriggerOutput(CodeBlock _Owner, string _Text)
+            public TriggerOutput(Capability _Owner, string _Text)
                 : base(_Owner)
             {
                 Owner = _Owner;
@@ -335,7 +344,7 @@ namespace SynergySequence
 
             //position in codeblock
             public List<TriggerInput> Connected = new List<TriggerInput>();
-            public CodeBlock Owner;
+            //public Capability Owner;
 
             public override bool AnyConnected { get { return Connected.Count != 0; } }
 
@@ -343,8 +352,8 @@ namespace SynergySequence
             {
                 float cnt = Owner.TriggerOutputs.Count;
                 float idx = (float)Owner.TriggerOutputs.IndexOf(this) - ((cnt - 1) / 2);
-                X = Owner.Width / 2;
-                Y = (int)((idx / cnt) * Owner.height);
+                X = Owner.Owner.Width / 2;
+                Y = (int)((idx / cnt) * Owner.Owner.Height);
             }
 
             public void DisconnectAll()
@@ -357,6 +366,31 @@ namespace SynergySequence
             }
         }
 
+        public class Capability
+        {
+            public Capability(CodeBlock _Owner)
+            {
+                Owner = _Owner;
+                if (Owner != null)
+                    Owner.Capabilities.Add(this);
+            }
+            public CodeBlock Owner = null;
+            public List<DataInput> DataInputs = new List<DataInput>();
+            public List<DataOutput> DataOutputs = new List<DataOutput>();
+            public List<TriggerInput> TriggerInputs = new List<TriggerInput>();
+            public List<TriggerOutput> TriggerOutputs = new List<TriggerOutput>();
+
+            public void AddDataInput(string _Text, string _Type) { DataInputs.Add(new DataInput(this, _Text, _Type)); }
+            public void AddTriggerInput(string _Text) { TriggerInputs.Add(new TriggerInput(this, _Text)); }
+            public void AddDataOutput(string _Text, string _Type) { DataOutputs.Add(new DataOutput(this, _Text, _Type)); }
+            public void AddTriggerOutput(string _Text) { TriggerOutputs.Add(new TriggerOutput(this, _Text)); }
+
+            [Browsable(false)]
+            public Input[] Inputs { get { List<Input> l = new List<Input>(DataInputs.ToArray()); l.AddRange(TriggerInputs.ToArray()); return l.ToArray(); } }
+            [Browsable(false)]
+            public Output[] Outputs { get { List<Output> l = new List<Output>(DataOutputs.ToArray()); l.AddRange(TriggerOutputs.ToArray()); return l.ToArray(); } }
+        }
+
         /// <summary>
         /// returns a list of codeblocks this code block is dependent on, also this codeblock can never connect anything to one of these codeblocks
         /// </summary>
@@ -366,7 +400,7 @@ namespace SynergySequence
             List<CodeBlock> list = new List<CodeBlock>();
             list.Add(this);
 
-            
+
 
             return list.ToArray();
         }

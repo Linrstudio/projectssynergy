@@ -92,7 +92,7 @@ namespace MainStation
                     {
                         foreach (BaseBlockEvent.Event evnt in ((BaseBlockEvent)msc).Events)
                         {
-                            if (evnt.Output.Connected.Count > 0)//only add the event to the list when there is code attached to it
+                            //if (evnt.Output.Connected.Count > 0)//only add the event to the list when there is code attached to it
                             {
                                 if (msc is BlockDelay)
                                     TimerCount++;
@@ -210,6 +210,7 @@ namespace MainStation
         public void Load(System.Xml.Linq.XElement _Data)
         {
             Sequence.Load(_Data.Element("Sequence"));
+            Sequence.CenterSequence();
             foreach (XElement element in _Data.Elements("Device"))
             {
                 devices.Add(new MainStationDevice(element));
@@ -511,7 +512,6 @@ namespace MainStation
             buffer = Read();
         }
     }
-
 
     public class MainStationDevice
     {

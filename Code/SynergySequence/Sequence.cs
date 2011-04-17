@@ -50,9 +50,9 @@ namespace SynergySequence
                 if (!Out.Connected.Contains(In)) Out.Connected.Add(In);
                 if (!In.Connected.Contains(Out)) In.Connected.Add(Out);
 
-                if (!codeblocks.Contains(Out.Owner)) codeblocks.Add(Out.Owner);
-                if (!codeblocks.Contains(In.Owner)) codeblocks.Add(In.Owner);
-                In.Owner.Sequence = Out.Owner.Sequence = this;
+                if (!codeblocks.Contains(Out.Owner.Owner)) codeblocks.Add(Out.Owner.Owner);
+                if (!codeblocks.Contains(In.Owner.Owner)) codeblocks.Add(In.Owner.Owner);
+                In.Owner.Owner.Sequence = Out.Owner.Owner.Sequence = this;
             }
 
             if (_Out is CodeBlock.DataOutput && _In is CodeBlock.DataInput)
@@ -63,9 +63,9 @@ namespace SynergySequence
 
                 if (In.Connected != null) In.Connected.Connected.Remove(In);// override connection
                 In.Connected = Out;
-                if (!codeblocks.Contains(Out.Owner)) codeblocks.Add(Out.Owner);
-                if (!codeblocks.Contains(In.Owner)) codeblocks.Add(In.Owner);
-                In.Owner.Sequence = Out.Owner.Sequence = this;
+                if (!codeblocks.Contains(Out.Owner.Owner)) codeblocks.Add(Out.Owner.Owner);
+                if (!codeblocks.Contains(In.Owner.Owner)) codeblocks.Add(In.Owner.Owner);
+                In.Owner.Owner.Sequence = Out.Owner.Owner.Sequence = this;
 
                 //remove any connection that will be overriden
                 //foreach (CodeBlock b in codeblocks) foreach (CodeBlock.DataOutput o in b.DataOutputs) foreach (CodeBlock.DataInput i in o.Connected.ToArray()) if (i == _In) o.Connected.Remove(i);
@@ -100,21 +100,28 @@ namespace SynergySequence
                 {
                     int input = int.Parse(connection.Attribute("Input").Value);
                     int inputowner = int.Parse(connection.Attribute("InputOwner").Value);
+                    int inputcapability = int.Parse(connection.Attribute("InputCapability").Value);
                     int output = int.Parse(connection.Attribute("Output").Value);
                     int outputowner = int.Parse(connection.Attribute("OutputOwner").Value);
-                    Connect(codeblocks[outputowner].DataOutputs[output], codeblocks[inputowner].DataInputs[input]);
+                    int outputcapability = int.Parse(connection.Attribute("OutputCapability").Value);
+                    Connect(codeblocks[outputowner].Capabilities[outputcapability].DataOutputs[output], codeblocks[inputowner].Capabilities[inputcapability].DataInputs[input]);
                 }
                 foreach (XElement connection in _Sequence.Elements("ConnectTrigger"))
                 {
                     int input = int.Parse(connection.Attribute("Input").Value);
                     int inputowner = int.Parse(connection.Attribute("InputOwner").Value);
+                    int inputcapability = int.Parse(connection.Attribute("InputCapability").Value);
                     int output = int.Parse(connection.Attribute("Output").Value);
                     int outputowner = int.Parse(connection.Attribute("OutputOwner").Value);
-                    Connect(codeblocks[outputowner].TriggerOutputs[output], codeblocks[inputowner].TriggerInputs[input]);
+                    int outputcapability = int.Parse(connection.Attribute("OutputCapability").Value);
+                    Connect(codeblocks[outputowner].Capabilities[outputcapability].TriggerOutputs[output], codeblocks[inputowner].Capabilities[inputcapability].TriggerInputs[input]);
                 }
             }
             //catch { /* FIXME */ }
+        }
 
+        public void CenterSequence()
+        {
             //center sequence to middle of 'scene'
 
             float minX = 10000;
@@ -161,9 +168,11 @@ namespace SynergySequence
                     {
                         XElement connection = new XElement("ConnectData");
                         connection.SetAttributeValue("Input", i.Owner.DataInputs.IndexOf(i).ToString());
-                        connection.SetAttributeValue("InputOwner", codeblocks.IndexOf(i.Owner).ToString());
+                        connection.SetAttributeValue("InputOwner", codeblocks.IndexOf(i.Owner.Owner).ToString());
+                        connection.SetAttributeValue("InputCapability", i.Owner.Owner.Capabilities.IndexOf(i.Owner).ToString());
                         connection.SetAttributeValue("Output", i.Connected.Owner.DataOutputs.IndexOf(i.Connected).ToString());
-                        connection.SetAttributeValue("OutputOwner", codeblocks.IndexOf(i.Connected.Owner).ToString());
+                        connection.SetAttributeValue("OutputOwner", codeblocks.IndexOf(i.Connected.Owner.Owner).ToString());
+                        connection.SetAttributeValue("OutputCapability", i.Connected.Owner.Owner.Capabilities.IndexOf(i.Connected.Owner).ToString());
                         sequence.Add(connection);
                     }
                 }
@@ -173,9 +182,11 @@ namespace SynergySequence
                     {
                         XElement connection = new XElement("ConnectTrigger");
                         connection.SetAttributeValue("Input", i.Owner.TriggerInputs.IndexOf(i).ToString());
-                        connection.SetAttributeValue("InputOwner", codeblocks.IndexOf(i.Owner).ToString());
+                        connection.SetAttributeValue("InputOwner", codeblocks.IndexOf(i.Owner.Owner).ToString());
+                        connection.SetAttributeValue("InputCapability", i.Owner.Owner.Capabilities.IndexOf(i.Owner).ToString());
                         connection.SetAttributeValue("Output", o.Owner.TriggerOutputs.IndexOf(o).ToString());
-                        connection.SetAttributeValue("OutputOwner", codeblocks.IndexOf(o.Owner).ToString());
+                        connection.SetAttributeValue("OutputOwner", codeblocks.IndexOf(o.Owner.Owner).ToString());
+                        connection.SetAttributeValue("OutputCapability", o.Owner.Owner.Capabilities.IndexOf(o.Owner).ToString());
                         sequence.Add(connection);
                     }
                 }
