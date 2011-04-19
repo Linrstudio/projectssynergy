@@ -164,6 +164,12 @@ namespace SynergySequence
 
         private void DrawPwettyLine(Graphics g, PointF A, PointF B, float _Width, System.Drawing.Color _Color, bool _IsVertical)
         {
+#if true
+            if (_IsVertical)
+                DrawLine(g, A, B, new PointF(0, 1), new PointF(0, -1), _Width, _Color, _IsVertical);
+            else
+                DrawLine(g, A, B, new PointF(1, 0), new PointF(-1, 0), _Width, _Color, _IsVertical);
+#else
             if (_IsVertical)
             {
                 B.Y -= 15;
@@ -186,6 +192,159 @@ namespace SynergySequence
                     new PointF(B.X, B.Y-5)
                 }, System.Drawing.Drawing2D.FillMode.Alternate);
             }
+#endif
+        }
+
+        private void DrawLine(Graphics g, PointF _From, PointF _To, PointF _N1, PointF _N2, float _Width, System.Drawing.Color _Color, bool _IsVertical)
+        {
+#if false
+            float beginsize = -500;
+
+            List<PointF> Line = new List<PointF>();
+            Line.Add(new PointF(_From.X + _N1.X * beginsize, _From.Y + _N1.Y * beginsize));
+            Line.Add(_From);
+            Line.Add(_To);
+            Line.Add(new PointF(_To.X + _N2.X * beginsize, _To.Y + _N2.Y * beginsize));
+
+            List<CodeBlock> IgnoreList = new List<CodeBlock>();
+        NEXT:
+            for (int i = 1; i < Line.Count-1-1; i++)
+            {
+                PointF A = Line[i];
+                PointF B = Line[i+1];
+
+                PointF D = new PointF(B.X - A.X, B.Y - A.Y);
+
+                foreach (CodeBlock c in Sequence.CodeBlocks)
+                {
+                    if (IgnoreList.Contains(c)) continue;
+                    float u = ((c.X - A.X) * D.X + (c.Y - A.Y) * D.Y) / (D.X * D.X + D.Y * D.Y);
+                    if (u > 0 && u < 1)
+                    {
+                        PointF point = new PointF(A.X + u * D.X, A.Y + u * D.Y);
+
+                        PointF C = new PointF(c.X - point.X, c.Y - point.Y);
+                        //C = new PointF(-C.Y, C.X);
+                        float Cl = (float)Math.Sqrt(C.X * C.X + C.Y * C.Y);
+                        C.X /= Cl;
+                        C.Y /= Cl;
+
+                        if (Cl < 50)
+                        {
+                            PointF N = new PointF(point.X - C.X * (50-Cl), point.Y - C.Y * (50-Cl));
+                            Line.Insert(i+1, N);
+                            IgnoreList.Add(c);
+                            if (Line.Count > 10) goto DONE;
+                            goto NEXT;
+                        }
+                    }
+                }
+            }
+            DONE:
+            try
+            {
+                g.DrawCurve(new Pen(new SolidBrush(_Color), 1.5f),
+                    Line.ToArray(),1,Line.Count-3
+                    );
+            }
+            catch { }
+#else
+            if (_IsVertical)
+                _To.Y -= 15;
+            else
+                _To.X -= 15;
+
+
+            float beginsize = -250;
+
+            List<PointF> Line = new List<PointF>();
+            Line.Add(new PointF(_From.X + _N1.X * beginsize, _From.Y + _N1.Y * beginsize));
+            Line.Add(_From);
+            Line.Add(_To);
+            Line.Add(new PointF(_To.X + _N2.X * beginsize, _To.Y + _N2.Y * beginsize));
+
+            List<CodeBlock> IgnoreList = new List<CodeBlock>();
+        NEXT:
+            for (int i = 1; i < Line.Count - 1 - 1; i++)
+            {
+                PointF A = Line[i];
+                PointF B = Line[i + 1];
+
+                PointF D = new PointF(B.X - A.X, B.Y - A.Y);
+
+                float bestu = 0;
+                CodeBlock best = null;
+                PointF bestC;
+                bool any = false;
+                foreach (CodeBlock c in Sequence.CodeBlocks)
+                {
+                    if (IgnoreList.Contains(c)) continue;
+                    float u = ((c.X - A.X) * D.X + (c.Y - A.Y) * D.Y) / (D.X * D.X + D.Y * D.Y);
+                    if (u > 0 && u < 1)
+                    {
+                        PointF point = new PointF(A.X + u * D.X, A.Y + u * D.Y);
+
+                        PointF C = new PointF(c.X - point.X, c.Y - point.Y);
+                        //C = new PointF(-C.Y, C.X);
+                        float Cl = (float)Math.Sqrt(C.X * C.X + C.Y * C.Y);
+                        C.X /= Cl;
+                        C.Y /= Cl;
+
+
+                        if (Math.Abs(bestu - 0.5) > Math.Abs(u - 0.5f) && Cl < 50)
+                        {
+                            bestu = u;
+                            best = c;
+                        }
+                    }
+                }
+                if (best != null)
+                {
+                    PointF point = new PointF(A.X + bestu * D.X, A.Y + bestu * D.Y);
+
+                    PointF C = new PointF(best.X - point.X, best.Y - point.Y);
+                    //C = new PointF(-C.Y, C.X);
+                    float Cl = (float)Math.Sqrt(C.X * C.X + C.Y * C.Y);
+                    C.X /= Cl;
+                    C.Y /= Cl;
+
+                    float r = (Math.Abs(C.X * best.width) + Math.Abs(C.Y * best.height)) / 2;//radius of object at IP
+                    r = r * 1.5f;//dont intersect objects but go around em
+
+                    if (Cl < r)
+                    {
+                        PointF N = new PointF(point.X - C.X * (r - Cl), point.Y - C.Y * (r - Cl));
+                        Line.Insert(i + 1, N);
+                        IgnoreList.Add(best);
+                        if (Line.Count > 10) goto DONE;
+                        goto NEXT;
+                    }
+
+                }
+            }
+        DONE:
+            try
+            {
+                g.DrawCurve(new Pen(new SolidBrush(_Color), _Width * 2),
+                    Line.ToArray(), 1, Line.Count - 3
+                    );
+                if (_IsVertical)
+                {
+                    g.FillPolygon(new SolidBrush(_Color), new PointF[]{
+                    new PointF(_To.X, _To.Y+15),
+                    new PointF(_To.X-5, _To.Y),
+                    new PointF(_To.X+5, _To.Y)}, System.Drawing.Drawing2D.FillMode.Alternate);
+                }
+                else
+                {
+                    g.FillPolygon(new SolidBrush(_Color), new PointF[]{
+                    new PointF(_To.X+15, _To.Y),
+                    new PointF(_To.X, _To.Y+5),
+                    new PointF(_To.X, _To.Y-5)}, System.Drawing.Drawing2D.FillMode.Alternate);
+                }
+            }
+            catch { }
+#endif
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -253,6 +412,7 @@ namespace SynergySequence
                                 foreach (CodeBlock.TriggerInput i in o.Connected)
                                 {
                                     DrawPwettyLine(e.Graphics, pos, i.GetPosition(), 1.5f, Color.Black, false);
+                                    //DrawLine(e.Graphics, pos, i.GetPosition(), new PointF(1, 0), new PointF(-1, 0), _w,Color.Black, false);
                                 }
                             }
                             else
@@ -530,7 +690,8 @@ namespace SynergySequence
                         if (input is CodeBlock.TriggerInput)
                         {
                             CodeBlock.TriggerInput i = (CodeBlock.TriggerInput)input;
-                            foreach (CodeBlock.TriggerOutput o in i.Connected) o.Connected.Clear();
+                            foreach (CodeBlock.TriggerOutput o in i.Connected) o.Connected.Remove(i);
+                            //foreach (CodeBlock.TriggerOutput o in i.Connected) o.Connected.Clear();
                             i.Connected.Clear();
                         }
                         Invalidate();

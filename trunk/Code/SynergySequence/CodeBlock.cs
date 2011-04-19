@@ -39,7 +39,7 @@ namespace SynergySequence
         public Sequence Sequence;
 
         public bool Selected = false;
-
+        public int InvokeIndex = 0;
         //editor stuff
         public float X;
         public float Y;
@@ -412,6 +412,7 @@ namespace SynergySequence
             _Graphics.DrawString("depth:" + GetDepth().ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, X, Y - 35);
             if (Scope != null) _Graphics.DrawString("scope:" + Scope.ToString(), new System.Drawing.Font("Arial", 8), System.Drawing.Brushes.Black, X, Y - 45);
 #endif
+            _Graphics.DrawString(InvokeIndex.ToString(), new Font("arial", 10), Brushes.Black, X, Y-50);
         }
 
         public class Prototype

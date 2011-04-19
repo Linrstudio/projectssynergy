@@ -278,6 +278,7 @@ namespace MainStationFrontEnd
                 {
                     FrontEndMainStation ms = (FrontEndMainStation)pd;
                     byte[] EEPROM = MainStation.MainStationCompiler.Compile(ms);
+                    if(MainStation.MainStation.Connected())
                     MainStation.MainStation.EEPROMWriteVerify(EEPROM);
                     System.IO.File.WriteAllBytes("c:/newcompiler.bin", EEPROM);
                 }

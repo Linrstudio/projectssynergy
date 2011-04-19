@@ -44,8 +44,7 @@ namespace MainStationFrontEnd
                 foreach (XElement element in file.Elements("ProgrammableDevice"))
                 {
                     string typename = element.Attribute("Type").Value;
-                    ProgrammableDevice d;
-                    d = (ProgrammableDevice)Activator.CreateInstance(null, "MainStationFrontEnd." + typename).Unwrap();
+                    ProgrammableDevice d = (ProgrammableDevice)Activator.CreateInstance(null, "MainStationFrontEnd." + typename).Unwrap();
                     d.Load(element);
                     programmabledevices.Add(d);
                 }
