@@ -72,6 +72,8 @@ namespace MainStation
             TimerCount = 0;
             byte[] Buffer = new byte[0xffff];//2^16
 
+            _MainStation.Sequence.SortDependencies();
+
             //global header
             //first 8 bits indicate the amount of timers
 
@@ -148,7 +150,8 @@ namespace MainStation
                         }
                     }
                     byte[] blob = new byte[] { };
-                    if (e.Output != null) blob = block.CompileEvent(e);
+                    if (e.Output != null) 
+                        blob = block.CompileEvent(e);
                     for (int i = 0; i < blob.Length; i++)
                     {
                         Buffer[currenteventaddr++] = blob[i];
@@ -164,7 +167,7 @@ namespace MainStation
 
 
             //fill in the blanks
-            Buffer[HEADERSIZE + deviceheadersize - 1] = 0xff;//tag the end each header with 0xffff
+            Buffer[HEADERSIZE + deviceheadersize - 1] = 0xff;//tag the end of each header with 0xffff
             Buffer[HEADERSIZE + deviceheadersize - 2] = 0xff;
             Buffer[HEADERSIZE + deviceheadersize + eventheadersize - 1] = 0xff;//tag the end each header with 0xffff
             Buffer[HEADERSIZE + deviceheadersize + eventheadersize - 2] = 0xff;
@@ -174,7 +177,7 @@ namespace MainStation
             Buffer[currenteventaddr + 2] = (byte)'F';
 
             MemoryStream stream = new MemoryStream();
-            stream.Write(Buffer, 0, currenteventaddr + 3);//+3 for EOF ( temporaryu )
+            stream.Write(Buffer, 0, currenteventaddr + 3);//+3 for EOF ( temporary )
 
             return stream.ToArray();
         }

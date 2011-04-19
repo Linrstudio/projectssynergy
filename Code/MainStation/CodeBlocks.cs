@@ -132,7 +132,7 @@ namespace MainStationCodeBlocks
         public override GetOutputResult GetOutput(DataOutput _Output)
         {
             var reg = MainStationCompiler.GetRegister(2);
-            return new GetOutputResult(CodeInstructions.Load(reg.index, (ushort)(val ? 0xffff : 0)), reg);
+            return new GetOutputResult(CodeInstructions.Load(reg.index, (byte)(val ? 0xffff : 0)), reg);
         }
         bool val;
         [Browsable(true), CategoryAttribute("Constant")]
@@ -496,16 +496,26 @@ namespace MainStationCodeBlocks
 
             foreach (DataInput i in DataInputs)
             {
-                GetOutputResult ans = ((MainStationCodeBlock)DataInputs[0].Connected.Owner.Owner).GetOutput(DataInputs[0].Connected);
+                GetOutputResult ans = ((MainStationCodeBlock)(i.Connected.Owner.Owner)).GetOutput(i.Connected);
                 stream.Write(ans.Code, 0, ans.Code.Length);
                 code = CodeInstructions.Mov(ans.Register.index, index, (byte)ans.Register.size); index += (byte)ans.Register.size;
                 stream.Write(code, 0, code.Length);
             }
-
             code = CodeInstructions.EPSend(DeviceID, index);
             stream.Write(code, 0, code.Length);
 
             return stream.ToArray();
+        }
+
+        public override GetOutputResult GetOutput(DataOutput _Output)
+        {
+            var reg = MainStationCompiler.GetRegister(2);
+            MemoryStream stream = new MemoryStream();
+            byte[] code;
+            code = CodeInstructions.Load(reg.index, EventID); stream.Write(code, 0, code.Length);
+            code = CodeInstructions.EPSend(DeviceID, (byte)(reg.size + 1)); stream.Write(code, 0, code.Length);
+            code = CodeInstructions.Mov(0, reg.index, (byte)reg.size); stream.Write(code, 0, code.Length);
+            return new GetOutputResult(stream.ToArray(), reg);
         }
 
         public override void Load(XElement _Data) { DeviceID = ushort.Parse(_Data.Attribute("DeviceID").Value); DeviceType = ushort.Parse(_Data.Attribute("TypeID").Value); EventID = byte.Parse(_Data.Attribute("EventID").Value); Create(); }

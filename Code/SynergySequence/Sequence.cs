@@ -145,6 +145,51 @@ namespace SynergySequence
             }
         }
 
+        public void SortDependencies()
+        {
+            int idx = 0;
+            foreach (CodeBlock c in codeblocks)
+            {
+                c.InvokeIndex = idx++;
+            }
+            bool changed = true;
+            while (changed)
+            {
+                changed = false;
+                foreach (CodeBlock c in codeblocks)
+                {
+                    foreach (CodeBlock.TriggerInput i in c.TriggerInputs)
+                    {
+                        foreach (CodeBlock.TriggerOutput o in i.Connected)
+                        {
+                            if (o.Owner.Owner.InvokeIndex > c.InvokeIndex)
+                            {
+                                int t = o.Owner.Owner.InvokeIndex;
+                                o.Owner.Owner.InvokeIndex = c.InvokeIndex;
+                                c.InvokeIndex = t;
+                                changed = true;
+                            }
+                        }
+                    }
+
+                    foreach (CodeBlock.DataInput i in c.DataInputs)
+                    {
+                        CodeBlock.DataOutput o = i.Connected;
+                        if (o != null)
+                        {
+                            if (o.Owner.Owner.InvokeIndex > c.InvokeIndex)
+                            {
+                                int t = o.Owner.Owner.InvokeIndex;
+                                o.Owner.Owner.InvokeIndex = c.InvokeIndex;
+                                c.InvokeIndex = t;
+                                changed = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public XElement Save()
         {
             XElement sequence = new XElement("Sequence");
