@@ -408,6 +408,7 @@ int main(void)
 
     #if defined(USB_INTERRUPT)
         USBDeviceAttach();
+ 		#error USB_INTERRUPT
     #endif
 
 	MSInit();

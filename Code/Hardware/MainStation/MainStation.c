@@ -17,12 +17,7 @@ void MSUpdate()
 
 void SetLED(int8 _State)
 {
-	LED=((_State&1))!=0?1:0;
-}
-
-int8 GetLED()
-{
-	return (LED?1:0);
+	LED=(_State!=0)?1:0;
 }
 
 void DisableOperation()

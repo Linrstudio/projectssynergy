@@ -58,19 +58,19 @@ void MSUpdate()
 	//find header
 	//if(!UARTAvailable())continue;
 	header=UARTReadInt8();
-	if(lastheader==0&&header==255)
+	if(lastheader==0&&header==0xff)
 	{
 		deviceid=UARTReadInt16();
 		Length  =UARTReadInt8();
 		if(deviceid==DeviceID)
 		{
-			for(i=0;i<Length&15;i++)EPBuffer[i]=UARTReadInt8();
+			for(i=0;i<Length;i++)EPBuffer[i]=UARTReadInt8();
 			EPBufferSize=0;
 			if(Length!=0)
 			{
 				EPInvokeEvent(EPBuffer[0],&(EPBuffer[1]));
 			}else{
-				if(!connected)
+				if(connected==0)
 				{
 					connected=255;
 					EPBuffer[0]=1;
