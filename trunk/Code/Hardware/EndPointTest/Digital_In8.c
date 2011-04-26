@@ -88,7 +88,14 @@ void EPPolled()
 //returns wether the event was successfully invoked
 int8 EPInvokeEvent(int8 _Event,int8* _Args)
 {
-	return 0;//since we dont have any events we assume all events fail
+	if(_Event>=8&&_Event<=15)
+	{
+		EPBuffer[0]=State[_Event-8];
+		EPBuffer[1]=State[_Event-8];
+		EPBufferSize=2;
+		return 255;
+	}
+	return 0;
 }
 #endif
 //EOF

@@ -1,6 +1,6 @@
-#define DIGITAL_IN8
-//#define DIGITAL_OUT8
-// #define RELAY8
+// #define DIGITAL_IN8
+// #define DIGITAL_OUT8
+#define RELAY8
 
 #include "Default.h"
 

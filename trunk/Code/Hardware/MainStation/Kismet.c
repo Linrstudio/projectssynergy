@@ -28,34 +28,50 @@ void KismetInit()
 
 void Set8(int8 _Register,int8 _Value)
 {
+#if 1
 	if(_Register&128)
 		SharedMemoryHigh[_Register&127]=_Value;
 	else
 		SharedMemoryLow[_Register]=_Value;
+#else
+	SharedMemoryLow[_Register]=_Value;
+#endif
 }
 
 int8 Get8(int8 _Register)
 {
+#if 1
 	if(_Register&128)
 		return SharedMemoryHigh[_Register&127];
 	else
 		return SharedMemoryLow[_Register];
+#else
+	return SharedMemoryLow[_Register];
+#endif
 }
 
 void Set16(int8 _Register,int16 _Value)
 {
+#if 1
 	if(_Register&128)
 		*(int16*)&(SharedMemoryHigh[_Register&127])=_Value;
 	else
 		*(int16*)&(SharedMemoryLow[_Register])=_Value;
+#else
+	*(int16*)&(SharedMemoryLow[_Register])=_Value;
+#endif
 }
 
 int16 Get16(int8 _Register)
 {
+#if 1
 	if(_Register&128)
 		return *(int16*)&(SharedMemoryHigh[_Register&127]);
 	else
 		return *(int16*)&(SharedMemoryLow[_Register]);
+#else
+	return *(int16*)&(SharedMemoryLow[_Register]);
+#endif
 }
 
 int8 KismetExecuteEvent(int16 _DeviceID,int8 _EventID)
@@ -208,9 +224,10 @@ int8 KismetExecuteEvent(int16 _DeviceID,int8 _EventID)
 				int8 reg1	=MemoryReadInt8();
 				Set16(reg1,(int16)RTCDay);
 			}break;
-			case 0x0A:
+			case 0x0A://Set LED
 			{
 				int8 reg	=MemoryReadInt8();
+				//Set16(reg,1);
 				SetLED(Get16(reg));
 			}break;
 			case 0x80:// $if goto $here?
@@ -235,7 +252,10 @@ int8 KismetExecuteEvent(int16 _DeviceID,int8 _EventID)
 			{
 				int16 dev	=MemoryReadInt16();
 				EPBufferSize=MemoryReadInt8();
-				EPSend(dev);
+				//try three times
+				if(EPSend(dev))break;
+				if(EPSend(dev))break;
+				if(EPSend(dev))break;
 			}break;
 			case 0x90://Set Delay
 			{

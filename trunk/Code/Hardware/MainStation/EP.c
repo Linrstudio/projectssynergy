@@ -119,7 +119,7 @@ int8 EPPoll(int16 _DeviceID)
 	event=Get8(0);//wait, there is more!
 	if(event!=0)
 	{
-		for(a=0;a<EPBUFFERSIZE;a++)
+		for(a=0;a<EPBufferSize&15;a++)
 			Set8(a,Get8(a+1));//move the parameters to the right place
 		KismetExecuteEvent(_DeviceID,event);
 	}
